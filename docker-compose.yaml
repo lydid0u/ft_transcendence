@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # Backend Fastify
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: fastify-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DB_PATH=/app/data/database.sqlite
+      - PORT=3000
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+      - sqlite_data:/app/data
+    depends_on:
+      - db
+    networks:
+      - app-network
+    command: npm run dev
+
+  # Frontend Vite.js
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: vite-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3000
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    networks:
+      - app-network
+    command: npm run dev
+
+  # SQLite Database (avec un conteneur pour gérer les volumes)
+  db:
+    image: alpine:latest
+    container_name: sqlite-db
+    volumes:
+      - sqlite_data:/data
+    command: >
+      sh -c "
+        apk add --no-cache sqlite &&
+        mkdir -p /data &&
+        if [ ! -f /data/database.sqlite ]; then
+          sqlite3 /data/database.sqlite 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT);'
+        fi &&
+        tail -f /dev/null
+      "
+    networks:
+      - app-network
+
+volumes:
+  sqlite_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
