@@ -1,4 +1,4 @@
-<!-- index.html -->
+<!-- index.html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -17,5 +17,625 @@
       window.location.href = 'app.html#home';
     }
   </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma SPA - Tutoriel</title>
+    <style>
+        /* Styles de base pour notre application */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        /* Navigation */
+        nav {
+            background: #2c3e50;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: #ecf0f1;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background-color: #34495e;
+        }
+
+        /* Zone de contenu principal */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 500px;
+        }
+
+        .page-content {
+            padding: 2rem;
+        }
+
+        .page-content h1 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+
+        .page-content h2 {
+            color: #34495e;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .page-content p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        /* Styles pour la page de contact */
+        .contact-form {
+            max-width: 600px;
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        /* Indicateur de chargement */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+        }
+
+        /* Classes utilitaires */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Styles pour la Landing Page avec tv.gif en background */
+        .landing-container {
+            min-height: 100vh;
+            background: url('tvv.gif') no-repeat center center;
+            background-size: cover; /* Changé de 'cover' à 'contain' pour moins de zoom */
+            background-color: black; /* Ajout d'un fond noir pour les espaces vides */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Overlay pour améliorer la lisibilité du texte */
+        .landing-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .landing-content {
+            max-width: 600px;
+            padding: 2rem;
+            z-index: 2;
+            position: relative;
+        }
+
+        .landing-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            animation: slideInDown 1s ease-out;
+        }
+
+        .landing-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            animation: slideInUp 1s ease-out 0.3s both;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .landing-description {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+            line-height: 1.8;
+            animation: slideInUp 1s ease-out 0.6s both;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .enter-button {
+            background: linear-gradient(45deg, rgb(192, 177, 177), #726e6c);
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: slideInUp 1s ease-out 0.9s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enter-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #f7f1ef, #797474);
+        }
+
+        .enter-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Styles pour la page de transition VHS */
+        .vhs-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .vhs-gif {
+            width: 100%; /* Changé de 100% à auto */
+            height: 100%; /* Changé de 100% à auto */
+            /* max-width: 90%; Limite la largeur à 90% de l'écran */
+            /* max-height: 90%;  Limite la hauteur à 90% de l'écran */ 
+            object-fit: cover; /* Changé de 'cover' à 'contain' */
+        }
+
+        /* Effet d'ondulation au clic */
+        .enter-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+            transform: translate(-50%, -50%);
+        }
+
+        .enter-button:active::before {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+        }
+
+        /* Animations de la landing page */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cache la navigation sur la landing page */
+        .landing-page nav {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation principale -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo" data-route="/">ft_transcendence</a>
+            <!-- <ul class="nav-links">
+                <li><a href="/home" data-route="/home">Accueil</a></li>
+                <li><a href="/about" data-route="/about">À propos</a></li>
+                <li><a href="/services" data-route="/services">Services</a></li>
+                <li><a href="/contact" data-route="/contact">Contact</a></li>
+            </ul> -->
+        </div>
+    </nav>
+
+    <!-- Zone où le contenu des pages sera affiché -->
+    <main id="content">
+        <div class="loading">Chargement de l'application...</div>
+    </main>
+
+    <script>
+      // config de la SPA, a chaque clique sur un lien, au lieu de rechgarger la page on charge juste le contenu de la div #content
+      // et on change l'url avec l'API History pour pouvoir faire precedent/suivant
+        const SPA = {
+            SPAattribute: {
+                defaultRoute: '/', //page par défaut
+                contentDiv: '#content' //id de l'html où le contenu sera chargé
+            },
+
+            // cache pour stocker les pages déjà chargées et eviter de les recharger
+            cache: new Map(),
+
+            // Fonction pour masquer la navigation et adapter le layout pour la landing page
+            hideStyleForLandingPage: function() {
+                document.querySelector('nav').style.display = 'none';
+                const main = document.querySelector('main');
+                main.style.margin = '0';
+                main.style.maxWidth = 'none';
+                main.style.background = 'transparent';
+                main.style.boxShadow = 'none';
+                main.style.borderRadius = '0';
+                main.style.minHeight = '100vh';
+                main.style.padding = '0';
+            },
+
+            // Fonction pour restaurer la navigation et le layout normal
+            mainDivCSS: function() {
+                document.querySelector('nav').style.display = 'block';
+                const main = document.querySelector('main');
+                main.style.margin = '2rem auto';
+                main.style.maxWidth = '1200px';
+                main.style.background = 'white';
+                main.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                main.style.borderRadius = '8px';
+                main.style.minHeight = '500px';
+                main.style.padding = '0 2rem';
+            },
+
+            // Fonction pour afficher la transition VHS
+            showVhsTransition: function() {
+                const app = document.querySelector('#content');
+                app.innerHTML = `
+                    <div class="vhs-transition">
+                        <img src="vhss.gif" class="vhs-gif" alt="Transition VHS">
+                    </div>
+                `;
+                
+                // Après 3 secondes (ajustez selon la durée de votre GIF), rediriger vers /home
+                setTimeout(() => {
+                    this.navigateTo('/home');
+                }, 2000);
+            },
+
+            routes: {
+                '/': {
+                    title: 'ft_transcendence',
+                    content: `
+                        <div class="landing-container">
+                            <div class="landing-content">
+                                <h1 class="landing-title">ft_transcendence</h1>
+                                <button class="enter-button" onclick="SPA.showVhsTransition()">
+                                    Entrer
+                                </button>
+                            </div>
+                        </div>
+                    `,
+                    routeScript: function() {
+                        SPA.hideStyleForLandingPage();
+                        console.log('🎬 Landing page avec tv.gif chargée');
+                    }
+                },
+
+                '/home': {
+                    title: 'Accueil',
+                    content: `
+                        <div class="page-content">
+                            <h1>HOME</h1>
+                            
+                        </div>
+                    `,
+                    routeScript: function() {
+                        SPA.mainDivCSS();
+                        console.log('Page daccueil chargée');
+                    }
+                },
+
+                '/about': {
+                    title: 'Qui sommes-nous ?',
+                    content: `
+                        <div class="page-content">
+                            <h1>À propos de nous</h1>
+                            <p>Nous sommes une équipe passionnée de développeurs web qui créent des applications modernes et performantes.</p>
+                            <h2>Notre mission</h2>
+                            <p>Notre objectif est de démontrer comment créer des applications web interactives sans avoir recours à des frameworks complexes.</p>
+                            <h2>Technologies utilisées</h2>
+                            <p>Cette application utilise uniquement HTML5, CSS3 et JavaScript ES6+ pour démontrer les capacités du web moderne.</p>
+                        </div>
+                    `,
+                    routeScript: function() {
+                        SPA.mainDivCSS();
+                        console.log('Page À propos chargée !');
+                    }
+                },
+
+                '/services': {
+                    title: 'Services - Ma SPA',
+                    content: `
+                        <div class="page-content">
+                            <h1>Nos Services</h1>
+                            <p>Nous proposons une gamme complète de services de développement web.</p>
+                            <h2>Développement Frontend</h2>
+                            <p>Création d'interfaces utilisateur modernes et responsives avec les dernières technologies web.</p>
+                            <h2>Développement Backend</h2>
+                            <p>Conception d'APIs robustes et d'architectures serveur scalables.</p>
+                            <h2>Conseil et Formation</h2>
+                            <p>Accompagnement dans vos projets et formation de vos équipes aux bonnes pratiques.</p>
+                        </div>
+                    `,
+                    routeScript: function() {
+                        SPA.mainDivCSS();
+                    }
+                },
+
+                '/contact': {
+                    title: 'Contact - Ma SPA',
+                    content: `
+                        <div class="page-content">
+                            <h1>Contactez-nous</h1>
+                            <p>N'hésitez pas à nous contacter pour toute question ou demande de devis.</p>
+                            
+                            <form class="contact-form" id="contactForm">
+                                <div class="form-group">
+                                    <label for="name">Nom :</label>
+                                    <input type="text" id="name" name="name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email :</label>
+                                    <input type="email" id="email" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="message">Message :</label>
+                                    <textarea id="message" name="message" rows="5" required></textarea>
+                                </div>
+                                <button type="submit" class="btn">Envoyer</button>
+                            </form>
+                        </div>
+                    `,
+                    routeScript: function() {
+                        SPA.mainDivCSS();
+                        
+                        const form = document.getElementById('contactForm');
+                        if (form) {
+                            form.addEventListener('submit', function(e) {
+                                e.preventDefault();
+                                alert('Merci pour votre message ! (Ceci est une démo)');
+                                form.reset();
+                            });
+                        }
+                    }
+                }
+            },
+
+            //cette fonction demarre la SPA, elle est appelée quand le DOM est chargé et charge la 1e page
+            initSPA: function() {
+                console.log('🚀 Initialisation de la SPA...');
+                
+                this.handleClick();
+                this.handlePreviousNextButtons();
+                this.loadCurrentPage();
+                
+                console.log('✅ SPA initialisée avec succès !');
+            },
+
+            //gere les clics sur les liens de navigation et empeche le rechargement de la page
+            handleClick: function() {
+              document.addEventListener('click', (e) => {
+                  
+                    const link = e.target.closest('[data-route]'); // on recup l'element clique avec e.target et .closest cherche dans le DOM l'element le plus proche qui a l'attribut 'data-route'
+                    //si ca a ete trouve, on stop le comportement par defaut (rechargement de la page) et on change l'url et le contenu sur la page sans recharger la page
+                    if (link) {
+                        e.preventDefault();
+                        const route = link.getAttribute('data-route');
+                        this.navigateTo(route);
+                    }
+                });
+            },
+
+            handlePreviousNextButtons: function() {
+                window.addEventListener('popstate', () => { //popstate est un evenement web qui sactive apres qu'on ai clique suivant/precedent et previent du changement d'url
+                    this.loadCurrentPage(); //cette fonction est alors appelee pour charger la page correspondante a l'url actuelle
+                });
+            },
+
+            navigateTo: function(route) {
+              // fonction membre qui vient de l'API History et qui change l'url sans recharger la page
+                history.pushState(null, null, route);
+                
+                this.loadRoute(route);
+                
+                // Mettre à jour la navigation active
+                this.updateActiveNavigation(route);
+            },
+
+            loadRoute: function(route) {
+                console.log(`📄 Chargement de la route: ${route}`);
+                
+                const routeToLoad = this.routes[route];
+                if (!routeToLoad) {
+                    console.error(`❌ Route non trouvée: ${route}`);
+                    this.error404();
+                    return;
+                }
+
+                document.title = routeToLoad.title;
+
+                const contentDiv = document.querySelector(this.SPAattribute.contentDiv);
+                contentDiv.innerHTML = routeToLoad.content;
+
+                // rend fluide le changement de page
+                contentDiv.classList.remove('fade-in');
+                contentDiv.offsetHeight;
+                contentDiv.classList.add('fade-in');
+
+                // on attend 1ms que le DOM charge avant de lancer le script specifiquie a la page 
+                if (routeToLoad.routeScript && typeof routeToLoad.routeScript === 'function') {
+                    setTimeout(() => {
+                        routeToLoad.routeScript();
+                    }, 10);
+                }
+            },
+
+            /*
+             * ÉTAPE 8: Chargement de la route actuelle
+             * 
+             * Cette fonction détermine quelle route charger en fonction
+             * de l'URL actuelle du navigateur.
+             */
+            loadCurrentPage: function() {
+                const currentPath = window.location.pathname;
+                this.loadRoute(currentPath);
+                this.updateActiveNavigation(currentPath);
+            },
+
+            /*
+             * ÉTAPE 9: Mise à jour de la navigation active
+             * 
+             * Cette fonction met à jour visuellement quel lien de navigation
+             * est actif (ajoute/supprime des classes CSS).
+             */
+            updateActiveNavigation: function(currentRoute) {
+                // Supprimer la classe active de tous les liens
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.classList.remove('active');
+                });
+
+                // Ajouter la classe active au lien correspondant
+                const activeLink = document.querySelector(`[data-route="${currentRoute}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            },
+
+            error404: function() {
+                const contentDiv = document.querySelector(this.SPAattribute.contentDiv);
+                contentDiv.innerHTML = `
+                    </div>
+                    <div class="vhs-transition">
+                        <img src="error404.gif" class="vhs-gif" alt="Transition VHS">
+
+                `;
+                document.title = 'Error 404';
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            SPA.initSPA();
+        });
+    </script>
 </body>
 </html>
