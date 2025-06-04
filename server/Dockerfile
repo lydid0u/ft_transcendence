@@ -6,13 +6,12 @@ WORKDIR /app
 RUN apk add --no-cache sqlite
 
 # Dépendances
-COPY package.json ./
-RUN npm install nodemon
-RUN npm install --production
+COPY package*.json ./
+RUN npm install
 
 # Code
 COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

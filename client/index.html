@@ -1,363 +1,28 @@
-<!-- index.html
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <title>ft_transcendence</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ma SPA - Tutoriel</title>
+        <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <meta name="google-signin-client_id" content="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com">
+        <link href="styles.css?v=1.0" rel="stylesheet">
 </head>
 <body>
-  <div class=".flex text-center m-9">
-    <h1 class="text-pink-400 text-6xl font-bold">ft_transcendence</h1>
-    <button onclick="enterSite()" class="m-4 px-4 py-2 bg-pink-200 hover:bg-pink-400 text-white rounded-md">Entrer</button>
-  </div>
-
-  <script>
-    function enterSite() {
-      window.location.href = 'app.html#home';
-    }
-  </script>
-</body>
-</html> -->
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ma SPA - Tutoriel</title>
-    <style>
-        /* Styles de base pour notre application */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
-        }
-
-        /* Navigation */
-        nav {
-            background: #2c3e50;
-            padding: 1rem 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            color: #ecf0f1;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: #ecf0f1;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            background-color: #34495e;
-        }
-
-        /* Zone de contenu principal */
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            min-height: 500px;
-        }
-
-        .page-content {
-            padding: 2rem;
-        }
-
-        .page-content h1 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 0.5rem;
-        }
-
-        .page-content h2 {
-            color: #34495e;
-            margin: 1.5rem 0 1rem 0;
-        }
-
-        .page-content p {
-            margin-bottom: 1rem;
-            text-align: justify;
-        }
-
-        /* Styles pour la page de contact */
-        .contact-form {
-            max-width: 600px;
-            margin-top: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
-        }
-
-        .btn {
-            background: #3498db;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn:hover {
-            background: #2980b9;
-        }
-
-        /* Indicateur de chargement */
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #7f8c8d;
-        }
-
-        /* Classes utilitaires */
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Styles pour la Landing Page avec tv.gif en background */
-        .landing-container {
-            min-height: 100vh;
-            background: url('tvv.gif') no-repeat center center;
-            background-size: cover; /* Changé de 'cover' à 'contain' pour moins de zoom */
-            background-color: black; /* Ajout d'un fond noir pour les espaces vides */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Overlay pour améliorer la lisibilité du texte */
-        .landing-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1;
-        }
-
-        .landing-content {
-            max-width: 600px;
-            padding: 2rem;
-            z-index: 2;
-            position: relative;
-        }
-
-        .landing-title {
-            font-size: 3.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            animation: slideInDown 1s ease-out;
-        }
-
-        .landing-subtitle {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            line-height: 1.6;
-            animation: slideInUp 1s ease-out 0.3s both;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        }
-
-        .landing-description {
-            font-size: 1.1rem;
-            margin-bottom: 3rem;
-            opacity: 0.8;
-            line-height: 1.8;
-            animation: slideInUp 1s ease-out 0.6s both;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        }
-
-        .enter-button {
-            background: linear-gradient(45deg, rgb(192, 177, 177), #726e6c);
-            color: white;
-            border: none;
-            padding: 1.2rem 3rem;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            animation: slideInUp 1s ease-out 0.9s both;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .enter-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-            background: linear-gradient(45deg, #f7f1ef, #797474);
-        }
-
-        .enter-button:active {
-            transform: translateY(-1px);
-        }
-
-        /* Styles pour la page de transition VHS */
-        .vhs-transition {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            overflow: hidden;
-        }
-
-        .vhs-gif {
-            width: 100%; /* Changé de 100% à auto */
-            height: 100%; /* Changé de 100% à auto */
-            /* max-width: 90%; Limite la largeur à 90% de l'écran */
-            /* max-height: 90%;  Limite la hauteur à 90% de l'écran */ 
-            object-fit: cover; /* Changé de 'cover' à 'contain' */
-        }
-
-        /* Effet d'ondulation au clic */
-        .enter-button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.3);
-            transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
-            transform: translate(-50%, -50%);
-        }
-
-        .enter-button:active::before {
-            width: 300px;
-            height: 300px;
-            top: 50%;
-            left: 50%;
-        }
-
-        /* Animations de la landing page */
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Cache la navigation sur la landing page */
-        .landing-page nav {
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation principale -->
     <nav>
         <div class="nav-container">
-            <a href="/" class="logo" data-route="/">ft_transcendence</a>
-            <!-- <ul class="nav-links">
+            <img src="logo.png" href="/" class="logo" data-route="/">
+            <ul class="nav-links">
                 <li><a href="/home" data-route="/home">Accueil</a></li>
                 <li><a href="/about" data-route="/about">À propos</a></li>
-                <li><a href="/services" data-route="/services">Services</a></li>
-                <li><a href="/contact" data-route="/contact">Contact</a></li>
-            </ul> -->
+                <li><a href="/dashboard" data-route="/dashboard">dashboard</a></li>
+                <li><a href="/tournoi" data-route="/tournoi">tournoi</a></li>
+            </ul>
         </div>
     </nav>
 
-    <!-- Zone où le contenu des pages sera affiché -->
-    <main id="content">
-        <div class="loading">Chargement de l'application...</div>
-    </main>
+    <main id="content"> </main>
 
     <script>
       // config de la SPA, a chaque clique sur un lien, au lieu de rechgarger la page on charge juste le contenu de la div #content
@@ -402,7 +67,7 @@
                 const app = document.querySelector('#content');
                 app.innerHTML = `
                     <div class="vhs-transition">
-                        <img src="vhss.gif" class="vhs-gif" alt="Transition VHS">
+                        <img src="gif/vhs.gif" class="vhs-gif" alt="Transition VHS">
                     </div>
                 `;
                 
@@ -418,7 +83,7 @@
                     content: `
                         <div class="landing-container">
                             <div class="landing-content">
-                                <h1 class="landing-title">ft_transcendence</h1>
+                                <h1 class="landing-title">FT_TRANSCENDENCE</h1>
                                 <button class="enter-button" onclick="SPA.showVhsTransition()">
                                     Entrer
                                 </button>
@@ -436,25 +101,25 @@
                     content: `
                         <div class="page-content">
                             <h1>HOME</h1>
-                            
+
+                            <!-- Contenu principal de la page home -->
+                            <div style="margin-top: 2rem;">
+                                <h2>Bienvenue sur ft_transcendence</h2>
+                                <button class="btn" onclick="SPA.navigateTo('/login')">Se connecter</button>
+                            </div>
                         </div>
                     `,
                     routeScript: function() {
                         SPA.mainDivCSS();
-                        console.log('Page daccueil chargée');
                     }
-                },
-
+                },    
+                       
                 '/about': {
                     title: 'Qui sommes-nous ?',
                     content: `
                         <div class="page-content">
-                            <h1>À propos de nous</h1>
-                            <p>Nous sommes une équipe passionnée de développeurs web qui créent des applications modernes et performantes.</p>
-                            <h2>Notre mission</h2>
-                            <p>Notre objectif est de démontrer comment créer des applications web interactives sans avoir recours à des frameworks complexes.</p>
-                            <h2>Technologies utilisées</h2>
-                            <p>Cette application utilise uniquement HTML5, CSS3 et JavaScript ES6+ pour démontrer les capacités du web moderne.</p>
+                            <h1>À propos</h1>
+                            <p>Lydia et khalid bang bang</p>
                         </div>
                     `,
                     routeScript: function() {
@@ -463,18 +128,11 @@
                     }
                 },
 
-                '/services': {
-                    title: 'Services - Ma SPA',
+                '/tournoi': {
+                    title: 'tournoi',
                     content: `
                         <div class="page-content">
-                            <h1>Nos Services</h1>
-                            <p>Nous proposons une gamme complète de services de développement web.</p>
-                            <h2>Développement Frontend</h2>
-                            <p>Création d'interfaces utilisateur modernes et responsives avec les dernières technologies web.</p>
-                            <h2>Développement Backend</h2>
-                            <p>Conception d'APIs robustes et d'architectures serveur scalables.</p>
-                            <h2>Conseil et Formation</h2>
-                            <p>Accompagnement dans vos projets et formation de vos équipes aux bonnes pratiques.</p>
+                            <h1> tournoi</h1>
                         </div>
                     `,
                     routeScript: function() {
@@ -482,40 +140,104 @@
                     }
                 },
 
-                '/contact': {
-                    title: 'Contact - Ma SPA',
+                '/dashboard': {
+                    title: 'dashboard',
                     content: `
                         <div class="page-content">
-                            <h1>Contactez-nous</h1>
-                            <p>N'hésitez pas à nous contacter pour toute question ou demande de devis.</p>
-                            
-                            <form class="contact-form" id="contactForm">
-                                <div class="form-group">
-                                    <label for="name">Nom :</label>
-                                    <input type="text" id="name" name="name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Email :</label>
-                                    <input type="email" id="email" name="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="message">Message :</label>
-                                    <textarea id="message" name="message" rows="5" required></textarea>
-                                </div>
-                                <button type="submit" class="btn">Envoyer</button>
-                            </form>
+                            <h1>dashboard</h1>
                         </div>
                     `,
                     routeScript: function() {
                         SPA.mainDivCSS();
-                        
-                        const form = document.getElementById('contactForm');
-                        if (form) {
-                            form.addEventListener('submit', function(e) {
-                                e.preventDefault();
-                                alert('Merci pour votre message ! (Ceci est une démo)');
-                                form.reset();
+                    }
+                },
+
+                '/login': {
+                    title: 'login',
+                    content: `
+                        <div class="page-content">
+                            <h1>login</h1>
+                             <!-- Section d'authentification Google -->
+                            <div id="auth-section" style="margin: 2rem 0; padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; background: #f8f9fa;">
+                                <h2>Authentification Google</h2>
+                                
+                                <!-- Bouton de connexion (affiché quand non connecté) -->
+                                <div id="signin-section" style="display: block;">
+                                    <p>Connectez-vous avec votre compte Google :</p>
+                                    <div id="g_id_onload"
+                                         data-client_id="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com"
+                                         data-callback="handleGoogleAuth"
+                                         data-auto_prompt="false">
+                                    </div>
+                                    <div class="g_id_signin"
+                                         data-type="standard"
+                                         data-size="large"
+                                         data-theme="outline"
+                                         data-text="sign_in_with"
+                                         data-shape="rectangular"
+                                         data-logo_alignment="left">
+                                    </div>
+                                </div>
+                                <div id=loginWithAccountSection style="display: none;">
+                                    <p>Ou connectez-vous avec votre compte :</p>
+                                    <form id="login-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                                        <input type="email" id="email" placeholder="Email" required style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
+                                        <input type="password" id="password" placeholder="Mot de passe" required style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
+                                        <button type="submit" class="btn" style="background: #007bff; color: white;">Se connecter</button>
+                                        </form>
+                                        <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">Pas de compte ? <a href="/register" data-route="/register" style="color: #007bff;">Inscrivez-vous</a></p>
+                                </div>
+                                            
+                                <!-- Section utilisateur connecté (masquée par défaut) -->
+                                <div id="user-section" style="display: none;">
+                                    <div id="user-info" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                        <img id="user-photo" src="" alt="Photo de profil" style="width: 50px; height: 50px; border-radius: 50%;">
+                                        <div>
+                                            <h3 id="user-name"></h3>
+                                            <p id="user-email" style="color: #666; font-size: 0.9rem;"></p>
+                                        </div>
+                                    </div>
+                                    <button id="signout-btn" class="btn" style="background: #dc3545; margin-top: 1rem;">
+                                        Se déconnecter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    routeScript: function() {
+                        SPA.mainDivCSS();
+
+                         // Initialiser l'authentification Google
+                         if (typeof google !== 'undefined' && google.accounts) {
+                            google.accounts.id.initialize({
+                                client_id: "632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com",
+                                callback: handleGoogleAuth
                             });
+                            
+                            // Rendre le bouton de connexion
+                            google.accounts.id.renderButton(
+                                document.querySelector('.g_id_signin'),
+                                { 
+                                    theme: "outline", 
+                                    size: "large",
+                                    text: "sign_in_with",
+                                    shape: "rounded",
+                                    logo_alignment: "left"
+                                }
+                            );
+                        }
+                        
+                        // Vérifier si l'utilisateur est déjà connecté
+                        const savedUser = localStorage.getItem('googleUser');
+                        if (savedUser) {
+                            const userData = JSON.parse(savedUser);
+                            displayUserInfo(userData);
+                        }
+                        
+                        // Gérer la déconnexion
+                        const signoutBtn = document.getElementById('signout-btn');
+                        if (signoutBtn) {
+                            signoutBtn.addEventListener('click', signOut);
                         }
                     }
                 }
@@ -558,8 +280,7 @@
                 
                 this.loadRoute(route);
                 
-                // Mettre à jour la navigation active
-                this.updateActiveNavigation(route);
+                this.setCurrentPageToActive(route);
             },
 
             loadRoute: function(route) {
@@ -590,31 +311,18 @@
                 }
             },
 
-            /*
-             * ÉTAPE 8: Chargement de la route actuelle
-             * 
-             * Cette fonction détermine quelle route charger en fonction
-             * de l'URL actuelle du navigateur.
-             */
             loadCurrentPage: function() {
                 const currentPath = window.location.pathname;
                 this.loadRoute(currentPath);
-                this.updateActiveNavigation(currentPath);
+                this.setCurrentPageToActive(currentPath);
             },
 
-            /*
-             * ÉTAPE 9: Mise à jour de la navigation active
-             * 
-             * Cette fonction met à jour visuellement quel lien de navigation
-             * est actif (ajoute/supprime des classes CSS).
-             */
-            updateActiveNavigation: function(currentRoute) {
-                // Supprimer la classe active de tous les liens
+            // supprime le css active de l'ancienne page et ajoute le nouveau css
+            setCurrentPageToActiveupdateActivePage: function(currentRoute) {
                 document.querySelectorAll('.nav-links a').forEach(link => {
                     link.classList.remove('active');
                 });
 
-                // Ajouter la classe active au lien correspondant
                 const activeLink = document.querySelector(`[data-route="${currentRoute}"]`);
                 if (activeLink) {
                     activeLink.classList.add('active');
@@ -626,7 +334,7 @@
                 contentDiv.innerHTML = `
                     </div>
                     <div class="vhs-transition">
-                        <img src="error404.gif" class="vhs-gif" alt="Transition VHS">
+                        <img src="gif/error404.gif" class="vhs-gif" alt="Transition VHS">
 
                 `;
                 document.title = 'Error 404';
@@ -636,6 +344,115 @@
         document.addEventListener('DOMContentLoaded', function() {
             SPA.initSPA();
         });
+
+        function handleGoogleAuth(response) {
+            console.log("Encoded JWT ID token: " + response.credential);
+            
+            // on decode le token jwt pour obtenir les info du user
+            const objUserData = decodeJwtResponse(response.credential);
+            
+            const userData = {
+                googleId: objUserData.sub,
+                name: objUserData.name,
+                email: objUserData.email,
+                picture: objUserData.picture,
+                token: response.credential
+            };
+            sendUserDataToBackend(userData);
+        }
+
+        async function sendUserDataToBackend(userData) {
+            try {
+                    const response = await fetch('http://localhost:3000/auth/google', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                
+                // on recupere la reponse du backend, 
+                const result = await response.json();
+                console.log("Réponse du backend:", result);
+
+                // save dans localStorage pour la session locale
+                localStorage.setItem('googleUser', JSON.stringify(userData));
+                localStorage.setItem('isAuthenticated', 'true');
+                
+                displayUserInfo(userData);
+            } catch (error) {
+                console.error("Erreur lors de l'envoi au backend:", error);
+                
+                localStorage.removeItem('googleUser');
+                localStorage.removeItem('isAuthenticated');
+
+                if (typeof google !== 'undefined' && google.accounts) {
+                    google.accounts.id.disableAutoSelect();
+                }
+                
+                SPA.navigateTo('/login');
+                
+                alert('Erreur de connexion au serveur. Veuillez réessayer.');
+            }
+        }
+
+        // on prend le payload ,base64Url en base64 en json, puis on return le json en objet js
+        function decodeJwtResponse(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            
+            return JSON.parse(jsonPayload);
+        }
+
+        function displayUserInfo(userData) {
+            // cache le boutton de connexion
+            const signinSection = document.getElementById('signin-section');
+            if (signinSection) {
+                signinSection.style.display = 'none';
+            }
+            
+            // Afficher la section utilisateur
+            const userSection = document.getElementById('user-section');
+            if (userSection) {
+                userSection.style.display = 'block';
+
+                const userPhoto = document.getElementById('user-photo');
+                const userName = document.getElementById('user-name');
+                const userEmail = document.getElementById('user-email');
+                
+                if (userPhoto) userPhoto.src = userData.picture;
+                if (userName) userName.textContent = userData.name;
+                if (userEmail) userEmail.textContent = userData.email;
+            }
+        }
+
+        function signOut() {
+            localStorage.removeItem('googleUser');
+            
+            // supprime le token google
+            if (typeof google !== 'undefined' && google.accounts)
+                google.accounts.id.disableAutoSelect();
+            
+            // cache la section info utilisateur
+            const userSection = document.getElementById('user-section');
+            if (userSection) {
+                userSection.style.display = 'none';
+            }
+            
+            // affiche le bouton de connexion
+            const signinSection = document.getElementById('signin-section');
+            if (signinSection)
+                signinSection.style.display = 'block';
+            
+            console.log('Utilisateur déconnecté');
+        }
     </script>
 </body>
 </html>

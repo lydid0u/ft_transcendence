@@ -13,7 +13,7 @@ db.serialize(() => {
     email TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`)
-})
+  })
 
 // CORS simple
 fastify.addHook('preHandler', async (request, reply) => {

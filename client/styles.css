@@ -1,0 +1,412 @@
+/* Import Gazpacho Font Family */
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Heavy.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Heavy.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: italic;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Gazpacho', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+/* Navigation */
+nav {
+    background: #efe5cf;
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: black;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background-color: #efe5cf;
+}
+
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-height: 500px;
+}
+
+.page-content {
+    padding: 2rem;
+}
+
+.page-content h1 {
+    color: #ecd8ac;
+    margin-bottom: 1rem;
+    border-bottom: 3px solid #ecd8ac;
+    padding-bottom: 0.5rem;
+}
+
+.page-content h2 {
+    color: #e4cfa2;
+    margin: 1.5rem 0 1rem 0;
+}
+
+.page-content p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+/* Styles pour la page de contact */
+.contact-form {
+    max-width: 600px;
+    margin-top: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #ecd8ac;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.btn {
+    background: #3498db;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background: #2980b9;
+}
+
+/* Indicateur de chargement */
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+}
+
+/* Classes utilitaires */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Styles pour la Landing Page avec tv.gif en background */
+.landing-container {
+    min-height: 100vh;
+    background: url('gif/tv.gif') no-repeat center center;
+    background-size: cover; 
+    background-color: black; /* Ajout d'un fond noir pour les espaces vides */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    width: 100vw;
+}
+
+/* Overlay pour améliorer la lisibilité du texte */
+.landing-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.landing-content {
+    max-width: 600px;
+    padding: 2rem;
+    z-index: 2;
+    position: relative;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.landing-title {
+    font-size: 80px;
+    font-weight: bold;
+    opacity: 0.2;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    animation: slideInDown 1s ease-out;
+    text-align: center;
+}
+
+.landing-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    line-height: 1.6;
+    animation: slideInUp 1s ease-out 0.3s both;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.landing-description {
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+    opacity: 0.8;
+    line-height: 1.8;
+    animation: slideInUp 1s ease-out 0.6s both;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.enter-button {
+    background: linear-gradient(45deg, rgb(192, 177, 177), #726e6c);
+    color: white;
+    opacity: 0.6;
+    border: none;
+    padding: 1.2rem 3rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: slideInUp 1s ease-out 0.9s both;
+    position: relative;
+    overflow: hidden;
+}
+
+.enter-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    background: linear-gradient(45deg, #f7f1ef, #797474);
+}
+
+.enter-button:active {
+    transform: translateY(-1px);
+}
+
+/* Styles pour la page de transition VHS */
+.vhs-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.vhs-gif {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Effet d'ondulation au clic */
+.enter-button::before {
+    content: '';
+    position: absolute;
+    opacity: 0.6;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+    transform: translate(-50%, -50%);
+}
+
+.enter-button:active::before {
+    width: 300px;
+    height: 300px;
+    top: 50%;
+    left: 50%;
+}
+
+/* Animations de la landing page */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cache la navigation sur la landing page */
+.landing-page nav {
+    display: none;
+}
