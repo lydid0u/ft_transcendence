@@ -1,17 +1,10 @@
-import { createUser, getAllUsers } from "../db/db.js";
+import fp from 'fastify-plugin'
 
-export default function userRoutes(fastify, options, done)
+async function userRoutes(fastify, options)
 {
-    fastify.get('/user', async (request, reply) => {
-        const data = await getAllUsers();
-        return data;
+    fastify.get('/', async (request, reply) => {
+        console.log("route '/'");
     });
-    
-    fastify.post('/user', async (request, reply) => {
-        const {nickname, password} = request.body;
-        const user = await createUser(nickname, password);
-        return user;
-    });
-
-    done();
 }
+
+export default fp(userRoutes);

@@ -1,68 +1,62 @@
-import pkg from 'sqlite3';
-const { Database } = pkg;
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
+import fp from 'fastify-plugin';
+import bcrypt from 'bcrypt';
 
-const db = new Database('database.db');
+const saltRounds = 10;
 
-export function createTable()
+async function dbFunction(fastify, options)
 {
-    return new Promise((resolve, reject) =>{
-        db.run("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, nickname TEXT, password TEXT);", 
-        function (err)
-        {
-            if (err)
-            {
-                console.error("Error creating table:", err);
-                reject(err);
-            }
-            else
-            {
-                console.log("Users table created or already exists");
-                resolve();
-            }
-        });
+    const db = await open({
+            filename : './database.db',
+            driver : sqlite3.Database
     });
-}
 
-export function createUser(nickname, password)
-{
-    return new Promise((resolve, reject) => {
-        db.run("INSERT INTO users (nickname, password) VALUES (?, ?)", [nickname, password],
-        function (err)
+    const dbHelper = {
+
+        connection : db,
+
+        async createTable()
         {
-            if (err)
+            await db.run('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, email TEXT UNIQUE, password TEXT, google_id TEXT UNIQUE, first_name TEXT, last_name TEXT, picture TEXT)');
+        },
+    
+        async findOrAddUser(google_id, email, password, first_name, last_name, picture)
+        {
+            let user = null;
+        
+            if (google_id)
             {
-                console.error("Error creating user:", err);
-                reject(err);
-            }
-            else
-            {
-                resolve({
-                    id: this.lastID,
-                    nickname: nickname,
-                    password: password
+                user = await db.get('SELECT * FROM users WHERE google_id = ?', google_id);
+                if (!user)
+                {
+                    await db.run('INSERT INTO users (google_id, email, first_name, last_name, picture) VALUES (?, ?, ?, ?, ?)',
+                    google_id, email, first_name, last_name, picture);
+                    user = await db.get('SELECT * FROM users WHERE google_id = ?', google_id);
                 }
-                )
             }
-        });
-    });
-}
-
-export function getAllUsers()
-{
-    return new Promise((resolve, reject) =>
-    {
-        db.all("SELECT * FROM users;", [],
-        (err, rows) => 
-        {
-            if(err)
+            else if (email && password)
             {
-                console.error("Error cannot retrieve data:", err);
-                reject(err);
+                const newpass = await bcrypt.hash(password, saltRounds);
+                user = await db.get ('SELECT * FROM users WHERE email = ?', email);
+                if (!user)
+                {
+                    await db.run('INSERT INTO users (email, password) VALUES (?, ?)', email, newpass);
+                    user = await db.get('SELECT * FROM users WHERE email = ?', email);
+                }
+                else
+                {
+                    const valid = await bcrypt.compare(password, user.password);
+                    if(!valid)
+                        throw new Error ('Wrong password');
+                }
             }
             else
-            {
-                resolve(rows);
-            }
-        })
-    })
+                throw new Error('Not enough data to retrieve or create user');
+            return user;
+        }
+    };
+    fastify.decorate('db', dbHelper);
+    await dbHelper.createTable();
 }
+export default fp(dbFunction);

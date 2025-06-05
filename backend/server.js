@@ -1,10 +1,11 @@
 import Fastify from 'fastify';
-import { createTable } from './db/db.js';
+import dbFunction from './db/db.js'
 import userRoutes from './routes/user.js';
 import authGoogle from './routes/auth.js'
 
 const fastify = Fastify();
 
+fastify.register(dbFunction);
 fastify.register(userRoutes);
 fastify.register(authGoogle);
 
@@ -21,17 +22,15 @@ fastify.addHook('preHandler', async (request, reply) => {
 })
 
 // Routes
-fastify.get('/', async () => {
-  return { message: 'Backend OK!' }
-})
+// fastify.get('/', async () => {
+//   return { message: 'Backend OK!' }
+// })
 
 
 const startServer = async() =>
 {
   try
   {
-    await createTable();
-    console.log("Table has been init");
     await fastify.listen({ port: 3000, host: '0.0.0.0' })
     console.log('Server listening on port 3000');
   }
