@@ -5,15 +5,19 @@ const sqlite3 = require('sqlite3').verbose()
 // Base de données SQLite
 const db = new sqlite3.Database('/app/data/database.sqlite')
 
-// Créer la table
+// Créer la table users avec support pour Google Auth
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
-    email TEXT,
+    email TEXT UNIQUE,
+    password TEXT,
+    google_id TEXT,
+    picture TEXT,
+    provider TEXT DEFAULT 'local',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`)
-  })
+})
 
 // CORS simple
 fastify.addHook('preHandler', async (request, reply) => {
