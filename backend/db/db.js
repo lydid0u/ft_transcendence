@@ -54,6 +54,18 @@ async function dbFunction(fastify, options)
             else
                 throw new Error('Not enough data to retrieve or create user');
             return user;
+        },
+
+        async changePassword(email, password)
+        {
+            let user = await db.get('SELECT password FROM users WHERE email = ?', email);
+            if (user)
+            {
+                const newpass = await bcrypt.hash(password, saltRounds);
+                user = await db.run('UPDATE users SET password = ? WHERE email = ?', newpass, email);
+            }
+            else
+                throw new Error ("Email doesn't exist");
         }
     };
     fastify.decorate('db', dbHelper);

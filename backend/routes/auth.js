@@ -67,6 +67,20 @@ async function authGoogle(fastify, options)
         }
 
     })
+
+    fastify.patch('/auth/change-password', async (request, reply) =>
+    {
+        try
+        {
+            const {email, password} = request.body;
+            await fastify.db.changePassword(email, password);
+            reply.send({sucess : true, message : "Password changed"});
+        }
+        catch (err)
+        {
+            reply.status(401).send({succes : false, message : err.message});
+        }
+    });
 }
 
 export default fp(authGoogle);
