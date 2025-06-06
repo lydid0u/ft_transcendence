@@ -20,6 +20,30 @@ async function authGoogle(fastify, options)
                 lastName: payload.family_name,
                 picture: payload.picture
             }
+        },
+
+        async createJWTtoken(user)
+        {
+            const token = fastify.jwt.sign({
+                sub : user.id,
+                email : user.email,
+                firstName : user.first_name,
+                iat : Math.floor(Date.now() / 1000),
+                exp : Math.floor(Date.now() / 1000) + (60 * 60)
+            });
+            return token;
+        },
+
+        async verifyJWT(request, reply)
+        {
+            try
+            {
+                await request.jwtVerify();
+            }
+            catch(err)
+            {
+                reply.code(401).send({ success: false, message : "Token invalide ou manquant"});
+            }
         }
         
     };
@@ -35,10 +59,11 @@ async function authGoogle(fastify, options)
             const user = await fastify.db.findOrAddUser(userInfo.googleId, userInfo.email, null, userInfo.firstName, userInfo.lastName, userInfo.picture);
             if (user)
             {
-                reply.send(user);
+                const jwt = await fastify.auth.createJWTtoken(user);
+                reply.send({user, jwt});
             }
             else
-                reply.status(401).send({success : false, message : "Couldn't create or retreive user"})
+                reply.status(401).send({success : false, message : "Couldn't create or retrieve user"})
         }
         catch(err)
         {
@@ -54,16 +79,17 @@ async function authGoogle(fastify, options)
             const user = await fastify.db.findOrAddUser(null, email, password)
             if (user)
             {
-                reply.send(user);
+                const jwt = await fastify.auth.createJWTtoken(user);
+                reply.send({user, jwt});
             }
             else
             {
-                reply.status(401).send({succes : false, message : "Couldn't authticate user"});
+                reply.status(401).send({ success : false, message : "Couldn't authenticate user"});
             }
         }
         catch (err)
         {
-            reply.status(401).send({succes : false, message : err.message});
+            reply.status(401).send({success : false, message : err.message});
         }
 
     })
@@ -74,7 +100,7 @@ async function authGoogle(fastify, options)
         {
             const {email, password} = request.body;
             await fastify.db.changePassword(email, password);
-            reply.send({sucess : true, message : "Password changed"});
+            reply.send({success : true, message : "Password changed"});
         }
         catch (err)
         {

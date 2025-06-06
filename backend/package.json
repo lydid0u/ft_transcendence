@@ -8,8 +8,10 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@fastify/jwt": "^9.1.0",
     "bcrypt": "^6.0.0",
-    "fastify": "4.24.3",
+    "fastify": "^5.3.3",
+    "fastify-jwt": "^4.2.0",
     "fastify-plugin": "^5.0.1",
     "google-auth-library": "^9.15.1",
     "sqlite": "^5.1.1",

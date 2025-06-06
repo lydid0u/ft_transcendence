@@ -2,8 +2,15 @@ import Fastify from 'fastify';
 import dbFunction from './db/db.js'
 import userRoutes from './routes/user.js';
 import authGoogle from './routes/auth.js'
+import fastifyJwt from '@fastify/jwt';
+
+
 
 const fastify = Fastify();
+
+fastify.register(fastifyJwt, {
+  secret: 'ma_cle_secreeeeteuh_ultra_puissanteeuuuh'
+});
 
 fastify.register(dbFunction);
 fastify.register(userRoutes);
