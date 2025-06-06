@@ -45,6 +45,28 @@ async function authGoogle(fastify, options)
             reply.status(401).send({ success: false, message: "Token Google invalide" });
         }
     })
+
+    fastify.post('/auth/login', async(request, reply) => {
+
+        try
+        {
+            const {email, password} = request.body;
+            const user = await fastify.db.findOrAddUser(null, email, password)
+            if (user)
+            {
+                reply.send(user);
+            }
+            else
+            {
+                reply.status(401).send({succes : false, message : "Couldn't authticate user"});
+            }
+        }
+        catch (err)
+        {
+            reply.status(401).send({succes : false, message : err.message});
+        }
+
+    })
 }
 
 export default fp(authGoogle);
