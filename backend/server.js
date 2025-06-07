@@ -8,8 +8,10 @@ import fastifyJwt from '@fastify/jwt';
 
 const fastify = Fastify();
 
+require('dotenv').config();
+
 fastify.register(fastifyJwt, {
-  secret: 'ma_cle_secreeeeteuh_ultra_puissanteeuuuh'
+  secret: process.env.SECRET_KEY_JWT
 });
 
 fastify.register(dbFunction);

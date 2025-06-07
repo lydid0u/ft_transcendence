@@ -10,6 +10,7 @@
   "dependencies": {
     "@fastify/jwt": "^9.1.0",
     "bcrypt": "^6.0.0",
+    "dotenv": "^16.5.0",
     "fastify": "^5.3.3",
     "fastify-jwt": "^4.2.0",
     "fastify-plugin": "^5.0.1",
