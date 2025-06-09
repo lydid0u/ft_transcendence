@@ -4,7 +4,7 @@ services:
   # Backend Fastify
   backend:
     build:
-      context: ./server
+      context: ./backend
       dockerfile: Dockerfile
     container_name: fastify-backend
     ports:
@@ -14,7 +14,7 @@ services:
       - DB_PATH=/app/data/database.sqlite
       - PORT=3000
     volumes:
-      - ./server:/app
+      - ./backend:/app
       - /app/node_modules
       - sqlite_data:/app/data
     depends_on:
