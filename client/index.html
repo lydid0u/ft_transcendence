@@ -13,7 +13,7 @@
 <body>
     <nav>
         <div class="nav-container">
-            <img src="logo.png" href="/" class="logo" data-route="/">
+            <img src="gif/logo.png" href="/" class="logo" data-route="/">
             <ul class="nav-links">
                 <li><a href="/home" data-route="/home">Accueil</a></li>
                 <li><a href="/about" data-route="/about">À propos</a></li>
@@ -78,6 +78,17 @@
                 }, 2000);
             },
 
+            notAuthenticated: function() {
+                const contentDiv = document.querySelector(this.SPAattribute.contentDiv);
+                contentDiv.innerHTML = `
+                    <div class="page-content">
+                        <h2>Vous n'êtes pas connecté</h2>
+                        <p>Veuillez vous connecter pour accéder à cette page.</p>
+                        <button class="btn" onclick="SPA.navigateTo('/login')">Se connecter</button>
+                    </div>
+                `;
+            },
+
             routes: {
                 '/': {
                     title: 'ft_transcendence',
@@ -137,6 +148,19 @@
                     `,
                     routeScript: function() {
                         SPA.mainDivCSS();
+
+                        const isAuthenticated = localStorage.getItem('isAuthenticated');
+                        if (!isAuthenticated) {
+                            SPA.notAuthenticated();
+                        } else {
+                            const user = JSON.parse(localStorage.getItem('user'));
+                            const contentDiv = document.querySelector(SPA.SPAattribute.contentDiv);
+                            contentDiv.innerHTML += `
+                                <div class="page-content">
+                                    <p>tournoi log</p>
+                                </div>
+                            `;
+                        }
                     }
                 },
 
@@ -144,11 +168,24 @@
                     title: 'dashboard',
                     content: `
                         <div class="page-content">
-                            <h1>dashboard</h1>
+                            <h1>dashboard </h1>
                         </div>
                     `,
                     routeScript: function() {
                         SPA.mainDivCSS();
+
+                        const isAuthenticated = localStorage.getItem('isAuthenticated');
+                        if (!isAuthenticated) {
+                            SPA.notAuthenticated();
+                        } else {
+                            const user = JSON.parse(localStorage.getItem('user'));
+                            const contentDiv = document.querySelector(SPA.SPAattribute.contentDiv);
+                            contentDiv.innerHTML += `
+                                <div class="page-content">
+                                    <p>dashboard je suis log et je suis</p>
+                                </div>
+                            `;
+                        }
                     }
                 },
 
@@ -282,7 +319,6 @@
                     }
                 }
             },
-
 
             //cette fonction demarre la SPA, elle est appelée quand le DOM est chargé et charge la 1e page
             initSPA: function() {
@@ -563,18 +599,44 @@ async function login() {
 
                 if (createPassword === confirmPassword) {
                     try {
-                        const response = await fetch('http://localhost:3000/auth/register', {
+                        const response = await fetch('http://localhost:3000/auth/login', {
                             method: 'POST',
                             headers: {'Content-Type': 'application/json'},
+         			        body: JSON.stringify({ firstName, lastName, email, pseudo, password: createPassword })
                         });
+                    
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (messageDiv) {
+                                messageDiv.textContent = "Inscription réussie !";
+                                messageDiv.style.color = "green";
+                            }
+                            localStorage.setItem('isAuthenticated', 'true');
+                            localStorage.setItem('user', JSON.stringify(data.user || { email }));
+                            
+                            if (window.SPA && typeof SPA.navigateTo === 'function') {
+                                SPA.navigateTo('/dashboard');
+                            }
+                        } else if (response.status === 400 && messageDiv) {
+                            messageDiv.textContent = "Erreur dans les données fournies.";
+                            messageDiv.style.color = "red";
+                        } else {
+                            if (messageDiv) {
+                                messageDiv.textContent = `Erreur inattendue: ${JSON.stringify(await response.json())}`;
+                                messageDiv.style.color = "red";
+                            }
+                        }
                     } catch (error) {
                         if (messageDiv) {
  		                    messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
  		                    messageDiv.style.color = "red";                            
                         }
-                    }
-                    
-            }
+                    }  
+                }
+                else {
+                        messageDiv.textContent = "Les mots de passe ne correspondent pas, reessayez.";
+                        messageDiv.style.color = "red";
+                }
         })
     }
 }
