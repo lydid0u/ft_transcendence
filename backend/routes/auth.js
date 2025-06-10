@@ -107,6 +107,35 @@ async function authGoogle(fastify, options)
             reply.status(401).send({succes : false, message : err.message});
         }
     });
+
+
+    fastify.get('/helloworld', async (request, reply) =>
+    {
+        try
+        {
+
+            reply.send({success : true, message : "hello world"});
+        }
+        catch (err)
+        {
+            reply.status(401).send({succes : false, message : err.message});
+        }
+    });
+
+}
+    fastify.get('/prout', async (request, reply) =>
+    {
+        try
+        {
+
+            reply.send({success : true, message : "hello prout"});
+        }
+        catch (err)
+        {
+            reply.status(401).send({succes : false, message : err.message});
+        }
+    });
+
 }
 
 export default fp(authGoogle);
