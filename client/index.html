@@ -246,32 +246,29 @@
                     content: `
                         <div class="page-content">
                             <h1>register</h1>
-                            <div class="divCreateAccount">
-                                <form class="createAccount" id=form>
-                                    <div class="form-input">
+                            <div class="divregister">
+                                <form classe"register" id="register-form" style="display: flex; flex-direction: column; gap: 1rem;">
                                         <label for="firstName">Prenom</label>
                                         <input type="text" id="firstName" name="firstName" placeholder="..." />
-                                    </div>
-                                    <div class="form-input">
+
                                         <label for="lastName">Nom</label>
                                         <input type="text" id="lastName" name="lastName" placeholder="..." />
-                                    </div>       
-                                    <div class="form-input">
+
                                         <label for="email">Email</label>
-                                        <input type="text" id="email" name="email" placeholder="..." />
-                                    </div>             
-                                    <div class="form-input">
-                                        <label for="password1">Mot de passe</label>
-                                        <input type="text" id="password1" name="password1" placeholder="..." />
-                                    </div>  
-                                    <div class="form-input">
-                                        <label for="password2">Confirme ton mot de passe</label>
-                                        <input type="text" id="password2" name="password2" placeholder="..." />
-                                    </div>
-                                    <div class="form-submit">
-                                        <button type="submit">Valider</button>
-                                    </div>
+                                        <input type="text" id="emailRegister" name="email" placeholder="..." />
+
+                                        <label for="pseudo">Pseudo</label>
+                                        <input type="text" id="pseudo" name="pseudo" placeholder="..." />
+
+                                        <label for="createPassword">Mot de passe</label>
+                                        <input type="text" id="createPassword" name="createPassword" placeholder="..." />
+
+                                        <label for="confirmPassword">Confirme ton mot de passe</label>
+                                        <input type="text" id="confirmPassword" name="confirmPassword" placeholder="..." />
+                                        
+                                    <button type="submit" class="loginBtn"  style="background: #007bff; color: white;">Valider</button>
                                 </form>        
+                                <div id="message" style="margin-top: 1rem; color: red;"></div>
                                 <div class="container-signin">
                                   <p>Already have an account? <a href="/login" data-route="/login" style="color: #007bff;" >Sign in</a>.</p>
                                 </div>
@@ -280,6 +277,8 @@
                     `,
                     routeScript: function() {
                         SPA.mainDivCSS();
+
+                        register();
                     }
                 }
             },
@@ -546,6 +545,38 @@ async function login() {
  			}	 
 		});
 	}
+}
+    
+    async function register() {
+    	const form = document.getElementById('register-form');
+	    if (form) {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const firstName = document.getElementById("firstName").value;
+                const lastName = document.getElementById("lastName").value; 
+                const email = document.getElementById("emailRegister").value;
+                const pseudo = document.getElementById("pseudo").value;
+                const createPassword = document.getElementById("createPassword").value;
+                const confirmPassword = document.getElementById("confirmPassword").value;
+                const messageDiv = document.getElementById('message');
+
+                if (createPassword === confirmPassword) {
+                    try {
+                        const response = await fetch('http://localhost:3000/auth/register', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                        });
+                    } catch (error) {
+                        if (messageDiv) {
+ 		                    messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
+ 		                    messageDiv.style.color = "red";                            
+                        }
+                    }
+                    
+            }
+        })
+    }
 }
     </script>
 </body>
