@@ -18,41 +18,45 @@ async function dbFunction(fastify, options)
 
         async createTable()
         {
-            await db.run('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, email TEXT UNIQUE, password TEXT, google_id TEXT UNIQUE, first_name TEXT, last_name TEXT, picture TEXT)');
+            await db.run('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, email TEXT UNIQUE, password TEXT, username TEXT UNIQUE, google_id TEXT UNIQUE, first_name TEXT, last_name TEXT, picture TEXT)');
         },
-    
-        async findOrAddUser(google_id, email, password, first_name, last_name, picture)
+        
+        async registerUser(email, password, username)
         {
             let user = null;
-        
-            if (google_id)
+
+            if(email && password && username)
             {
-                user = await db.get('SELECT * FROM users WHERE google_id = ?', google_id);
-                if (!user)
-                {
-                    await db.run('INSERT INTO users (google_id, email, first_name, last_name, picture) VALUES (?, ?, ?, ?, ?)',
-                    google_id, email, first_name, last_name, picture);
-                    user = await db.get('SELECT * FROM users WHERE google_id = ?', google_id);
-                }
-            }
-            else if (email && password)
-            {
+                user = await fastify.utilsDb.checkEmail(email);
+                if(user)
+                    throw new Error("Mail already taken");
+                user = await fastify.utilsDb.checkUsername(username);
+                if (user)
+                    throw new Error("Username already taken");
                 const newpass = await bcrypt.hash(password, saltRounds);
-                user = await db.get ('SELECT * FROM users WHERE email = ?', email);
-                if (!user)
-                {
-                    await db.run('INSERT INTO users (email, password) VALUES (?, ?)', email, newpass);
-                    user = await db.get('SELECT * FROM users WHERE email = ?', email);
-                }
-                else
-                {
-                    const valid = await bcrypt.compare(password, user.password);
-                    if(!valid)
-                        throw new Error ('Wrong password');
-                }
+                await db.run('INSERT INTO users (email, password, username) VALUES (?, ?, ?)', email, newpass, username);
+                user = await db.get('SELECT * FROM users WHERE email = ?', email);
+                return (user); 
             }
             else
-                throw new Error('Not enough data to retrieve or create user');
+                throw new Error("Not enough data to create user");
+        },
+
+        async loginUser(email, password)
+        {
+            let user = null;
+            user = await db.get('SELECT * FROM users WHERE email = ?', email);
+            if (!user)
+            {
+                console.log("ZABORMOK");
+                throw new Error('Wrong mail or password');
+            }
+            const valid = bcrypt.compare(password, user.password);
+            if (!valid)
+            {
+                console.log("ZABORMOK2");
+                throw new Error('Wrong mail or password');
+            }
             return user;
         },
 
@@ -66,6 +70,12 @@ async function dbFunction(fastify, options)
             }
             else
                 throw new Error ("Email doesn't exist");
+        },
+
+        async showTableUsers()
+        {
+            const users = await db.all('SELECT * FROM users;');
+            return users;
         }
     };
     fastify.decorate('db', dbHelper);

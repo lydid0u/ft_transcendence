@@ -3,38 +3,35 @@ import dbFunction from './db/db.js'
 import userRoutes from './routes/user.js';
 import authGoogle from './routes/auth.js'
 import fastifyJwt from '@fastify/jwt';
+import utilsDbFunc from './db/utils.js'
+import dotenv from 'dotenv';
 
 
 
 const fastify = Fastify();
 
-require('dotenv').config();
+dotenv.config();
 
 fastify.register(fastifyJwt, {
   secret: process.env.SECRET_KEY_JWT
 });
 
 fastify.register(dbFunction);
+fastify.register(utilsDbFunc);
 fastify.register(userRoutes);
 fastify.register(authGoogle);
 
 
 // CORS simple
 fastify.addHook('preHandler', async (request, reply) => {
-  reply.header('Access-Control-Allow-Origin', '*')
-  reply.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
-  reply.header('Access-Control-Allow-Headers', 'Content-Type')
+reply.header('Access-Control-Allow-Origin', '*')
+reply.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+reply.header('Access-Control-Allow-Headers', 'Content-Type')
   
   if (request.method === 'OPTIONS') {
     return reply.send()
   }
 })
-
-// Routes
-// fastify.get('/', async () => {
-//   return { message: 'Backend OK!' }
-// })
-
 
 const startServer = async() =>
 {

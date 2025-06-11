@@ -71,16 +71,33 @@ async function authGoogle(fastify, options)
         }
     })
 
-    fastify.post('/auth/login', async(request, reply) => {
+    fastify.post('/auth/login', async(request, reply) =>
+    {
+        try
+        {
+            const {email, password, username} = request.body;
+            const user = await fastify.db.loginUser(email, password, username);
+            if(!user)
+                reply.status(401).send({success : false, message : "Couldn't find user"});
+            return user;
+        }
+        catch (err)
+        {
+            reply.status(401).send({success : false, message : err.message, touch : "Zabormok"});
+        }
+
+    })
+
+    fastify.post('/auth/register', async(request, reply) => {
 
         try
         {
-            const {email, password} = request.body;
-            const user = await fastify.db.findOrAddUser(null, email, password)
+            const {email, password, username} = request.body;
+            const user = await fastify.db.registerUser(email, password, username)
             if (user)
             {
                 const jwt = await fastify.auth.createJWTtoken(user);
-                reply.send({user, jwt});
+                reply.send({jwt, user});
             }
             else
             {
@@ -94,6 +111,20 @@ async function authGoogle(fastify, options)
 
     })
 
+    fastify.patch('/auth/reset-password', async (request, reply) =>
+    {
+        try
+        {
+            const {email, password} = request.body;
+            await fastify.db.changePassword(email, password);
+            reply.send({success : true, message : "Password changed"});
+        }
+        catch (err)
+        {
+            reply.status(401).send({success : false, message : err.message});
+        }
+    })
+
     fastify.patch('/auth/change-password', async (request, reply) =>
     {
         try
@@ -104,9 +135,9 @@ async function authGoogle(fastify, options)
         }
         catch (err)
         {
-            reply.status(401).send({succes : false, message : err.message});
+            reply.status(401).send({success : false, message : err.message});
         }
-    });
+    })
 }
 
 export default fp(authGoogle);
