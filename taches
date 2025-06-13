@@ -1,0 +1,2 @@
+Ajout d'un username dans la DB + avoir celui de la personne connecter via google
+Enregistrer le JWT cote front lorsque la personne se log
