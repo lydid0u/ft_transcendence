@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ma SPA - Tutoriel</title>
+        <title>ft_transcendence</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="register.js" defer></script>  <!-- defer = telecharge le script en parallele mais l'execute que quand le DOM est chargee-->
         <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -13,7 +13,7 @@
 <body>
     <nav>
         <div class="nav-container">
-            <img src="logo.png" href="/" class="logo" data-route="/">
+            <img src="gif/logo.png" href="/" class="logo" data-route="/">
             <ul class="nav-links">
                 <li><a href="/home" data-route="/home">Accueil</a></li>
                 <li><a href="/about" data-route="/about">À propos</a></li>
@@ -78,6 +78,17 @@
                 }, 2000);
             },
 
+            notAuthenticated: function() {
+                const contentDiv = document.querySelector(this.SPAattribute.contentDiv);
+                contentDiv.innerHTML = `
+                    <div class="page-content">
+                        <h2>Vous n'êtes pas connecté</h2>
+                        <p>Veuillez vous connecter pour accéder à cette page.</p>
+                        <button class="btn" onclick="SPA.navigateTo('/login')">Se connecter</button>
+                    </div>
+                `;
+            },
+
             routes: {
                 '/': {
                     title: 'ft_transcendence',
@@ -137,6 +148,19 @@
                     `,
                     routeScript: function() {
                         SPA.mainDivCSS();
+
+                        const isAuthenticated = localStorage.getItem('isAuthenticated');
+                        if (!isAuthenticated) {
+                            SPA.notAuthenticated();
+                        } else {
+                            const user = JSON.parse(localStorage.getItem('user'));
+                            const contentDiv = document.querySelector(SPA.SPAattribute.contentDiv);
+                            contentDiv.innerHTML += `
+                                <div class="page-content">
+                                    <p>tournoi log</p>
+                                </div>
+                            `;
+                        }
                     }
                 },
 
@@ -144,11 +168,24 @@
                     title: 'dashboard',
                     content: `
                         <div class="page-content">
-                            <h1>dashboard</h1>
+                            <h1>dashboard </h1>
                         </div>
                     `,
                     routeScript: function() {
                         SPA.mainDivCSS();
+
+                        const isAuthenticated = localStorage.getItem('isAuthenticated');
+                        if (!isAuthenticated) {
+                            SPA.notAuthenticated();
+                        } else {
+                            const user = JSON.parse(localStorage.getItem('user'));
+                            const contentDiv = document.querySelector(SPA.SPAattribute.contentDiv);
+                            contentDiv.innerHTML += `
+                                <div class="page-content">
+                                    <p>dashboard je suis log et je suis</p>
+                                </div>
+                            `;
+                        }
                     }
                 },
 
@@ -159,10 +196,11 @@
                             <h2>Connectez-vous ou créez votre compte</h2>
                             <div id=loginWithAccountSection style="display: block;">
                                 <form id="login-form" style="display: flex; flex-direction: column; gap: 1rem;">
-                                    <input type="email" id="mail" placeholder="Email" required style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
+                                    <input type="email" id="email" placeholder="Email" required style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
                                     <input type="password" id="password" placeholder="Mot de passe" required style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
                                     <button type="submit" class="loginBtn"  style="background: #007bff; color: white;">Se connecter</button>
                                     </form>
+                                    <div id="message" style="margin-top: 1rem; color: red;"></div>
                                     <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">Pas de compte ? <a href="/register" data-route="/register" style="color: #007bff;">Inscrivez-vous</a></p>
                             </div>
                              <!-- Section d'authentification Google -->
@@ -245,44 +283,42 @@
                     content: `
                         <div class="page-content">
                             <h1>register</h1>
-                            <div class="divCreateAccount">
-                                <form class="createAccount" id=form>
-                                    <div class="form-input">
+                            <div class="divregister">
+                                <form classe"register" id="register-form" style="display: flex; flex-direction: column; gap: 1rem;">
                                         <label for="firstName">Prenom</label>
                                         <input type="text" id="firstName" name="firstName" placeholder="..." />
-                                    </div>
-                                    <div class="form-input">
+
                                         <label for="lastName">Nom</label>
                                         <input type="text" id="lastName" name="lastName" placeholder="..." />
-                                    </div>       
-                                    <div class="form-input">
+
                                         <label for="email">Email</label>
-                                        <input type="text" id="email" name="email" placeholder="..." />
-                                    </div>             
-                                    <div class="form-input">
-                                        <label for="password1">Mot de passe</label>
-                                        <input type="text" id="password1" name="password1" placeholder="..." />
-                                    </div>  
-                                    <div class="form-input">
-                                        <label for="password2">Confirme ton mot de passe</label>
-                                        <input type="text" id="password2" name="password2" placeholder="..." />
-                                    </div>
-                                    <div class="form-submit">
-                                        <button type="submit">Valider</button>
-                                    </div>
+                                        <input type="text" id="emailRegister" name="email" placeholder="..." />
+
+                                        <label for="pseudo">Pseudo</label>
+                                        <input type="text" id="pseudo" name="pseudo" placeholder="..." />
+
+                                        <label for="createPassword">Mot de passe</label>
+                                        <input type="text" id="createPassword" name="createPassword" placeholder="..." />
+
+                                        <label for="confirmPassword">Confirme ton mot de passe</label>
+                                        <input type="text" id="confirmPassword" name="confirmPassword" placeholder="..." />
+                                        
+                                    <button type="submit" class="loginBtn"  style="background: #007bff; color: white;">Valider</button>
                                 </form>        
+                                <div id="message" style="margin-top: 1rem; color: red;"></div>
                                 <div class="container-signin">
-                                  <p>Already have an account? <a href="/login" data-route="/login">Sign in</a>.</p>
+                                  <p>Already have an account? <a href="/login" data-route="/login" style="color: #007bff;" >Sign in</a>.</p>
                                 </div>
                             </div>                                                                                                                                                              
                         </div>
                     `,
                     routeScript: function() {
                         SPA.mainDivCSS();
+
+                        register();
                     }
                 }
             },
-
 
             //cette fonction demarre la SPA, elle est appelée quand le DOM est chargé et charge la 1e page
             initSPA: function() {
@@ -359,7 +395,7 @@
             },
 
             // supprime le css active de l'ancienne page et ajoute le nouveau css
-            setCurrentPageToActiveupdateActivePage: function(currentRoute) {
+            setCurrentPageToActive: function(currentRoute) {
                 document.querySelectorAll('.nav-links a').forEach(link => {
                     link.classList.remove('active');
                 });
@@ -498,23 +534,112 @@
             console.log('Utilisateur déconnecté');
         }
 
-//         function loginOrRegister() {
-//             const mail = document.getElementById('mail');
-//             if (mail) 
-//         {
-// const email = 'user@example.com';
-//                         checkEmailExists(email)
-//                           .then(exists => {
-//                             if (exists) {
-//                               console.log('Cet email est déjà inscrit');
-//                             } else {
-//                               console.log('Cet email n\'est pas encore inscrit');
-//                             }
-//                           });
-//         }
-//         }
-        // <input type="password" id="password" placeholder="Mot de passe" required style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
-        
+async function login() {
+	const form = document.getElementById('login-form');
+	if (form) {
+		form.addEventListener('submit', async function (e) {
+		e.preventDefault();
+
+		const email = document.getElementById("email").value;
+		const password = document.getElementById("password").value;
+		const messageDiv = document.getElementById('message');
+
+			try {
+					const response = await fetch('http://localhost:3000/auth/login', {
+					method: 'POST',
+					headers: {'Content-Type': 'application/json'},
+ 			         body: JSON.stringify({ email, password })
+ 			       });
+			   
+ 			       if (response.ok) {
+ 			         const data = await response.json();
+ 			         if (messageDiv) {
+ 			             messageDiv.textContent = "Connexion réussie !";
+ 			             messageDiv.style.color = "green";
+ 			         }
+ 			         localStorage.setItem('isAuthenticated', 'true');
+ 			         localStorage.setItem('user', JSON.stringify(data.user || { email }));
+					 
+				  if (window.SPA && typeof SPA.navigateTo === 'function') {
+				    SPA.navigateTo('/dashboard');
+				  }
+
+ 			       } else if (response.status === 401 && messageDiv) {
+ 			             messageDiv.textContent = "Email ou mot de passe incorrect.";
+ 			             messageDiv.style.color = "red";
+ 			       } else {
+ 			         if (messageDiv) {
+ 			             messageDiv.textContent = `Erreur inattendue: ${response.status}`;
+ 			             messageDiv.style.color = "red";
+ 			         }
+ 			       }
+ 			} catch (error) {
+ 		       if (messageDiv) {
+ 		           messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
+ 		           messageDiv.style.color = "red";
+ 		       }
+ 			}	 
+		});
+	}
+}
+    
+    async function register() {
+    	const form = document.getElementById('register-form');
+	    if (form) {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const firstName = document.getElementById("firstName").value;
+                const lastName = document.getElementById("lastName").value; 
+                const email = document.getElementById("emailRegister").value;
+                const pseudo = document.getElementById("pseudo").value;
+                const createPassword = document.getElementById("createPassword").value;
+                const confirmPassword = document.getElementById("confirmPassword").value;
+                const messageDiv = document.getElementById('message');
+
+                if (createPassword === confirmPassword) {
+                    try {
+                        const response = await fetch('http://localhost:3000/auth/login', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+         			        body: JSON.stringify({ firstName, lastName, email, pseudo, password: createPassword })
+                        });
+                    
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (messageDiv) {
+                                messageDiv.textContent = "Inscription réussie !";
+                                messageDiv.style.color = "green";
+                            }
+                            localStorage.setItem('isAuthenticated', 'true');
+                            localStorage.setItem('user', JSON.stringify(data.user || { email }));
+                            
+                            if (window.SPA && typeof SPA.navigateTo === 'function') {
+                                SPA.navigateTo('/dashboard');
+                            }
+                        } else if (response.status === 400 && messageDiv) {
+                            messageDiv.textContent = "Erreur dans les données fournies.";
+                            messageDiv.style.color = "red";
+                        } else {
+                            if (messageDiv) {
+                                messageDiv.textContent = `Erreur inattendue: ${JSON.stringify(await response.json())}`;
+                                messageDiv.style.color = "red";
+                            }
+                        }
+                    } catch (error) {
+                        if (messageDiv) {
+ 		                    messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
+ 		                    messageDiv.style.color = "red";                            
+                        }
+                    }  
+                }
+                else {
+                        messageDiv.textContent = "Les mots de passe ne correspondent pas, reessayez.";
+                        messageDiv.style.color = "red";
+                }
+        })
+    }
+}
     </script>
 </body>
 </html>

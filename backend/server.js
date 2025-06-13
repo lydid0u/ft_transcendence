@@ -6,8 +6,6 @@ import fastifyJwt from '@fastify/jwt';
 import utilsDbFunc from './db/utils.js'
 import dotenv from 'dotenv';
 
-
-
 const fastify = Fastify();
 
 dotenv.config();
