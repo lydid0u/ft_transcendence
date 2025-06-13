@@ -21,9 +21,18 @@ async function dbFunction(fastify, options)
             await db.run('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, email TEXT UNIQUE, password TEXT, username TEXT UNIQUE, google_id TEXT UNIQUE, first_name TEXT, last_name TEXT, picture TEXT)');
         },
         
-        async registerUser(email, password, username)
+        async registerUser(google_id, email, password, username, picture)
         {
             let user = null;
+            if(google_id)
+            {
+                user = await db.get('SELECT * FROM users WHERE google_id = ?', google_id);
+                if(user)
+                    return (user);
+                await db.run('INSERT INTO users (google_id, email, username, picture) VALUES (?, ?, ?, ?)', google_id, email, username, picture);
+                user = await db.get('SELECT * FROM users WHERE google_id = ?', google_id);
+                return (user);
+            }
 
             if(email && password && username)
             {
@@ -45,7 +54,9 @@ async function dbFunction(fastify, options)
         async loginUser(email, password)
         {
             let user = null;
+            console.log("Login attempt with email:", email);
             user = await db.get('SELECT * FROM users WHERE email = ?', email);
+            console.log("User found:", user);
             if (!user)
             {
                 console.log("ZABORMOK");

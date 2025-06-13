@@ -56,10 +56,12 @@ async function authGoogle(fastify, options)
         {
             const {token} = request.body;
             const userInfo = await authHelper.verifyGoogleToken(token);            
-            const user = await fastify.db.findOrAddUser(userInfo.googleId, userInfo.email, null, userInfo.firstName, userInfo.lastName, userInfo.picture);
+            const user = await fastify.db.registerUser(userInfo.googleId, userInfo.email, null, null, userInfo.picture);
+            console.log("User found or created:", user);
             if (user)
             {
                 const jwt = await fastify.auth.createJWTtoken(user);
+                console.log("User authenticated with Google:", user);
                 reply.send({user, jwt});
             }
             else
@@ -75,8 +77,8 @@ async function authGoogle(fastify, options)
     {
         try
         {
-            const {email, password, username} = request.body;
-            const user = await fastify.db.loginUser(email, password, username);
+            const {email, password} = request.body;
+            const user = await fastify.db.loginUser(email, password);
             if(!user)
                 reply.status(401).send({success : false, message : "Couldn't find user"});
             return user;
@@ -92,8 +94,9 @@ async function authGoogle(fastify, options)
 
         try
         {
-            const {email, password, username} = request.body;
-            const user = await fastify.db.registerUser(email, password, username)
+            const {email, password, pseudo : username} = request.body;
+            console.log("Registering user with email:", email, "and username:", username);
+            const user = await fastify.db.registerUser(null, email, password, username, null)
             if (user)
             {
                 const jwt = await fastify.auth.createJWTtoken(user);
