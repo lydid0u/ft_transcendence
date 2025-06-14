@@ -23,8 +23,7 @@ async function login() {
  			            }
  			            localStorage.setItem('isAuthenticated', 'true');
  			            localStorage.setItem('user', JSON.stringify(data.user || { email }));
-                        localStorage.setItem('jwtToken', data.token || '');
-
+                        localStorage.setItem('jwtToken', data.jwt || '');
 					 
 				        if (window.SPA && typeof SPA.navigateTo === 'function') {
 				          SPA.navigateTo('/dashboard');

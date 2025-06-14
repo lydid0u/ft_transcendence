@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import cors from '@fastify/cors'
 import dbFunction from './db/db.js'
 import userRoutes from './routes/user.js';
 import authGoogle from './routes/auth.js'
@@ -10,8 +11,27 @@ const fastify = Fastify();
 
 dotenv.config();
 
+// Replace your current cors registration with this:
+fastify.register(cors, {
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Replace with your actual frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 204,
+  preflightContinue: false
+});
 fastify.register(fastifyJwt, {
   secret: process.env.SECRET_KEY_JWT
+});
+
+fastify.decorate('prevalidate', async function(request, reply) {
+  try {
+    // Verify JWT token from Authorization header
+    await request.jwtVerify()
+  } catch (err) {
+    reply.code(401).send({ error: 'Unauthorized', message: 'Invalid or missing token' })
+  }
 });
 
 fastify.register(dbFunction);
@@ -19,17 +39,6 @@ fastify.register(utilsDbFunc);
 fastify.register(userRoutes);
 fastify.register(authGoogle);
 
-
-// CORS simple
-fastify.addHook('preHandler', async (request, reply) => {
-reply.header('Access-Control-Allow-Origin', '*')
-reply.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
-reply.header('Access-Control-Allow-Headers', 'Content-Type')
-  
-  if (request.method === 'OPTIONS') {
-    return reply.send()
-  }
-})
 
 const startServer = async() =>
 {

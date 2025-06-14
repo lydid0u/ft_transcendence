@@ -7,11 +7,12 @@ async function getUserDataFromBackend() {
                 'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
             }
         });
-
+        
         if (!response.ok) {
             throw new Error(`Erreur HTTP: ${response.status}`);
         }
-
+        
+        console.log("HERE", localStorage.getItem('jwtToken'));
         const data = await response.json();
         console.log("Données du backend:", data);
         const contentDiv = document.querySelector(SPA.SPAattribute.contentDiv);

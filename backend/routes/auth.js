@@ -81,7 +81,9 @@ async function authGoogle(fastify, options)
             const user = await fastify.db.loginUser(email, password);
             if(!user)
                 reply.status(401).send({success : false, message : "Couldn't find user"});
-            return user;
+            const jwt = await fastify.auth.createJWTtoken(user);
+            reply.send({jwt, user});
+            // return user;
         }
         catch (err)
         {
