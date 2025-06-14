@@ -1,0 +1,44 @@
+<div class="page-content">
+    <h2>Connectez-vous ou créez votre compte</h2>
+    <div id="loginWithAccountSection" style="display: block;">
+        <form id="login-form" style="display: flex; flex-direction: column; gap: 1rem;">
+            <input type="email" id="email" placeholder="Email" required style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
+            <input type="password" id="password" placeholder="Mot de passe" required style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
+            <button type="submit" class="loginBtn"  style="background: #007bff; color: white;">Se connecter</button>
+        </form>
+        <div id="message" style="margin-top: 1rem; color: red;"></div>
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">Pas de compte ? <a href="/register" data-route="/register" style="color: #007bff;">Inscrivez-vous</a></p>
+    </div>
+    <!-- Section d'authentification Google -->
+    <div id="auth-section" style="margin: 2rem 0; padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; background: #f8f9fa;">
+        <!-- Bouton de connexion (affiché quand non connecté) -->
+        <div id="signin-section" style="display: block;">
+            <div id="g_id_onload"
+                 data-client_id="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com"
+                 data-callback="handleGoogleAuth"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
+        </div>
+        <!-- Section utilisateur connecté (masquée par défaut) -->
+        <div id="user-section" style="display: none;">
+            <div id="user-info" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <img id="user-photo" src="" alt="Photo de profil" style="width: 50px; height: 50px; border-radius: 50%;">
+                <div>
+                    <h3 id="user-name"></h3>
+                    <p id="user-email" style="color: #666; font-size: 0.9rem;"></p>
+                </div>
+            </div>
+            <button id="signout-btn" class="btn" style="background: #dc3545; margin-top: 1rem;">
+                Se déconnecter
+            </button>
+        </div>
+    </div>
+</div>
