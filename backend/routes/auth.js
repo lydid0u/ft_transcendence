@@ -45,8 +45,7 @@ async function authGoogle(fastify, options)
                 reply.code(401).send({ success: false, message : "Token invalide ou manquant"});
             }
         }
-        
-    };
+    }
     fastify.decorate('auth', authHelper);
 
 
@@ -73,6 +72,31 @@ async function authGoogle(fastify, options)
         }
     })
 
+    fastify.post('/auth/2FA-code', async(request, reply) =>
+    {
+        try
+        {
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            const {email} = request.body
+            await fastify.nodemailer.sendMail({
+                from: process.env.MAIL_2FA,
+                to: email,
+                subject: 'Your verification code',
+                text: `Your verification code is: ${code}`,
+                html: `<p>Voici votre code de verification: <b>${code}</b></p>`
+            });
+            return reply.send({ success: true, message: "Code sent successfully" });    
+        } 
+        catch (err) 
+        {
+            console.error("Email sending error:", err);
+            return reply.status(500).send({ 
+                success: false, 
+                message: "Failed to send verification code",
+                error: err.message});
+        }
+    })
+
     fastify.post('/auth/login', async(request, reply) =>
     {
         try
@@ -82,6 +106,7 @@ async function authGoogle(fastify, options)
             if(!user)
                 reply.status(401).send({success : false, message : "Couldn't find user"});
             const jwt = await fastify.auth.createJWTtoken(user);
+            // reply.send({email : user.email, message : "Code envoyé"});
             reply.send({jwt, user});
             // return user;
         }
@@ -98,7 +123,7 @@ async function authGoogle(fastify, options)
         {
             const {email, password, pseudo : username} = request.body;
             console.log("Registering user with email:", email, "and username:", username);
-            const user = await fastify.db.registerUser(null, email, password, username, null)
+            const user = await fastify.db.registerUser(null, email, password, username, null);
             if (user)
             {
                 const jwt = await fastify.auth.createJWTtoken(user);

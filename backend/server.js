@@ -6,6 +6,7 @@ import authGoogle from './routes/auth.js'
 import fastifyJwt from '@fastify/jwt';
 import utilsDbFunc from './db/utils.js'
 import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
 
 const fastify = Fastify();
 
@@ -27,12 +28,32 @@ fastify.register(fastifyJwt, {
 
 fastify.decorate('prevalidate', async function(request, reply) {
   try {
-    // Verify JWT token from Authorization header
     await request.jwtVerify()
   } catch (err) {
     reply.code(401).send({ error: 'Unauthorized', message: 'Invalid or missing token' })
   }
 });
+
+// Créer un transporteur Nodemailer directement
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.MAIL_2FA,
+    pass: process.env.PASS_2FA
+  }
+});
+
+// Vérifier la connexion
+transporter.verify(function(error, success) {
+  if (error) {
+    console.error('Erreur de configuration Nodemailer:', error);
+  } else {
+    console.log('Nodemailer est prêt à envoyer des messages');
+  }
+});
+
+// Décorer l'instance fastify avec le transporteur
+fastify.decorate('nodemailer', transporter);
 
 fastify.register(dbFunction);
 fastify.register(utilsDbFunc);

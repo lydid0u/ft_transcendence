@@ -16,6 +16,7 @@
     "fastify-jwt": "^4.2.0",
     "fastify-plugin": "^5.0.1",
     "google-auth-library": "^9.15.1",
+    "nodemailer": "^7.0.3",
     "sqlite": "^5.1.1",
     "sqlite3": "5.1.6"
   },
