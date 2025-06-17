@@ -181,6 +181,16 @@ const SPA = {
             }
         },
 
+        '/changePassword': {
+            title: 'changePassword',
+            content: 'pages/changePassword.html', // Path to HTML file
+            routeScript: function() {
+                SPA.mainDivCSS();
+
+                changePassword();
+            }
+        },        
+
         '/profile': {
             title: 'profile',
             content: 'pages/profile.html', // Path to HTML file
@@ -196,6 +206,8 @@ const SPA = {
                     contentDiv.innerHTML += `
                         <div class="page-content">
                             <p>Bienvenue, ${user.email} !</p>
+                            <p><a href="/changePassword" data-route="/changePassword" style="color: #007bff;" > Changer </a>de mot de passe ?<p>
+                            
                         </div>
                     `;
                    
