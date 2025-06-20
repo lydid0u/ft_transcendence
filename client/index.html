@@ -4,10 +4,22 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ft_transcendence</title>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+            }
+            body {
+                background-color: #c3c1a8;
+            }
+        </style>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
         <meta name="google-signin-client_id" content="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com">
-        <link href="styles.css?v=1.0" rel="stylesheet">
+        <link href="styles.css?v=1.1" rel="stylesheet">
         
         <script src="js/spa.js" defer></script>
         <script src="js/loginOrRegister.js" defer></script>
@@ -18,18 +30,16 @@
         <script src="js/password.js" defer></script>
     </head>
     <body>
-        <nav>
-            <div class="nav-container">
-                <img src="gif/logo.png" href="/" class="logo" data-route="/">
-                <ul class="nav-links">
-                    <li><a href="/home" data-route="/home">Accueil</a></li>
-                    <li><a href="/about" data-route="/about">À propos</a></li>
-                    <li><a href="/dashboard" data-route="/dashboard">dashboard</a></li>
-                    <li><a href="/tournoi" data-route="/tournoi">tournoi</a></li>
-                </ul>
-            </div>
-        </nav>
-
         <main id="content"> </main>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // Ajoute la télécommande cartoon sur toutes les pages
+                if (typeof SPA !== 'undefined' && SPA.addGlobalRemoteControl) {
+                    SPA.addGlobalRemoteControl();
+                } else {
+                    console.error("La fonction SPA.addGlobalRemoteControl n'est pas disponible");
+                }
+            });
+        </script>
     </body>
 </html>

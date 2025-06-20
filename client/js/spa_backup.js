@@ -40,11 +40,12 @@ const SPA = {
             navElement.style.display = 'block';
         }
         
-        // Style pour la TV en arrière-plan en plein écran        document.body.style.margin = '0';
+        // Style pour la TV en arrière-plan en plein écran
+        document.body.style.margin = '0';
         document.body.style.padding = '0';
         document.body.style.overflow = 'hidden';
         document.body.style.height = '100vh';
-        document.body.style.background = '#c3c1a8'; // Couleur de fond autour de la TV
+        document.body.style.background = '#2a2119'; // Couleur de fond sombre autour de la TV
         
         const main = document.querySelector('main');
         main.style.margin = '0';
@@ -272,7 +273,9 @@ const SPA = {
         this.loadRoute(route);
 
         this.setCurrentPageToActive(route);
-    },    loadRoute: async function (route) { // Make function async
+    },
+
+    loadRoute: async function (route) { // Make function async
         console.log(`📄 Chargement de la route: ${route}`);
 
         const routeToLoad = this.routes[route];
@@ -313,14 +316,6 @@ const SPA = {
         if (routeToLoad.routeScript && typeof routeToLoad.routeScript === 'function') {
             routeToLoad.routeScript();
         }
-        
-        // Ajouter la télécommande aux pages autres que la landing page
-        if (route !== '/') {
-            // Petit délai pour s'assurer que la page est chargée
-            setTimeout(() => {
-                this.addGlobalRemoteControl();
-            }, 100);
-        }
     },
 
     setCurrentPageToActive: function(currentPath) {
@@ -334,15 +329,15 @@ const SPA = {
         const activeLink = document.querySelector(`a[data-route="${currentPath}"]`);
         if (activeLink) {
             activeLink.classList.add('active');
-        }    },      error404: function() {
+        }
+    },
+
+    error404: function() {
         // Appliquons le style de mise en page pour les pages qui ne sont pas la landing page
         this.mainDivCSS();
         
         const contentDiv = document.querySelector(this.SPAattribute.contentDiv);
         contentDiv.innerHTML = `
-            <div class="vhs-transition">
-                <img src="test2.png" class="vhs-gif" alt="Transition VHS">
-            </div>
             <div class="error404-content">
                 <h1 class="error-title">Page non trouvée</h1>
                 <p class="error-message">La page que vous recherchez n'existe pas.</p>
@@ -351,17 +346,7 @@ const SPA = {
             </div>
         `;
         
-        document.title = 'Error 404 - Chaîne introuvable';
-        
-        // Ajouter la télécommande globale sur la page d'erreur
-        this.addGlobalRemoteControl();      },addGlobalRemoteControl: function() {
-        // Ne pas ajouter de télécommande sur la landing page
-        if (window.location.hash === '#/') {
-            return;
-        }
-
-        // Supprimer l'ancienne télécommande si elle existe
-        const existingRemote = document.querySelector('.remote-control-404');
+        // Supprimer l'ancienne télécommande si elle existe        const existingRemote = document.querySelector('.remote-control-404');
         if (existingRemote) {
             existingRemote.remove();
         }
@@ -385,307 +370,28 @@ const SPA = {
             [9, { name: 'Password', route: '/changePassword' }]
         ]);
         
-        // Déterminer la chaîne actuelle basée sur l'URL
-        let currentPath = window.location.hash.substring(1); // Enlève le #
-        let currentChannel = 2; // Home par défaut
-        
-        // Trouver la chaîne qui correspond à l'URL actuelle
-        for (const [key, value] of channels.entries()) {
-            if (value.route === currentPath) {
-                currentChannel = key;
-                break;
-            }
-        }
-        
-        // CSS style télécommande cartoon
-        const style = document.createElement('style');        style.id = 'remote-style-404';
-        style.textContent = `            /* Zone de détection hover invisible en bas à droite */
-            .hover-zone-404 {
-                position: fixed !important;
-                bottom: 0 !important;
-                right: 0 !important;
-                width: 220px !important;
-                height: 50px !important;
-                z-index: 999998 !important;
-                background: transparent !important;
-                cursor: default !important;
-            }/* Hover zone sans icône ni texte */
-            .hover-zone-404::before {
-                content: '';
-                position: absolute;
-                bottom: 5px;
-                right: 20px;
-            }              .remote-control-404 {
-                position: fixed !important;
-                bottom: 20px !important; /* Position en bas de l'écran */
-                right: 20px !important;
-                transform: translateY(100%) !important; /* Cachée sous l'écran */
-                z-index: 999999 !important;
-                transition: transform 0.4s ease !important;
-            }
-            
-            /* Quand on hover la zone OU la télécommande */
-            .hover-zone-404:hover + .remote-control-404,
-            .remote-control-404:hover {
-                transform: translateY(0) !important; /* Visible complètement */
-                bottom: 20px !important; /* Maintient la position en bas */
-            }
-            
-            .remote-body {
-                width: 180px;
-                height: 440px;
-                background: #7dd3c0;
-                border: 4px solid #f4d03f;
-                border-radius: 25px;
-                box-shadow: 
-                    0 10px 30px rgba(0,0,0,0.3),
-                    inset 0 2px 0 rgba(255,255,255,0.3);
-                padding: 20px;
-                position: relative;
-            }
-            
-            /* Un seul bouton power rouge en haut à gauche */
-            .power-btn {
-                width: 35px;
-                height: 35px;
-                background: #e74c3c;
-                border: 3px solid #2c3e50;
-                border-radius: 50%;
-                cursor: pointer;
-                box-shadow: 0 4px 0 #c0392b;
-                transition: all 0.1s ease;
-                margin-bottom: 20px;
-            }
-            
-            .power-btn:hover {
-                background: #ec7063;
-            }
-            
-            .power-btn:active {
-                transform: translateY(2px);
-                box-shadow: 0 2px 0 #c0392b;
-            }
-            
-            /* Grille 3x3 boutons blancs */
-            .nav-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(3, 1fr);
-                gap: 8px;
-                margin-bottom: 20px;
-            }
-            
-            .nav-btn {
-                width: 40px;
-                height: 25px;
-                background: #ffffff;
-                border: 3px solid #2c3e50;
-                border-radius: 15px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 12px;
-                font-weight: bold;
-                color: #2c3e50;
-                box-shadow: 0 3px 0 #34495e;
-                transition: all 0.1s ease;
-            }
-            
-            .nav-btn:hover {
-                background: #ecf0f1;
-            }
-            
-            .nav-btn:active {
-                transform: translateY(2px);
-                box-shadow: 0 1px 0 #34495e;
-            }
-            
-            /* Boutons jaunes sur les côtés */
-            .side-buttons {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 20px;
-            }
-            
-            .side-btn {
-                width: 30px;
-                height: 30px;
-                background: #f1c40f;
-                border: 3px solid #2c3e50;
-                border-radius: 50%;
-                cursor: pointer;
-                box-shadow: 0 3px 0 #f39c12;
-                transition: all 0.1s ease;
-            }
-            
-            .side-btn:hover {
-                background: #f7dc6f;
-            }
-            
-            .side-btn:active {
-                transform: translateY(2px);
-                box-shadow: 0 1px 0 #f39c12;
-            }
-            
-            /* Pad directionnel central */
-            .directional-pad {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-            
-            .dpad-container {
-                position: relative;
-                width: 100px;
-                height: 100px;
-                background: #f1c40f;
-                border: 4px solid #2c3e50;
-                border-radius: 15px;
-                box-shadow: 0 4px 0 #f39c12;
-            }
-            
-            .dpad-btn {
-                position: absolute;
-                background: transparent;
-                border: none;
-                cursor: pointer;
-                font-size: 16px;
-                font-weight: bold;
-                color: #2c3e50;
-                width: 20px;
-                height: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .dpad-up {
-                top: 10px;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            
-            .dpad-down {
-                bottom: 10px;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            
-            .dpad-left {
-                left: 10px;
-                top: 50%;
-                transform: translateY(-50%);
-            }
-            
-            .dpad-right {
-                right: 10px;
-                top: 50%;
-                transform: translateY(-50%);
-            }
-            
-            .dpad-center {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 30px;
-                height: 30px;
-                background: #2c3e50;
-                border: 2px solid #fff;
-                border-radius: 50%;
-                color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 10px;
-                cursor: pointer;
-            }
-            
-            .dpad-center:hover {
-                background: #34495e;
-            }
-            
-            /* Boutons colorés en bas */
-            .color-row {
-                display: flex;
-                justify-content: space-around;
-                margin-bottom: 20px;
-            }
-            
-            .color-btn {
-                width: 35px;
-                height: 15px;
-                border: 3px solid #2c3e50;
-                border-radius: 10px;
-                cursor: pointer;
-                box-shadow: 0 3px 0 rgba(0,0,0,0.2);
-                transition: all 0.1s ease;
-            }
-            
-            .color-btn.red {
-                background: #e74c3c;
-            }
-            
-            .color-btn.yellow {
-                background: #f1c40f;
-            }
-            
-            .color-btn.green {
-                background: #27ae60;
-            }
-            
-            .color-btn:hover {
-                filter: brightness(1.1);
-            }
-            
-            .color-btn:active {
-                transform: translateY(2px);
-                box-shadow: 0 1px 0 rgba(0,0,0,0.2);
-            }
-            
-            /* Écran en haut */
-            .remote-screen {
-                width: 140px;
-                height: 35px;
-                background: #2c3e50;
-                border: 2px solid #34495e;
-                border-radius: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 0 auto 15px auto;
-            }
-            
-            .channel-display {
-                color: #00ff00;
-                font-family: 'Courier New', monospace;
-                font-size: 12px;
-                font-weight: bold;
-            }
-        `;
-        document.head.appendChild(style);        // HTML de la télécommande cartoon avec zone de hover
+        let currentChannel = 4; // Default to dashboard
+
+        // HTML de la télécommande cartoon avec zone de hover
         const remoteHTML = `
             <div class="hover-zone-404"></div>
             <div class="remote-control-404">
                 <div class="remote-body">
                     <div class="remote-screen">
-                        <span class="channel-display" id="channel-display">CH ${currentChannel} - ${channels.get(currentChannel).name}</span>
+                        <span class="channel-display" id="channel-display-404">CH 4 - Dashboard</span>
                     </div>
                     
                     <div class="power-btn" onclick="SPA.navigateTo('/login')" title="Power"></div>
                     
-                    <div class="nav-grid">
-                        <button class="nav-btn" onclick="remoteNavigate('/')" title="Landing">1</button>
-                        <button class="nav-btn" onclick="remoteNavigate('/home')" title="Home">2</button>
-                        <button class="nav-btn" onclick="remoteNavigate('/about')" title="About">3</button>
-                        <button class="nav-btn" onclick="remoteNavigate('/dashboard')" title="Dashboard">4</button>
-                        <button class="nav-btn" onclick="remoteNavigate('/tournoi')" title="Tournoi">5</button>
-                        <button class="nav-btn" onclick="remoteNavigate('/profile')" title="Profil">6</button>
-                        <button class="nav-btn" onclick="remoteNavigate('/login')" title="Login">7</button>
-                        <button class="nav-btn" onclick="remoteNavigate('/register')" title="Register">8</button>
-                        <button class="nav-btn" onclick="remoteNavigate('/changePassword')" title="Password">9</button>
+                    <div class="nav-grid">                        <button class="nav-btn" onclick="remoteNavigate404('/')" title="Landing">1</button>
+                        <button class="nav-btn" onclick="remoteNavigate404('/home')" title="Home">2</button>
+                        <button class="nav-btn" onclick="remoteNavigate404('/about')" title="About">3</button>
+                        <button class="nav-btn" onclick="remoteNavigate404('/dashboard')" title="Dashboard">4</button>
+                        <button class="nav-btn" onclick="remoteNavigate404('/tournoi')" title="Tournoi">5</button>
+                        <button class="nav-btn" onclick="remoteNavigate404('/profile')" title="Profil">6</button>
+                        <button class="nav-btn" onclick="remoteNavigate404('/login')" title="Login">7</button>
+                        <button class="nav-btn" onclick="remoteNavigate404('/register')" title="Register">8</button>
+                        <button class="nav-btn" onclick="remoteNavigate404('/changePassword')" title="Password">9</button>
                     </div>
                     
                     <div class="side-buttons">
@@ -694,9 +400,8 @@ const SPA = {
                     </div>
                     
                     <div class="directional-pad">
-                        <div class="dpad-container">
-                            <button class="dpad-btn dpad-up" onclick="changeChannelGlobal(1)" title="Channel +">▲</button>
-                            <button class="dpad-btn dpad-down" onclick="changeChannelGlobal(-1)" title="Channel -">▼</button>
+                        <div class="dpad-container">                            <button class="dpad-btn dpad-up" onclick="changeChannel404(1)" title="Channel +">▲</button>
+                            <button class="dpad-btn dpad-down" onclick="changeChannel404(-1)" title="Channel -">▼</button>
                             <button class="dpad-btn dpad-left" onclick="history.back()" title="Back">◀</button>
                             <button class="dpad-btn dpad-right" onclick="history.forward()" title="Forward">▶</button>
                             <button class="dpad-center" onclick="location.reload()" title="OK">OK</button>
@@ -713,15 +418,13 @@ const SPA = {
                     <div style="height: 20px;"></div>
                 </div>
             </div>
-        `;
-        
-        document.body.insertAdjacentHTML('beforeend', remoteHTML);
-          // Fonctions JavaScript globales
-        window.remoteNavigate = function(route) {
+        `;        document.body.insertAdjacentHTML('beforeend', remoteHTML);
+          // Fonctions JavaScript
+        window.remoteNavigate404 = function(route) {
             SPA.navigateTo(route);
         };
         
-        window.changeChannel = function(direction) {
+        window.changeChannel404 = function(direction) {
             const channelKeys = Array.from(channels.keys());
             let currentIndex = channelKeys.indexOf(currentChannel);
             
@@ -734,11 +437,244 @@ const SPA = {
             currentChannel = channelKeys[currentIndex];
             const channel = channels.get(currentChannel);
             
-            document.getElementById('channel-display').textContent = `CH ${currentChannel} - ${channel.name}`;
+            document.getElementById('channel-display-404').textContent = `CH ${currentChannel} - ${channel.name}`;
             SPA.navigateTo(channel.route);
         };
         
+        document.title = 'Error 404 - Chaîne introuvable';
+        
         console.log('🎮 Télécommande top-hover ajoutée !');
+    },
+
+    addGlobalRemoteControl: function() {
+        // Supprimer l'ancienne télécommande si elle existe
+        const existingRemote = document.querySelector('.remote-control-global');
+        if (existingRemote) {
+            existingRemote.remove();
+        }
+        
+        // Supprimer l'ancien style si il existe
+        const existingStyle = document.querySelector('#remote-style-global');
+        if (existingStyle) {
+            existingStyle.remove();
+        }
+        
+        // Map des chaînes/pages pour navigation
+        const channels = new Map([
+            [1, { name: 'Landing', route: '/' }],
+            [2, { name: 'Home', route: '/home' }],
+            [3, { name: 'About', route: '/about' }],
+            [4, { name: 'Dashboard', route: '/dashboard' }],
+            [5, { name: 'Tournoi', route: '/tournoi' }],
+            [6, { name: 'Profile', route: '/profile' }],
+            [7, { name: 'Login', route: '/login' }],
+            [8, { name: 'Register', route: '/register' }],
+            [9, { name: 'Change Password', route: '/changePassword' }]
+        ]);
+        
+        let currentChannel = 2; // Default to home
+        
+        // Créer un style pour la télécommande
+        const style = document.createElement('style');
+        style.id = 'remote-style-global';
+        style.textContent = `
+            .remote-control-global {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: linear-gradient(145deg, #8a7a62, #6d604d);
+                border: 3px solid #5a5040;
+                border-radius: 20px;
+                padding: 15px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                width: 200px;
+                transform: scale(0.8);
+                transform-origin: bottom right;
+                transition: all 0.3s ease;
+                opacity: 0.7;
+            }
+            
+            .hover-zone-global {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                width: 100px; 
+                height: 100px;
+                z-index: 999;
+            }
+
+            .hover-zone-global:hover + .remote-control-global,
+            .remote-control-global:hover {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            .remote-body {
+                background: linear-gradient(145deg, #706353, #5a4f42);
+                border-radius: 15px;
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .power-btn {
+                width: 30px;
+                height: 30px;
+                background: radial-gradient(circle, #ff0000, #cc0000);
+                border-radius: 50%;
+                border: 2px solid #880000;
+                margin-bottom: 15px;
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .power-btn:hover {
+                background: radial-gradient(circle, #ff3333, #ee0000);
+                box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            }
+
+            .nav-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(145deg, #5d4e3a, #4a3f32);
+                border: 2px solid #3a3225;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Arial', sans-serif;
+                font-size: 16px;
+                font-weight: bold;
+                color: #ecd8ac;
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .nav-btn:hover {
+                background: linear-gradient(145deg, #6d5c45, #574a3c);
+                box-shadow: 0 0 8px rgba(236, 216, 172, 0.3);
+            }
+
+            .side-buttons {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .side-btn {
+                width: 20px;
+                height: 50px;
+                background: linear-gradient(145deg, #5d4e3a, #4a3f32);
+                border: 2px solid #3a3225;
+                border-radius: 10px;
+                cursor: pointer;
+            }
+
+            .side-btn:hover {
+                background: linear-gradient(145deg, #6d5c45, #574a3c);
+                box-shadow: 0 0 8px rgba(236, 216, 172, 0.3);
+            }
+
+            .color-row {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .color-btn {
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                border: 2px solid #3a3225;
+                cursor: pointer;
+            }
+
+            .red { background-color: #ff0000; }
+            .yellow { background-color: #ffff00; }
+            .green { background-color: #00ff00; }
+
+            .color-btn:hover {
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+                transform: scale(1.1);
+            }
+            
+            .remote-screen { width: 140px; height: 35px; background: #2c3e50; border: 2px solid #34495e; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; }
+            .channel-display { color: #00ff00; font-family: 'Courier New', monospace; font-size: 12px; font-weight: bold; }
+        `;
+        document.head.appendChild(style);
+
+        // HTML de la télécommande cartoon avec zone de hover
+        const remoteHTML = `
+            <div class="hover-zone-global"></div>
+            <div class="remote-control-global">
+                <div class="remote-body">
+                    <div class="remote-screen">
+                        <span class="channel-display" id="channel-display-global">CH 2 - Home</span>
+                    </div>
+                    <div class="power-btn" onclick="SPA.navigateTo('/login')" title="Power"></div>
+                    <div class="nav-grid">
+                        <button class="nav-btn" onclick="remoteNavigateGlobal('/')" title="Landing">1</button>
+                        <button class="nav-btn" onclick="remoteNavigateGlobal('/home')" title="Home">2</button>
+                        <button class="nav-btn" onclick="remoteNavigateGlobal('/about')" title="About">3</button>
+                        <button class="nav-btn" onclick="remoteNavigateGlobal('/dashboard')" title="Dashboard">4</button>
+                        <button class="nav-btn" onclick="remoteNavigateGlobal('/tournoi')" title="Tournoi">5</button>
+                        <button class="nav-btn" onclick="remoteNavigateGlobal('/profile')" title="Profil">6</button>
+                        <button class="nav-btn" onclick="remoteNavigateGlobal('/login')" title="Login">7</button>
+                        <button class="nav-btn" onclick="remoteNavigateGlobal('/register')" title="Register">8</button>
+                        <button class="nav-btn" onclick="remoteNavigateGlobal('/changePassword')" title="Password">9</button>
+                    </div>
+                    <div class="side-buttons">
+                        <div class="side-btn" onclick="SPA.navigateTo('/profile')" title="Profil"></div>
+                        <div class="side-btn" onclick="SPA.navigateTo('/tournoi')" title="Tournoi"></div>
+                    </div>
+                    <div class="directional-pad">
+                        <div class="dpad-container">
+                            <button class="dpad-btn dpad-up" onclick="changeChannelGlobal(1)" title="Channel +">▲</button>
+                            <button class="dpad-btn dpad-down" onclick="changeChannelGlobal(-1)" title="Channel -">▼</button>
+                            <button class="dpad-btn dpad-left" onclick="history.back()" title="Back">◀</button>
+                            <button class="dpad-btn dpad-right" onclick="history.forward()" title="Forward">▶</button>
+                            <button class="dpad-center" onclick="location.reload()" title="OK">OK</button>
+                        </div>
+                    </div>
+                    <div class="color-row">
+                        <div class="color-btn red" onclick="SPA.navigateTo('/profile')" title="Rouge"></div>
+                        <div class="color-btn yellow" onclick="SPA.navigateTo('/dashboard')" title="Jaune"></div>
+                        <div class="color-btn green" onclick="SPA.navigateTo('/home')" title="Vert"></div>
+                    </div>
+                    <div style="height: 20px;"></div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', remoteHTML);
+
+        // Fonctions JavaScript globales
+        window.remoteNavigateGlobal = function(route) {
+            SPA.navigateTo(route);
+        };
+        window.changeChannelGlobal = function(direction) {
+            const channelKeys = Array.from(channels.keys());
+            let currentIndex = channelKeys.indexOf(currentChannel);
+            if (direction > 0) {
+                currentIndex = (currentIndex + 1) % channelKeys.length;
+            } else {
+                currentIndex = currentIndex <= 0 ? channelKeys.length - 1 : currentIndex - 1;
+            }
+            currentChannel = channelKeys[currentIndex];
+            const channel = channels.get(currentChannel);
+            document.getElementById('channel-display-global').textContent = `CH ${currentChannel} - ${channel.name}`;
+            SPA.navigateTo(channel.route);
+        };
     }
 };
 
