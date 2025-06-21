@@ -1,330 +1,24 @@
-/* Import Gazpacho Font Family */
 @font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
+  font-family: "Heading Pro";
+  src: url(https://manzdev.github.io/twitch-television/fonts/heading-pro.woff) format("woff");
+  font-display: swap;
 }
 
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Thin.ttf') format('truetype');
-    font-weight: 100;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Thin.ttf') format('truetype');
-    font-weight: 100;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Light.ttf') format('truetype');
-    font-weight: 300;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Light.ttf') format('truetype');
-    font-weight: 300;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Medium.ttf') format('truetype');
-    font-weight: 500;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Medium.ttf') format('truetype');
-    font-weight: 500;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Heavy.ttf') format('truetype');
-    font-weight: 800;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Heavy.ttf') format('truetype');
-    font-weight: 800;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Black.ttf') format('truetype');
-    font-weight: 900;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Gazpacho';
-    src: url('Gazpacho-Font/Gazpacho/Gazpacho Italic Black.ttf') format('truetype');
-    font-weight: 900;
-    font-style: italic;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+:root {
+  --television-width: 430px;
+  --television-height: 420px;
+  --television-bgcolor: #b71a11;
+  --television-bgcolor-dark: #88110b;
+  --antenna-gradient: linear-gradient(to top, #444 10%, #999 25% 40%, #444 70%, #2224 90%);
 }
 
 body {
-    font-family: 'Gazpacho', sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f4f4f4;
-}
-
-/* Navigation */
-nav {
-    background: #efe5cf;
-    padding: 1rem 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nav-links {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-}
-
-.nav-links a {
-    color: black;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-.nav-links a:hover,
-.nav-links a.active {
-    background-color: #efe5cf;
-}
-
-main {
-    width: 100%;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Styles pour l'élément main avec l'image TV en fond */
-main[style*="background: url(\"./nobg.png\")"] {
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important; /* Changed from 'contain' to 'cover' to fill the screen */
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    padding: 0;
-}
-
-/* Responsive design pour l'image TV */
-@media (max-width: 1200px) {
-    main[style*="background"] {
-        background-size: cover !important;
-    }
-      main[style*="background"] #content {
-        width: 70%;
-        height: 48%;
-        transform: translate(-50%, -52%);
-    }
-}
-
-@media (max-width: 768px) {
-    main[style*="background"] {
-        background-size: cover !important;
-    }
-      main[style*="background"] #content {
-        width: 75%;
-        height: 42%;
-        transform: translate(-50%, -52%);
-        padding: 10px;
-        font-size: 0.9em;
-    }
-}
-
-/* Pour les écrans très larges */
-@media (min-width: 1600px) {    main[style*="background"] #content {
-        width: 65%;
-        height: 46%;
-        transform: translate(-50%, -52%);
-        max-width: 800px;
-    }
-}
-
-/* Pour les écrans très étroits (mobiles) */
-@media (max-width: 480px) {    main[style*="background"] #content {
-        width: 80%;
-        height: 38%;
-        transform: translate(-50%, -52%);
-        font-size: 0.85em;
-        padding: 10px 8px;
-    }
-    
-    /* Ajuster les formulaires sur mobile */
-    main[style*="background"] #content form {
-        max-width: 100%;
-    }
-    
-    main[style*="background"] #content input[type="email"],
-    main[style*="background"] #content input[type="password"],
-    main[style*="background"] #content input[type="text"] {
-        padding: 8px;
-        margin-bottom: 10px;
-        font-size: 14px;
-    }
-}
-
-.page-content {
-    padding: 2rem;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.page-content h1 {
-    color: #ecd8ac;
-    margin-bottom: 1rem;
-    border-bottom: 3px solid #ecd8ac;
-    padding-bottom: 0.5rem;
-}
-
-.page-content h2 {
-    color: #e4cfa2;
-    margin: 1.5rem 0 1rem 0;
-}
-
-.page-content p {
-    margin-bottom: 1rem;
-    text-align: justify;
-}
-
-/* Styles pour la page de contact */
-.contact-form {
-    max-width: 600px;
-    margin-top: 2rem;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: #ecd8ac;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
-}
-
-.btn {
-    background: #3498db;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-    background: #2980b9;
-}
-
-/* Indicateur de chargement */
-.loading {
-    text-align: center;
-    padding: 2rem;
-    color: #7f8c8d;
-}
-
-/* Classes utilitaires */
-.fade-in {
-    animation: fadeIn 0.3s ease-in;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  margin: 0;
+  background: #000;
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* Styles pour la Landing Page avec tv.gif en background */
@@ -332,9 +26,7 @@ main[style*="background: url(\"./nobg.png\")"] {
     min-height: 100vh;
     background: url('gif/tv.gif') no-repeat center center;
     background-size: cover;
-    /* Changé de 'cover' à 'contain' pour moins de zoom */
     background-color: black;
-    /* Ajout d'un fond noir pour les espaces vides */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -359,7 +51,6 @@ main[style*="background: url(\"./nobg.png\")"] {
 .landing-content {
     max-width: 600px;
     opacity: 0.3;
-
     padding: 2rem;
     z-index: 2;
     position: relative;
@@ -420,27 +111,6 @@ main[style*="background: url(\"./nobg.png\")"] {
     transform: translateY(-1px);
 }
 
-/* Styles pour la page de transition VHS */
-.vhs-transition {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    overflow: hidden;
-}
-
-.vhs-gif {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
 /* Effet d'ondulation au clic */
 .enter-button::before {
     content: '';
@@ -492,488 +162,489 @@ main[style*="background: url(\"./nobg.png\")"] {
 .landing-page nav {
     display: none;
 }
-    .remote-control-404 {
-        position: fixed !important;
-        bottom: -420px !important;
-        right: 20px !important;
-        z-index: 999999 !important;
-        transition: bottom 0.4s ease !important;
-    }
-    
-    /* Quand on hover la zone OU la télécommande */
-    .hover-zone-404:hover + .remote-control-404,
-    .remote-control-404:hover {
-        bottom: 20px !important;
-    }
-    
-    /* Zone de détection hover invisible en bas à droite */
-    .hover-zone-404 {
-        position: fixed !important;
-        bottom: 0 !important;
-        right: 0 !important;
-        width: 200px !important;
-        height: 30px !important;
-        z-index: 999998 !important;
-        background: transparent !important;
-        cursor: pointer !important;
-    }
-    
-    .hover-zone-404::before {
-        content: '📺 Remote';
-        position: absolute;
-        bottom: 5px;
-        right: 20px;
-        font-size: 16px;
-        color: #fff;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-        pointer-events: none;
-        opacity: 0.7;
-    }    /* Suppression de l'ancien style de la télécommande 404 qui conflictait */
 
-    @keyframes tvGlow {
-        0% {
-            opacity: 0.6;
-            text-shadow: 0 0 5px #d4af37;
-        }
-
-        100% {            opacity: 1;
-            text-shadow: 0 0 20px #d4af37, 0 0 30px #d4af37;
-        }
-    }
-    
-    .remote-body {
-        width: 180px;
-        height: 440px;
-        background: #7dd3c0;
-        border: 4px solid #f4d03f;
-        border-radius: 25px;
-        box-shadow: 
-            0 10px 30px rgba(0,0,0,0.3),
-            inset 0 2px 0 rgba(255,255,255,0.3);
-        padding: 20px;        position: relative;
-    }
-    
-    .remote-screen {
-        width: 140px;
-        height: 35px;
-        background: #2c3e50;
-        border: 2px solid #34495e;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 15px auto;
-    }
-
-    .remote-screen::before {
-        content: '';
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        right: 2px;
-        height: 8px;
-        background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
-        border-radius: 8px 8px 0 0;
-    }
-
-    .error-code {
-        color: #00ff41;        font-family: 'Courier New', monospace;
-        font-size: 18px;
-        font-weight: bold;
-        text-shadow:
-            0 0 10px #00ff41,
-            0 0 20px #00ff41,
-            0 0 30px #00ff41;
-        animation: terminalBlink 1.5s infinite;
-        letter-spacing: 2px;
-    }
-    
-    .channel-display {
-        color: #00ff00;
-        font-family: 'Courier New', monospace;
-        font-size: 12px;
-        font-weight: bold;
-    }
-
-    /* Un seul bouton power rouge en haut à gauche */
-    .power-btn {
-        width: 35px;
-        height: 35px;
-        background: #e74c3c;
-        border: 3px solid #2c3e50;
-        border-radius: 50%;
-        cursor: pointer;
-        box-shadow: 0 4px 0 #c0392b;
-        transition: all 0.1s ease;
-        margin-bottom: 20px;
-    }
-    
-    .power-btn:hover {
-        background: #ec7063;
-    }
-    
-    .power-btn:active {
-        transform: translateY(2px);
-        box-shadow: 0 2px 0 #c0392b;
-    }
-    
-    /* Grille 3x3 boutons blancs */    .nav-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        gap: 8px;
-        margin-bottom: 20px;
-    }
-    
-    .nav-btn {
-        width: 40px;
-        height: 25px;
-        background: #ffffff;
-        border: 3px solid #2c3e50;
-        border-radius: 15px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: bold;
-        color: #2c3e50;
-        box-shadow: 0 3px 0 #34495e;
-        transition: all 0.1s ease;
-    }
-    
-    .nav-btn:hover {
-        background: #ecf0f1;
-    }
-    
-    .nav-btn:active {
-        transform: translateY(2px);
-        box-shadow: 0 1px 0 #34495e;
-    }
-    
-    /* Boutons jaunes sur les côtés */
-    .side-buttons {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-    
-    .side-btn {
-        width: 30px;
-        height: 30px;
-        background: #f1c40f;
-        border: 3px solid #2c3e50;
-        border-radius: 50%;
-        cursor: pointer;
-        box-shadow: 0 3px 0 #f39c12;
-        transition: all 0.1s ease;
-    }
-    
-    .side-btn:hover {
-        background: #f7dc6f;
-    }
-    
-    .side-btn:active {
-        transform: translateY(2px);
-        box-shadow: 0 1px 0 #f39c12;
-    }
-    
-    /* Pad directionnel central */
-    .directional-pad {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    
-    .dpad-container {
-        position: relative;
-        width: 100px;
-        height: 100px;
-        background: #f1c40f;
-        border: 4px solid #2c3e50;
-        border-radius: 15px;
-        box-shadow: 0 4px 0 #f39c12;
-    }
-    
-    .dpad-btn {
-        position: absolute;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-        color: #2c3e50;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .dpad-up {
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    
-    .dpad-down {
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    
-    .dpad-left {
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-    
-    .dpad-right {
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-    
-    .dpad-center {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 30px;
-        height: 30px;
-        background: #2c3e50;
-        border: 2px solid #fff;
-        border-radius: 50%;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        cursor: pointer;
-    }
-    
-    .dpad-center:hover {
-        background: #34495e;
-    }
-    
-    /* Boutons colorés en bas */
-    .color-row {
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 20px;
-    }
-    
-    .color-btn {
-        width: 35px;
-        height: 15px;
-        border: 3px solid #2c3e50;
-        border-radius: 10px;
-        cursor: pointer;
-        box-shadow: 0 3px 0 rgba(0,0,0,0.2);
-        transition: all 0.1s ease;
-    }
-    
-    .color-btn.red {
-        background: #e74c3c;
-    }
-    
-    .color-btn.yellow {
-        background: #f1c40f;
-    }
-    
-    .color-btn.green {
-        background: #27ae60;
-    }
-    
-    .color-btn:hover {
-        filter: brightness(1.1);
-    }
-    
-    .color-btn:active {
-        transform: translateY(2px);
-        box-shadow: 0 1px 0 rgba(0,0,0,0.2);
-    }
-    /* Styles pour la télévision et le contenu */    /* Style pour centrer le contenu dans la télévision */
-    main[style*="background"] #content {
-        position: absolute;
-        width: 70%;
-        height: 55%;
-        max-width: 900px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -52%); /* Ajusté pour centrer dans la TV */
-        overflow-y: auto;
-        padding: 15px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        z-index: 10;
-        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-    }
-    
-    /* Animation de glow pour la TV */
-    @keyframes tvGlow {
-        0% { box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.1); }
-        100% { box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 255, 255, 0.3); }
-    }
-
-    /* Styles pour la page d'erreur 404 */
-    .error404-content {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-    }
-
-    .error-title {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        font-family: 'Gazpacho', sans-serif;
-        font-weight: bold;
-        color: #ff6b6b;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    .error-message {
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-        color: #333;
-    }
-
-    .error-gif {
-        max-width: 100%;
-        max-height: 50vh;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Responsive pour mobile */    @media (max-width: 768px) { 
-        .remote-control-404 {
-            bottom: -420px !important;
-            right: 5px !important;
-            scale: 0.85;
-        }
-
-        .remote-control-404:hover {
-            bottom: 5px !important;
-        }
-    }
-
-/* Styles spécifiques pour le formulaire de connexion et d'inscription */
-main[style*="background"] #content form {
-    width: 100%;
-    max-width: 320px;
-    margin: 0 auto;
-}
-
-main[style*="background"] #content input[type="email"],
-main[style*="background"] #content input[type="password"],
-main[style*="background"] #content input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-}
-
-main[style*="background"] #content button.btn,
-main[style*="background"] #content button[type="submit"],
-main[style*="background"] #content .g_id_signin {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    font-size: 16px;
-    text-align: center;
-}
-
-/* Amélioration du style des liens de texte dans la télévision */
-main[style*="background"] #content a {
-    color: #4d90fe;
-    text-decoration: none;
-    margin: 5px 0;
-    display: inline-block;
-}
-
-main[style*="background"] #content a:hover {
-    text-decoration: underline;
-}
-
-/* Titre de connexion */
-main[style*="background"] #content h2, 
-main[style*="background"] #content h3 {
-    margin-bottom: 20px;
-    color: #333;
-}
-
-/* Amélioration globale pour l'affichage dans la télévision */
-main[style*="background"] #content {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    backdrop-filter: blur(1px);
-}
-
-/* Ajout d'un effet CRT subtil pour renforcer l'immersion */
-main[style*="background"]::before {
-    content: '';
-    display: block;
-    position: absolute;
+/* Styles pour la page de transition VHS */
+.vhs-transition {
+    position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.03) 0px,
-        rgba(0, 0, 0, 0.03) 1px,
-        transparent 1px,
-        transparent 2px
-    );
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.4;
-}
-
-/* Style global pour l'affichage plein écran */
-html, body, main {
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
     overflow: hidden;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
 }
 
-/* Ajuster pour le plein écran de la télévision */
-main[style*="background"] {
-    background-size: 120% auto !important; /* Agrandir l'image pour qu'elle prenne plus de place */
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
-}
-
-/* Amélioration de l'immersion avec un effet de scanlines */
-main[style*="background"]::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
+.vhs-gif {
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0) 50%,
-        rgba(0, 0, 0, 0.025) 50%
-    );
-    background-size: 100% 4px;
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0.3;
+    object-fit: cover;
+}
+
+/* TV Design */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.tv {
+  width: var(--television-width);
+  height: var(--television-height);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tv .antenna-container {
+  width: 235px;
+  height: 85px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.tv .antenna-container .antenna {
+  width: 100%;
+  height: 4px;
+  background: var(--antenna-gradient);
+  transform-origin: 100% 50%;
+  transform: rotate(20deg) translateY(3px);
+  z-index: 0;
+  display: flex;
+  align-items: center;
+}
+
+.tv .antenna-container .antenna::before {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 10px;
+  background: var(--antenna-gradient);
+  border-radius: 24% 53% 53% 24% / 36% 40% 40% 36%;
+  border: 1px solid #444;
+  border-left: 0;
+  border-bottom: 0;
+  transform: translateY(-1px);
+}
+
+.tv .television-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+}
+
+.tv .television-container .television {
+  width: 425px;
+  height: 300px;
+  border-radius: 35px / 45px;
+  box-shadow:
+    2px 2px 5px #0004,
+    2px -2px 2px darkred inset,
+    2px 1px 1px #fff inset,
+    0 0 3px 5px #0002;
+  background: var(--television-bgcolor);
+  background: linear-gradient(var(--television-bgcolor), var(--television-bgcolor-dark));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.tv .television-container .television .television-inner {
+  width: 93%;
+  height: 90%;
+  background: linear-gradient(to bottom, #454c45 5%, #232522 35% 45%);
+  border-bottom: 1px solid #fff;
+  box-shadow: 0 1px 2px #470404 inset;
+  border-radius: 25px / 25px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: 0.8fr;
+  align-content: center;
+  gap: 3px;
+}
+
+.tv .television-container .television .television-inner .television-screen-container {
+  border: 1px solid #222;
+  box-shadow:
+    0 2px 2px #888,
+    2px 0 2px #444,
+    -2px 0 2px #444,
+    0 -2px 2px #111;
+  border-radius: 35px / 25px;
+  margin: 10px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    linear-gradient(70deg, #555 15%, transparent 30%),
+    repeating-conic-gradient(#222 0 30deg, #333 60deg, #222 90deg);
+}
+
+.tv .television-container .television .television-inner .television-screen-container .television-crt {
+  width: 99%;
+  height: 95%;
+  background: #111;
+  box-shadow:
+    0 0 5px 2px #111,
+    0 0 10px 2px #1112;
+  border-radius: 85px 85px 85px 85px / 100px 100px 100px 100px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tv .television-container .television .television-inner .television-screen-container .television-crt .television-screen {
+  background: #302d30;
+  width: 95%;
+  height: 95%;
+  border-radius: 30%;
+  box-shadow: 0 0 5px 2px #111 inset;
+  overflow: hidden;
+  position: relative;
+}
+
+.tv .television-container .television .television-inner .television-screen-container .television-crt .television-screen .noise {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(to bottom, transparent, #aaa4, #8881, #6664, #4445, #2228, #4443, transparent),
+    repeating-linear-gradient(transparent 0 2px, #25242950 2px 4px);
+  animation: moveBand 8s linear infinite;
+  z-index: 4;
+  position: relative;
+}
+
+.tv .television-container .television .television-inner .television-screen-container .television-crt .television-screen .off {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(#222, #1a1a1a, #111);
+  z-index: 5;
+  position: absolute;
+  top: 0;
+}
+
+.tv .television-container .television .television-inner .television-screen-container .television-crt .television-screen .logo-container {
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tv .television-container .television .television-inner .television-screen-container .television-crt .television-screen .logo-container .logo {
+  background: #f34b59;
+  width: 45px;
+  height: 32px;
+  border-radius: 8px;
+  margin-right: 5px;
+  display: grid;
+  place-items: center;
+}
+
+.tv .television-container .television .television-inner .television-screen-container .television-crt .television-screen .logo-container .logo .play {
+  width: 15px;
+  height: 15px;
+  background: #fff;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.tv .television-container .television .television-inner .television-screen-container .television-crt .television-screen .logo-container .text {
+  font-family: "Heading Pro", sans-serif;
+  font-size: 42px;
+  color: white;
+  letter-spacing: -1px;
+}
+
+.tv .television-container .television .television-inner .television-lateral {
+  display: grid;
+  grid-template-rows: 1.1fr 1fr;
+  gap: 12px;
+  margin: 15px;
+  margin-left: 0;
+}
+
+.tv .television-container .television .television-inner .television-lateral .dial-container {
+  border: 2px solid #333;
+  border-left: 1px solid #444;
+  border-bottom: 2px solid #444;
+  border-radius: 5px;
+  box-shadow:
+    -2px 2px 6px #111 inset,
+    -1px 2px 3px #aaa;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  align-items: center;
+}
+
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial {
+  width: 42px;
+  height: 42px;
+  border: 2px solid #6e706f;
+  border-radius: 50%;
+  box-shadow:
+    -4px 2px 4px #111,
+    0 0 1px 2px #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: grab;
+}
+
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data {
+  color: #888;
+  font-size: 6px;
+  text-shadow: 0 0 2px #888;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transform-origin: 50% 50%;
+}
+
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(2) { transform: rotate(30deg); }
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(3) { transform: rotate(60deg); }
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(4) { transform: rotate(90deg); }
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(5) { transform: rotate(120deg); }
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(6) { transform: rotate(150deg); }
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(7) { transform: rotate(180deg); }
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(8) { transform: rotate(210deg); }
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(9) { transform: rotate(240deg); }
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(10) { transform: rotate(270deg); }
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(11) { transform: rotate(300deg); }
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .data-container .data:nth-child(12) { transform: rotate(330deg); }
+
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .dial-core {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: conic-gradient(#eee 0deg 45deg, #666 70deg 285deg, #eee 320deg);
+  position: absolute;
+}
+
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial .selector {
+  position: absolute;
+  width: 75%;
+  background: linear-gradient(#666 30%, #aaa 40%);
+  height: 4px;
+  border: 1px solid #666;
+  border-radius: 4px / 8px;
+  transform: rotate(calc(var(--value) - 90deg));
+  transition: transform 0.25s linear;
+}
+
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial.channel-button {
+  background: #000;
+}
+
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial.volume-button {
+  background: #ccc;
+}
+
+.tv .television-container .television .television-inner .television-lateral .dial-container .dial.volume-button .data {
+  color: #444;
+}
+
+.tv .television-container .television .television-inner .television-lateral .speaker-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px 0;
+  margin-bottom: 12px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.tv .television-container .television .television-inner .speaker-container div {
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(#000, #222);
+  border-radius: 50%;
+  border-bottom: 1px solid #fff;
+}
+
+.tv .television-container .television .television-inner .buttons {
+  position: absolute;
+  bottom: 5px;
+  right: 30px;
+  width: 60px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.tv .television-container .television .television-inner .buttons .button-container {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(to bottom, #fff 40%, #aaa 50% 55%, #666 70%);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tv .television-container .television .television-inner .buttons .button-container .button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(to top, #fff 40%, #aaa 50% 55%, #666 70%);
+  box-shadow: -1px -1px 1px 2px #000;
+  transform: translate(2px, 1px);
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
+  cursor: pointer;
+}
+
+.tv .television-container .television .television-inner .buttons .button-container .button:active {
+  transform: translate(0, 0);
+  box-shadow: 0 0 1px 2px #000;
+}
+
+.tv .television-container .television-base {
+  width: 350px;
+  height: 25px;
+  background: linear-gradient(var(--television-bgcolor), var(--television-bgcolor-dark));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 8px 4px #0009;
+}
+
+.tv .television-container .television-base::before,
+.tv .television-container .television-base::after {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 100%;
+  background-color: var(--television-bgcolor);
+  background-image: linear-gradient(var(--television-bgcolor), var(--television-bgcolor-dark));
+  transform: translateX(var(--x)) skewX(var(--skew-x));
+}
+
+.tv .television-container .television-base::before {
+  --skew-x: 10deg;
+  --x: -2px;
+}
+
+.tv .television-container .television-base::after {
+  --skew-x: -10deg;
+  --x: 2px;
+}
+
+.tv .television-container .television-base .slots {
+  width: 50%;
+  height: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.tv .television-container .television-base .slots .slot {
+  width: 4px;
+  height: 100%;
+  background: #0b0000;
+  margin-left: 3px;
+  border-radius: 2px / 1px;
+}
+
+.tv .television-container .foot-container {
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.tv .television-container .foot-container .foot {
+  width: 20px;
+  height: 10px;
+  background: var(--television-bgcolor);
+}
+
+.tv .television-container .foot-container .foot.left {
+  box-shadow: 4px 0 #850101;
+}
+
+.tv .television-container .foot-container .foot.right {
+  box-shadow: -4px 0 #850101;
+}
+
+/* TV Animations */
+.tv .off {
+  transition: opacity 0.5s;
+  opacity: 1;
+}
+
+.tv:not(.on) .off {
+  opacity: 0;
+}
+
+@keyframes moveBand {
+  0% { background-position-y: 0, 0; }
+  100% { background-position-y: -221px, -150px; }
+}
+
+.created {
+  background: 
+    url(https://assets.codepen.io/154065/internal/avatars/users/default.png),
+    linear-gradient(to bottom, #884ced, #ec1cce);
+  background-size: 75px 75px, cover;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 75px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 2em;
+}
+
+.created span,
+.created h2,
+.created p,
+.created a {
+  font-family: Montserrat;
+  margin: 0;
+}
+
+.created a,
+.created p,
+.created span {
+  color: #fff;    
+}
+
+.created h2 {
+  font-weight: 700;
+  transform: translate(0, -4px);    
+}
+
+.created a {
+  text-decoration-color: rgba(255,255,255,0.4);
+}
+
+.created a:hover {
+  color: #e6e82a;
 }

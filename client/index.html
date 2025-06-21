@@ -28,16 +28,188 @@
         <script src="js/init.js" defer></script>
         <script src="js/profile.js" defer></script>
         <script src="js/password.js" defer></script>
+        <script src="js/tv-controls.js" defer></script>
     </head>
     <body>
+        <div class="container">
+            <div class="tv">
+                <div class="antenna-container">
+                    <div class="antenna"></div>
+                </div>
+                <div class="television-container">
+                    <div class="television">
+                        <div class="television-inner">
+                            <div class="television-screen-container">
+                                <div class="television-crt">
+                                    <div class="television-screen">
+                                        <div class="off"></div>
+                                        <div class="logo-container">
+                                            <div class="logo">
+                                                <div class="play"></div>
+                                            </div>
+                                            <div class="text">YouTube</div>
+                                        </div>
+                                        <div class="noise"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="television-lateral">
+                                <div class="dial-container">
+                                    <div class="dial channel-button" style="--value: 0deg;">
+                                        <div class="data-container">
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                        </div>
+                                        <div class="dial-core"></div>
+                                        <div class="selector"></div>
+                                    </div>
+                                    <div class="dial volume-button" style="--value: 0deg;">
+                                        <div class="data-container">
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                            <div class="data">#</div>
+                                        </div>
+                                        <div class="dial-core"></div>
+                                        <div class="selector"></div>
+                                    </div>
+                                </div>
+                                <div class="speaker-container">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                            <div class="buttons">
+                                <div class="button-container">
+                                    <div class="button"></div>
+                                </div>
+                                <div class="button-container">
+                                    <div class="button"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="television-base">
+                        <div class="slots">
+                            <div class="slot"></div>
+                            <div class="slot"></div>
+                            <div class="slot"></div>
+                        </div>
+                        <div class="slots">
+                            <div class="slot"></div>
+                            <div class="slot"></div>
+                            <div class="slot"></div>
+                            <div class="slot"></div>
+                            <div class="slot"></div>
+                            <div class="slot"></div>
+                        </div>
+                    </div>
+                    <div class="foot-container">
+                        <div class="foot left"></div>
+                        <div class="foot right"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="created">
+            <span>Created by</span>
+            <a href="https://manz.dev/"><h2>Manz.dev</h2></a>
+            <p>on <a href="https://twitch.tv/ManzDev">Twitch</a> / <a href="https://youtu.be/thvSqIo8D5s">Youtube</a></p>
+        </div>
+        
         <main id="content"> </main>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
+                // Positionnement correct de la TV
+                const container = document.querySelector('.container');
+                if (container) {
+                    container.style.position = 'fixed';
+                    container.style.top = '0';
+                    container.style.left = '0';
+                    container.style.width = '100%';
+                    container.style.height = '100%';
+                    container.style.zIndex = '1';
+                    console.log('TV container positioned');
+                }
+                
                 // Ajoute la télécommande cartoon sur toutes les pages
                 if (typeof SPA !== 'undefined' && SPA.addGlobalRemoteControl) {
                     SPA.addGlobalRemoteControl();
                 } else {
                     console.error("La fonction SPA.addGlobalRemoteControl n'est pas disponible");
+                }
+                
+                // S'assurer que le contenu principal est au-dessus de la TV
+                const main = document.querySelector('main');
+                if (main) {
+                    main.style.position = 'relative';
+                    main.style.zIndex = '10';
+                    console.log('Main content positioned above TV');
                 }
             });
         </script>

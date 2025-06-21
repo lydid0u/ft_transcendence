@@ -39,26 +39,26 @@ const SPA = {
         if (navElement) {
             navElement.style.display = 'block';
         }
-        
-        // Style pour la TV en arrière-plan en plein écran        document.body.style.margin = '0';
+          // Style pour les pages normales (non landing page)
+        document.body.style.margin = '0';
         document.body.style.padding = '0';
         document.body.style.overflow = 'hidden';
         document.body.style.height = '100vh';
-        document.body.style.background = '#c3c1a8'; // Couleur de fond autour de la TV
-        
-        const main = document.querySelector('main');
+        document.body.style.background = '#000'; // Fond noir pour la nouvelle TV
+          const main = document.querySelector('main');
         main.style.margin = '0';
         main.style.maxWidth = 'none';
         main.style.width = '100%';
         main.style.padding = '0';
-        main.style.height = '100vh';        main.style.background = 'url("./nobg.png") no-repeat center center';
-        main.style.backgroundSize = 'cover'; /* Changed from 'contain' to 'cover' to fill the screen */
+        main.style.height = '100vh';
+        main.style.background = 'transparent'; // Suppression de la référence à nobg.png
         main.style.boxShadow = 'none';
         main.style.borderRadius = '0';
         main.style.display = 'flex';
         main.style.justifyContent = 'center';
         main.style.alignItems = 'center';
         main.style.position = 'relative';
+        main.style.zIndex = '10'; // S'assurer que le contenu principal est au-dessus de la TV
     },
 
     // Fonction pour afficher la transition VHS
