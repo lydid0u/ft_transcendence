@@ -1,16 +1,34 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors'
-import dbFunction from './db/db.js'
+import dbFunction from './db/db_auth.js';
+import dbFunctionPatch from './db/db_patch.js';
 import userRoutes from './routes/user.js';
 import authGoogle from './routes/auth.js'
 import fastifyJwt from '@fastify/jwt';
 import utilsDbFunc from './db/utils.js'
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
+import multipart from '@fastify/multipart'
+import fastifyStatic from '@fastify/static';
+import path from 'path'
+import { fileURLToPath } from 'url';
 
 const fastify = Fastify();
 
 dotenv.config();
+
+fastify.register(fastifyJwt, {
+  secret: process.env.SECRET_KEY_JWT
+});
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.MAIL_2FA,
+    pass: process.env.PASS_2FA
+  }
+});
+fastify.decorate('nodemailer', transporter);
 
 // Replace your current cors registration with this:
 fastify.register(cors, {
@@ -22,9 +40,6 @@ fastify.register(cors, {
   optionsSuccessStatus: 204,
   preflightContinue: false
 });
-fastify.register(fastifyJwt, {
-  secret: process.env.SECRET_KEY_JWT
-});
 
 fastify.decorate('prevalidate', async function(request, reply) {
   try {
@@ -34,16 +49,6 @@ fastify.decorate('prevalidate', async function(request, reply) {
   }
 });
 
-// Créer un transporteur Nodemailer directement
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.MAIL_2FA,
-    pass: process.env.PASS_2FA
-  }
-});
-
-// Vérifier la connexion
 transporter.verify(function(error, success) {
   if (error) {
     console.error('Erreur de configuration Nodemailer:', error);
@@ -52,14 +57,25 @@ transporter.verify(function(error, success) {
   }
 });
 
-// Décorer l'instance fastify avec le transporteur
-fastify.decorate('nodemailer', transporter);
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const avatarDir = path.join(__dirname, 'avatar');
+
+fastify.register(multipart, {
+        limits: {
+            fileSize: 2 * 1024 * 1024 // 2 Mo
+        }
+    });
 fastify.register(dbFunction);
 fastify.register(utilsDbFunc);
+fastify.register(dbFunctionPatch);
 fastify.register(userRoutes);
 fastify.register(authGoogle);
-
+fastify.register(fastifyStatic, {
+  root: avatarDir,         // Le dossier où sont stockés tes avatars
+  prefix: '/avatar/',      // L’URL publique pour accéder aux fichiers
+});
 
 const startServer = async() =>
 {

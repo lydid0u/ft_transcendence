@@ -49,11 +49,12 @@ async function authGoogle(fastify, options)
     fastify.decorate('auth', authHelper);
 
 
-    fastify.post('/auth/google', async(request, reply) =>
+    fastify.post('/auth/google',  async(request, reply) =>
     {
         try
         {
             const {token} = request.body;
+            console.log(token);
             const userInfo = await authHelper.verifyGoogleToken(token);            
             const user = await fastify.db.registerUser(userInfo.googleId, userInfo.email, null, null, userInfo.picture);
             console.log("User found or created:", user);
@@ -61,6 +62,7 @@ async function authGoogle(fastify, options)
             {
                 const jwt = await fastify.auth.createJWTtoken(user);
                 console.log("User authenticated with Google:", user);
+                console.log(jwt);
                 reply.send({user, jwt});
             }
             else
@@ -72,31 +74,6 @@ async function authGoogle(fastify, options)
         }
     })
 
-    fastify.post('/auth/2FA-code', async(request, reply) =>
-    {
-        try
-        {
-            const code = Math.floor(100000 + Math.random() * 900000).toString();
-            const {email} = request.body
-            await fastify.nodemailer.sendMail({
-                from: process.env.MAIL_2FA,
-                to: email,
-                subject: 'Your verification code',
-                text: `Your verification code is: ${code}`,
-                html: `<p>Voici votre code de verification: <b>${code}</b></p>`
-            });
-            return reply.send({ success: true, message: "Code sent successfully" });    
-        } 
-        catch (err) 
-        {
-            console.error("Email sending error:", err);
-            return reply.status(500).send({ 
-                success: false, 
-                message: "Failed to send verification code",
-                error: err.message});
-        }
-    })
-
     fastify.post('/auth/login', async(request, reply) =>
     {
         try
@@ -104,11 +81,8 @@ async function authGoogle(fastify, options)
             const {email, password} = request.body;
             const user = await fastify.db.loginUser(email, password);
             if(!user)
-                reply.status(401).send({success : false, message : "Couldn't find user"});
-            const jwt = await fastify.auth.createJWTtoken(user);
-            // reply.send({email : user.email, message : "Code envoyé"});
-            reply.send({jwt, user});
-            // return user;
+                reply.status(401).send({success : false, message : "Couldn't find user"})
+            return reply.send({ success: true, message: "Identifiants validés, veuillez entrer le code de vérification" });
         }
         catch (err)
         {
@@ -117,8 +91,72 @@ async function authGoogle(fastify, options)
 
     })
 
-    fastify.post('/auth/register', async(request, reply) => {
+    fastify.post('/auth/2FA-code', async(request, reply) =>
+    {
+        try
+        {
+            const {email} = request.body;
+            const user = await fastify.utilsDb.checkEmail(email);
+            if(!user)
+            {
+                return reply.status(404).send({
+                    success: false,
+                    message: "Utilisateur non trouvé"
+                });
+            }
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            if (!fastify.twoFactorCodes)
+                    fastify.twoFactorCodes = new Map();
+            fastify.twoFactorCodes.set(email, {code, expiresAt: Date.now() + (1 * 60 * 1000), user: user });
+            // await fastify.nodemailer.sendMail({
+            //     from: process.env.MAIL_2FA,
+            //     to: email,
+            //     subject: 'Your verification code',
+            //     text: `Your verification code is: ${code}`,
+            //     html: `<p>Voici votre code de verification: <b>${code}</b></p>`
+            // });
+            console.log(code, email);
+            return reply.send({
+                success : true,
+                message : "Code envoyé avec succès"
+            })
+        }
+        catch (err)
+        {
+            console.error("Erreur d'envoi de code:", err);
+            return reply.status(500).send({ 
+            success: false, 
+            message: "Erreur lors de l'envoi du code",
+            error: err.message
+            });
+        }
+    });
 
+    fastify.post('/auth/2FA-verify', async(request, reply) =>
+    {
+        const {email, code} = request.body;
+        const real_code = fastify.twoFactorCodes.get(email);
+        if(Date.now() > real_code.expiresAt)
+        {
+            fastify.twoFactorCodes.delete(email);
+            reply.status(400).send({success : false, message : "Verification code has expired. Please relogin"});
+            return ;
+        }
+        else if(code != real_code.code)
+        {
+            reply.status(400).send({success : false, message : "Verification code is wrong. Please retry"});
+            return ;
+        }
+        else if (code == real_code.code)
+        {
+            const jwt = await fastify.auth.createJWTtoken(real_code.user);
+            fastify.twoFactorCodes.delete(email);
+            reply.send({jwt, user : real_code.user});
+        }
+    })
+
+    fastify.post('/auth/register', async(request, reply) => 
+    {
         try
         {
             const {email, password, pseudo : username} = request.body;
@@ -136,17 +174,17 @@ async function authGoogle(fastify, options)
         }
         catch (err)
         {
-            reply.status(401).send({success : false, message : err.message});
+            reply.status(401).send({success : false, message : "inside register", deux : err.message});
         }
 
     })
 
-    fastify.patch('/auth/reset-password', async (request, reply) =>
+    fastify.patch('/auth/change-password', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
         try
         {
             const {email, password} = request.body;
-            await fastify.db.changePassword(email, password);
+            await fastify.dbPatch.changePassword(email, password);
             reply.send({success : true, message : "Password changed"});
         }
         catch (err)
@@ -154,18 +192,68 @@ async function authGoogle(fastify, options)
             reply.status(401).send({success : false, message : err.message});
         }
     })
-
-    fastify.patch('/auth/change-password', async (request, reply) =>
+    
+    fastify.post('/auth/2FA-code/pass', async(request, reply) =>
     {
         try
         {
-            const {email, password} = request.body;
-            await fastify.db.changePassword(email, password);
-            reply.send({success : true, message : "Password changed"});
+            const {email} = request.body;
+            const user = await fastify.utilsDb.checkEmail(email);
+            if(!user)
+            {
+                return reply.status(404).send({
+                    success: false,
+                    message: "Utilisateur non trouvé"
+                });
+            }
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            if (!fastify.twoFactorCodes)
+                    fastify.twoFactorCodes = new Map();
+            fastify.twoFactorCodes.set(email, {code, expiresAt: Date.now() + (1 * 60 * 1000), user: user });
+            // await fastify.nodemailer.sendMail({
+            //     from: process.env.MAIL_2FA,
+            //     to: email,
+            //     subject: 'Your verification code',
+            //     text: `Your verification code is: ${code}`,
+            //     html: `<p>Voici votre code de verification: <b>${code}</b></p>`
+            // });
+            console.log(code, email);
+            return reply.send({
+                success : true,
+                message : "Code envoyé avec succès"
+            })
         }
         catch (err)
         {
-            reply.status(401).send({success : false, message : err.message});
+            console.error("Erreur d'envoi de code:", err);
+            return reply.status(500).send({ 
+            success: false, 
+            message: "Erreur lors de l'envoi du code",
+            error: err.message
+            });
+        }
+    })
+    
+    fastify.post('/auth/2FA-verify/pass', async(request, reply) =>
+    {
+        const {email, code} = request.body
+        const real_code = fastify.twoFactorCodes.get(email);
+        if(Date.now() > real_code.expiresAt)
+        {
+            fastify.twoFactorCodes.delete(email);
+            reply.status(400).send({success : false, message : "Verification code has expired. Please relogin"});
+            return ;
+        }
+        else if(code != real_code.code)
+        {
+            reply.status(400).send({success : false, message : "Verification code is wrong. Please retry"});
+            return ;
+        }
+        else if (code == real_code.code)
+        {
+            const jwt = await fastify.auth.createJWTtoken(real_code.user);
+            fastify.twoFactorCodes.delete(email);
+            reply.send({jwt, user : real_code.user});
         }
     })
 }
