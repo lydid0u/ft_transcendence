@@ -1,7 +1,4 @@
-// TV Controls JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('TV Controls: DOM chargé');
-  
   // Fonction pour initialiser les contrôles de la TV
   function initTVControls() {
     console.log('Initialisation des contrôles TV');
@@ -12,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     console.log('TV trouvée dans le DOM');
     
-    const powerButton = document.querySelector(".button:last-child");
-    const unknownButton = document.querySelector(".button:first-child");
+    const powerButton = document.getElementById("button-2");
+    const homeButton = document.getElementById("button-1");
 
     // Trouve le bon bouton nav (nav-dial) et la barre (nav-selector)
     const navDial = document.getElementById('nav-dial');
@@ -113,15 +110,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (powerButton) {
-      powerButton.addEventListener("click", () => {
+      powerButton.addEventListener("click", (e) => {
+        //ajouter la logique pour allumer/éteindre la TV
+        console.log("Power button cliqué!");
         tv.classList.toggle("on");
       });
     }
+    if (homeButton) {
+      homeButton.addEventListener("click", (e) => {
+       SPA.navigateTo('/home');
+       console.log("Home button cliqué!");
+      });
+    } 
   }
 
-  // Initialiser les contrôles
   initTVControls();
-  // Si nous sommes dans une SPA, nous devons gérer aussi les changements de page
   if (typeof SPA !== 'undefined') {
     console.log('SPA détectée, configuration des gestionnaires de changement de page');
     

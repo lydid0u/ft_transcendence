@@ -1,3 +1,3 @@
-document.addEventListener('DOMContentLoaded', function() {
-    SPA.initSPA();
-});
+// document.addEventListener('DOMContentLoaded', function() {
+//     SPA.initSPA();
+// });

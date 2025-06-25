@@ -2,85 +2,81 @@ const SPA = {
     SPAattribute: {
         defaultRoute: '/', // page par défaut
         contentDiv: '#content' // id de l'html où le contenu sera chargé
+        ,contentParent: null
     },
 
-    // cache pour stocker les pages déjà chargées et éviter de les recharger
-    cache: new Map(),
-
-    // Ajout d'une propriété pour suivre l'état de la TV
-    isTvOn: false,
-
-    // Fonction pour masquer la navigation et adapter le layout pour la landing page
     hideStyleForLandingPage: function () {
-        // Vérifie si la balise nav existe avant d'essayer d'y accéder
-        const navElement = document.querySelector('nav');
-        if (navElement) {
-            navElement.style.display = 'none';
+        const content = document.querySelector(this.SPAattribute.contentDiv);
+        const tvContainer = document.querySelector('#tv-container');
+
+        if (content && tvContainer) {
+            // Sauvegarder le parent original s'il n'est pas déjà sauvegardé
+            if (!this.SPAattribute.contentParent) {
+                this.SPAattribute.contentParent = content.parentNode;
+            }
+            // Déplacer #content pour qu'il soit un enfant direct de <body>
+            // pour qu'il ne soit pas caché quand on cache #tv-container
+            if (content.parentNode !== document.body) {
+                document.body.appendChild(content);
+            }
         }
 
-        const tvContainer = document.querySelector('.container');
         if (tvContainer) {
             tvContainer.style.display = 'none';
         }
         
-        // Réinitialiser les styles du body pour la landing page
-        document.body.style.margin = '';
-        document.body.style.padding = '';
-        document.body.style.overflow = '';
-        document.body.style.height = '';
-        document.body.style.background = '';
+        document.body.style.margin = '0';
+        document.body.style.padding = '0';
+        document.body.style.overflow = 'auto';
+        document.body.style.height = 'auto';
+        document.body.style.background = 'white';
         
-        const main = document.querySelector('main');
-        main.style.margin = '0';
-        main.style.maxWidth = 'none';
-        main.style.background = 'white';
-        main.style.boxShadow = 'none';
-        main.style.borderRadius = '0';
-        main.style.minHeight = '100vh';
-        main.style.padding = '0';
+        if(content) {
+            content.style.position = 'static';
+            content.style.margin = '0';
+            content.style.maxWidth = 'none';
+            content.style.background = 'white';
+            content.style.boxShadow = 'none';
+            content.style.borderRadius = '0';
+            content.style.minHeight = '100vh';
+            content.style.padding = '0';
+        }
     },
 
     // Fonction pour restaurer la navigation et le layout normal
     mainDivCSS: function () {
-          // Style pour les pages normales (non landing page)
+        const content = document.querySelector(this.SPAattribute.contentDiv);
+        const tvContainer = document.querySelector('#tv-container');
+
+        // Replacer #content dans son conteneur original (dans la TV)
+        if (content && this.SPAattribute.contentParent && content.parentNode !== this.SPAattribute.contentParent) {
+            this.SPAattribute.contentParent.appendChild(content);
+        }
+
+        if (tvContainer) {
+            tvContainer.style.display = 'flex';
+        }
+
         document.body.style.margin = '0';
         document.body.style.padding = '0';
         document.body.style.overflow = 'hidden';
         document.body.style.height = '100vh';
-        document.body.style.background = 'transparent'; 
+        document.body.style.background = '#c3c1a8'; // Couleur de fond originale
 
-        const tvContainer = document.querySelector('.container');
-        if (tvContainer) {
-            tvContainer.classList.remove('tv-off');
-            tvContainer.style.display = 'flex';
-            tvContainer.style.position = 'fixed';
-            tvContainer.style.top = '0';
-            tvContainer.style.left = '0';
-            tvContainer.style.width = '100%';
-            tvContainer.style.height = '100%';
-            tvContainer.style.zIndex = '1';
+        // Réinitialiser les styles de #content pour qu'il s'affiche correctement dans la TV
+        if (content) {
+            content.style.position = '';
+            content.style.margin = '';
+            content.style.maxWidth = '';
+            content.style.background = '';
+            content.style.boxShadow = '';
+            content.style.borderRadius = '';
+            content.style.minHeight = '';
+            content.style.padding = '';
         }
-
-        const main = document.querySelector('main');
-        
-        main.style.margin = '0';
-        // main.style.maxWidth = 'none';
-        // main.style.width = '100%';
-        main.style.padding = '0';
-        // main.style.height = '100vh';
-        main.style.background = 'lightpink'; 
-        main.style.boxShadow = 'none';
-        main.style.borderRadius = '0';
-        main.style.display = 'flex';
-        main.style.justifyContent = 'center';
-        main.style.alignItems = 'center';
-        // main.style.position = 'relative';
-        main.style.zIndex = '10'; // S'assurer que le contenu principal est au-dessus de la TV
-        main.style.scrollbarColor = "red blue"
     },
 
-    // Fonction pour afficher la transition VHS
-    showVhsTransition: function () {
+    VhsTransition: function () {
         const app = document.querySelector('#content');
         app.innerHTML = `
             <div class="vhs-transition">
@@ -140,7 +136,6 @@ const SPA = {
                 if (!isAuthenticated) {
                     SPA.notAuthenticated();
                 } else {
-                    const user = JSON.parse(localStorage.getItem('user'));
                     const contentDiv = document.querySelector(SPA.SPAattribute.contentDiv);
                     contentDiv.innerHTML += `
                         <div class="page-content">
@@ -161,7 +156,6 @@ const SPA = {
                 if (!isAuthenticated) {
                     SPA.notAuthenticated();
                 } else {
-                    const user = JSON.parse(localStorage.getItem('user'));
                     const contentDiv = document.querySelector(SPA.SPAattribute.contentDiv);
 
                     contentDiv.innerHTML += `
@@ -282,11 +276,11 @@ const SPA = {
     navigateTo: function (route) {
         // fonction membre qui vient de l'API History et qui change l'url sans recharger la page
         history.pushState(null, null, route);
-
         this.loadRoute(route);
-
         this.setCurrentPageToActive(route);
-    },    loadRoute: async function (route) { // Make function async
+    },
+
+    loadRoute: async function (route) { // Make function async
         console.log(`📄 Chargement de la route: ${route}`);
 
         const routeToLoad = this.routes[route];
@@ -294,6 +288,11 @@ const SPA = {
             console.error(`❌ Route non trouvée: ${route}`);
             this.error404();
             return;
+        }
+
+        // Execute the route's script if it exists
+        if (routeToLoad.routeScript && typeof routeToLoad.routeScript === 'function') {
+            routeToLoad.routeScript();
         }
 
         document.title = routeToLoad.title;
@@ -318,16 +317,10 @@ const SPA = {
             // Fallback for direct HTML string content (if any are left)
             contentDiv.innerHTML = routeToLoad.content;
         } else {
-            console.error(`❌ Contenu de route invalide pour: ${route}`);
+            console.error(`Contenu de route invalide pour: ${route}`);
             this.error404();
             return;
         }
-
-        // Execute the route's script if it exists
-        if (routeToLoad.routeScript && typeof routeToLoad.routeScript === 'function') {
-            routeToLoad.routeScript();
-        }
-        
     },
 
     setCurrentPageToActive: function(currentPath) {
@@ -341,29 +334,21 @@ const SPA = {
         const activeLink = document.querySelector(`a[data-route="${currentPath}"]`);
         if (activeLink) {
             activeLink.classList.add('active');
-        }    },      error404: function() {
-        // Appliquons le style de mise en page pour les pages qui ne sont pas la landing page
-        this.mainDivCSS();
-        
+        }
+    },
+
+    error404: function() {
+        console.error('error 404 - page not found');
         const contentDiv = document.querySelector(this.SPAattribute.contentDiv);
         contentDiv.innerHTML = `
             <div class="vhs-transition">
-                <img src="test2.png" class="vhs-gif" alt="Transition VHS">
-            </div>
-            <div class="error404-content">
-                <h1 class="error-title">Page non trouvée</h1>
-                <p class="error-message">La page que vous recherchez n'existe pas.</p>
-                <img src="gif/error404.gif" class="error-gif" alt="Erreur 404" style="max-width:80%; max-height: 40vh;">
-                <button class="btn" onclick="SPA.navigateTo('/home')" style="margin-top:20px;">Retour à l'accueil</button>
+                <img src="gif/error404.gif" class="vhs-gif" alt="Transition VHS">
             </div>
         `;
-        
-        document.title = 'Error 404 - Chaîne introuvable';
-        }
+        document.title = 'Error 404 - Page Not Found';
+    }
     };
 
-// Initialize the SPA when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     SPA.init();
-    // La télécommande sera ajoutée par les pages individuelles au besoin
 });

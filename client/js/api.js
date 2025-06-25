@@ -19,13 +19,10 @@ async function sendUserDataToBackend(userData) {
         // save dans localStorage pour la session locale
         localStorage.setItem('googleUser', JSON.stringify(userData));
         localStorage.setItem('isAuthenticated', 'true');
-        // Assuming the backend sends a JWT token for Google Auth as well
-        if (result.token) {
+        if (result.token) 
             localStorage.setItem('jwtToken', result.token);
-        }
         
         displayUserInfo(userData);
-        // Redirect to dashboard or appropriate page
         if (window.SPA && typeof SPA.navigateTo === 'function') {
             SPA.navigateTo('/dashboard');
         }
