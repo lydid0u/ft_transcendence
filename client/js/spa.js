@@ -46,17 +46,6 @@ const SPA = {
         }, 2000);
     },
 
-    notAuthenticated: function () {
-        const contentDiv = document.querySelector(this.SPAattribute.contentDiv);
-        contentDiv.innerHTML = `
-            <div class="page-content">
-                <h2>Vous n'êtes pas connecté</h2>
-                <p>Veuillez vous connecter pour accéder à cette page.</p>
-                <button class="btn" onclick="SPA.navigateTo('/login')">Se connecter</button>
-            </div>
-        `;
-    },
-
     routes: {
         '/': {
             title: 'ft_transcendence',
@@ -75,24 +64,12 @@ const SPA = {
 
         '/tournoi': {
             title: 'tournoi',
-            content: 'pages/tournoi.html',
-            routeScript: function () {
-                const isAuthenticated = localStorage.getItem('isAuthenticated');
-                if (!isAuthenticated) {
-                    SPA.notAuthenticated();
-                }
-            }
+            content: 'pages/tournoi.html'
         },
 
         '/dashboard': {
             title: 'dashboard',
-            content: 'pages/dashboard.html',
-            routeScript: function () {
-                const isAuthenticated = localStorage.getItem('isAuthenticated');
-                if (!isAuthenticated) {
-                    SPA.notAuthenticated();
-                }
-            }
+            content: 'pages/dashboard.html'
         },
 
         '/login': {
@@ -124,13 +101,8 @@ const SPA = {
                     const userData = JSON.parse(savedUser);
                     displayUserInfo(userData);
                 }
-
-                // Gérer la déconnexion
-                const signoutBtn = document.getElementById('signout-btn');
-                if (signoutBtn) {
-                    signoutBtn.addEventListener('click', signOut);
-                }
-
+                
+                alreadyLoggedIn();
                 login();
             }
         },
@@ -155,13 +127,8 @@ const SPA = {
             title: 'profile',
             content: 'pages/profile.html',
             routeScript: function () {
-                const isAuthenticated = localStorage.getItem('isAuthenticated');
-                if (!isAuthenticated) {
-                    SPA.notAuthenticated();
-                } else {
-                    const user = JSON.parse(localStorage.getItem('user'));
-                    displayUserProfile(user);
-                }
+                const user = JSON.parse(localStorage.getItem('user'));
+                displayUserProfile(user);
             }
         }
     },
@@ -193,6 +160,19 @@ const SPA = {
     },
 
     loadRoute: async function (route) {
+        const isAuthenticated = localStorage.getItem('isAuthenticated');
+        const publicRoutes = ['/', '/login', '/register'];
+
+        if (!isAuthenticated && !publicRoutes.includes(route)) {
+            this.navigateTo('/login');
+            return;
+        }
+
+        if (isAuthenticated && (route === '/login' || route === '/register')) {
+            this.navigateTo('/home');
+            return;
+        }
+
         this.handleLayout(route);
 
         const routeToLoad = this.routes[route];
@@ -200,7 +180,7 @@ const SPA = {
             this.error404();
             return;
         }
-
+ 
         document.title = routeToLoad.title;
         const contentDiv = document.querySelector(this.SPAattribute.contentDiv);
 

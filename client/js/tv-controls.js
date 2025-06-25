@@ -107,8 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (powerButton) {
       powerButton.addEventListener("click", (e) => {
-        //ajouter la logique pour allumer/éteindre la TV
-        tv.classList.toggle("on");
+        turnOffTheTv()
       });
     }
     if (homeButton) {
@@ -162,3 +161,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 });
+
+function turnOffTheTv() {
+  alert("test")
+  tv.classList.toggle("off");
+}

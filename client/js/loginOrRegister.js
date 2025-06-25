@@ -50,8 +50,6 @@ async function login() {
 async function register() {
     const form = document.getElementById('register-form');
     if (form) {
-        alert("register function called");
-        alert("Inscription");
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
@@ -64,7 +62,6 @@ async function register() {
             const messageDiv = document.getElementById('message');
 
             if (createPassword === confirmPassword) {
-                alert("Les mots de passe correspondent, vous pouvez continuer l'inscription.");
                 console.log("Passwords match, proceeding with registration...");
                 try {
                     const response = await fetch('http://localhost:3000/auth/register', {
@@ -111,4 +108,22 @@ async function register() {
             }
     })
 }
+}
+
+function alreadyLoggedIn() {
+    const isAuthenticated = localStorage.getItem('isAuthenticated');
+    if (isAuthenticated === 'true') {
+        const contentDiv = document.querySelector('#content');
+        if (contentDiv) {
+            contentDiv.innerHTML = `
+            <div class="flex flex-col items-center rounded-[50px] h-full w-full p-8 bg-gradient-to-b from-stone-200 to-stone-300 no-scrollbar">
+                <div class="w-full max-w-4xl text-center">
+                    <h1 class="text-5xl font-bold mb-12 text-stone-400">Tu es deja connecte !</h1>
+                    <div onclick="SPA.navigateTo('/home')" class="inline-block px-6 py-3 bg-stone-600 hover:bg-stone-700 text-white font-bold rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+                        Retourner à l'accueil
+                    </div>
+                </div>
+            </div>`;
+        }
+    }
 }
