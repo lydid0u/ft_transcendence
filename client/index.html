@@ -1,217 +1,165 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>ft_transcendence</title>
-        <style>
-            html, body {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                width: 100%;
-                overflow: hidden;
-            }
-            body {
-                background-color: #c3c1a8;
-            }
-        </style>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://accounts.google.com/gsi/client" async defer></script>
-        <meta name="google-signin-client_id" content="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com">
-        <link href="styles.css?v=1.1" rel="stylesheet">
-        
-        <script src="js/spa.js" defer></script>
-        <script src="js/loginOrRegister.js" defer></script>
-        <script src="js/google-auth.js" defer></script>
-        <script src="js/api.js" defer></script>
-        <script src="js/init.js" defer></script>
-        <script src="js/profile.js" defer></script>
-        <script src="js/password.js" defer></script>
-        <script src="js/tv-controls.js" defer></script>
-    </head>
-    <body>
-        <div class="container">
-            <div class="tv">
-                <div class="antenna-container">
-                    <div class="antenna"></div>
-                </div>
-                <div class="television-container">
-                    <div class="television">
-                        <div class="television-inner">
-                            <div class="television-screen-container">
-                                <div class="television-crt">
-                                    <div class="television-screen">
-                                        <div class="off"></div>
-                                        <div class="logo-container">
-                                            <div class="logo">
-                                                <div class="play"></div>
-                                            </div>
-                                            <div class="text">YouTube</div>
-                                        </div>
-                                        <div class="noise"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="television-lateral">
-                                <div class="dial-container">
-                                    <div class="dial channel-button" style="--value: 0deg;">
-                                        <div class="data-container">
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                        </div>
-                                        <div class="dial-core"></div>
-                                        <div class="selector"></div>
-                                    </div>
-                                    <div class="dial volume-button" style="--value: 0deg;">
-                                        <div class="data-container">
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                            <div class="data">#</div>
-                                        </div>
-                                        <div class="dial-core"></div>
-                                        <div class="selector"></div>
-                                    </div>
-                                </div>
-                                <div class="speaker-container">
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                </div>
-                            </div>
-                            <div class="buttons">
-                                <div class="button-container">
-                                    <div class="button"></div>
-                                </div>
-                                <div class="button-container">
-                                    <div class="button"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="television-base">
-                        <div class="slots">
-                            <div class="slot"></div>
-                            <div class="slot"></div>
-                            <div class="slot"></div>
-                        </div>
-                        <div class="slots">
-                            <div class="slot"></div>
-                            <div class="slot"></div>
-                            <div class="slot"></div>
-                            <div class="slot"></div>
-                            <div class="slot"></div>
-                            <div class="slot"></div>
-                        </div>
-                    </div>
-                    <div class="foot-container">
-                        <div class="foot left"></div>
-                        <div class="foot right"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ft_transcendence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <meta name="google-signin-client_id" content="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com" />
+    <link href="styles.css" rel="stylesheet" />
 
-        <div class="created">
-            <span>Created by</span>
-            <a href="https://manz.dev/"><h2>Manz.dev</h2></a>
-            <p>on <a href="https://twitch.tv/ManzDev">Twitch</a> / <a href="https://youtu.be/thvSqIo8D5s">Youtube</a></p>
+    <script src="js/spa.js" defer></script>
+    <script src="js/loginOrRegister.js" defer></script>
+    <script src="js/google-auth.js" defer></script>
+    <script src="js/api.js" defer></script>
+    <script src="js/init.js" defer></script>
+    <script src="js/profile.js" defer></script>
+    <script src="js/password.js" defer></script>
+    <script src="js/tv-controls.js" defer></script>
+  </head>
+  <body class="m-0 p-0 h-full w-full overflow-hidden bg-[#c3c1a8]">
+    <div id="tv-container" class="fixed top-0 left-0 w-full h-full flex justify-center items-center z-[1]">
+      <div id="tv-main" class="tv w-[1860px] h-[840px] flex flex-col items-center">
+        <!-- <div id="antenna-container" class="w-[470px] h-[170px] flex flex-col justify-end">
+          <div
+            id="antenna"
+            class="antenna w-full h-2 bg-gradient-to-t from-[#444] via-[#999] to-[#444] transform origin-right rotate-[20deg] translate-y-[6px] z-0 flex items-center before:content-[''] before:block before:w-4 before:h-[20px] before:bg-gradient-to-t before:from-[#444] before:via-[#999] before:to-[#444] before:rounded-[24%_53%_53%_24%/36%_40%_40%_36%] before:border-2 before:border-[#444] before:border-l-0 before:border-b-0 before:-translate-y-0.5"></div>
+        </div> -->
+        <div id="television-container" class="flex flex-col items-center z-[1]">
+          <div
+            id="television"
+            class="w-[1133px] h-[800px] rounded-[70px/90px] shadow-[4px_4px_10px_#0004,4px_-4px_4px_#7a8471_inset,4px_2px_2px_#fff_inset,0_0_6px_10px_#0002] bg-gradient-to-b from-[#9aad8e] to-[#6b7a5f] flex justify-center items-center z-[2]">
+            <div
+              id="television-inner"
+              class="w-[93%] h-[90%] bg-gradient-to-b from-[#454c45] via-[#232522] to-[#232522] border-b-2 border-white shadow-[0_2px_4px_#4a5c42_inset] rounded-[50px] relative grid grid-cols-[3fr_1fr] grid-rows-[0.8fr] content-center gap-[6px]">
+              <div
+                id="television-screen-container"
+                class="border-2 border-[#222] shadow-[0_4px_4px_#888,4px_0_4px_#444,-4px_0_4px_#444,0_-4px_4px_#111] rounded-[70px/50px] m-[20px] overflow-hidden flex justify-center items-center text-pink-400">
+                <div
+                  id="television-crt"
+                  class="w-full h-full bg-[#111] shadow-[0_0_10px_4px_#111,0_0_20px_4px_#1112] roxunded-[170px/200px] overflow-hidden flex justify-center items-center">
+                  <div id="television-screen" class="bg-black w-[100%] h-[100%] shadow-[0_0_10px_4px_#111_inset] overflow-y-scroll relative no-scrollbar p-6">
+                    <main id="content" class="relative z-10 h-full"></main>
+
+                    <!-- <div id="screen-off" class="off absolute top-0 w-full h-full bg-[radial-gradient(#222,#1a1a1a,#111)] z-[5] transition-opacity duration-500 opacity-100"></div> -->
+
+                    <!-- <div id="screen-noise" class="noise w-full h-full z-[4] relative bg-[linear-gradient(to_bottom,transparent,#aaa4,#8881,#6664,#4445,#2228,#4443,transparent),repeating-linear-gradient(transparent_0_4px,#25242950_4px_8px)] animate-[moveBand_8s_linear_infinite]"></div> -->
+                  </div>
+                </div>
+              </div>
+              <div id="television-lateral" class="grid grid-rows-[1.1fr_1fr] gap-6 m-[30px] ml-0">
+                <div
+                  id="dial-container"
+                  class="border-4 border-[#333] border-l-2 border-l-[#444] border-b-4 border-b-[#444] rounded-[10px] shadow-[-4px_4px_12px_#111_inset,-2px_4px_6px_#aaa] flex flex-col justify-center gap-[12px] items-center">
+                  <div
+                    id="nav-dial"
+                    class="w-[164px] h-[164px] border-4 border-[#6e706f] rounded-full shadow-[-8px_4px_8px_#111,0_0_2px_4px_#000] flex justify-center items-center relative cursor-grab bg-[#ccc]"
+                    style="--value: 0deg">
+                    <div id="nav-data-container" class="flex justify-center w-full h-full">
+                      <div id="nav-data-1" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center">Accueil</div>
+                      <div id="nav-data-3" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center rotate-[60deg]">Password</div>
+                      <div id="nav-data-5" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center rotate-[120deg]">Tournoi</div>
+                      <div id="nav-data-7" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center rotate-[180deg]">Dashboard</div>
+                      <div id="nav-data-9" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center rotate-[240deg]">Profil</div>
+                      <div id="nav-data-11" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center rotate-[300deg]">A propos</div>
+                    </div>
+                    <div id="nav-dial-core" class="w-28 h-28 rounded-full absolute bg-[conic-gradient(#eee_0deg_45deg,#666_70deg_285deg,#eee_320deg)]"></div>
+                    <div
+                      id="nav-selector"
+                      class="absolute w-3/4 h-2 bg-[linear-gradient(#666_30%,#aaa_40%)] border-2 border-[#666] rounded-[8px/16px] [transform:rotate(calc(var(--value)_-_90deg))] transition-transform duration-[250ms] linear"></div>
+                  </div>
+                </div>
+                <div id="speaker-container" class="grid grid-cols-6 gap-y-0.5 gap-x-0 mb-6 mx-1">
+                  <div id="speaker-1" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-2" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-3" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-4" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-5" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-6" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-7" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-8" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-9" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-10" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-11" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-12" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-13" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-14" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-15" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-16" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-17" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-18" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-19" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-20" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-21" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-22" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-23" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-24" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-25" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-26" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-27" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-28" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-29" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-30" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-31" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-32" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-33" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-34" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-35" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-36" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-37" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-38" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-39" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-40" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-41" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-42" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-43" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-44" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-45" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-46" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-47" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                  <div id="speaker-48" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
+                </div>
+              </div>
+              <div id="buttons-container" class="absolute bottom-[60px] right-[90px] w-[120px] flex justify-between">
+                <div id="button-container-1" class="w-12 h-12 bg-[linear-gradient(to_bottom,#fff_40%,#aaa_50%_55%,#666_70%)] rounded-full flex justify-center items-center">
+                  <div
+                    id="button-1"
+                    onclick="SPA.navigateTo('/home')"
+                    class="w-7 h-7 rounded-full bg-[linear-gradient(to_top,#fff_40%,#aaa_50%_55%,#666_70%)] shadow-[-2px_-2px_2px_4px_#000] transform translate-x-1 translate-y-0.5 transition-all duration-100 cursor-pointer active:translate-x-0 active:translate-y-0 active:shadow-[0_0_2px_4px_#000]"></div>
+                </div>
+                <div id="button-container-2" class="w-12 h-12 bg-[linear-gradient(to_bottom,#fff_40%,#aaa_50%_55%,#666_70%)] rounded-full flex justify-center items-center">
+                  <div
+                    id="button-2"
+                    onclick="turnOnTheTv()"
+                    class="w-7 h-7 rounded-full bg-[linear-gradient(to_top,#fff_40%,#aaa_50%_55%,#666_70%)] shadow-[-2px_-2px_2px_4px_#000] transform translate-x-1 translate-y-0.5 transition-all duration-100 cursor-pointer active:translate-x-0 active:translate-y-0 active:shadow-[0_0_2px_4px_#000]"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="television-base"
+            class="w-[700px] h-[50px] bg-gradient-to-b from-[#9aad8e] to-[#6b7a5f] shadow-[0_16px_8px_#0009] flex justify-between items-center before:content-[''] before:block before:w-4 before:h-full before:bg-gradient-to-b before:from-[#9aad8e] before:to-[#6b7a5f] before:transform before:-translate-x-1 before:skew-x-[10deg] after:content-[''] after:block after:w-4 after:h-full after:bg-gradient-to-b after:from-[#9aad8e] after:to-[#6b7a5f] after:transform after:translate-x-1 after:-skew-x-[10deg]">
+            <div id="slots-left" class="w-1/2 h-[30px] flex justify-center">
+              <div id="slot-left-1" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
+              <div id="slot-left-2" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
+              <div id="slot-left-3" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
+            </div>
+            <div id="slots-right" class="w-1/2 h-[30px] flex justify-center">
+              <div id="slot-right-1" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
+              <div id="slot-right-2" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
+              <div id="slot-right-3" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
+              <div id="slot-right-4" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
+              <div id="slot-right-5" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
+              <div id="slot-right-6" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
+            </div>
+          </div>
+          <div id="foot-container" class="w-[50%] flex justify-between">
+            <div id="foot-left" class="w-12 h-6 bg-[#9aad8e] shadow-[8px_0_#6b7a5f]"></div>
+            <div id="foot-right" class="w-12 h-6 bg-[#9aad8e] shadow-[-8px_0_#6b7a5f]"></div>
+          </div>
         </div>
-        
-        <main id="content"> </main>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                // Positionnement correct de la TV
-                const container = document.querySelector('.container');
-                if (container) {
-                    container.style.position = 'fixed';
-                    container.style.top = '0';
-                    container.style.left = '0';
-                    container.style.width = '100%';
-                    container.style.height = '100%';
-                    container.style.zIndex = '1';
-                    console.log('TV container positioned');
-                }
-                
-                // Ajoute la télécommande cartoon sur toutes les pages
-                if (typeof SPA !== 'undefined' && SPA.addGlobalRemoteControl) {
-                    SPA.addGlobalRemoteControl();
-                } else {
-                    console.error("La fonction SPA.addGlobalRemoteControl n'est pas disponible");
-                }
-                
-                // S'assurer que le contenu principal est au-dessus de la TV
-                const main = document.querySelector('main');
-                if (main) {
-                    main.style.position = 'relative';
-                    main.style.zIndex = '10';
-                    console.log('Main content positioned above TV');
-                }
-            });
-        </script>
-    </body>
+      </div>
+    </div>
+  </body>
 </html>
