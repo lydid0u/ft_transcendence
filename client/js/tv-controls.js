@@ -1,13 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Fonction pour initialiser les contrôles de la TV
   function initTVControls() {
-    console.log('Initialisation des contrôles TV');
     const tv = document.querySelector(".tv");
     if (!tv) {
       console.error('TV non trouvée dans le DOM');
       return;
     }
-    console.log('TV trouvée dans le DOM');
     
     const powerButton = document.getElementById("button-2");
     const homeButton = document.getElementById("button-1");
@@ -58,9 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!target) return;
             const realId = target.id;
             
-            // CORRECTION: Naviguer directement avec la bonne route
             const targetRoute = labelRouteMap[realId];
-            console.log('Clic sur', realId, 'navigation vers', targetRoute);
             
             if (typeof SPA !== 'undefined' && typeof SPA.navigateTo === 'function') {
               SPA.navigateTo(targetRoute);
@@ -112,25 +108,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (powerButton) {
       powerButton.addEventListener("click", (e) => {
         //ajouter la logique pour allumer/éteindre la TV
-        console.log("Power button cliqué!");
         tv.classList.toggle("on");
       });
     }
     if (homeButton) {
       homeButton.addEventListener("click", (e) => {
        SPA.navigateTo('/home');
-       console.log("Home button cliqué!");
       });
     } 
   }
 
   initTVControls();
   if (typeof SPA !== 'undefined') {
-    console.log('SPA détectée, configuration des gestionnaires de changement de page');
-    
     // Essayer de déterminer si nous sommes sur la landing page
     function handlePageChange() {
-      console.log('Changement de page détecté');
       const container = document.querySelector('.container');
       
       // Tester tous les cas de route vers la landing page
@@ -139,11 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             window.location.pathname === '/' || 
                             window.location.pathname === '/landing';
       
-      console.log('Page actuelle:', window.location.pathname, 'isLandingPage:', isLandingPage);
-      
       if (isLandingPage) {
         if (container) container.style.display = 'none';
-        console.log('TV masquée (landing page)');
       } else {
         if (container) {
           container.style.display = 'flex';
@@ -153,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
           container.style.width = '100%';
           container.style.height = '100%';
           container.style.zIndex = '1';
-          console.log('TV visible (page normale)');
         }
       }
       
@@ -175,7 +162,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 });
-
-function turnOnTheTv() {
-
-}

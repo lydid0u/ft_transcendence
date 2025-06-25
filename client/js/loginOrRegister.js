@@ -50,6 +50,8 @@ async function login() {
 async function register() {
     const form = document.getElementById('register-form');
     if (form) {
+        alert("register function called");
+        alert("Inscription");
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
@@ -62,6 +64,8 @@ async function register() {
             const messageDiv = document.getElementById('message');
 
             if (createPassword === confirmPassword) {
+                alert("Les mots de passe correspondent, vous pouvez continuer l'inscription.");
+                console.log("Passwords match, proceeding with registration...");
                 try {
                     const response = await fetch('http://localhost:3000/auth/register', {
                         method: 'POST',
@@ -95,12 +99,15 @@ async function register() {
                     if (messageDiv) {
                         messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
                         messageDiv.style.color = "red";                            
+
                     }
                 }  
             }
             else {
-                    messageDiv.textContent = "Les mots de passe ne correspondent pas, reessayez.";
-                    messageDiv.style.color = "red";
+                    if (messageDiv) {
+                        messageDiv.textContent = "Les mots de passe ne correspondent pas, réessayez.";
+                        messageDiv.style.color = "red";
+                    }
             }
     })
 }

@@ -48,7 +48,6 @@ body {
 }
 
 
-/* Styles pour la Landing Page avec tv.gif en background */
 .landing-container {
     min-height: 100vh;
     background: url('gif/tv.gif') no-repeat center center;
@@ -63,7 +62,6 @@ body {
     overflow: hidden;
 }
 
-/* Overlay pour améliorer la lisibilité du texte */
 .landing-container::before {
     content: '';
     position: absolute;
@@ -138,7 +136,6 @@ body {
     transform: translateY(-1px);
 }
 
-/* Effet d'ondulation au clic */
 .enter-button::before {
     content: '';
     position: absolute;
@@ -160,7 +157,6 @@ body {
     left: 50%;
 }
 
-/* Animations de la landing page */
 @keyframes slideInDown {
     from {
         opacity: 0;
@@ -185,12 +181,7 @@ body {
     }
 }
 
-/* Cache la navigation sur la landing page */
-.landing-page nav {
-    display: none;
-}
 
-/* Styles pour la page de transition VHS */
 .vhs-transition {
     position: fixed;
     top: 0;
