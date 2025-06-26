@@ -24,6 +24,32 @@ async function userRoutes(fastify, options)
         })
     });
 
+    fastify.patch('/user/avatar', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
+    {
+        try
+        {
+            await fastify.dbPatch.addOrChangeAvatar(request);
+            reply.send({success : true, message : "Votre avatar a bien été upload"})
+        }
+        catch (err)
+        {
+            return reply.status(400).send({success: false, message: "Erreur lors de l'ajout d'avatar", error: err.message});
+        }        
+    })
+
+    fastify.patch('/user/username', {preValidation : [fastify.prevalidate]}, async (request, reply) => {
+        try
+        {
+            const {newusername} = request.body;
+            await fastify.dbPatch.changeUsername(newusername, request.user.email);
+            reply.send({success : true, message : "Votre pseudo a bien été modifié"});
+        }
+        catch (err)
+        {
+            return reply.status(400).send({success : false, message : "Erreur lors du changement d'username", error : err.message});
+        }
+    })
+
 }
 
 export default fp(userRoutes);

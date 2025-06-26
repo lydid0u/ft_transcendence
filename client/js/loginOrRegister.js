@@ -53,12 +53,10 @@ async function register() {
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const firstName = document.getElementById("firstName").value;
-            const lastName = document.getElementById("lastName").value; 
-            const email = document.getElementById("emailRegister").value;
-            const pseudo = document.getElementById("pseudo").value;
-            const createPassword = document.getElementById("createPassword").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
+            const email = document.getElementById("emailRegister").value || "test@test.fr";
+            const pseudo = document.getElementById("pseudo").value || "test";
+            const createPassword = document.getElementById("createPassword").value  || "123";
+            const confirmPassword = document.getElementById("confirmPassword").value || "123";;
             const messageDiv = document.getElementById('message');
 
             if (createPassword === confirmPassword) {
@@ -67,7 +65,7 @@ async function register() {
                     const response = await fetch('http://localhost:3000/auth/register', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ firstName, lastName, email, pseudo, password: createPassword })
+                        body: JSON.stringify({ email, pseudo, password: createPassword })
                     });
                 
                     if (response.ok) {
