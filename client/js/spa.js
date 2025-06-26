@@ -94,7 +94,6 @@ const SPA = {
                         }
                     );
                 }
-
                 // Vérifier si l'utilisateur est déjà connecté
                 const savedUser = localStorage.getItem('googleUser');
                 if (savedUser) {
@@ -153,7 +152,6 @@ const SPA = {
     },
 
     navigateTo: function (route) {
-        // fonction membre qui vient de l'API History et qui change l'url sans recharger la page
         history.pushState(null, null, route);
         this.loadRoute(route);
         this.setCurrentPageToActive(route);
