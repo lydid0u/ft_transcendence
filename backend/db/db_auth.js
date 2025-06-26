@@ -43,7 +43,7 @@ async function dbFunction(fastify, options)
                 if (user)
                     throw new Error("Username already taken");
                 const newpass = await bcrypt.hash(password, saltRounds);
-                await db.run('INSERT INTO users (email, password, username) VALUES (?, ?, ?)', email, newpass, username);
+                await db.run('INSERT INTO users (email, password, username, picture) VALUES (?, ?, ?, ?)', email, newpass, username, "default.png");
                 user = await db.get('SELECT * FROM users WHERE email = ?', email);
                 return (user); 
             }
@@ -69,18 +69,6 @@ async function dbFunction(fastify, options)
                 throw new Error('Wrong mail or password');
             }
             return user;
-        },
-
-        async changePassword(email, password)
-        {
-            let user = await db.get('SELECT password FROM users WHERE email = ?', email);
-            if (user)
-            {
-                const newpass = await bcrypt.hash(password, saltRounds);
-                user = await db.run('UPDATE users SET password = ? WHERE email = ?', newpass, email);
-            }
-            else
-                throw new Error ("Email doesn't exist");
         },
 
         async showTableUsers()

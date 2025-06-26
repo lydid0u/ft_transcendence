@@ -1,6 +1,5 @@
 import fastify from 'fastify';
 import fp from 'fastify-plugin'
-import db from './db.js';
 
 async function utilsDbFunc(fastify, options)
 {
