@@ -33,7 +33,7 @@ fastify.decorate('nodemailer', transporter);
 // Replace your current cors registration with this:
 fastify.register(cors, {
   origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Replace with your actual frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -43,6 +43,7 @@ fastify.register(cors, {
 
 fastify.decorate('prevalidate', async function(request, reply) {
   try {
+    console.log("Verifying JWT token...");
     await request.jwtVerify()
   } catch (err) {
     reply.code(401).send({ error: 'Unauthorized', message: 'Invalid or missing token' })
