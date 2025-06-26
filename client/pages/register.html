@@ -1,30 +1,41 @@
-<div class="page-content">
-    <h1>register</h1>
-    <div class="divregister">
-        <form class="register" id="register-form" style="display: flex; flex-direction: column; gap: 1rem;">
-                <label for="firstName">Prenom</label>
-                <input type="text" id="firstName" name="firstName" placeholder="...">
-
-                <label for="lastName">Nom</label>
-                <input type="text" id="lastName" name="lastName" placeholder="...">
-
-                <label for="email">Email</label>
-                <input type="text" id="emailRegister" name="email" placeholder="...">
-
-                <label for="pseudo">Pseudo</label>
-                <input type="text" id="pseudo" name="pseudo" placeholder="...">
-
-                <label for="createPassword">Mot de passe</label>
-                <input type="text" id="createPassword" name="createPassword" placeholder="...">
-
-                <label for="confirmPassword">Confirme ton mot de passe</label>
-                <input type="text" id="confirmPassword" name="confirmPassword" placeholder="...">
-                
-            <button type="submit" class="loginBtn"  style="background: #007bff; color: white;">Valider</button>
-        </form>        
-        <div id="message" style="margin-top: 1rem; color: red;"></div>
-        <div class="container-signin">
-          <p>Already have an account? <a href="/login" data-route="/login" style="color: #007bff;" >Sign in</a>.</p>
+<div class="flex flex-col items-center rounded-[50px] justify-center h-full w-full p-8 bg-gradient-to-b from-stone-200 to-stone-300">
+    <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-stone-700">Inscription</h1>
+            <p class="text-stone-500 mt-2">Créez votre compte</p>
         </div>
-    </div>                                                                                                                                                              
+
+        <form class="space-y-4" id="register-form">
+            <div>
+                <label for="firstName" class="block text-sm font-medium text-stone-600">Prénom</label>
+                <input type="text" id="firstName" name="firstName" placeholder="..." class="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500">
+            </div>
+            <div>
+                <label for="lastName" class="block text-sm font-medium text-stone-600">Nom</label>
+                <input type="text" id="lastName" name="lastName" placeholder="..." class="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500">
+            </div>
+            <div>
+                <label for="emailRegister" class="block text-sm font-medium text-stone-600">Email</label>
+                <input type="text" id="emailRegister" name="email" placeholder="..." class="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500">
+            </div>
+            <div>
+                <label for="pseudo" class="block text-sm font-medium text-stone-600">Pseudo</label>
+                <input type="text" id="pseudo" name="pseudo" placeholder="..." class="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500">
+            </div>
+            <div>
+                <label for="createPassword" class="block text-sm font-medium text-stone-600">Mot de passe</label>
+                <input type="password" id="createPassword" name="createPassword" placeholder="..." class="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500">
+            </div>
+            <div>
+                <label for="confirmPassword" class="block text-sm font-medium text-stone-600">Confirmer le mot de passe</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="..." class="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500">
+            </div>
+            
+            <button type="submit" id="submitRegister" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-stone-600 hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500">Valider</button>
+        </form>        
+        <div id="message" class="mt-4 text-center text-red-500"></div>
+        <div class="mt-4 text-sm text-center text-stone-600">
+          <p>Déjà un compte? <a href="/login" data-route="/login" class="font-medium text-stone-600 hover:text-stone-500">Connectez-vous</a>.</p>
+        </div>
+    </div>
 </div>
