@@ -4,6 +4,8 @@ import dbFunction from './db/db_auth.js';
 import dbFunctionPatch from './db/db_patch.js';
 import userRoutes from './routes/user.js';
 import authGoogle from './routes/auth.js'
+import tableFriends from './db/db_friends.js'
+import friendsRoutes from './routes/friends.js'
 import fastifyJwt from '@fastify/jwt';
 import utilsDbFunc from './db/utils.js'
 import dotenv from 'dotenv';
@@ -72,7 +74,9 @@ fastify.register(dbFunction);
 fastify.register(utilsDbFunc);
 fastify.register(dbFunctionPatch);
 fastify.register(userRoutes);
+fastify.register(friendsRoutes);
 fastify.register(authGoogle);
+fastify.register(tableFriends);
 fastify.register(fastifyStatic, {
   root: avatarDir,         // Le dossier où sont stockés tes avatars
   prefix: '/avatar/',      // L’URL publique pour accéder aux fichiers
