@@ -5,7 +5,7 @@ async function utilsDbFunc(fastify, options)
 {
     const utilsDb =
     {
-        async getoneUser(email)
+        async getOneUser(email)
         {
             const user = await fastify.db.connection.get('SELECT * FROM users WHERE email = ?', email);
             return user;

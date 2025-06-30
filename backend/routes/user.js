@@ -8,9 +8,12 @@ async function userRoutes(fastify, options)
 
     fastify.get('/user', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        const user = await fastify.db.getOneUser(request.email);
+        const user = await fastify.utilsDb.getOneUser(request.user.email);
         if(user)
+        {
+            console.log("user found", user);
             reply.send({user})
+        }
     }); 
 
     fastify.get('/db/users', async (request, reply) => {
@@ -36,7 +39,10 @@ async function userRoutes(fastify, options)
         try
         {
             await fastify.dbPatch.addOrChangeAvatar(request);
-            reply.send({success : true, message : "Votre avatar a bien été upload"})
+            const user = await fastify.utilsDb.getOneUser(request.user.email);
+            if (!user.picture)
+                return reply.status(400).send({success: false, message: "Erreur lors de l'ajout d'avatar, l'image est peut-être trop grande"});
+            reply.send({success : true, message : "Votre avatar a bien été upload", newUser: user});
         }
         catch (err)
         {
@@ -49,7 +55,8 @@ async function userRoutes(fastify, options)
         {
             const {newusername} = request.body;
             await fastify.dbPatch.changeUsername(newusername, request.user.email);
-            reply.send({success : true, message : "Votre pseudo a bien été modifié"});
+            const user = await fastify.utilsDb.getOneUser(request.user.email);
+            reply.send({success : true, message : "Votre pseudo a bien été modifié", newUser: user});
         }
         catch (err)
         {

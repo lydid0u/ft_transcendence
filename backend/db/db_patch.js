@@ -32,7 +32,7 @@ async function dbFunctionPatch(fastify, options)
             if (!file.mimetype.startsWith('image/')) {
                 throw new Error("Le fichier doit être une image.");
             }
-            const avatar = await file.toBuffer()
+            const avatar = await file.toBuffer() // ca throw si limage est trop grande pcq index.js
             if(!avatar)
                 throw new Error("Couldn't find avatar");
             const user = await fastify.db.connection.get('SELECT * FROM users  WHERE email = ?', request.user.email)
@@ -41,12 +41,15 @@ async function dbFunctionPatch(fastify, options)
                 try {
                     await fs.promises.unlink(oldAvatarPath);
                 } catch (err) {
+                    console.error("Erreur lors de la suppression de l'ancien avatar :", err);
                     // Ignore si le fichier n'existe pas
                 }
             }
-            const avatarPath = path.join(__dirname, '..', 'avatar', nameFile);
+            const dataUrl = `data:${file.mimetype};base64,${avatar.toString('base64')}`;
+            const avatarPath = path.join(__dirname, '..', 'avatar', file.filename);
+            console.log("avatarPath", avatarPath);
             await fs.promises.writeFile(avatarPath, avatar);
-            await fastify.db.connection.run('UPDATE users SET picture = ? WHERE email = ?', nameFile, request.user.email);
+            await fastify.db.connection.run('UPDATE users SET picture = ? WHERE email = ?', dataUrl, request.user.email);
         },
 
         async changeUsername(newusername, email)

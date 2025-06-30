@@ -129,9 +129,9 @@ const SPA = {
             title: 'profile',
             content: 'pages/profile.html',
             routeScript: function () {
-                const user = JSON.parse(localStorage.getItem('user'));
-                displayUserProfile(user);
+                displayUserProfile();
                 changeUsername();
+                changeAvatar();
             }
         }
     },

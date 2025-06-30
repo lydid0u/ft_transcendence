@@ -1,25 +1,6 @@
-function displayUserProfile(user) {
-  const userGreeting = document.getElementById("user-greeting");
-  if (userGreeting && user && user.username) {
-    userGreeting.textContent = `Salut ${user.username}`;
-  }
-
-  const userEmail = document.getElementById("user-email");
-  if (userEmail && user && user.email) {
-    userEmail.textContent = user.email;
-  }
-
-  const userAvatar = document.getElementById("user-avatar");
-  if (userAvatar && user && user.picture) {
-    userAvatar.src = user.picture;
-  }
-
-  getUserDataFromBackend();
-}
-
-async function getUserDataFromBackend() {
+async function displayUserProfile() {
   try {
-    const response = await fetch("http://localhost:3000/profile", {
+    const response = await fetch("http://localhost:3000/user", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -32,35 +13,50 @@ async function getUserDataFromBackend() {
     }
 
     const data = await response.json();
-    console.log("Données du backend:", data);
+    const user = data.user; 
+    console.log("User data received:", user); // Debug: voir ce que le backend renvoie
+    localStorage.setItem("user", JSON.stringify(user));
+    if (user && user.email) {
+      localStorage.setItem("email", user.email);
+    }
 
-    // Mettre à jour les statistiques dans la section dédiée
-    const userStats = document.getElementById("user-stats");
-    if (userStats) {
-      userStats.innerHTML = `
-                <div class="bg-stone-50 p-4 rounded-lg">
-                    <h3 class="text-lg font-semibold text-stone-600 mb-2">Statistiques</h3>
-                    <p class="text-stone-500">Parties jouées: <span class="font-medium text-stone-700">${
-                      data.gamesPlayed || 0
-                    }</span></p>
-                    <p class="text-stone-500">Victoires: <span class="font-medium text-green-600">${
-                      data.wins || 0
-                    }</span></p>
-                    <p class="text-stone-500">Défaites: <span class="font-medium text-red-600">${
-                      data.losses || 0
-                    }</span></p>
-                </div>`;
+    const userGreeting = document.getElementById("user-greeting");
+    if (userGreeting && user && user.username) {
+      userGreeting.textContent = `Salut ${user.username}`;
+    }
+
+    const userEmail = document.getElementById("user-email");
+    if (userEmail && user && user.email) {
+      userEmail.textContent = user.email;
+    }
+
+    const userAvatar = document.getElementById("user-avatar");
+    if (userAvatar && user && user.picture) {
+      userAvatar.src = user.picture;
     }
   } catch (error) {
     console.error("Erreur lors de la récupération des données:", error);
-    const userStats = document.getElementById("user-stats");
-    if (userStats) {
-      userStats.innerHTML = `
-                <div class="bg-red-50 p-4 rounded-lg">
-                    <p class="text-red-600">Erreur lors du chargement des données</p>
-                </div>
-            `;
+  }
+
+  // getUserDataFromBackend();
+}
+
+async function getUserDataFromBackend() {
+  try {
+    const response = await fetch("http://localhost:3000/user", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
     }
+
+  } catch (error) {
+    console.error("Erreur lors de la récupération des données:", error);
   }
 }
 
@@ -77,7 +73,6 @@ async function changeUsername() {
       const newUsername = document.getElementById("new-username").value;
       
       try {
-        alert(newUsername);
         const response = await fetch("http://localhost:3000/user/username", {
           method: "PATCH",
           headers: {
@@ -89,7 +84,6 @@ async function changeUsername() {
             email: localStorage.getItem("email"),
           }),
         });
-        alert(response.status);
         if (!response.ok) {
           messageDiv.textContent = `Erreur inattendue: ${JSON.stringify(
             await response.json()
@@ -104,6 +98,14 @@ async function changeUsername() {
         }
         messageDiv.textContent = "Pseudo change avec succes !";
         messageDiv.style.color = "green";
+        const data = await response.json();
+        const newUser = data.newUser;
+        alert(`New username: ${JSON.stringify(newUser)}`);
+        localStorage.setItem("user", JSON.stringify(newUser));
+        const userGreeting = document.getElementById("user-greeting");
+        if (userGreeting && newUser && newUser.username) {
+          userGreeting.textContent = `Salut ${newUser.username}`;
+        }
       } catch (error) {
         messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
         messageDiv.style.color = "red";
@@ -123,7 +125,8 @@ if (form) {
       const response = await fetch("http://localhost:3000/user/avatar", {
         method: "PATCH",
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+          "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`,
+          // "Content-Type": "multipart/form-data" // Ne pas définir Content-Type pour FormData
         },
         body: formData
       });
@@ -134,6 +137,14 @@ if (form) {
       }
       messageDiv.textContent = "Avatar changé avec succès !";
       messageDiv.style.color = "green";
+      const data = await response.json();
+      const user = data.newUser;
+      localStorage.setItem("user", JSON.stringify(user));
+      const userAvatar = document.getElementById("user-avatar");
+      if (userAvatar && user && user.picture) {
+        userAvatar.src = user.picture;
+      }
+      
     } catch (error) {
       messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
       messageDiv.style.color = "red";
