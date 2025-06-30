@@ -6,6 +6,13 @@ async function userRoutes(fastify, options)
         console.log("route '/'");
     });
 
+    fastify.get('/user', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
+    {
+        const user = await fastify.db.getOneUser(request.email);
+        if(user)
+            reply.send({user})
+    }); 
+
     fastify.get('/db/users', async (request, reply) => {
         const users = await fastify.db.showTableUsers()
         return (users);

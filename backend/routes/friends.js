@@ -12,7 +12,6 @@ async function friendsRoute(fastify, options)
     fastify.post('/friends-add', async (request, reply) =>
     {
         console.log("Add friends");
-        
     })
 }
 
