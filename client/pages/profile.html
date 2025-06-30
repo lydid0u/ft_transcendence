@@ -1,10 +1,106 @@
-<div class="flex flex-col items-center rounded-[50px] h-full w-full p-8 bg-gradient-to-b from-stone-200 to-stone-300 no-scrollbar">
-    <div class="w-full max-w-4xl">
-        <div class="text-center mb-12">
+<div
+  class="flex flex-col items-center rounded-[50px] h-full w-full p-8 bg-gradient-to-b from-stone-200 to-stone-300 no-scrollbar overflow-y-auto"
+>
+  <div class="w-full max-w-4xl">
+    <!-- <div class="text-center mb-12">
             <h1 class="text-5xl font-bold text-stone-400">Profil</h1>
-        </div>
-        <div class="bg-white p-8 rounded-lg shadow-lg w-full">
-            <!-- Le contenu du profil sera injecté ici par profile.js -->
-        </div>
+        </div> -->
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full">
+      <div class="flex flex-col items-center mb-8">
+        <img
+          id="user-avatar"
+          src="/media/logo.png"
+          alt="Avatar utilisateur"
+          class="w-32 h-32 rounded-full mb-4"
+        />
+        <h2
+          id="user-greeting"
+          class="text-3xl font-semibold text-stone-600"
+        ></h2>
+        <p id="user-email" class="text-stone-500"></p>
+      </div>
+      <div class="bg-stone-50 p-4 rounded-lg">
+        <h3 class="text-lg font-semibold text-stone-600 mb-2">Changer mon nom d'utilisateur</h3>
+        <form id="change-username-form" class="mt-4">
+          <input
+            type="text"
+            id="new-username"
+            class="border border-stone-300 p-2 rounded w-full"
+            placeholder="Nouveau nom d'utilisateur"
+            required
+          />
+          <button type="submit" class="mt-2 bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+            Mettre à jour le nom d'utilisateur
+          </button>
+        </form>
+      </div>
+    <div class="bg-stone-50 p-4 rounded-lg">
+        <h3 class="text-lg font-semibold text-stone-600 mb-2">Changer ma photo de profile</h3>
+        <form id="change-avatar-form" enctype="multipart/form-data" method="post">
+            <input type="file" name="avatar" accept="image/*" required>
+            <button type="submit" class="mt-2 bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Envoyer</button>
+        </form>
+      </div>
+      <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 text-center text-stone-700">
+          Changer de mot de passe
+        </h1>
+        <form class="space-y-4" id="change-password-form">
+          <div>
+            <label
+              for="actualPassword"
+              class="block text-sm font-medium text-stone-600"
+              >Mot de passe actuel</label
+            >
+            <input
+              type="password"
+              id="actualPassword"
+              name="actualPassword"
+              placeholder="..."
+              class="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500"
+            />
+          </div>
+
+          <div>
+            <label
+              for="newPassword"
+              class="block text-sm font-medium text-stone-600"
+              >Nouveau mot de passe</label
+            >
+            <input
+              type="password"
+              id="newPassword"
+              name="newPassword"
+              placeholder="..."
+              class="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500"
+            />
+          </div>
+
+          <div>
+            <label
+              for="confirmNewPassword"
+              class="block text-sm font-medium text-stone-600"
+              >Confirmer le nouveau mot de passe</label
+            >
+            <input
+              type="password"
+              id="confirmNewPassword"
+              name="confirmNewPassword"
+              placeholder="..."
+              class="mt-1 block w-full px-3 py-2 bg-white border border-stone-300 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            id="change-password-submit"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-stone-600 hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500"
+          >
+            Valider
+          </button>
+        </form>
+        <div id="message" class="mt-4 text-center text-red-500"></div>
+      </div>
     </div>
+  </div>
 </div>

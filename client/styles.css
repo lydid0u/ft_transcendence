@@ -50,7 +50,7 @@ body {
 
 .landing-container {
     min-height: 100vh;
-    background: url('gif/tv.gif') no-repeat center center;
+    background: url('media/tv.gif') no-repeat center center;
     background-size: cover;
     background-color: black;
     display: flex;

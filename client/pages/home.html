@@ -1,4 +1,4 @@
-<div class="flex flex-col items-center rounded-[50px] h-full w-full p-8 bg-gradient-to-b from-stone-200 to-stone-300 no-scrollbar">
+<div class="flex flex-col items-center rounded-[50px] h-full w-full p-8 bg-gradient-to-b from-stone-200 to-stone-300 no-scrollbar overflow-y-auto">
   <div class="w-full max-w-4xl">
     <!-- Hero Section -->
     <div class="mb-12 text-center">
@@ -22,4 +22,25 @@
       </div>
     </div>
   </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <button onclick="SPA.navigateTo('/home')" class="bg-stone-600 hover:bg-stone-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+        <div class="text-2xl mb-2">🧠</div>
+        <div>Partie de pong</div>
+      </button>
+
+      <button onclick="SPA.navigateTo('/tournoi')" class="bg-stone-600 hover:bg-stone-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+        <div class="text-2xl mb-2">🏆</div>
+        <div>Tournoi</div>
+      </button>
+      
+      <button onclick="SPA.navigateTo('/dashboard')" class="bg-stone-600 hover:bg-stone-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+        <div class="text-2xl mb-2">📊</div>
+        <div>Dashboard</div>
+      </button>
+      
+      <button onclick="SPA.navigateTo('/profile')" class="bg-stone-600 hover:bg-stone-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+        <div class="text-2xl mb-2">🎯</div>
+        <div>Profile</div>
+      </button>
+    </div>
 </div>

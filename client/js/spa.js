@@ -37,7 +37,7 @@ const SPA = {
         const app = document.querySelector('#content');
         app.innerHTML = `
             <div class="vhs-transition">
-                <img src="gif/vhs.gif" class="vhs-gif" alt="Transition VHS">
+                <img src="media/vhs.gif" class="vhs-gif" alt="Transition VHS">
             </div>
         `;
 
@@ -69,7 +69,10 @@ const SPA = {
 
         '/dashboard': {
             title: 'dashboard',
-            content: 'pages/dashboard.html'
+            content: 'pages/dashboard.html',
+            routeScript: function () {
+                getUserDataFromBackend();
+            }
         },
 
         '/login': {
@@ -128,6 +131,7 @@ const SPA = {
             routeScript: function () {
                 const user = JSON.parse(localStorage.getItem('user'));
                 displayUserProfile(user);
+                changeUsername();
             }
         }
     },
@@ -227,7 +231,7 @@ const SPA = {
         const contentDiv = document.querySelector(this.SPAattribute.contentDiv);
         contentDiv.innerHTML = `
             <div class="vhs-transition">
-                <img src="gif/error404.gif" class="vhs-gif" alt="Transition VHS">
+                <img src="media/error404.gif" class="vhs-gif" alt="Transition VHS">
             </div>
         `;
         document.title = 'Error 404 - Page Not Found';
