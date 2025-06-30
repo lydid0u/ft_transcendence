@@ -4,11 +4,12 @@ async function changePassword() {
 
   const form = document.getElementById("change-password-form");
   if (form) {
-    form.addEventListener("change-password-btn", async function (event) {
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
       const newPassword = document.getElementById("newPassword").value;
       const confirmNewPassword =
         document.getElementById("confirmNewPassword").value;
-      const email = localStorage.getItem(email);
 
       if (newPassword != confirmNewPassword) {
         messageDiv.textContent =
@@ -21,12 +22,12 @@ async function changePassword() {
         const response = await fetch(
           "http://localhost:3000/auth/change-password",
           {
-            method: "POST",
+            method: "PATCH",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
             },
-            body: JSON.stringify({ email, newPassword }),
+            body: JSON.stringify({ password:newPassword }),
           }
         );
         if (!response.ok) {

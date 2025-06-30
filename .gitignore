@@ -1,2 +1,5 @@
 *.env
 *.db
+/backend/avatar/*
+!/backend/avatar/default.png
+node_modules
