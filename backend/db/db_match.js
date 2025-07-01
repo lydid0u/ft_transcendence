@@ -23,7 +23,7 @@
 //         }
 //     }
 //     fastify.decorate('dbMatches', dbMatches);
-//     await dbMatches.createTable();
+//     await dbMatches.createTableMatches();
 // };
 
 // export default fp(tableMatches);

@@ -194,6 +194,21 @@ async function authGoogle(fastify, options) {
     async (request, reply) => {
       try {
         console.log("Changing password for user:", request.user.email);
+        const { currpass, newpassword } = request.body;
+        await fastify.dbPatch.changePassword(request.user.email, currpass, newpassword);
+        reply.send({ success: true, message: "Password changed" });
+      } catch (err) {
+        reply.status(401).send({ success: false, message: err.message });
+      }
+    }
+  );
+
+  fastify.patch(
+    "/auth/reset-password",
+    { preValidation: [fastify.prevalidate] },
+    async (request, reply) => {
+      try {
+        console.log("Reseting password for user:", request.user.email);
         const { password } = request.body;
         await fastify.dbPatch.changePassword(request.user.email, password);
         reply.send({ success: true, message: "Password changed" });
