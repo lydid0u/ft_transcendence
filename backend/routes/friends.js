@@ -2,16 +2,25 @@ import fp from 'fastify-plugin'
 
 async function friendsRoute(fastify, options)
 {
-    fastify.get('/friends', async (request, reply) =>
+    fastify.get('/get-all-friends', async (request, reply) =>
     {
         console.log("Route friends");
         const table = await fastify.dbFriends.showTableFriends();
         return table;
     }),
 
-    fastify.post('/friends-add', async (request, reply) =>
+    fastify.patch('/friends', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        console.log("Add friends");
+        const {friend_delete} = request.body
+        fastify.dbFriends.deletefriend(request, friend_delete);
+        reply.send({ status: 'success' });
+    },
+
+    fastify.post('/friends-add', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
+    {
+        const { friend_nickname } = request.body;
+        await fastify.dbFriends.addFriends(request, friend_nickname);
+        reply.send({ status: 'success' });
     })
 }
 

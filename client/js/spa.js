@@ -117,6 +117,14 @@ const SPA = {
             }
         },
 
+        '/friends': {
+            title: 'friends',
+            content: 'pages/friends.html',
+            routeScript: function () {
+                displayFriendsList();
+            }
+        },
+
         '/changePassword': {
             title: 'changePassword',
             content: 'pages/changePassword.html',

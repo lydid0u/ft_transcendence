@@ -1,5 +1,5 @@
-# Makefile for Docker Compose Stack (Fastify + Vite + SQLite)
-# =============================================================
+# Makefile for Docker Compose Stack (Fastify + Vite TypeScript + SQLite)
+# =================================================================
 
 # Variables
 COMPOSE_FILE = docker-compose.yaml
@@ -29,7 +29,7 @@ start: ## Start all services in detached mode
 	@echo "$(BLUE)Frontend: http://localhost:5173$(NC)"
 	@echo "$(BLUE)Backend:  http://localhost:3000$(NC)"
 
-start-logs: ## Start all services and show logs
+dev: ## Start development environment with logs
 	@echo "$(YELLOW)Starting $(PROJECT_NAME) services with logs...$(NC)"
 	docker-compose -f $(COMPOSE_FILE) up --build
 
@@ -38,16 +38,11 @@ stop: ## Stop all services
 	docker-compose -f $(COMPOSE_FILE) stop
 	@echo "$(GREEN)Services stopped successfully!$(NC)"
 
-restart: ## Restart all services
-	@echo "$(YELLOW)Restarting $(PROJECT_NAME) services...$(NC)"
-	docker-compose -f $(COMPOSE_FILE) restart
-	@echo "$(GREEN)Services restarted successfully!$(NC)"
-
-restart-build: ## Restart all services with rebuild
+restart: ## Restart all services with rebuild
 	@echo "$(YELLOW)Restarting $(PROJECT_NAME) services with rebuild...$(NC)"
 	docker-compose -f $(COMPOSE_FILE) down
 	docker-compose -f $(COMPOSE_FILE) up -d --build
-	@echo "$(GREEN)Services restarted with rebuild successfully!$(NC)"
+	@echo "$(GREEN)Services restarted successfully!$(NC)"
 
 # Logs commands
 logs: ## Show logs from all services
@@ -59,29 +54,10 @@ logs-backend: ## Show logs from backend service only
 logs-frontend: ## Show logs from frontend service only
 	docker-compose -f $(COMPOSE_FILE) logs -f frontend
 
-logs-db: ## Show logs from database service only
-	docker-compose -f $(COMPOSE_FILE) logs -f db
-
-# Service management
-backend: ## Start only backend service
-	@echo "$(YELLOW)Starting backend service...$(NC)"
-	docker-compose -f $(COMPOSE_FILE) up -d --build backend db
-
-frontend: ## Start only frontend service
-	@echo "$(YELLOW)Starting frontend service...$(NC)"
-	docker-compose -f $(COMPOSE_FILE) up -d --build frontend
-
-db: ## Start only database service
-	@echo "$(YELLOW)Starting database service...$(NC)"
-	docker-compose -f $(COMPOSE_FILE) up -d --build db
-
 # Status and monitoring
 status: ## Show status of all services
 	@echo "$(YELLOW)$(PROJECT_NAME) Services Status:$(NC)"
 	docker-compose -f $(COMPOSE_FILE) ps
-
-top: ## Show running processes in containers
-	docker-compose -f $(COMPOSE_FILE) top
 
 # Shell access
 shell-backend: ## Access backend container shell
@@ -90,27 +66,13 @@ shell-backend: ## Access backend container shell
 shell-frontend: ## Access frontend container shell
 	docker-compose -f $(COMPOSE_FILE) exec frontend sh
 
-shell-db: ## Access database container shell
-	docker-compose -f $(COMPOSE_FILE) exec db sh
-
 # Database operations
-db-shell: ## Access SQLite database shell
-	docker-compose -f $(COMPOSE_FILE) exec db sqlite3 /data/database.sqlite
-
 db-backup: ## Backup database to ./backups/
 	@mkdir -p backups
 	@echo "$(YELLOW)Creating database backup...$(NC)"
 	docker-compose -f $(COMPOSE_FILE) exec db sqlite3 /data/database.sqlite ".backup /data/backup.db"
 	docker cp $$(docker-compose -f $(COMPOSE_FILE) ps -q db):/data/backup.db ./backups/database_$$(date +%Y%m%d_%H%M%S).db
 	@echo "$(GREEN)Database backup created in ./backups/$(NC)"
-
-db-restore: ## Restore database from backup (usage: make db-restore BACKUP=backup_file.db)
-	@if [ -z "$(BACKUP)" ]; then echo "$(RED)Usage: make db-restore BACKUP=backup_file.db$(NC)"; exit 1; fi
-	@if [ ! -f "./backups/$(BACKUP)" ]; then echo "$(RED)Backup file not found: ./backups/$(BACKUP)$(NC)"; exit 1; fi
-	@echo "$(YELLOW)Restoring database from $(BACKUP)...$(NC)"
-	docker cp ./backups/$(BACKUP) $$(docker-compose -f $(COMPOSE_FILE) ps -q db):/data/restore.db
-	docker-compose -f $(COMPOSE_FILE) exec db sh -c "cp /data/restore.db /data/database.sqlite"
-	@echo "$(GREEN)Database restored successfully!$(NC)"
 
 # Cleanup commands
 down: ## Stop and remove containers, networks
@@ -123,19 +85,6 @@ clean: ## Stop and remove containers, networks, and volumes
 	docker-compose -f $(COMPOSE_FILE) down -v
 	@echo "$(GREEN)Cleanup completed!$(NC)"
 
-clean-all: ## Stop and remove everything including images
-	@echo "$(RED)WARNING: This will remove all containers, networks, volumes AND images!$(NC)"
-	@echo "$(YELLOW)Press Ctrl+C to cancel, or Enter to continue...$(NC)"
-	@read
-	docker-compose -f $(COMPOSE_FILE) down -v --rmi all
-	@echo "$(GREEN)Complete cleanup finished!$(NC)"
-
-prune: ## Remove unused Docker resources
-	@echo "$(YELLOW)Pruning unused Docker resources...$(NC)"
-	docker system prune -f
-	docker volume prune -f
-	@echo "$(GREEN)Docker resources pruned!$(NC)"
-
 # Build commands
 build: ## Build all services without starting
 	@echo "$(YELLOW)Building $(PROJECT_NAME) services...$(NC)"
@@ -145,17 +94,17 @@ build-no-cache: ## Build all services without cache
 	@echo "$(YELLOW)Building $(PROJECT_NAME) services (no cache)...$(NC)"
 	docker-compose -f $(COMPOSE_FILE) build --no-cache
 
-# Development helpers
-dev: start-logs ## Start development environment with logs
-
-npm-backend: ## Run npm command in backend (usage: make npm-backend CMD="install package-name")
-	@if [ -z "$(CMD)" ]; then echo "$(RED)Usage: make npm-backend CMD=\"install package-name\"$(NC)"; exit 1; fi
-	docker-compose -f $(COMPOSE_FILE) exec backend npm $(CMD)
+# TypeScript helpers
+type-check: ## Check TypeScript types in frontend
+	docker-compose -f $(COMPOSE_FILE) exec frontend npm run type-check
 
 npm-frontend: ## Run npm command in frontend (usage: make npm-frontend CMD="install package-name")
 	@if [ -z "$(CMD)" ]; then echo "$(RED)Usage: make npm-frontend CMD=\"install package-name\"$(NC)"; exit 1; fi
 	docker-compose -f $(COMPOSE_FILE) exec frontend npm $(CMD)
 
-.PHONY: help start start-logs stop restart restart-build logs logs-backend logs-frontend logs-db \
-	backend frontend db status top shell-backend shell-frontend shell-db db-shell db-backup db-restore \
-	down clean clean-all prune build build-no-cache dev npm-backend npm-frontend
+npm-backend: ## Run npm command in backend (usage: make npm-backend CMD="install package-name")
+	@if [ -z "$(CMD)" ]; then echo "$(RED)Usage: make npm-backend CMD=\"install package-name\"$(NC)"; exit 1; fi
+	docker-compose -f $(COMPOSE_FILE) exec backend npm $(CMD)
+
+.PHONY: help start dev stop restart logs logs-backend logs-frontend status shell-backend shell-frontend \
+	db-backup down clean build build-no-cache type-check npm-frontend npm-backend
