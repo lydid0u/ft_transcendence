@@ -125,9 +125,9 @@ const SPA = {
             }
         },
 
-        '/changePassword': {
-            title: 'changePassword',
-            content: 'pages/changePassword.html',
+        '/pong': {
+            title: 'Pong',
+            content: 'pages/pong.html',
             routeScript: function () {
                 changePassword();
             }
@@ -137,9 +137,11 @@ const SPA = {
             title: 'profile',
             content: 'pages/profile.html',
             routeScript: function () {
-                displayUserProfile();
-                changeUsername();
-                changeAvatar();
+                setTimeout(() => {
+                    displayUserProfile();
+                    changeUsername();
+                    changeAvatar();
+                }, 0);
             }
         }
     },

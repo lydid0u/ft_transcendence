@@ -1,46 +1,85 @@
 async function displayUserProfile() {
   try {
+    const token = localStorage.getItem("jwtToken");
+    console.log("🔑 Token récupéré:", token ? "✅ Existe" : "❌ Manquant");
+    
+    if (!token) {
+      console.error("❌ Pas de token JWT trouvé");
+      return;
+    }
+
+    console.log("🌐 Tentative de connexion à l'API...");
+    
     const response = await fetch("http://localhost:3000/user", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
+    console.log("📡 Réponse API:", {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok
+    });
+
     if (!response.ok) {
-      throw new Error(`Erreur HTTP: ${response.status}`);
+      const errorText = await response.text();
+      console.error("❌ Erreur API:", errorText);
+      throw new Error(`Erreur HTTP: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const user = data.user; 
-    console.log("User data received:", user); // Debug: voir ce que le backend renvoie
+    console.log("✅ Données reçues:", data);
+    
+    const user = data.user;
+    console.log("👤 Objet utilisateur:", user);
+
+    // Vérifier si les éléments existent
+    const userGreeting = document.getElementById("user-greeting");
+    const userEmail = document.getElementById("user-email");
+    const userAvatar = document.getElementById("user-avatar");
+
+    console.log("🔍 Éléments DOM trouvés:", {
+      greeting: userGreeting ? "✅" : "❌",
+      email: userEmail ? "✅" : "❌",
+      avatar: userAvatar ? "✅" : "❌"
+    });
+
+    if (userGreeting && user && user.username) {
+      userGreeting.textContent = `Salut ${user.username}`;
+      console.log("✅ Greeting mis à jour");
+    }
+
+    if (userEmail && user && user.email) {
+      userEmail.textContent = user.email;
+      console.log("✅ Email mis à jour");
+    }
+
+    if (userAvatar && user && user.picture) {
+      userAvatar.src = user.picture;
+      console.log("✅ Avatar mis à jour");
+    }
+
     localStorage.setItem("user", JSON.stringify(user));
     if (user && user.email) {
       localStorage.setItem("email", user.email);
     }
 
-    const userGreeting = document.getElementById("user-greeting");
-    if (userGreeting && user && user.username) {
-      userGreeting.textContent = `Salut ${user.username}`;
-    }
-
-    const userEmail = document.getElementById("user-email");
-    if (userEmail && user && user.email) {
-      userEmail.textContent = user.email;
-    }
-
-    const userAvatar = document.getElementById("user-avatar");
-    if (userAvatar && user && user.picture) {
-      userAvatar.src = user.picture;
-    }
   } catch (error) {
-    console.error("Erreur lors de la récupération des données:", error);
+    console.error("💥 ERREUR DÉTAILLÉE:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    // Vérifier si c'est une erreur réseau
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      console.error("🌐 Erreur réseau - Vérifiez que votre serveur backend est lancé");
+    }
   }
-
-  // getUserDataFromBackend();
 }
-
 async function getUserDataFromBackend() {
   try {
     const response = await fetch("http://localhost:3000/user", {
