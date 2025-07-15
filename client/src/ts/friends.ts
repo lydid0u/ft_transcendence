@@ -1,11 +1,9 @@
-// friends.ts - Complete friends management application
-
-// Types and Interfaces
 interface Friend {
   id: number
-  user_id: number
-  friend_id: number
-  nickname?: string
+  user_id?: number
+  friend_id?: number
+  username?: string
+  email?: string
 }
 
 interface ApiResponse {
@@ -15,97 +13,70 @@ interface ApiResponse {
 
 type MessageType = "success" | "error" | "info"
 
-// API Class for handling backend requests
 class FriendsAPI {
   private baseUrl: string
 
-  constructor(baseUrl = "") {
+  constructor(baseUrl = "http://localhost:3000") {
     this.baseUrl = baseUrl
   }
 
   /**
    * Get all friends for the current user
    */
-  async getAllFriends(): Promise<Friend[]> {
+  async getAllFriends(): Promise<any> {
     try {
+      const token = localStorage.getItem("jwtToken");
+      
       const response = await fetch(`${this.baseUrl}/get-all-friends`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         credentials: "include", // Include cookies for authentication
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const friends: Friend[] = await response.json()
-      return friends
+      });
+      
+      const responseText = await response.text();
+      console.log("Server friends response:", responseText);
+      
+      // Parse la réponse à nouveau car .text() a déjà consommé le body
+      return JSON.parse(responseText);
     } catch (error) {
-      console.error("Error fetching friends:", error)
-      throw new Error("Impossible de récupérer la liste d'amis")
+      console.error("Error fetching friends:", error);
+      throw new Error(`HTTP error! status: 999`);
     }
   }
-
-  /**
-   * Add a new friend by nickname
-   */
-  async addFriend(friendNickname: string): Promise<ApiResponse> {
+    
+  async addFriend(username: string): Promise<ApiResponse> {
     try {
+      const token = localStorage.getItem("jwtToken");
+      console.log("Adding friend:", username);
+      
       const response = await fetch(`${this.baseUrl}/friends-add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         credentials: "include",
         body: JSON.stringify({
-          friend_nickname: friendNickname,
+          friend_nickname: username, // Le backend attend friend_nickname
         }),
-      })
+      });
 
+      const responseText = await response.text();
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+          throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result: ApiResponse = await response.json()
-      return result
+      const result: ApiResponse = JSON.parse(responseText);
+      return result;
     } catch (error) {
-      console.error("Error adding friend:", error)
-      throw new Error("Impossible d'ajouter cet ami")
-    }
-  }
-
-  /**
-   * Delete a friend by nickname
-   */
-  async deleteFriend(friendNickname: string): Promise<ApiResponse> {
-    try {
-      const response = await fetch(`${this.baseUrl}/friends`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          friend_delete: friendNickname,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const result: ApiResponse = await response.json()
-      return result
-    } catch (error) {
-      console.error("Error deleting friend:", error)
-      throw new Error("Impossible de supprimer cet ami")
+      throw new Error(error instanceof Error ? error.message : "Impossible d'ajouter cet ami");
     }
   }
 }
 
-// Main Application Class
 class FriendsApp {
   private friends: Friend[] = []
   private filteredFriends: Friend[] = []
@@ -136,11 +107,33 @@ class FriendsApp {
   }
 
   private init(): void {
+    // Vérifier si les éléments DOM existent
+    if (!this.searchInput || !this.addFriendBtn || !this.friendsList || 
+        !this.friendsCount || !this.loadingState || !this.emptyState || !this.messageContainer) {
+      console.error("DOM elements not found. Make sure the friends page is loaded correctly.");
+      // Afficher un message dans la console pour faciliter le débogage
+      console.log("Missing DOM elements:", {
+        searchInput: !!this.searchInput,
+        addFriendBtn: !!this.addFriendBtn,
+        friendsList: !!this.friendsList,
+        friendsCount: !!this.friendsCount,
+        loadingState: !!this.loadingState,
+        emptyState: !!this.emptyState,
+        messageContainer: !!this.messageContainer
+      });
+      return;
+    }
+    
     this.bindEvents()
     this.loadFriends()
   }
 
   private bindEvents(): void {
+    if (!this.searchInput || !this.addFriendBtn) {
+      console.error("Cannot bind events - DOM elements are missing");
+      return;
+    }
+
     // Search input event
     this.searchInput.addEventListener("input", (e: Event) => {
       const target = e.target as HTMLInputElement
@@ -161,67 +154,58 @@ class FriendsApp {
   }
 
   private async loadFriends(): Promise<void> {
-    try {
-      this.showLoading(true)
-      this.friends = await this.api.getAllFriends()
-      this.filteredFriends = [...this.friends]
-      this.renderFriends()
-      this.updateFriendsCount()
-    } catch (error) {
-      this.showMessage("Erreur lors du chargement des amis", "error")
-      console.error("Error loading friends:", error)
-    } finally {
-      this.showLoading(false)
+  try {
+    this.showLoading(true);
+    const response = await this.api.getAllFriends();
+    console.log("Réponse API complète:", response);
+    
+    // Extraire correctement les amis de la réponse
+    if (response && response.friends && Array.isArray(response.friends)) {
+      this.friends = response.friends;
+    } else if (Array.isArray(response)) {
+      this.friends = response;
+    } else {
+      this.friends = [];
+      console.error("Format de réponse inattendu:", response);
     }
+    
+    console.log("Amis extraits:", this.friends);
+    this.filteredFriends = [...this.friends];
+    this.renderFriends();
+    this.updateFriendsCount();
+  } catch (error) {
+    this.showMessage("Erreur lors du chargement des amis", "error");
+    console.error("❌ Error loading friends:", error);
+  } finally {
+    this.showLoading(false);
   }
+}
 
   private handleSearch(searchTerm: string): void {
     this.filteredFriends = this.friends.filter((friend) =>
-      friend.nickname?.toLowerCase().includes(searchTerm.toLowerCase()),
+      friend.username?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     this.renderFriends()
   }
 
   private async handleAddFriend(): Promise<void> {
-    const nickname = this.searchInput.value.trim()
-
-    if (!nickname) {
+    const username = this.searchInput.value.trim()
+    if (!username) {
       this.showMessage("Veuillez entrer un pseudo", "error")
       return
     }
-
-    // Check if friend already exists
-    if (this.friends.some((friend) => friend.nickname === nickname)) {
-      this.showMessage("Cet ami est déjà dans votre liste", "error")
-      return
-    }
-
     try {
-      const result = await this.api.addFriend(nickname)
+      const result = await this.api.addFriend(username)
       if (result.status === "success") {
         this.showMessage("Ami ajouté avec succès!", "success")
         this.searchInput.value = ""
-        await this.loadFriends() // Reload the friends list
+        // Ajouter un délai avant de recharger pour laisser le temps à la base de données
+        setTimeout(async () => {
+          await this.loadFriends() // Reload the friends list
+        }, 500);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Erreur lors de l'ajout de l'ami"
-      this.showMessage(errorMessage, "error")
-    }
-  }
-
-  private async handleDeleteFriend(nickname: string): Promise<void> {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer ${nickname} de vos amis?`)) {
-      return
-    }
-
-    try {
-      const result = await this.api.deleteFriend(nickname)
-      if (result.status === "success") {
-        this.showMessage("Ami supprimé avec succès!", "success")
-        await this.loadFriends() // Reload the friends list
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erreur lors de la suppression de l'ami"
       this.showMessage(errorMessage, "error")
     }
   }
@@ -235,45 +219,27 @@ class FriendsApp {
 
     this.emptyState.classList.add("hidden")
 
-    this.friendsList.innerHTML = this.filteredFriends.map((friend) => this.createFriendHTML(friend)).join("")
-
-    // Add event listeners to delete buttons
-    this.friendsList.querySelectorAll("[data-delete-friend]").forEach((button) => {
-      button.addEventListener("click", (e) => {
-        const nickname = (e.target as HTMLElement).getAttribute("data-delete-friend")
-        if (nickname) {
-          this.handleDeleteFriend(nickname)
-        }
-      })
-    })
+    // Générer le HTML sans bouton de suppression
+    this.friendsList.innerHTML = this.filteredFriends
+      .map((friend) => this.createFriendHTML(friend))
+      .join("")
   }
 
   private createFriendHTML(friend: Friend): string {
-    const nickname = friend.nickname || "Utilisateur inconnu"
-    const initial = nickname.charAt(0).toUpperCase()
+    const username = friend.username || "Utilisateur inconnu"
+    const initial = username.charAt(0).toUpperCase()
 
     return `
       <li class="p-4 hover:bg-gray-50 transition-colors duration-150 animate-slide-up">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center">
           <div class="flex items-center space-x-4">
             <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
               ${initial}
             </div>
             <div>
-              <h3 class="text-lg font-medium text-gray-900">${nickname}</h3>
-              <p class="text-sm text-gray-500">ID: ${friend.friend_id}</p>
+              <h3 class="text-lg font-medium text-gray-900">${username}</h3>
+              <p class="text-sm text-gray-500">Email: ${friend.email || 'Non renseigné'}</p>
             </div>
-          </div>
-          <div class="flex items-center space-x-2">
-            <button 
-              data-delete-friend="${nickname}"
-              class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors duration-150"
-              title="Supprimer cet ami"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-              </svg>
-            </button>
           </div>
         </div>
       </li>
@@ -330,10 +296,32 @@ class FriendsApp {
   }
 }
 
-// Initialize the app when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-  new FriendsApp()
-})
+// Fonction qui sera appelée par le SPA router
+function displayFriendsList() {
+  console.log("🔄 Initialisation de la liste d'amis via displayFriendsList()");
+  // Petite temporisation pour s'assurer que le DOM est complètement chargé
+  setTimeout(() => {
+    if (document.getElementById("friends-list") && 
+        document.getElementById("search-input")) {
+      console.log("✅ FriendsApp: Éléments DOM trouvés, initialisation");
+      new FriendsApp();
+    } else {
+      console.warn("⚠️ FriendsApp: Éléments DOM non trouvés");
+    }
+  }, 100);
+}
 
 // Export for potential external use
-export { FriendsApp, FriendsAPI }
+export { FriendsApp, FriendsAPI, displayFriendsList }
+
+// Make functions available globally for the SPA router
+declare global {
+  interface Window {
+    FriendsApp: typeof FriendsApp;
+    displayFriendsList: typeof displayFriendsList;
+  }
+}
+
+// Expose to window for SPA
+window.FriendsApp = FriendsApp;
+window.displayFriendsList = displayFriendsList;

@@ -18,11 +18,25 @@ async function tableFriends(fastify, options)
                 )`)
         },
 
-        async showTableFriends()
-        {
-            console.log("HERE");
-            const friends = await fastify.db.connection.all('SELECT * FROM friends;')
-            return friends;
+       async showTableFriends() 
+       {
+            console.log("Récupération de tous les amis");
+    
+            const friends = await fastify.db.connection.all(`
+                SELECT 
+                    f.id, 
+                    f.user_id, 
+                    f.friend_id,
+                    u.username, 
+                    u.email
+                FROM 
+                    friends f
+                JOIN 
+                    users u ON f.friend_id = u.id
+            `);
+    
+            console.log("Amis trouvés:", friends.length);
+            return { status: 'success', friends: friends };
         },
 
         async addFriends(request, friend_nickname)
