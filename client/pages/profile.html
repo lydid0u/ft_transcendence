@@ -19,6 +19,45 @@
         <p id="user-email" class="text-slate-600 text-lg"></p>
       </div>
     </div>
+    <!-- changer statut online busy or offline -->
+       <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 mb-6">
+         <!-- <div class="relative inline-block w-full"> -->
+           <h3 class="text-lg font-semibold text-stone-600 mb-2">
+             Changer de status
+           </h3>
+           <p class="text-sm text-gray-500 mt-2">
+             Montre a tes amis que tu es disponible pour jouer !
+           </p>
+           <!-- Bouton principal qui affiche le texte actuel -->
+            <button id="dropdownButton"
+                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors duration-200 flex items-center justify-between">
+                <span id="buttonText">Choisi ton status</span>
+                <!-- Icône de flèche qui tourne quand le menu est ouvert -->
+                <svg id="dropdownArrow" class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+           
+            <!-- Menu déroulant (caché par défaut) -->
+            <div id="dropdownMenu"
+                 class="hidden absolute top-full left-0 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                <!-- Option 1 -->
+                <button class="dropdown-option w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors duration-150 first:rounded-t-lg"
+                        data-value="option1">
+                    Option 1
+                </button>
+                <!-- Option 2 -->
+                <button class="dropdown-option w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors duration-150"
+                        data-value="option2">
+                    Option 2
+                </button>
+                <!-- Option 3 -->
+                <button class="dropdown-option w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors duration-150 last:rounded-b-lg"
+                        data-value="option3">
+                    Option 3
+                </button>
+            </div>
+        </div>
 
     <!-- 2FA Section -->
     <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20">
