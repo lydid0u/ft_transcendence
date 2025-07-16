@@ -117,9 +117,17 @@ const SPA = {
             }
         },
 
-        '/changePassword': {
-            title: 'changePassword',
-            content: 'pages/changePassword.html',
+        '/friends': {
+            title: 'friends',
+            content: 'pages/friends.html',
+            routeScript: function () {
+                displayFriendsList();
+            }
+        },
+
+        '/pong': {
+            title: 'Pong',
+            content: 'pages/pong.html',
             routeScript: function () {
                 changePassword();
             }
@@ -129,9 +137,11 @@ const SPA = {
             title: 'profile',
             content: 'pages/profile.html',
             routeScript: function () {
-                displayUserProfile();
-                changeUsername();
-                changeAvatar();
+                setTimeout(() => {
+                    displayUserProfile();
+                    changeUsername();
+                    changeAvatar();
+                }, 0);
             }
         }
     },

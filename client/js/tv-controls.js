@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Mapping explicite labelId -> route
       const labelRouteMap = {
         'nav-data-1': '/home',           // Accueil
-        'nav-data-3': '/changePassword', // Changer mot de passe
+        'nav-data-3': '/pong',           // Pong
         'nav-data-5': '/tournoi',        // Tournoi
         'nav-data-7': '/dashboard',      // Dashboard
         'nav-data-9': '/profile',        // Profil
