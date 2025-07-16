@@ -1,0 +1,112 @@
+<div class="flex flex-col items-center rounded-[50px] h-full w-full p-8 bg-gradient-to-b from-stone-200 to-stone-300 no-scrollbar overflow-y-auto">
+    <div class="w-full max-w-4xl text-center">
+        <h1 class="text-5xl font-bold mb-12 text-stone-400">HISTORIQUE DES MATCHS</h1>
+
+        <!-- Stats Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
+                <h3 class="text-2xl font-bold text-stone-800 mb-4">Taux de Victoire</h3>
+                <canvas id="winrateChart" width="180" height="180"></canvas>
+                <div class="mt-4 text-lg text-stone-700 js-winrate">--% Win</div>
+            </div>
+            <div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
+                <h3 class="text-2xl font-bold text-stone-800 mb-4">Parties Jouées</h3>
+                <div class="text-5xl font-extrabold text-stone-700 mb-2 js-games-played">--</div>
+                <div class="flex gap-4 justify-center">
+                    <div class="flex flex-col items-center">
+                        <span class="text-blue-600 font-bold text-xl js-wins">--</span>
+                        <span class="text-stone-500 text-sm">Victoires</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-red-600 font-bold text-xl js-losses">--</span>
+                        <span class="text-stone-500 text-sm">Défaites</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Match History Section -->
+        <div class="bg-white rounded-2xl shadow p-6 mb-8">
+            <h3 class="text-2xl font-bold text-stone-800 mb-4">Derniers Matchs</h3>
+            <div id="history-loading" class="text-center py-4">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-stone-600"></div>
+                <p class="mt-2 text-stone-600">Chargement de l'historique...</p>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="text-stone-500 text-sm">
+                        <th class="py-2">Date</th>
+                        <th class="py-2">Adversaire</th>
+                        <th class="py-2">Score</th>
+                        <th class="py-2">Résultat</th>
+                    </tr>
+                </thead>
+                <tbody class="js-match-history">
+                    <!-- Exemple de ligne de match victorieux -->
+                    <tr class="bg-blue-50 border-b border-blue-100">
+                        <td class="py-3 px-2">16/07/2025</td>
+                        <td class="py-3 px-2 font-medium">Joueur 1</td>
+                        <td class="py-3 px-2 font-bold">11 - 5</td>
+                        <td class="py-3 px-2">
+                            <span class="text-blue-600 font-bold">Victoire</span>
+                        </td>
+                    </tr>
+                    <!-- Exemple de ligne de match perdu -->
+                    <tr class="bg-red-50 border-b border-red-100">
+                        <td class="py-3 px-2">15/07/2025</td>
+                        <td class="py-3 px-2 font-medium">Joueur 2</td>
+                        <td class="py-3 px-2 font-bold">7 - 11</td>
+                        <td class="py-3 px-2">
+                            <span class="text-red-600 font-bold">Défaite</span>
+                        </td>
+                    </tr>
+                    <!-- Exemple d'un autre match victorieux -->
+                    <tr class="bg-blue-50 border-b border-blue-100">
+                        <td class="py-3 px-2">14/07/2025</td>
+                        <td class="py-3 px-2 font-medium">Joueur 3</td>
+                        <td class="py-3 px-2 font-bold">11 - 9</td>
+                        <td class="py-3 px-2">
+                            <span class="text-blue-600 font-bold">Victoire</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Nécessaire pour le graphique -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Script en ligne pour initialiser le graphique
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('winrateChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Victoires', 'Défaites'],
+                    datasets: [{
+                        data: [2, 1], // Exemple: 2 victoires, 1 défaite
+                        backgroundColor: ['#3b82f6', '#dc2626'], // Bleu pour victoires, Rouge pour défaites
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { 
+                            display: true,
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Mettre à jour les statistiques d'exemple
+            document.querySelector('.js-games-played').textContent = '3';
+            document.querySelector('.js-wins').textContent = '2';
+            document.querySelector('.js-losses').textContent = '1';
+            document.querySelector('.js-winrate').textContent = '67% Win';
+        });
+    </script>
+</div>
