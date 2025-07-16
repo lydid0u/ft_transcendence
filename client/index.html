@@ -9,19 +9,16 @@
     <meta name="google-signin-client_id" content="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com" />
     <link href="styles.css" rel="stylesheet" />
 
-    <script src="js/spa.js" defer></script>
-    <script src="js/loginOrRegister.js" defer></script>
-    <script src="js/google-auth.js" defer></script>
-    <script src="js/api.js" defer></script>
-    <script src="js/profile.js" defer></script>
-    <script src="js/password.js" defer></script>
-    <script src="js/tv-controls.js" defer></script>
-    <script src="js/dashboard.js" defer></script>
     <script type="module" src="./src/main.ts" defer></script>
+    <script src="js/tv-controls.js" defer></script>
+    <script src="js/google-auth.js" defer></script>
+
   </head>
   <body class="m-0 p-0 h-full w-full overflow-hidden bg-[#c3c1a8]">
     <div id="tv-container" class="fixed top-0 left-0 w-full h-full flex justify-center items-center z-[1]">
       <div id="tv-main" class="tv w-[1860px] h-[840px] flex flex-col items-center">
+         <button id="deconnect" class="flex flex-col rounded bg-red-400 text-white p-5 rounded-lg text-lg mb-6 ">Se deconnecter</button>
+
         <!-- <div id="antenna-container" class="w-[470px] h-[170px] flex flex-col justify-end">
           <div
             id="antenna"

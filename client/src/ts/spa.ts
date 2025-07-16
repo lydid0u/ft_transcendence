@@ -321,3 +321,4 @@ const SPA = {
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
 });
+window.SPA = SPA; // Expose SPA globally

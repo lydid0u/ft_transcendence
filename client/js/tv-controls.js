@@ -166,3 +166,22 @@ function turnOffTheTv() {
   alert("test")
   tv.classList.toggle("off");
 }
+
+
+function logout() {
+  localStorage.removeItem("user");
+  localStorage.removeItem("jwtToken");
+  localStorage.removeItem("isAuthenticated");
+}
+
+// Lier le bouton "Se deconnecter" à la fonction logout
+document.addEventListener('DOMContentLoaded', function() {
+  const deconnectBtn = document.getElementById("deconnect");
+  if (deconnectBtn) {
+    deconnectBtn.addEventListener("click", function() {
+      logout();
+      // Redirige vers la page de login ou landing si besoin
+      window.location.href = "/login.html";
+    });
+  }
+});
