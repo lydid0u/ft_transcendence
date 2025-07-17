@@ -204,9 +204,21 @@ function turnOffTheTv(): void {
   }
 }
 
-function logout(): void {
+async function logout(): Promise<void> {
   try {
-    // Remove all authentication-related data
+    try {
+      await fetch('http://localhost:3000/user/connection-status', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('jwtToken') || ''}`,
+        },
+        body: JSON.stringify({ status: 0 }), // 0 = déconnecté et 1 = connecté
+      });
+    } catch (error) {
+      console.error('Erreur lors de la notification du status de connexion au backend:', error);
+    }
+
     localStorage.removeItem("user");
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("isAuthenticated");
@@ -229,14 +241,13 @@ function logout(): void {
     }
   } catch (error) {
     console.error('Error during logout:', error);
-    // Fallback navigation even if logout fails
     window.location.href = "/login.html";
   }
 }
 
-// Bind the "Se deconnecter" button to the logout function
+//logout button
 document.addEventListener('DOMContentLoaded', function(): void {
-  const deconnectBtn: HTMLElement | null = document.getElementById("deconnect");
+  const deconnectBtn: HTMLElement | null = document.getElementById("button-2");
   if (deconnectBtn) {
     deconnectBtn.addEventListener("click", function(): void {
       logout();

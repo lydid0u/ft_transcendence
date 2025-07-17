@@ -124,9 +124,10 @@ async function resetPassword(): Promise<void> {
   });
 }
 
+// ---- //
+
 export { changePassword, resetPassword };
 
-// Expose functions globally for SPA routing
 declare global {
   interface Window {
     changePassword: typeof changePassword;
@@ -134,8 +135,6 @@ declare global {
   }
 }
 
-// Make sure these functions are exported to the window object
-// with a console message confirming they're being registered
 console.log("Registering password functions to window object");
 window.changePassword = changePassword;
 window.resetPassword = resetPassword;

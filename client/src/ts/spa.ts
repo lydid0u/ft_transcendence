@@ -34,7 +34,6 @@ declare global {
 declare function getUserDataFromBackend(): void;
 declare function handleGoogleAuth(response: any): void;
 declare function displayUserInfo(userData: any): void;
-declare function alreadyLoggedIn(): void;
 declare function login(): void;
 declare function register(): void;
 declare function displayFriendsList(): void;
@@ -42,7 +41,6 @@ declare function changePassword(): Promise<void>;
 declare function displayUserProfile(): Promise<void>;
 declare function changeUsername(): Promise<void>;
 declare function changeAvatar(): Promise<void>;
-declare function initializeStatusSystem(): void;
 
 const SPA = {
   SPAattribute: {
@@ -160,7 +158,6 @@ const SPA = {
           }
         }
         
-        alreadyLoggedIn();
         login();
       }
     },
@@ -195,7 +192,6 @@ const SPA = {
       routeScript: function(): void {
         setTimeout(() => {
           displayUserProfile();
-          initializeStatusSystem(); // Ajout de cette ligne pour initialiser le système de statut
           changeUsername();
           changeAvatar();
         }, 1000);
@@ -334,7 +330,6 @@ declare global {
     getUserDataFromBackend: () => void;
     handleGoogleAuth: (response: any) => void;
     displayUserInfo: (userData: any) => void;
-    alreadyLoggedIn: () => void;
     login: () => void; 
     register: () => void;
     displayFriendsList: () => void;
@@ -342,7 +337,6 @@ declare global {
     displayUserProfile: () => Promise<void>;
     changeUsername: () => Promise<void>;
     changeAvatar: () => Promise<void>;
-    initializeStatusSystem: () => void;
     [key: string]: any; // Allow dynamic access for other properties
   }
 }
@@ -393,7 +387,6 @@ interface FunctionMap {
   getUserDataFromBackend: () => void;
   handleGoogleAuth: (response: any) => void;
   displayUserInfo: (userData: any) => void;
-  alreadyLoggedIn: () => void;
   login: () => void;
   register: () => void;
   displayFriendsList: () => void;
@@ -415,12 +408,6 @@ if (typeof window.handleGoogleAuth !== 'function') {
 if (typeof window.displayUserInfo !== 'function') {
   window.displayUserInfo = function(userData) {
     console.log('displayUserInfo function called but not yet implemented', userData);
-  };
-}
-
-if (typeof window.alreadyLoggedIn !== 'function') {
-  window.alreadyLoggedIn = function() {
-    console.log('alreadyLoggedIn function called but not yet implemented');
   };
 }
 

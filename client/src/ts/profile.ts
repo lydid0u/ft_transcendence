@@ -18,34 +18,6 @@ interface ChangeUserResponse {
   picture?: string
 }
 
-// Status types
-type StatusType = "online" | "busy" | "offline"
-
-// Status configuration
-const statusConfig = {
-  online: {
-    bgColor: "bg-green-500",
-    text: "En ligne",
-    description: "Disponible pour jouer",
-    animation: "animate-pulse",
-  },
-  busy: {
-    bgColor: "bg-orange-500",
-    text: "Occupé",
-    description: "Ne pas déranger",
-    animation: "",
-  },
-  offline: {
-    bgColor: "bg-gray-400",
-    text: "Hors ligne",
-    description: "Indisponible",
-    animation: "",
-  },
-}
-
-// Current user status
-let currentStatus: StatusType = "online"
-
 async function displayUserProfile(): Promise<void> {
   try {
     const response: Response = await fetch("http://localhost:3000/user", {
@@ -84,198 +56,9 @@ async function displayUserProfile(): Promise<void> {
       userAvatar.src = user.picture
     }
 
-    // Load user status
-    loadUserStatus()
   } catch (error: unknown) {
     console.error("Erreur lors de la récupération des données:", error)
   }
-}
-
-function loadUserStatus(): void {
-  const savedStatus = localStorage.getItem("userStatus") as StatusType
-  if (savedStatus && ["online", "busy", "offline"].includes(savedStatus)) {
-    currentStatus = savedStatus
-  }
-  updateStatusDisplay()
-}
-
-function updateStatusDisplay(): void {
-  const statusButton = document.getElementById("status-button")
-  const currentStatusIndicator = document.getElementById("current-status-indicator")
-  const currentStatusText = document.getElementById("current-status-text")
-  const currentStatusDescription = document.getElementById("current-status-description")
-
-  if (statusButton) {
-    // Remove all status classes
-    statusButton.className = statusButton.className
-      .split(" ")
-      .filter((cls) => !cls.startsWith("bg-") && !cls.includes("animate"))
-      .join(" ")
-
-    // Add current status classes
-    statusButton.classList.add(statusConfig[currentStatus].bgColor)
-    if (statusConfig[currentStatus].animation) {
-      statusButton.classList.add(statusConfig[currentStatus].animation)
-    }
-
-    // Update title
-    statusButton.title = `Statut: ${statusConfig[currentStatus].text}`
-  }
-
-  if (currentStatusIndicator) {
-    // Remove all background color classes
-    currentStatusIndicator.className = currentStatusIndicator.className
-      .split(" ")
-      .filter((cls) => !cls.startsWith("bg-"))
-      .join(" ")
-    currentStatusIndicator.classList.add(statusConfig[currentStatus].bgColor)
-  }
-
-  if (currentStatusText) {
-    currentStatusText.textContent = statusConfig[currentStatus].text
-  }
-
-  if (currentStatusDescription) {
-    currentStatusDescription.textContent = `- ${statusConfig[currentStatus].description}`
-  }
-
-  // Update active status in dropdown
-  updateActiveStatusOption()
-}
-
-function updateActiveStatusOption(): void {
-  const statusOptions = document.querySelectorAll(".status-option")
-  statusOptions.forEach((option) => {
-    const button = option as HTMLButtonElement
-    const status = button.getAttribute("data-status") as StatusType
-
-    if (status === currentStatus) {
-      button.classList.add("bg-blue-50")
-    } else {
-      button.classList.remove("bg-blue-50")
-    }
-  })
-}
-
-function changeStatus(newStatus: StatusType): void {
-  currentStatus = newStatus
-  localStorage.setItem("userStatus", newStatus)
-  updateStatusDisplay()
-  hideStatusDropdown()
-
-  // Show notification
-  showStatusNotification(`Statut changé vers: ${statusConfig[newStatus].text}`)
-
-  // Optionally send to backend
-  updateStatusOnServer(newStatus)
-}
-
-async function updateStatusOnServer(status: StatusType): Promise<void> {
-  try {
-    const response = await fetch("http://localhost:3000/user/status", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-      },
-      body: JSON.stringify({ status }),
-    })
-
-    if (!response.ok) {
-      console.error("Erreur lors de la mise à jour du statut sur le serveur")
-    }
-  } catch (error) {
-    console.error("Erreur lors de la mise à jour du statut:", error)
-  }
-}
-
-function showStatusNotification(message: string): void {
-  // Create temporary notification
-  const notification = document.createElement("div")
-  notification.className =
-    "fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-0 opacity-100"
-  notification.textContent = message
-
-  document.body.appendChild(notification)
-
-  // Animate in
-  setTimeout(() => {
-    notification.classList.add("translate-x-0", "opacity-100")
-  }, 10)
-
-  // Remove after 3 seconds
-  setTimeout(() => {
-    notification.classList.add("translate-x-full", "opacity-0")
-    setTimeout(() => {
-      if (document.body.contains(notification)) {
-        document.body.removeChild(notification)
-      }
-    }, 300)
-  }, 3000)
-}
-
-function showStatusDropdown(): void {
-  const dropdown = document.getElementById("status-dropdown")
-  if (dropdown) {
-    dropdown.classList.remove("hidden")
-    setTimeout(() => {
-      dropdown.classList.remove("opacity-0", "-translate-y-2")
-      dropdown.classList.add("opacity-100", "translate-y-0")
-    }, 10)
-  }
-}
-
-function hideStatusDropdown(): void {
-  const dropdown = document.getElementById("status-dropdown")
-  if (dropdown) {
-    dropdown.classList.remove("opacity-100", "translate-y-0")
-    dropdown.classList.add("opacity-0", "-translate-y-2")
-    setTimeout(() => {
-      dropdown.classList.add("hidden")
-    }, 200)
-  }
-}
-
-function initializeStatusSystem(): void {
-  const statusButton = document.getElementById("status-button")
-  const statusOptions = document.querySelectorAll(".status-option")
-
-  // Status button click handler
-  if (statusButton) {
-    statusButton.addEventListener("click", (e) => {
-      e.stopPropagation()
-      const dropdown = document.getElementById("status-dropdown")
-      if (dropdown && dropdown.classList.contains("hidden")) {
-        showStatusDropdown()
-      } else {
-        hideStatusDropdown()
-      }
-    })
-  }
-
-  // Status option click handlers
-  statusOptions.forEach((option) => {
-    option.addEventListener("click", (e) => {
-      e.stopPropagation()
-      const status = (e.currentTarget as HTMLButtonElement).getAttribute("data-status") as StatusType
-      if (status) {
-        changeStatus(status)
-      }
-    })
-  })
-
-  // Close dropdown when clicking outside
-  document.addEventListener("click", (e) => {
-    const dropdown = document.getElementById("status-dropdown")
-    const statusButton = document.getElementById("status-button")
-
-    if (dropdown && statusButton && !dropdown.contains(e.target as Node) && !statusButton.contains(e.target as Node)) {
-      hideStatusDropdown()
-    }
-  })
-
-  // Initialize display
-  updateStatusDisplay()
 }
 
 function showMessage(elementId: string, message: string, type: "success" | "error"): void {
@@ -392,7 +175,7 @@ async function changeAvatar() {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-          // ne pas définir Content-Type pour FormData
+          // on definit pas Content-Type pour FormData
         },
         body: formData,
       })
@@ -518,23 +301,19 @@ async function changePassword(): Promise<void> {
 // Initialize everything when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   displayUserProfile()
-  initializeStatusSystem()
   changeUsername()
   changeAvatar()
   activate2fa()
   changePassword()
 })
 
-export { displayUserProfile, changeUsername, changeAvatar, activate2fa, changeStatus, initializeStatusSystem }
-
+export { displayUserProfile, changeUsername, changeAvatar, activate2fa }
 declare global {
   interface Window {
     displayUserProfile: typeof displayUserProfile
     changeUsername: typeof changeUsername
     changeAvatar: typeof changeAvatar
     activate2fa: typeof activate2fa
-    changeStatus: typeof changeStatus
-    initializeStatusSystem: typeof initializeStatusSystem
   }
 }
 
@@ -545,5 +324,3 @@ window.displayUserProfile = displayUserProfile
 window.changeUsername = changeUsername
 window.changeAvatar = changeAvatar
 window.activate2fa = activate2fa
-window.changeStatus = changeStatus
-window.initializeStatusSystem = initializeStatusSystem

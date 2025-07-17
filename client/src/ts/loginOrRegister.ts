@@ -21,7 +21,6 @@ interface AuthErrorResponse {
   error?: string;
 }
 
-// Global SPA interface
 declare global {
   interface Window {
     SPA?: {
@@ -30,7 +29,6 @@ declare global {
   }
 }
 
-// Type guards
 function isLoginResponse(data: any): data is LoginResponse {
   return data && typeof data === 'object' && 'user' in data && 'jwt' in data;
 }
@@ -88,13 +86,23 @@ async function login(): Promise<void> {
           messageDiv.style.color = "green";
         }
 
+          try {
+            await fetch('http://localhost:3000/user/connection-status', {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${data.jwt || ''}`,
+              },
+              body: JSON.stringify({ status: 1 }), // 1 = connecté et 0 = déconnecté
+            });
+          } catch (err) {
+            console.error("Erreur lors de la notification du status de connexion au backend:", err);
+          }
+        
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('user', JSON.stringify(data.user || { email }));
         localStorage.setItem('jwtToken', data.jwt || '');
 
-        if (window.SPA && typeof window.SPA.navigateTo === 'function') {
-          window.SPA.navigateTo('/dashboard');
-        }
       } else if (response.status === 401) {
         if (messageDiv) {
           messageDiv.textContent = "Email ou mot de passe incorrect.";
@@ -201,26 +209,7 @@ async function register(): Promise<void> {
   });
 }
 
-function alreadyLoggedIn(): void {
-  const isAuthenticated: string | null = localStorage.getItem('isAuthenticated');
-  
-  if (isAuthenticated === 'true') {
-    const contentDiv: HTMLElement | null = document.querySelector('#content');
-    if (contentDiv) {
-      contentDiv.innerHTML = `
-        <div class="flex flex-col items-center rounded-[50px] h-full w-full p-8 bg-gradient-to-b from-stone-200 to-stone-300 no-scrollbar overflow-y-auto">
-          <div class="w-full max-w-4xl text-center">
-            <h1 class="text-5xl font-bold mb-12 text-stone-400">Tu es déjà connecté !</h1>
-            <div onclick="window.SPA?.navigateTo('/home')" class="inline-block px-6 py-3 bg-stone-600 hover:bg-stone-700 text-white font-bold rounded-lg shadow-lg transform transition duration-300 hover:scale-105 cursor-pointer">
-              Retourner à l'accueil
-            </div>
-          </div>
-        </div>
-      `;
-    }
-  }
-}
+
 window.SPA = window.SPA || {};
-window.alreadyLoggedIn = alreadyLoggedIn;
 window.login = login;
 window.register = register;
