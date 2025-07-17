@@ -47,3 +47,4 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
         }
     }
 }
+

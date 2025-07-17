@@ -1,4 +1,3 @@
-// Types and interfaces
 interface RouteConfig {
   title: string;
   content: string;
@@ -39,10 +38,11 @@ declare function alreadyLoggedIn(): void;
 declare function login(): void;
 declare function register(): void;
 declare function displayFriendsList(): void;
-declare function changePassword(): void;
-declare function displayUserProfile(): void;
-declare function changeUsername(): void;
-declare function changeAvatar(): void;
+declare function changePassword(): Promise<void>;
+declare function displayUserProfile(): Promise<void>;
+declare function changeUsername(): Promise<void>;
+declare function changeAvatar(): Promise<void>;
+declare function initializeStatusSystem(): void;
 
 const SPA = {
   SPAattribute: {
@@ -195,9 +195,10 @@ const SPA = {
       routeScript: function(): void {
         setTimeout(() => {
           displayUserProfile();
+          initializeStatusSystem(); // Ajout de cette ligne pour initialiser le système de statut
           changeUsername();
           changeAvatar();
-        }, 0);
+        }, 1000);
       }
     }
   } as Record<string, RouteConfig>,
@@ -224,7 +225,7 @@ const SPA = {
   },
 
   navigateTo: function(route: string): void {
-    history.pushState(null, null, route);
+    history.pushState("", "", route);
     this.loadRoute(route);
     this.setCurrentPageToActive(route);
   },
@@ -318,7 +319,131 @@ const SPA = {
   }
 };
 
+// Import the actual implementations from modules
+// These are already imported at the main.ts level so the functions should be available
+
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
 });
-window.SPA = SPA; // Expose SPA globally
+
+export { SPA };
+
+declare global {
+  interface Window {
+    SPA: typeof SPA;
+    getUserDataFromBackend: () => void;
+    handleGoogleAuth: (response: any) => void;
+    displayUserInfo: (userData: any) => void;
+    alreadyLoggedIn: () => void;
+    login: () => void; 
+    register: () => void;
+    displayFriendsList: () => void;
+    changePassword: () => Promise<void>;
+    displayUserProfile: () => Promise<void>;
+    changeUsername: () => Promise<void>;
+    changeAvatar: () => Promise<void>;
+    initializeStatusSystem: () => void;
+    [key: string]: any; // Allow dynamic access for other properties
+  }
+}
+
+// Moved to the end of the file
+
+// Ensure these functions are actually defined somewhere in your codebase
+// or assign empty functions if you're still developing them:
+
+// Wait for the functions to be defined properly by other modules
+// The functions should be registered from their respective modules
+// This is just a safety measure in case they're not defined yet
+if (typeof window.displayUserProfile !== 'function') {
+  console.warn('Warning: displayUserProfile function not found, using placeholder implementation');
+  window.displayUserProfile = function(): Promise<void> {
+    console.log('displayUserProfile function called but not yet implemented');
+    return Promise.resolve();
+  };
+}
+
+if (typeof window.changeUsername !== 'function') {
+  console.warn('Warning: changeUsername function not found, using placeholder implementation');
+  window.changeUsername = function(): Promise<void> {
+    console.log('changeUsername function called but not yet implemented');
+    return Promise.resolve();
+  };
+}
+
+if (typeof window.changeAvatar !== 'function') {
+  console.warn('Warning: changeAvatar function not found, using placeholder implementation');
+  window.changeAvatar = function(): Promise<void> {
+    console.log('changeAvatar function called but not yet implemented');
+    return Promise.resolve();
+  };
+}
+
+if (typeof window.changePassword !== 'function') {
+  console.warn('Warning: changePassword function not found, using placeholder implementation');
+  window.changePassword = function(): Promise<void> {
+    console.log('changePassword function called but not yet implemented');
+    return Promise.resolve();
+  };
+}
+
+// Add fallbacks for any other functions that might be missing
+// Create a type that matches the window interface for our functions
+interface FunctionMap {
+  getUserDataFromBackend: () => void;
+  handleGoogleAuth: (response: any) => void;
+  displayUserInfo: (userData: any) => void;
+  alreadyLoggedIn: () => void;
+  login: () => void;
+  register: () => void;
+  displayFriendsList: () => void;
+}
+
+// Define default implementations for each function
+if (typeof window.getUserDataFromBackend !== 'function') {
+  window.getUserDataFromBackend = function() {
+    console.log('getUserDataFromBackend function called but not yet implemented');
+  };
+}
+
+if (typeof window.handleGoogleAuth !== 'function') {
+  window.handleGoogleAuth = function(response) {
+    console.log('handleGoogleAuth function called but not yet implemented', response);
+  };
+}
+
+if (typeof window.displayUserInfo !== 'function') {
+  window.displayUserInfo = function(userData) {
+    console.log('displayUserInfo function called but not yet implemented', userData);
+  };
+}
+
+if (typeof window.alreadyLoggedIn !== 'function') {
+  window.alreadyLoggedIn = function() {
+    console.log('alreadyLoggedIn function called but not yet implemented');
+  };
+}
+
+if (typeof window.login !== 'function') {
+  window.login = function() {
+    console.log('login function called but not yet implemented');
+    return Promise.resolve();
+  };
+}
+
+if (typeof window.register !== 'function') {
+  window.register = function() {
+    console.log('register function called but not yet implemented');
+    return Promise.resolve();
+  };
+}
+
+if (typeof window.displayFriendsList !== 'function') {
+  console.warn('Warning: displayFriendsList function not found, using placeholder implementation');
+  window.displayFriendsList = function() {
+    console.log('displayFriendsList function called but not yet implemented');
+  };
+}
+
+// Expose SPA globally after all other functions are defined
+window.SPA = SPA;

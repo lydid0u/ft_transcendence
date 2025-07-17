@@ -1,3 +1,8 @@
+interface ApiErrorResponse {
+  message?: string;
+  error?: string;
+}
+
 async function changePassword(): Promise<void> {
   const messageDiv = document.getElementById("message") as HTMLElement;
   const form = document.getElementById("change-password-form") as HTMLFormElement;
@@ -61,9 +66,6 @@ async function changePassword(): Promise<void> {
       messageDiv.style.color = "red";
     }
   });
-  // Expose function globally for SPA routing
-  // @ts-ignore
-  window.changePassword = changePassword;
 }
 
 async function resetPassword(): Promise<void> {
@@ -121,3 +123,19 @@ async function resetPassword(): Promise<void> {
     }
   });
 }
+
+export { changePassword, resetPassword };
+
+// Expose functions globally for SPA routing
+declare global {
+  interface Window {
+    changePassword: typeof changePassword;
+    resetPassword: typeof resetPassword;
+  }
+}
+
+// Make sure these functions are exported to the window object
+// with a console message confirming they're being registered
+console.log("Registering password functions to window object");
+window.changePassword = changePassword;
+window.resetPassword = resetPassword;

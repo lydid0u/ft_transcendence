@@ -62,7 +62,7 @@ async function dbFunction(fastify, options)
                 console.log("ZABORMOK");
                 throw new Error('Wrong mail or password');
             }
-            const valid = bcrypt.compare(password, user.password);
+            const valid = await bcrypt.compare(password, user.password);
             if (!valid)
             {
                 console.log("ZABORMOK2");

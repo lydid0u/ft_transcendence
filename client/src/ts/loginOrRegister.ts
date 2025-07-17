@@ -220,6 +220,7 @@ function alreadyLoggedIn(): void {
     }
   }
 }
+window.SPA = window.SPA || {};
 window.alreadyLoggedIn = alreadyLoggedIn;
 window.login = login;
 window.register = register;
