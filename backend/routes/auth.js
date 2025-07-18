@@ -25,7 +25,7 @@ async function authGoogle(fastify, options) {
 
     async createJWTtoken(user) {
       const token = fastify.jwt.sign({
-        sub: user.id,
+        id: user.id,
         email: user.email,
         firstName: user.first_name,
         iat: Math.floor(Date.now() / 1000),
@@ -159,7 +159,7 @@ async function authGoogle(fastify, options) {
     try {
       const { email, password, pseudo: username } = request.body;
       console.log(
-        "Registering user with email:",
+        "Registering user with email:", 
         email,
         "and username:",
         username
