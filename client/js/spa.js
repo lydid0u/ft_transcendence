@@ -41,7 +41,7 @@ const SPA = {
                 <img src="gif/vhs.gif" class="vhs-gif" alt="Transition VHS">
             </div>
         `;
-        
+
         // Après 3 secondes (ajustez selon la durée de votre GIF), rediriger vers /home
         setTimeout(() => {
             this.navigateTo('/home');
@@ -75,8 +75,8 @@ const SPA = {
             routeScript: function() {
                 SPA.mainDivCSS();
             }
-        },    
-               
+        },
+
         '/about': {
             title: 'Qui sommes-nous ?',
             content: 'pages/about.html', // Path to HTML file
@@ -106,6 +106,31 @@ const SPA = {
                 }
             }
         },
+
+		'/gameAI': {
+			title: 'Pong AI Game',
+			content: 'pages/gameAI.html',
+			routeScript: function ()
+			{
+				SPA.mainDivCSS();
+				setTimeout(() => {
+					const canvas = document.getElementById('game-canvas');
+					if (!canvas)
+					{
+						console.error('Game-canvas not found');
+						return;
+					}
+					try
+					{
+						const game = new Game();
+						requestAnimationFrame(() => game.gameLoop());
+					} catch (e)
+					{
+						console.error('Game init failed:', e);
+					}
+				}, 100);
+			}
+		},
 
         '/dashboard': {
             title: 'dashboard',
@@ -140,12 +165,12 @@ const SPA = {
                         client_id: "632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com",
                         callback: handleGoogleAuth
                     });
-                    
+
                     // afficher le bouton de connexion
                     google.accounts.id.renderButton(
                         document.querySelector('.g_id_signin'),
-                        { 
-                            theme: "outline", 
+                        {
+                            theme: "outline",
                             size: "large",
                             text: "sign_in_with",
                             shape: "rounded",
@@ -160,7 +185,7 @@ const SPA = {
                     const userData = JSON.parse(savedUser);
                     displayUserInfo(userData);
                 }
-                
+
                 // Gérer la déconnexion
                 const signoutBtn = document.getElementById('signout-btn');
                 if (signoutBtn) {
@@ -169,7 +194,7 @@ const SPA = {
 
                 login()
             }
-        }, 
+        },
 
         '/register': {
             title: 'register',
@@ -198,7 +223,7 @@ const SPA = {
                             <p>Bienvenue, ${user.email} !</p>
                         </div>
                     `;
-                   
+
                     getUserDataFromBackend();
                 }
             }
@@ -208,18 +233,18 @@ const SPA = {
     //cette fonction demarre la SPA, elle est appelée quand le DOM est chargé et charge la 1e page
     initSPA: function() {
         console.log('🚀 Initialisation de la SPA...');
-        
+
         this.handleClick();
         this.handlePreviousNextButtons();
         this.loadCurrentPage();
-        
+
         console.log('✅ SPA initialisée avec succès !');
     },
 
     //gere les clics sur les liens de navigation et empeche le rechargement de la page
     handleClick: function() {
       document.addEventListener('click', (e) => {
-          
+
             const link = e.target.closest('[data-route]'); // on recup l'element clique avec e.target et .closest cherche dans le DOM l'element le plus proche qui a l'attribut 'data-route'
             //si ca a ete trouve, on stop le comportement par defaut (rechargement de la page) et on change l'url et le contenu sur la page sans recharger la page
             if (link) {
@@ -239,15 +264,15 @@ const SPA = {
     navigateTo: function(route) {
       // fonction membre qui vient de l'API History et qui change l'url sans recharger la page
         history.pushState(null, null, route);
-        
+
         this.loadRoute(route);
-        
+
         this.setCurrentPageToActive(route);
     },
 
     loadRoute: async function(route) { // Make function async
         console.log(`📄 Chargement de la route: ${route}`);
-        
+
         const routeToLoad = this.routes[route];
         if (!routeToLoad) {
             console.error(`❌ Route non trouvée: ${route}`);
@@ -270,7 +295,7 @@ const SPA = {
             } catch (error) {
                 console.error(`Erreur lors du chargement du contenu HTML pour ${route}:`, error);
                 contentDiv.innerHTML = '<p>Erreur de chargement du contenu.</p>';
-                this.error404(); 
+                this.error404();
                 return;
             }
         } else if (typeof routeToLoad.content === 'string') {
@@ -287,7 +312,7 @@ const SPA = {
         contentDiv.classList.add('fade-in');
 
         if (routeToLoad.routeScript && typeof routeToLoad.routeScript === 'function') {
-            setTimeout(() => { 
+            setTimeout(() => {
                 routeToLoad.routeScript();
             }, 10);
         }
