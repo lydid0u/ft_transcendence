@@ -14,8 +14,25 @@ async function dbFunctionPatch(fastify, options)
 {
     const dbPatch = {
 
+        async changePassword(email, currpass, newpassword)
+        {            
+            let user = await fastify.db.connection.get('SELECT password FROM users WHERE email = ?', email);
+            if (!user)
+                throw new Error ("Email doesn't exist");
+            const check = await bcrypt.compare(currpass, user.password);
+            if (!check)
+                throw new Error ("Wrong password");
+            if (check)
+            {
+                const newpass = await bcrypt.hash(newpassword, saltRounds);
+                user = await fastify.db.connection.run('UPDATE users SET password = ? WHERE email = ?', newpass, email);
+            }
+            else
+                throw new Error ("Email doesn't exist");
+        },
+
         async changePassword(email, password)
-        {
+        {            
             let user = await fastify.db.connection.get('SELECT password FROM users WHERE email = ?', email);
             if (user)
             {

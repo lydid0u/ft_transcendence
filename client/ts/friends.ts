@@ -50,7 +50,6 @@ class FriendsAPI {
   async addFriend(username: string): Promise<ApiResponse> {
     try {
       const token = localStorage.getItem("jwtToken");
-      console.log("Adding friend:", username);
       
       const response = await fetch(`${this.baseUrl}/friends-add`, {
         method: "POST",

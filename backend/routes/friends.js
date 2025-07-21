@@ -4,8 +4,7 @@ async function friendsRoute(fastify, options)
 {
     fastify.get('/get-all-friends', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        console.log("Route friends");
-        const table = await fastify.dbFriends.showTableFriends();
+        const table = await fastify.dbFriends.showTableFriends(request.user.id);
         return table;
     }),
 

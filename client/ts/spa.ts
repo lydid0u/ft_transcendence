@@ -40,6 +40,7 @@ declare function changePassword(): Promise<void>;
 declare function displayUserProfile(): Promise<void>;
 declare function changeUsername(): Promise<void>;
 declare function changeAvatar(): Promise<void>;
+declare function displayMatchHistory(): void;
 
 const SPA = {
   SPAattribute: {
@@ -183,6 +184,22 @@ const SPA = {
         changePassword();
       }
     },
+    
+    '/match-history': {
+  title: 'Historique des matchs',
+  content: 'pages/match-history.html',
+  routeScript: function(): void {
+    console.log("👉 SPA route /match-history activated");
+    setTimeout(() => {
+      if (typeof displayMatchHistory === 'function') {
+        console.log("✅ displayMatchHistory function found");
+        displayMatchHistory();
+      } else {
+        console.error("❌ displayMatchHistory function NOT found");
+      }
+    }, 100);
+  }
+},
 
     '/profile': {
       title: 'profile',
