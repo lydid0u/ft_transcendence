@@ -1,24 +1,28 @@
-// Define the User interface to type the user object
 interface User {
   username?: string
   email?: string
   picture?: string
 }
 
-// Define the API response structure
 interface UserResponse {
   user: User
 }
 
-// Interface pour la reponse de l'api
 interface ChangeUserResponse {
-  newusername?: string // Si ton API retourne juste le nouveau username
-  user?: User // Si ton API retourne l'utilisateur complet
+  newusername?: string
+  newUser?: User
   message?: string
   picture?: string
 }
 
 async function displayUserProfile(): Promise<void> {
+    const jwtToken = localStorage.getItem("jwtToken");
+  if (!jwtToken) {
+    if (window.SPA && typeof window.SPA.navigateTo === "function") {
+      window.SPA.navigateTo("/login");
+    }
+    return;
+  }
   try {
     const response: Response = await fetch("http://localhost:3000/user", {
       method: "GET",
@@ -29,12 +33,13 @@ async function displayUserProfile(): Promise<void> {
     })
 
     if (!response.ok) {
+      console.log("la")
       throw new Error(`Erreur HTTP: ${response.status}`)
     }
 
     const data: UserResponse = await response.json()
     const user: User = data.user
-    console.log("User data received:", user) // Debug: voir ce que le backend renvoie
+    console.log("User data received:", user)
 
     localStorage.setItem("user", JSON.stringify(user))
 
@@ -141,11 +146,11 @@ async function changeUsername(): Promise<void> {
       const data: ChangeUserResponse = await response.json()
       console.log("Response data API in change Username:", data)
 
-      if (data.user) {
-        console.log(`New username: ${JSON.stringify(data.user.username)}`)
-        localStorage.setItem("user", JSON.stringify(data.user))
+      if (data.newUser) {
+        console.log(`New username: ${JSON.stringify(data.newUser.username)}`)
+        localStorage.setItem("user", JSON.stringify(data.newUser))
         const userGreeting = document.getElementById("user-greeting") as HTMLElement
-        if (userGreeting && data.user.username) userGreeting.textContent = `Salut ${data.user.username}`
+        if (userGreeting && data.newUser.username) userGreeting.textContent = `Salut ${data.newUser.username}`
 
         showMessage("message-username", "Pseudo changé avec succès !", "success")
         form.reset()
@@ -188,10 +193,10 @@ async function changeAvatar() {
       const data: ChangeUserResponse = await response.json()
       console.log("retour de l'api dans changeAvatar:", data)
 
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user))
+      if (data.newUser) {
+        localStorage.setItem("user", JSON.stringify(data.newUser))
         const userAvatar = document.getElementById("user-avatar") as HTMLImageElement
-        if (userAvatar && data.user.picture) userAvatar.src = data.user.picture
+        if (userAvatar && data.newUser.picture) userAvatar.src = data.newUser.picture
 
         showMessage("message-avatar", "Avatar changé avec succès !", "success")
         form.reset()
@@ -317,8 +322,6 @@ declare global {
   }
 }
 
-// Make sure these functions are exported to the window object
-// with a console message confirming they're being registered
 console.log("Registering profile functions to window object")
 window.displayUserProfile = displayUserProfile
 window.changeUsername = changeUsername

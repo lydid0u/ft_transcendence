@@ -1,4 +1,3 @@
-// Types and interfaces
 interface User {
   email: string;
   pseudo?: string;

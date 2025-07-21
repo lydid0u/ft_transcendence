@@ -1,4 +1,3 @@
-// Types and interfaces
 interface LabelRouteMap {
   [key: string]: string;
 }

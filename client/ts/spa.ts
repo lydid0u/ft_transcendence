@@ -30,10 +30,9 @@ declare global {
   }
 }
 
-// Declare external functions that should be available
 declare function getUserDataFromBackend(): void;
 declare function handleGoogleAuth(response: any): void;
-declare function displayUserInfo(userData: any): void;
+declare function addPseudoForGoogleLogin(userData: UserData): Promise<void>;
 declare function login(): void;
 declare function register(): void;
 declare function displayFriendsList(): void;
@@ -123,17 +122,16 @@ const SPA = {
     },
 
     '/login': {
-      title: 'login',
-      content: 'pages/login.html',
-      routeScript: function(): void {
-        if (typeof window.google !== 'undefined' && window.google.accounts) {
-          window.google.accounts.id.initialize({
-            client_id: "632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com",
-            callback: handleGoogleAuth
-          });
-
-          // afficher le bouton de connexion
-          const signInElement: Element | null = document.querySelector('.g_id_signin');
+  title: 'login',
+  content: 'pages/login.html',
+  routeScript: function(): void {
+      if (typeof window.google !== 'undefined' && window.google.accounts) {
+        window.google.accounts.id.initialize({
+          client_id: "632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com",
+          callback: handleGoogleAuth
+        });
+        const signInElement: Element | null = document.querySelector('.g_id_signin');
+        if (signInElement) {
           window.google.accounts.id.renderButton(
             signInElement,
             {
@@ -145,20 +143,20 @@ const SPA = {
             }
           );
         }
-        
-        // Vérifier si l'utilisateur est déjà connecté
-        const savedUser: string | null = localStorage.getItem('googleUser');
-        if (savedUser) {
-          try {
-            const userData: any = JSON.parse(savedUser);
-            displayUserInfo(userData);
-          } catch (error) {
-            console.error('Erreur lors du parsing des données utilisateur:', error);
-            localStorage.removeItem('googleUser');
-          }
+      }
+      login();
+  }
+},
+
+    '/googleLogin': {
+      title: 'Google Login',
+      content: 'pages/googleLogin.html',
+        routeScript: function(): void {
+        const googleUser = localStorage.getItem('googleUser');
+        if (googleUser) {
+          const userData: UserData = JSON.parse(googleUser);
+          addPseudoForGoogleLogin(userData);
         }
-        
-        login();
       }
     },
 
@@ -194,7 +192,7 @@ const SPA = {
           displayUserProfile();
           changeUsername();
           changeAvatar();
-        }, 1000);
+        }, 50);
       }
     }
   } as Record<string, RouteConfig>,
@@ -315,9 +313,6 @@ const SPA = {
   }
 };
 
-// Import the actual implementations from modules
-// These are already imported at the main.ts level so the functions should be available
-
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
 });
@@ -327,110 +322,19 @@ export { SPA };
 declare global {
   interface Window {
     SPA: typeof SPA;
-    getUserDataFromBackend: () => void;
+    getUserDataFromBackend: () => Promise<void>;
     handleGoogleAuth: (response: any) => void;
     displayUserInfo: (userData: any) => void;
     login: () => void; 
     register: () => void;
     displayFriendsList: () => void;
+    addPseudoForGoogleLogin: (userData: UserData) => Promise<void>;
     changePassword: () => Promise<void>;
     displayUserProfile: () => Promise<void>;
     changeUsername: () => Promise<void>;
     changeAvatar: () => Promise<void>;
-    [key: string]: any; // Allow dynamic access for other properties
+    [key: string]: any; 
   }
 }
 
-// Moved to the end of the file
-
-// Ensure these functions are actually defined somewhere in your codebase
-// or assign empty functions if you're still developing them:
-
-// Wait for the functions to be defined properly by other modules
-// The functions should be registered from their respective modules
-// This is just a safety measure in case they're not defined yet
-if (typeof window.displayUserProfile !== 'function') {
-  console.warn('Warning: displayUserProfile function not found, using placeholder implementation');
-  window.displayUserProfile = function(): Promise<void> {
-    console.log('displayUserProfile function called but not yet implemented');
-    return Promise.resolve();
-  };
-}
-
-if (typeof window.changeUsername !== 'function') {
-  console.warn('Warning: changeUsername function not found, using placeholder implementation');
-  window.changeUsername = function(): Promise<void> {
-    console.log('changeUsername function called but not yet implemented');
-    return Promise.resolve();
-  };
-}
-
-if (typeof window.changeAvatar !== 'function') {
-  console.warn('Warning: changeAvatar function not found, using placeholder implementation');
-  window.changeAvatar = function(): Promise<void> {
-    console.log('changeAvatar function called but not yet implemented');
-    return Promise.resolve();
-  };
-}
-
-if (typeof window.changePassword !== 'function') {
-  console.warn('Warning: changePassword function not found, using placeholder implementation');
-  window.changePassword = function(): Promise<void> {
-    console.log('changePassword function called but not yet implemented');
-    return Promise.resolve();
-  };
-}
-
-// Add fallbacks for any other functions that might be missing
-// Create a type that matches the window interface for our functions
-interface FunctionMap {
-  getUserDataFromBackend: () => void;
-  handleGoogleAuth: (response: any) => void;
-  displayUserInfo: (userData: any) => void;
-  login: () => void;
-  register: () => void;
-  displayFriendsList: () => void;
-}
-
-// Define default implementations for each function
-if (typeof window.getUserDataFromBackend !== 'function') {
-  window.getUserDataFromBackend = function() {
-    console.log('getUserDataFromBackend function called but not yet implemented');
-  };
-}
-
-if (typeof window.handleGoogleAuth !== 'function') {
-  window.handleGoogleAuth = function(response) {
-    console.log('handleGoogleAuth function called but not yet implemented', response);
-  };
-}
-
-if (typeof window.displayUserInfo !== 'function') {
-  window.displayUserInfo = function(userData) {
-    console.log('displayUserInfo function called but not yet implemented', userData);
-  };
-}
-
-if (typeof window.login !== 'function') {
-  window.login = function() {
-    console.log('login function called but not yet implemented');
-    return Promise.resolve();
-  };
-}
-
-if (typeof window.register !== 'function') {
-  window.register = function() {
-    console.log('register function called but not yet implemented');
-    return Promise.resolve();
-  };
-}
-
-if (typeof window.displayFriendsList !== 'function') {
-  console.warn('Warning: displayFriendsList function not found, using placeholder implementation');
-  window.displayFriendsList = function() {
-    console.log('displayFriendsList function called but not yet implemented');
-  };
-}
-
-// Expose SPA globally after all other functions are defined
 window.SPA = SPA;

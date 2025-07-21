@@ -124,8 +124,6 @@ async function resetPassword(): Promise<void> {
   });
 }
 
-// ---- //
-
 export { changePassword, resetPassword };
 
 declare global {
@@ -135,6 +133,5 @@ declare global {
   }
 }
 
-console.log("Registering password functions to window object");
 window.changePassword = changePassword;
 window.resetPassword = resetPassword;
