@@ -43,6 +43,7 @@ declare function changePassword(): void;
 declare function displayUserProfile(): void;
 declare function changeUsername(): void;
 declare function changeAvatar(): void;
+declare function displayMatchHistory(): void;
 
 const SPA = {
   SPAattribute: {
@@ -188,6 +189,22 @@ const SPA = {
         changePassword();
       }
     },
+    
+    '/match-history': {
+  title: 'Historique des matchs',
+  content: 'pages/match-history.html',
+  routeScript: function(): void {
+    console.log("👉 SPA route /match-history activated");
+    setTimeout(() => {
+      if (typeof displayMatchHistory === 'function') {
+        console.log("✅ displayMatchHistory function found");
+        displayMatchHistory();
+      } else {
+        console.error("❌ displayMatchHistory function NOT found");
+      }
+    }, 100);
+  }
+},
 
     '/profile': {
       title: 'profile',

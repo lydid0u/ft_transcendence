@@ -1,16 +1,15 @@
+// Interface simplifiée pour un match
 interface Match {
-  id: number
   date: string
-  player1_id: number
-  player2_id: number
   player1_name?: string
   player2_name?: string
   score_player1: number
   score_player2: number
   winner_id: number
-  result?: 'Win' | 'Loss' // Pour faciliter l'affichage
+  player1_id: number  // Pour déterminer si le joueur a gagné ou perdu
 }
 
+// Interface pour les stats de match
 interface MatchStats {
   gamesPlayed: number
   wins: number
@@ -19,324 +18,296 @@ interface MatchStats {
   matchHistory: Match[]
 }
 
-interface ApiResponse {
-  status: string
-  message?: string
+// Format des données reçues du backend
+interface ApiMatchStats {
+  matchplayed: number
+  victory: number
+  defeats: number
+  ratio: number
 }
 
 type MessageType = "success" | "error" | "info"
 
+// Classe API simplifiée
 class MatchHistoryAPI {
   private baseUrl: string
+  private token: string | null
 
   constructor(baseUrl = "http://localhost:3000") {
     this.baseUrl = baseUrl
+    this.token = localStorage.getItem("jwtToken")
   }
 
-  async getMatchHistory(): Promise<MatchStats> {
+  // Méthode utilitaire pour les appels API
+  private async fetchAPI<T>(endpoint: string): Promise<T> {
     try {
-      const token = localStorage.getItem("jwtToken");
-      
-      const response = await fetch(`${this.baseUrl}/history-details`, {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          "Authorization": `Bearer ${this.token}`,
         },
         credentials: "include",
       });
       
-      const responseText = await response.text();
-      console.log("Server match history response:", responseText);
-      
-      // Parse la réponse à nouveau car .text() a déjà consommé le body
-      return JSON.parse(responseText);
+      const data = await response.json();
+      return data as T;
     } catch (error) {
-      console.error("Error fetching match history:", error);
-      throw new Error(`HTTP error! status: 999`);
+      console.error(`Error fetching ${endpoint}:`, error);
+      throw error;
+    }
+  }
+
+  // Récupérer les statistiques globales
+  async getMatchHistory(): Promise<ApiMatchStats> {
+    try {
+      const data = await this.fetchAPI<ApiMatchStats>('/history-details');
+      console.log("Stats récupérées:", data);
+      return data;
+    } catch (error) {
+      console.error("Erreur stats:", error);
+      return { matchplayed: 0, victory: 0, defeats: 0, ratio: 0 };
+    }
+  }
+
+  // Récupérer l'historique détaillé des matchs
+  async getHistoryDetails(): Promise<Match[]> {
+    try {
+      const data = await this.fetchAPI<Match[]>('/match-history');
+      console.log("Historique récupéré:", data);
+      return data;
+    } catch (error) {
+      console.error("Erreur historique:", error);
+      return [];
     }
   }
 }
 
+// Classe simplifiée pour l'affichage de l'historique des matchs
 class MatchHistoryApp {
+  // Données
   private matchStats: MatchStats | null = null
   private api: MatchHistoryAPI
-  private winrateChart: any // Chart.js instance
 
-  // DOM Elements
-  private gamesPlayed: HTMLElement
-  private winsCount: HTMLElement
-  private lossesCount: HTMLElement
-  private winratePercent: HTMLElement
-  private winrateChartEl: HTMLCanvasElement
-  private matchCount: HTMLElement
-  private matchesList: HTMLElement
-  private loadingState: HTMLDivElement
-  private emptyState: HTMLDivElement
-  private messageContainer: HTMLDivElement
+  // Éléments DOM
+  private gamesPlayed: HTMLElement | null
+  private winsCount: HTMLElement | null
+  private lossesCount: HTMLElement | null
+  private winratePercent: HTMLElement | null
+  private winrateChartEl: HTMLElement | null
+  private matchCount: HTMLElement | null
+  private matchesList: HTMLElement | null
+  private loadingState: HTMLElement | null
+  private emptyState: HTMLElement | null
+  private messageContainer: HTMLElement | null
 
   constructor() {
+    console.log('🚀 MatchHistoryApp initialisé');
     this.api = new MatchHistoryAPI()
 
-    // Initialize DOM elements
-    this.gamesPlayed = document.getElementById("games-played") as HTMLElement
-    this.winsCount = document.getElementById("wins-count") as HTMLElement
-    this.lossesCount = document.getElementById("losses-count") as HTMLElement
-    this.winratePercent = document.getElementById("winrate-percent") as HTMLElement
-    this.winrateChartEl = document.getElementById("winrateChart") as HTMLCanvasElement
-    this.matchCount = document.getElementById("match-count") as HTMLElement
-    this.matchesList = document.getElementById("matches-list") as HTMLElement
-    this.loadingState = document.getElementById("loading-state") as HTMLDivElement
-    this.emptyState = document.getElementById("empty-state") as HTMLDivElement
-    this.messageContainer = document.getElementById("message-container") as HTMLDivElement
+    // Récupération des éléments DOM
+    this.gamesPlayed = document.getElementById("games-played")
+    this.winsCount = document.getElementById("wins-count")
+    this.lossesCount = document.getElementById("losses-count")
+    this.winratePercent = document.getElementById("winrate-percent")
+    this.winrateChartEl = document.getElementById("winrateChart")
+    this.matchCount = document.getElementById("match-count")
+    this.matchesList = document.getElementById("matches-list")
+    this.loadingState = document.getElementById("loading-state")
+    this.emptyState = document.getElementById("empty-state")
+    this.messageContainer = document.getElementById("message-container")
 
     this.init()
   }
-   private init(): void {
-    // Vérifier si les éléments DOM existent
-    if (!this.gamesPlayed || !this.winsCount || !this.lossesCount || 
-        !this.winratePercent || !this.winrateChartEl || !this.matchCount || 
-        !this.matchesList || !this.loadingState || !this.emptyState) {
-      console.error("DOM elements not found. Make sure the match history page is loaded correctly.");
-      // Afficher un message dans la console pour faciliter le débogage
-      console.log("Missing DOM elements:", {
-        gamesPlayed: !!this.gamesPlayed,
-        winsCount: !!this.winsCount,
-        lossesCount: !!this.lossesCount,
-        winratePercent: !!this.winratePercent,
-        winrateChartEl: !!this.winrateChartEl,
-        matchCount: !!this.matchCount,
-        matchesList: !!this.matchesList,
-        loadingState: !!this.loadingState,
-        emptyState: !!this.emptyState
-      });
+  
+  // Initialisation
+  private init(): void {
+    console.log('⚙️ Initialisation...');
+    if (!this.validateDomElements()) {
       return;
     }
-    this.loadMatchHistory()
+    this.loadMatchHistory();
   }
 
- private async loadMatchHistory(): Promise<void> {
-  try {
-    console.log("🔄 Chargement de l'historique des matchs...");
-    this.showLoading(true);
-    
-    // DONNÉES STATIQUES DE TEST
-    const mockStats = {
-      gamesPlayed: 10,
-      wins: 7,
-      losses: 3,
-      winrate: 70,
-      matchHistory: [
-        {
-          id: 1,
-          date: "2025-07-14",
-          player1_id: 1,
-          player2_id: 2,
-          player1_name: "Toi",
-          player2_name: "Bob",
-          score_player1: 11,
-          score_player2: 5,
-          winner_id: 1,
-          result: "Win"
-        },
-        {
-          id: 2,
-          date: "2025-07-13",
-          player1_id: 1,
-          player2_id: 3,
-          player1_name: "Toi",
-          player2_name: "Alice",
-          score_player1: 7,
-          score_player2: 11,
-          winner_id: 3,
-          result: "Loss"
-        },
-        {
-          id: 3,
-          date: "2025-07-12",
-          player1_id: 1,
-          player2_id: 4,
-          player1_name: "Toi",
-          player2_name: "Charlie",
-          score_player1: 11,
-          score_player2: 9,
-          winner_id: 1,
-          result: "Win"
-        }
-      ]
+  // Validation des éléments DOM
+  private validateDomElements(): boolean {
+    const elements = {
+      gamesPlayed: !!this.gamesPlayed,
+      winsCount: !!this.winsCount,
+      lossesCount: !!this.lossesCount,
+      winratePercent: !!this.winratePercent,
+      winrateChartEl: !!this.winrateChartEl,
+      matchCount: !!this.matchCount,
+      matchesList: !!this.matchesList,
+      loadingState: !!this.loadingState,
+      emptyState: !!this.emptyState
     };
     
-    // Utiliser des données statiques au lieu de l'API
-    console.log("📊 Données statiques de test:", mockStats);
-    this.matchStats = mockStats;
-    this.renderStats();
-    this.initWinrateChart();
-    this.renderMatchHistory();
+    const allPresent = Object.values(elements).every(Boolean);
+    if (!allPresent) {
+      console.error("❌ Éléments DOM manquants:", elements);
+    }
     
-    console.log("✅ Historique des matchs chargé avec succès (données statiques)");
-  } catch (error) {
-    this.showMessage("Erreur lors du chargement de l'historique des matchs", "error");
-    console.error("❌ Error loading match history:", error);
-  } finally {
-    this.showLoading(false);
+    return allPresent;
   }
-}
 
+  // Chargement des données
+  private async loadMatchHistory(): Promise<void> {
+    try {
+      console.log('🔄 Chargement de l\'historique...');
+      
+      // 1. Récupération des statistiques
+      const apiStats = await this.api.getMatchHistory();
+      console.log('✅ Statistiques:', apiStats);
+      
+      // 2. Récupération des matchs
+      const matchHistory = await this.api.getHistoryDetails();
+      console.log('✅ Matchs:', matchHistory);
+      
+      // 3. Préparation des données
+      this.matchStats = {
+        gamesPlayed: apiStats.matchplayed || 0,
+        wins: apiStats.victory || 0,
+        losses: apiStats.defeats || 0,
+        winrate: apiStats.ratio || 0,
+        matchHistory: matchHistory
+      };
+      
+      // 4. Mise à jour de l'interface
+      this.renderStats();
+      this.displayWinRate();
+      this.renderMatchHistory();
+      
+      // 5. Masquer le chargement
+      if (this.loadingState) {
+        this.loadingState.style.display = 'none';
+      }
+      
+      // 6. État vide si nécessaire
+      if (this.emptyState && matchHistory.length === 0) {
+        this.emptyState.style.display = 'block';
+      } else if (this.emptyState) {
+        this.emptyState.style.display = 'none';
+      }
+      
+    } catch (error) {
+      console.error('❌ Erreur:', error);
+      this.showNotification('Impossible de charger l\'historique des matchs');
+      if (this.loadingState) this.loadingState.style.display = 'none';
+    }
+  }
+  
+  // Affichage des statistiques
   private renderStats(): void {
     if (!this.matchStats) return;
-
+    
     const { gamesPlayed, wins, losses, winrate } = this.matchStats;
     
-    this.gamesPlayed.textContent = gamesPlayed.toString();
-    this.winsCount.textContent = wins.toString();
-    this.lossesCount.textContent = losses.toString();
-    this.winratePercent.textContent = `${winrate}%`;
-    this.matchCount.textContent = gamesPlayed.toString();
+    if (this.gamesPlayed) this.gamesPlayed.textContent = gamesPlayed.toString();
+    if (this.winsCount) this.winsCount.textContent = wins.toString();
+    if (this.lossesCount) this.lossesCount.textContent = losses.toString();
+    if (this.winratePercent) this.winratePercent.textContent = `${winrate}%`;
+    if (this.matchCount) this.matchCount.textContent = gamesPlayed.toString();
   }
 
-   private initWinrateChart(): void {
-    if (!this.matchStats) return;
+  // Affichage du taux de victoire
+  private displayWinRate(): void {
+    if (!this.matchStats || !this.winrateChartEl) return;
     
-    const { wins, losses } = this.matchStats;
-    const ctx = this.winrateChartEl.getContext('2d');
+    const { wins, losses, winrate } = this.matchStats;
     
-    if (!ctx) return;
+    // Création d'un affichage simple
+    const container = document.createElement('div');
+    container.className = 'flex flex-col items-center justify-center p-4';
+    container.innerHTML = `
+      <div class="text-2xl font-bold">${wins} V - ${losses} D</div>
+      <div class="text-lg text-gray-600 mt-2">Ratio: ${winrate}%</div>
+    `;
     
-    // @ts-ignore - Chart est globalement disponible via le CDN
-    this.winrateChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Victoires', 'Défaites'],
-        datasets: [{
-          data: [wins, losses],
-          backgroundColor: ['#3b82f6', '#dc2626'], // Bleu et Rouge comme demandé
-          borderWidth: 0
-        }]
-      },
-      options: {
-        cutout: '70%',
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              usePointStyle: true,
-              padding: 20
-            }
-          }
-        }
-      }
-    });
+    // Remplacer le canvas
+    this.winrateChartEl.style.display = 'none';
+    this.winrateChartEl.parentNode?.insertBefore(container, this.winrateChartEl);
   }
 
+  // Affichage de l'historique des matchs
   private renderMatchHistory(): void {
-    if (!this.matchStats || !this.matchStats.matchHistory || this.matchStats.matchHistory.length === 0) {
-      this.matchesList.innerHTML = "";
-      this.emptyState.classList.remove("hidden");
+    if (!this.matchStats || !this.matchesList) return;
+    
+    const matches = this.matchStats.matchHistory;
+    
+    if (matches.length === 0) {
+      if (this.matchesList) this.matchesList.innerHTML = "";
+      if (this.emptyState) this.emptyState.style.display = 'block';
       return;
     }
-    this.emptyState.classList.add("hidden");
-
-    // Limiter à 3 matchs comme demandé
-    const recentMatches = this.matchStats.matchHistory.slice(0, 3);
     
-    // Générer le HTML pour les matchs
-    this.matchesList.innerHTML = recentMatches
-      .map((match) => this.createMatchHTML(match))
-      .join("");
+    // Masquer l'état vide
+    if (this.emptyState) this.emptyState.style.display = 'none';
+    
+    // Limiter à 3 matchs
+    const recentMatches = matches.slice(0, 3);
+    
+    // Générer le HTML
+    this.matchesList.innerHTML = recentMatches.map(match => {
+      // Déterminer si le joueur a gagné
+      const isWin = match.winner_id === match.player1_id;
+      const rowClass = isWin ? 'bg-blue-50' : 'bg-red-50';
+      const resultClass = isWin ? 'text-blue-600' : 'text-red-600';
+      const resultText = isWin ? 'Victoire' : 'Défaite';
+      
+      return `
+        <tr class="${rowClass}">
+          <td class="px-4 py-3 text-sm">${match.date}</td>
+          <td class="px-4 py-3 text-sm font-medium">${match.player2_name || 'Adversaire'}</td>
+          <td class="px-4 py-3 text-sm">${match.score_player1} - ${match.score_player2}</td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-1 rounded-full ${resultClass} text-sm font-medium">
+              ${resultText}
+            </span>
+          </td>
+        </tr>
+      `;
+    }).join('');
   }
 
-  private createMatchHTML(match: Match): string {
-    const isWin = match.result === 'Win';
-    const rowClass = isWin ? 'bg-blue-50' : 'bg-red-50';
-    const resultClass = isWin ? 'text-blue-600' : 'text-red-600';
-    const resultText = isWin ? 'Victoire' : 'Défaite';
-
-    return `
-      <tr class="${rowClass}">
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          ${match.date}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          <div class="text-sm font-medium text-gray-900">${match.player2_name || 'Adversaire'}</div>
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          ${match.score_player1} - ${match.score_player2}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          <span class="px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${resultClass}">
-            ${resultText}
-          </span>
-        </td>
-      </tr>
-    `;
-  }
-
-  private showLoading(show: boolean): void {
-    if (show) {
-      this.loadingState.classList.remove("hidden");
-      this.matchesList.innerHTML = "";
-      this.emptyState.classList.add("hidden");
-    } else {
-      this.loadingState.classList.add("hidden");
+  // Affichage d'une notification
+  private showNotification(message: string, type: MessageType = 'error'): void {
+    console.log(`📢 ${message} (${type})`);
+    
+    // Si pas de conteneur, utiliser alert
+    if (!this.messageContainer) {
+      alert(message);
+      return;
     }
-  }
-
-  private showMessage(message: string, type: MessageType = "info"): void {
-    const messageId = Date.now();
-    const bgColor = type === "success" ? "bg-green-500" : type === "error" ? "bg-red-500" : "bg-blue-500";
-
-    const messageElement = document.createElement("div");
-    messageElement.id = `message-${messageId}`;
-    messageElement.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg mb-2 animate-slide-up`;
-    messageElement.innerHTML = `
-      <div class="flex items-center justify-between">
-        <span>${message}</span>
-        <button class="ml-4 text-white hover:text-gray-200 close-message">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    `;
-
-    // Add close event listener
-    const closeButton = messageElement.querySelector(".close-message");
-    closeButton?.addEventListener("click", () => {
-      messageElement.remove();
-    });
-
-    this.messageContainer.appendChild(messageElement);
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-      const element = document.getElementById(`message-${messageId}`);
-      if (element) {
-        element.remove();
-      }
-    }, 5000);
+    
+    // Créer la notification
+    const notification = document.createElement('div');
+    notification.className = `p-4 mb-4 rounded-lg ${type === 'error' ? 'bg-red-500' : 'bg-blue-500'} text-white`;
+    notification.textContent = message;
+    
+    // Ajouter au DOM
+    this.messageContainer.appendChild(notification);
+    
+    // Supprimer après 3 secondes
+    setTimeout(() => notification.remove(), 3000);
   }
 }
-  function displayMatchHistory() {
-  setTimeout(() => {
-    if (document.getElementById("matches-list") && 
-        document.getElementById("winrateChart")) {
-      new MatchHistoryApp();
-    } else {
-      console.warn("⚠️ MatchHistoryApp: Éléments DOM non trouvés");
-    }
-  }, 100);
+
+// Fonction globale pour afficher l'historique des matchs
+function displayMatchHistory(): void {
+  console.log('🏓 Démarrage de l\'application d\'historique des matchs');
+  setTimeout(() => new MatchHistoryApp(), 100);
 }
 
+// Exporter les classes et fonctions
 export { MatchHistoryApp, MatchHistoryAPI, displayMatchHistory }
 
+// Déclarer les types globaux
 declare global {
   interface Window {
-    MatchHistoryApp: typeof MatchHistoryApp;
     displayMatchHistory: typeof displayMatchHistory;
   }
 }
 
-window.MatchHistoryApp = MatchHistoryApp;
+// Exposer la fonction au scope global
 window.displayMatchHistory = displayMatchHistory;
