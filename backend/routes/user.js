@@ -64,6 +64,21 @@ async function userRoutes(fastify, options)
         }
     })
 
+    fastify.patch('/user/2fa-activate', {preValidation : [fastify.prevalidate]}, async (request, reply) => {
+        try {
+            await fastify.dbPatch.activate2FA(request.user.email, request.body.isActivate);
+            const user = await fastify.utilsDb.getOneUser(request.user.email);
+            console.log("2FA status updated for user:", request.user.email, "isActivate:", request.body.isActivate);
+            if (!user) {
+                return reply.status(404).send({ success: false, message: "User not found" });
+            }
+            reply.send({ success: true, message: "2FA status updated successfully", user });
+        }
+        catch (err) {
+            return reply.status(400).send({ success: false, message: "Erreur lors de la mise à jour du statut 2FA", error: err.message });
+        }
+    })
+
 }
 
 export default fp(userRoutes);

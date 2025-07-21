@@ -29,7 +29,7 @@ declare global {
 }
 
 function isLoginResponse(data: any): data is LoginResponse {
-  return data && typeof data === 'object' && 'user' in data && 'jwt' in data;
+  return data && typeof data === 'object' && 'user' in data;
 }
 
 function isRegisterResponse(data: any): data is RegisterResponse {
@@ -72,35 +72,56 @@ async function login(): Promise<void> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-
       if (response.ok) {
         const data: unknown = await response.json();
         
         if (!isLoginResponse(data)) {
           throw new Error("Format de réponse invalide");
         }
-
-        if (messageDiv) {
-          messageDiv.textContent = "Connexion réussie !";
-          messageDiv.style.color = "green";
-        }
-
-          try {
-            await fetch('http://localhost:3000/user/connection-status', {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${data.jwt || ''}`,
-              },
-              body: JSON.stringify({ status: 1 }), // 1 = connecté et 0 = déconnecté
-            });
-          } catch (err) {
-            console.error("Erreur lors de la notification du status de connexion au backend:", err);
-          }
         
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('user', JSON.stringify(data.user || { email }));
-        localStorage.setItem('jwtToken', data.jwt || '');
+        // if (messageDiv) {
+        //   messageDiv.textContent = "Connexion réussie !";
+        //   messageDiv.style.color = "green";
+        // }
+        console.log("Utilisateur authentifié, redirection vers la page de connexion Google");
+        
+        // try {
+          //   await fetch('http://localhost:3000/user/connection-status', {
+            //     method: 'PATCH',
+            //     headers: {
+              //       'Content-Type': 'application/json',
+              //       Authorization: `Bearer ${data.jwt || ''}`,
+              //     },
+              //     body: JSON.stringify({ status: 1 }), // 1 = connecté et 0 = déconnecté
+              //   });
+              // } catch (err) {
+                //   console.error("Erreur lors de la notification du status de connexion au backend:", err);
+                // }
+                
+                console.log("Réponse du backend:", data);
+                localStorage.setItem('user', JSON.stringify(data.user || { email }));
+          
+          if (!data.jwt) {
+            try {
+              await fetch('http://localhost:3000/auth/2FA-code', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email })
+              });
+            } catch (err) {
+              console.error("Erreur lors de l'envoi du code 2FA vers le mail:", err);
+            }
+
+            console.log('2fa active, redirection vers la page OTP');
+            window.SPA?.navigateTo('/otp');
+          } else {
+            localStorage.setItem('jwtToken', data.jwt || '');
+            localStorage.setItem('isAuthenticated', 'true');
+
+            window.SPA?.navigateTo('/home');
+          }
 
       } else if (response.status === 401) {
         if (messageDiv) {
@@ -115,12 +136,51 @@ async function login(): Promise<void> {
       }
     } catch (error: unknown) {
       if (messageDiv) {
-        messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
+        console.error("Erreur lors de la connexion:", error);
+        messageDiv.textContent = "Erreur réseau on est ici. Veuillez réessayer.";
         messageDiv.style.color = "red";
       }
     }
   });
 }
+
+async function otpSubmit(email: string): Promise<void> {
+  setTimeout(() => {
+		const form = document.getElementById("otp-form") as HTMLFormElement | null;
+    if (!form) return;
+		form.addEventListener("submit", async (event: Event) => {
+			event.preventDefault()
+			const code: string = (document.getElementById("otp-code") as HTMLInputElement)?.value || ""
+
+      console.log("HERE");
+			try {
+				const response = await fetch('http://localhost:3000/auth/2FA-verify', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({email, code })
+				});
+				if (!response.ok)
+					throw new Error(`Erreur HTTP: ${response.status}`);
+
+				const result = await response.json();
+				console.log("Réponse du backend:", result);
+
+				if (result.success) {
+					localStorage.setItem('jwtToken', result.jwt);
+          localStorage.setItem('isAuthenticated', 'true');
+          console.log("Connexion réussie, redirection vers la page d'accueil");
+					window.SPA.navigateTo('/home');
+				}
+
+			} catch (error) {
+				console.error("Erreur lors de l'envoi au backend:", error);
+			}
+		})
+	}, 100);
+}
+
 
 async function register(): Promise<void> {
   const form: HTMLFormElement | null = document.getElementById('register-form') as HTMLFormElement;
@@ -212,3 +272,4 @@ async function register(): Promise<void> {
 window.SPA = window.SPA || {};
 window.login = login;
 window.register = register;
+window.otpSubmit = otpSubmit;

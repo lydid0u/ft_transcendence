@@ -229,21 +229,27 @@ async function activate2fa() {
 
     const isActivate = button.checked
     const boolean = isActivate
-
+    console.log("isActivate:", isActivate, "boolean:", boolean)
     try {
-      const response: Response = await fetch("http://localhost:3000/user/2fa-verify", {
-        method: "POST",
+      const response: Response = await fetch("http://localhost:3000/user/2fa-activate", {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
         },
-        body: JSON.stringify({
-          email: localStorage.getItem("email"),
-          boolean: boolean,
+        body: JSON.stringify({email: localStorage.getItem("email"), isActivate: boolean,
         }),
       })
 
-      if (!response.ok) throw new Error("Échec de la requête")
+      console.log("Response status:", localStorage.getItem("email"), boolean)
+      if (response.status === 400) {
+        showMessage("message-2fa", "Erreur lors de la mise à jour de la 2FA.", "error")
+        console.log("Response status 400, returning")
+        return
+      }
+
+      if (!response.ok) 
+        throw new Error("Échec de la requête")
 
       localStorage.setItem("2fa_enabled", boolean.toString())
       messageDiv.textContent = isActivate ? "2FA activée avec succès." : "2FA désactivée avec succès."
@@ -253,7 +259,7 @@ async function activate2fa() {
         messageDiv.classList.add("hidden")
       }, 5000)
     } catch (error) {
-      console.error(error)
+      console.log("LERREUR", error)
       messageDiv.textContent = "Erreur lors de la mise à jour de la 2FA."
       messageDiv.classList.remove("hidden")
       checkbox.checked = !isActivate
@@ -303,7 +309,6 @@ async function changePassword(): Promise<void> {
   })
 }
 
-// Initialize everything when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   displayUserProfile()
   changeUsername()

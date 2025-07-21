@@ -1,3 +1,5 @@
+import { activate2fa } from "./profile";
+
 interface RouteConfig {
   title: string;
   content: string;
@@ -41,6 +43,7 @@ declare function displayUserProfile(): Promise<void>;
 declare function changeUsername(): Promise<void>;
 declare function changeAvatar(): Promise<void>;
 declare function displayMatchHistory(): void;
+declare function otpSubmit(email: string): Promise<void>;
 
 const SPA = {
   SPAattribute: {
@@ -149,6 +152,24 @@ const SPA = {
   }
 },
 
+    '/otp': {
+      title: 'Double Authentification',
+      content: 'pages/otp.html',
+      routeScript: function(): void {
+        const otpInput: HTMLInputElement | null = document.querySelector('#otp-input');
+        const email = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}').email : '';
+        console.log('email', email);
+        if (!email) {
+          console.error('Aucun utilisateur trouvé dans le localStorage.');
+          return;
+        }
+        if (otpInput) {
+          otpInput.focus(); // ca met le curseur directement dans le champ de saisie
+        }
+        otpSubmit(email);
+      }
+    },
+
     '/googleLogin': {
       title: 'Google Login',
       content: 'pages/googleLogin.html',
@@ -185,21 +206,21 @@ const SPA = {
       }
     },
     
-    '/match-history': {
-  title: 'Historique des matchs',
-  content: 'pages/match-history.html',
-  routeScript: function(): void {
-    console.log("👉 SPA route /match-history activated");
-    setTimeout(() => {
-      if (typeof displayMatchHistory === 'function') {
-        console.log("✅ displayMatchHistory function found");
-        displayMatchHistory();
-      } else {
-        console.error("❌ displayMatchHistory function NOT found");
-      }
-    }, 100);
-  }
-},
+      '/match-history': {
+    title: 'Historique des matchs',
+    content: 'pages/match-history.html',
+    routeScript: function(): void {
+      console.log("👉 SPA route /match-history activated");
+      setTimeout(() => {
+        if (typeof displayMatchHistory === 'function') {
+          console.log("✅ displayMatchHistory function found");
+          displayMatchHistory();
+        } else {
+          console.error("❌ displayMatchHistory function NOT found");
+        }
+      }, 100);
+    }
+  },
 
     '/profile': {
       title: 'profile',
@@ -209,6 +230,7 @@ const SPA = {
           displayUserProfile();
           changeUsername();
           changeAvatar();
+          activate2fa();
         }, 50);
       }
     }
@@ -242,8 +264,8 @@ const SPA = {
   },
 
   loadRoute: async function(route: string): Promise<void> {
-    const isAuthenticated: string | null = localStorage.getItem('isAuthenticated');
-    const publicRoutes: string[] = ['/', '/login', '/register'];
+    const isAuthenticated: boolean = localStorage.getItem('jwtToken') != null;
+    const publicRoutes: string[] = ['/', '/login', '/register', '/about', '/otp', '/googleLogin'];
 
     if (!isAuthenticated && !publicRoutes.includes(route)) {
       this.navigateTo('/login');
@@ -350,6 +372,7 @@ declare global {
     displayUserProfile: () => Promise<void>;
     changeUsername: () => Promise<void>;
     changeAvatar: () => Promise<void>;
+    otpSubmit: (email: string) => Promise<void>;
     [key: string]: any; 
   }
 }

@@ -59,8 +59,10 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 			console.log("Utilisateur authentifié, redirection vers la page de connexion Google");
 			window.SPA.navigateTo('/googleLogin');
 		}
-		else
+		else { 
 			localStorage.setItem('jwtToken', data.jwt);
+			window.SPA.navigateTo('/home');
+		}
 	} catch (error) {
 		console.error("Erreur lors de l'envoi au backend:", error);
 
@@ -90,7 +92,7 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
 			event.preventDefault()
 			const username: string = (document.getElementById("new-username") as HTMLInputElement)?.value || ""
 			
-			console.log('tjrs la');
+			console.log('tjrs la' , username);
 			if (!username && message) {
 				message.textContent = "Le nom d'utilisateur ne peut pas être vide."
 				message.style.color = "red"
@@ -103,7 +105,7 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ userData })
+					body: JSON.stringify({ username, userData })
 				});
 
 				if (!response.ok)
