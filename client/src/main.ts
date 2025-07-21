@@ -4,6 +4,7 @@ import './ts/loginOrRegister';
 import './ts/password';
 import './ts/profile';
 import './ts/spa';
+import './ts/gameAI';
 // import './ts/tv-controls';
 // import './ts/google-auth';
 // import './ts/dashboard';

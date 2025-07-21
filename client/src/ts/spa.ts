@@ -9,6 +9,8 @@ interface SPAAttributes {
   defaultRoute: string;
   contentDiv: string;
   contentParent?: Node | null;
+  currentGameInstance?: Game | null;
+
 }
 
 interface GoogleAuthConfig {
@@ -22,6 +24,8 @@ interface GoogleAccounts {
     renderButton: (element: Element | null, options: any) => void;
   };
 }
+
+import { Game } from './gameAI';
 
 declare global {
   interface Window {
@@ -48,7 +52,8 @@ const SPA = {
   SPAattribute: {
     defaultRoute: '/', // page par défaut
     contentDiv: '#content', // id de l'html où le contenu sera chargé
-    contentParent: null as Node | null
+    contentParent: null as Node | null,
+	currentGameInstance: null as Game | null
   } as SPAAttributes,
 
   handleLayout: function(route: string): void {
@@ -115,6 +120,46 @@ const SPA = {
       title: 'tournoi',
       content: 'pages/tournoi.html'
     },
+
+	'/gameAI': {
+			title: 'Pong AI Game',
+			content: 'pages/gameAI.html',
+			routeScript: function ()
+			{
+				function tryInitGame() {
+					const canvas = document.getElementById('game-canvas');
+					if (!canvas)
+					{
+						console.error('Game-canvas not found');
+						setTimeout(tryInitGame, 50);
+						return;
+					}
+					if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
+					{
+						console.log("Game instance destroyed");
+						SPA.SPAattribute.currentGameInstance.destroy();
+						console.log("Game instance destroyed");
+					}
+					try
+					{
+						const game = new Game();
+						console.log("Created a new game instance")
+						SPA.SPAattribute.currentGameInstance = game;
+						if (SPA.SPAattribute.currentGameInstance === null)
+						{
+							throw new Error("current game didn't load");
+							return;
+						}
+						requestAnimationFrame(() => SPA.SPAattribute.currentGameInstance.gameLoop());
+					}
+					catch (e)
+					{
+						console.error('Game init failed:', e);
+					}
+				}
+				tryInitGame();
+			}
+		},
 
     '/dashboard': {
       title: 'dashboard',
