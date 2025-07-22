@@ -160,7 +160,7 @@ async function changeUsername(): Promise<void> {
       }
     } catch (error) {
       console.error("Erreur lors du changement de pseudo:", error)
-      showMessage("message-username", "Erreur réseau. Veuillez réessayer.", "error")
+      showMessage("message-username", "Erreur réseau 3. Veuillez réessayer.", "error")
     }
   })
 }
@@ -202,7 +202,7 @@ async function changeAvatar() {
         form.reset()
       }
     } catch (error) {
-      showMessage("message-avatar", "Erreur réseau. Veuillez réessayer.", "error")
+      showMessage("message-avatar", "Erreur réseau 4. Veuillez réessayer.", "error")
     }
   })
 }
@@ -304,7 +304,7 @@ async function changePassword(): Promise<void> {
         showMessage("message-password", "Mot de passe actuel incorrect.", "error")
       }
     } catch (error) {
-      showMessage("message-password", "Erreur réseau. Veuillez réessayer.", "error")
+      showMessage("message-password", "Erreur réseau 5. Veuillez réessayer.", "error")
     }
   })
 }

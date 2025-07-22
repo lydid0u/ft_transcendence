@@ -12,7 +12,7 @@ interface LoginResponse {
 
 interface RegisterResponse {
   user: User;
-  token: string;
+  jwt: string;
 }
 
 interface AuthErrorResponse {
@@ -33,7 +33,7 @@ function isLoginResponse(data: any): data is LoginResponse {
 }
 
 function isRegisterResponse(data: any): data is RegisterResponse {
-  return data && typeof data === 'object' && 'user' in data && 'token' in data;
+  return data && typeof data === 'object' && 'user' in data && 'jwt' in data;
 }
 
 async function login(): Promise<void> {
@@ -200,11 +200,11 @@ async function register(): Promise<void> {
   form.addEventListener('submit', async function (e: Event): Promise<void> {
     e.preventDefault();
 
-    const emailInput: HTMLInputElement | null = document.getElementById("emailRegister") as HTMLInputElement;
-    const pseudoInput: HTMLInputElement | null = document.getElementById("pseudo") as HTMLInputElement;
-    const createPasswordInput: HTMLInputElement | null = document.getElementById("createPassword") as HTMLInputElement;
-    const confirmPasswordInput: HTMLInputElement | null = document.getElementById("confirmPassword") as HTMLInputElement;
-    const messageDiv: HTMLElement | null = document.getElementById('message');
+    const emailInput = document.getElementById("emailRegister") as HTMLInputElement;
+    const pseudoInput = document.getElementById("pseudo") as HTMLInputElement;
+    const createPasswordInput = document.getElementById("createPassword") as HTMLInputElement;
+    const confirmPasswordInput = document.getElementById("confirmPassword") as HTMLInputElement;
+    const messageDiv = document.getElementById('message');
 
     if (!emailInput || !pseudoInput || !createPasswordInput || !confirmPasswordInput) {
       if (messageDiv) {
@@ -214,12 +214,11 @@ async function register(): Promise<void> {
       return;
     }
 
-    const email: string = emailInput.value || "test@test.fr";
-    const pseudo: string = pseudoInput.value || "test";
-    const createPassword: string = createPasswordInput.value || "123";
-    const confirmPassword: string = confirmPasswordInput.value || "123";
+    const email = emailInput.value || "test@test.fr";
+    const pseudo = pseudoInput.value || "test";
+    const createPassword = createPasswordInput.value || "123";
+    const confirmPassword = confirmPasswordInput.value || "123";
 
-    // Fixed the comparison operator (was ==! instead of !==)
     if (createPassword !== confirmPassword) {
       if (messageDiv) {
         messageDiv.textContent = "Les mots de passe ne correspondent pas, réessayez.";
@@ -229,41 +228,25 @@ async function register(): Promise<void> {
     }
 
     try {
-      const response: Response = await fetch('http://localhost:3000/auth/register', {
+      const response = await fetch('http://localhost:3000/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, pseudo, password: createPassword })
       });
       const data: unknown = await response.json();
 
-      if (response.status === 400) {
-        if (messageDiv) {
-          messageDiv.textContent = "Erreur dans les données fournies.";
-          messageDiv.style.color = "red";
-        }
-        return;
-      }
-
       if (!response.ok) {
-        const errorData: AuthErrorResponse = await response.json();
+        const errorData = data as AuthErrorResponse;
         if (messageDiv) {
-          messageDiv.textContent = `Erreur inattendue: ${JSON.stringify(errorData)}`;
+          messageDiv.textContent = `Erreur inattendue: ${errorData.message || errorData.error || response.status}`;
           messageDiv.style.color = "red";
         }
         return;
       }
 
-      
-      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK
-      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK      
-      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK
-      // if (!isRegisterResponse(data)) {
-      //   throw new Error("Format de réponse invalide");
-      // } 
-      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK
-      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK
-      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK
-
+      if (!isRegisterResponse(data)) {
+        throw new Error("Format de réponse invalide");
+      }
 
       if (messageDiv) {
         messageDiv.textContent = "Inscription réussie !";
@@ -276,24 +259,24 @@ async function register(): Promise<void> {
 
       try {
         await fetch('http://localhost:3000/user/connection-status', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${data.jwt || ''}`,
-              },
-              body: JSON.stringify({ status: 1 }), // 1 = connecté et 0 = déconnecté
-            });
-          } 
-        catch (err) {
-            console.error("Erreur lors de la notification du status de connexion au backend:", err);
-          }
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${data.jwt || ''}`,
+          },
+          body: JSON.stringify({ status: 1 }),
+        });
+      } catch (err) {
+        console.error("Erreur lors de la notification du status de connexion au backend:", err);
+      }
+
       if (window.SPA && typeof window.SPA.navigateTo === 'function') {
         window.SPA.navigateTo('/dashboard');
       }
     } catch (error: unknown) {
       if (messageDiv) {
         console.error("Erreur lors de l'inscription:", error);
-        messageDiv.textContent = "Erreur réseau 2. Veuillez réessayer.";
+        messageDiv.textContent = "Erreur réseau 1. Veuillez réessayer.";
         messageDiv.style.color = "red";
       }
     }
