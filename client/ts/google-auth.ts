@@ -127,14 +127,24 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
 				const result = await response.json();
 				console.log("Réponse du backend:", result);
 
-				if (result.success) {
+				if (result.success) 
+				{
 					localStorage.setItem('jwtToken', result.jwt);
+					await fetch('http://localhost:3000/user/connection-status', {
+						method: 'PATCH',
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${result.jwt || ''}`,
+						},
+						body: JSON.stringify({ status: true }), // 1 = connecté et 0 = déconnecté
+						});
+					} 
 					window.SPA.navigateTo('/home');
+				} 
+				catch (error) 
+				{
+					console.error("Erreur lors de l'envoi au backend:", error);
 				}
-
-			} catch (error) {
-				console.error("Erreur lors de l'envoi au backend:", error);
-			}
 		})
 	}, 100);
 }
