@@ -47,10 +47,11 @@ async function dbFunctionPatch(fastify, options)
         {
             if (def)
             {
-                const defaultAvatarPath = path.join(__dirname, '..', 'avatar', 'default.png');
-                const defaultAvatar = await fs.promises.readFile(defaultAvatarPath);
-                const dataUrl = `data:image/png;base64,${defaultAvatar.toString('base64')}`;
-                // await fastify.db.connection.run('UPDATE users SET picture = ? WHERE email = ?', dataUrl, requestOrEmail);
+                const avatars = ['firstavatar.png', 'secondavatar.png', 'thirdavatar.png'];
+                const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+                const avatarPath = path.join(__dirname, '..', 'avatar', randomAvatar);
+                const avatarBuffer = await fs.promises.readFile(avatarPath);
+                const dataUrl = `data:image/png;base64,${avatarBuffer.toString('base64')}`;
                 return dataUrl; 
             }
             const file = await requestOrEmail.file()
