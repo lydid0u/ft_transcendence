@@ -116,7 +116,7 @@ async function authGoogle(fastify, options) {
       {
         const jwt = await fastify.auth.createJWTtoken(user);
         console.log(jwt);
-        reply.send({ jwt, user });
+        reply.send({success : true, jwt, user });
       }
     } catch (err) {
       reply
@@ -205,7 +205,7 @@ async function authGoogle(fastify, options) {
       );
       if (user) {
         const jwt = await fastify.auth.createJWTtoken(user);
-        reply.send({ jwt, user });
+        reply.send({success : true, jwt, user });
       } else {
         reply
           .status(401)

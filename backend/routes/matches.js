@@ -24,6 +24,8 @@ async function matchesRoutes(fastify, options)
 
     fastify.get('/history-details', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
+        const avatar = await fastify.db.connection.get('SELECT picture FROM users WHERE id = ?', request.user.id); 
+        console.log("avatar:", avatar);
         const data = await fastify.db.connection.all('SELECT * FROM matches WHERE player1_id = ? OR player2_id = ?', request.user.id, request.user.id);
         const victory = data.filter(m => m.winner_id === request.user.id).length; 
         const defeats = data.length - victory;

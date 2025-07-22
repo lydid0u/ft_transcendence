@@ -43,7 +43,8 @@ async function dbFunction(fastify, options)
                 if (user)
                     throw new Error("Username already taken");
                 const newpass = await bcrypt.hash(password, saltRounds);
-                await db.run('INSERT INTO users (email, password, username, picture) VALUES (?, ?, ?, ?)', email, newpass, username, "default.png");
+                const avatar = await fastify.dbPatch.addOrChangeAvatar(email, true);
+                await db.run('INSERT INTO users (email, password, username, picture) VALUES (?, ?, ?, ?)', email, newpass, username, avatar);
                 user = await db.get('SELECT * FROM users WHERE email = ?', email);
                 return (user); 
             }

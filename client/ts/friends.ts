@@ -23,6 +23,8 @@ class FriendsAPI {
   /**
    * Get all friends for the current user
    */
+
+   
   async getAllFriends(): Promise<any> {
     try {
       const token = localStorage.getItem("jwtToken");
@@ -35,7 +37,7 @@ class FriendsAPI {
         },
         credentials: "include", // Include cookies for authentication
       });
-      
+      console.log("HERE");
       const responseText = await response.text();
       console.log("Server friends response:", responseText);
       
@@ -73,6 +75,21 @@ class FriendsAPI {
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Impossible d'ajouter cet ami");
     }
+  }
+  async getOnlineStatus(username: string): Promise<boolean> {
+    const token = localStorage.getItem("jwtToken");
+    console.log("Checking online status for:", username);
+    const response = await fetch(`${this.baseUrl}/user/get-online-status?friend_nickname=${encodeURIComponent(username)}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      credentials: "include",
+    });
+    const result = await response.json();
+    return result.isOnline === true;
   }
 }
 
@@ -170,7 +187,7 @@ class FriendsApp {
     
     console.log("Amis extraits:", this.friends);
     this.filteredFriends = [...this.friends];
-    this.renderFriends();
+    await this.renderFriends();
     this.updateFriendsCount();
   } catch (error) {
     this.showMessage("Erreur lors du chargement des amis", "error");
@@ -180,11 +197,11 @@ class FriendsApp {
   }
 }
 
-  private handleSearch(searchTerm: string): void {
+  private async handleSearch(searchTerm: string): Promise<void> {
     this.filteredFriends = this.friends.filter((friend) =>
       friend.username?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
-    this.renderFriends()
+    await this.renderFriends()
   }
 
   private async handleAddFriend(): Promise<void> {
@@ -209,7 +226,7 @@ class FriendsApp {
     }
   }
 
-  private renderFriends(): void {
+  private async renderFriends(): Promise<void> {
     if (this.filteredFriends.length === 0) {
       this.friendsList.innerHTML = ""
       this.emptyState.classList.remove("hidden")
@@ -219,31 +236,38 @@ class FriendsApp {
     this.emptyState.classList.add("hidden")
 
     // Générer le HTML sans bouton de suppression
-    this.friendsList.innerHTML = this.filteredFriends
-      .map((friend) => this.createFriendHTML(friend))
-      .join("")
-  }
+    const htmlArray = await Promise.all(
+    this.filteredFriends.map((friend) => this.createFriendHTML(friend))
+  );
+  this.friendsList.innerHTML = htmlArray.join("");
+}
 
-  private createFriendHTML(friend: Friend): string {
-    const username = friend.username || "Utilisateur inconnu"
-    const initial = username.charAt(0).toUpperCase()
+  private async createFriendHTML(friend: Friend): Promise<string> {
+  const username = friend.username || "Utilisateur inconnu";
+  const initial = username.charAt(0).toUpperCase();
+  const isOnline = await this.api.getOnlineStatus(username);
+  const statusColor = isOnline ? "#22c55e" : "#ef4444"; // vert ou rouge
+  const statusText = isOnline ? "En ligne" : "Hors ligne";
 
-    return `
-      <li class="p-4 hover:bg-gray-50 transition-colors duration-150 animate-slide-up">
-        <div class="flex items-center">
-          <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-              ${initial}
-            </div>
-            <div>
-              <h3 class="text-lg font-medium text-gray-900">${username}</h3>
-              <p class="text-sm text-gray-500">Email: ${friend.email || 'Non renseigné'}</p>
+  return `
+    <li class="p-4 hover:bg-gray-50 transition-colors duration-150 animate-slide-up">
+      <div class="flex items-center">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+            ${initial}
+          </div>
+          <div>
+            <h3 class="text-lg font-medium text-gray-900">${username}</h3>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="inline-block w-3 h-3 rounded-full" style="background:${statusColor};"></span>
+              <span class="text-sm font-semibold" style="color:${statusColor};">${statusText}</span>
             </div>
           </div>
         </div>
-      </li>
-    `
-  }
+      </div>
+    </li>
+  `;
+}
 
   private updateFriendsCount(): void {
     this.friendsCount.textContent = this.friends.length.toString()

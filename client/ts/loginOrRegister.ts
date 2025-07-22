@@ -79,28 +79,8 @@ async function login(): Promise<void> {
           throw new Error("Format de réponse invalide");
         }
         
-        // if (messageDiv) {
-        //   messageDiv.textContent = "Connexion réussie !";
-        //   messageDiv.style.color = "green";
-        // }
-        console.log("Utilisateur authentifié, redirection vers la page de connexion Google");
-        
-        // try {
-          //   await fetch('http://localhost:3000/user/connection-status', {
-            //     method: 'PATCH',
-            //     headers: {
-              //       'Content-Type': 'application/json',
-              //       Authorization: `Bearer ${data.jwt || ''}`,
-              //     },
-              //     body: JSON.stringify({ status: 1 }), // 1 = connecté et 0 = déconnecté
-              //   });
-              // } catch (err) {
-                //   console.error("Erreur lors de la notification du status de connexion au backend:", err);
-                // }
-                
-                console.log("Réponse du backend:", data);
-                localStorage.setItem('user', JSON.stringify(data.user || { email }));
-          
+          localStorage.setItem('user', JSON.stringify(data.user || { email }));
+    
           if (!data.jwt) {
             try {
               await fetch('http://localhost:3000/auth/2FA-code', {
@@ -117,6 +97,19 @@ async function login(): Promise<void> {
             console.log('2fa active, redirection vers la page OTP');
             window.SPA?.navigateTo('/otp');
           } else {
+            try {
+        await fetch('http://localhost:3000/user/connection-status', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${data.jwt || ''}`,
+              },
+              body: JSON.stringify({ status: true }), // 1 = connecté et 0 = déconnecté
+            });
+          } 
+        catch (err) {
+            console.error("Erreur lors de la notification du status de connexion au backend:", err);
+          }
             localStorage.setItem('jwtToken', data.jwt || '');
             localStorage.setItem('isAuthenticated', 'true');
 
@@ -127,6 +120,12 @@ async function login(): Promise<void> {
         if (messageDiv) {
           messageDiv.textContent = "Email ou mot de passe incorrect.";
           messageDiv.style.color = "red";
+        }
+      } 
+        else if (response.status === 200) {
+        if( messageDiv) {
+          messageDiv.textContent = "Connexion réussie, redirection vers la page d'accueil.";
+          messageDiv.style.color = "green";
         }
       } else {
         if (messageDiv) {
@@ -152,7 +151,6 @@ async function otpSubmit(email: string): Promise<void> {
 			event.preventDefault()
 			const code: string = (document.getElementById("otp-code") as HTMLInputElement)?.value || ""
 
-      console.log("HERE");
 			try {
 				const response = await fetch('http://localhost:3000/auth/2FA-verify', {
 					method: 'POST',
@@ -168,6 +166,19 @@ async function otpSubmit(email: string): Promise<void> {
 				console.log("Réponse du backend:", result);
 
 				if (result.success) {
+          try {
+        await fetch('http://localhost:3000/user/connection-status', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${data.jwt || ''}`,
+              },
+              body: JSON.stringify({ status: 1 }), // 1 = connecté et 0 = déconnecté
+            });
+          } 
+        catch (err) {
+            console.error("Erreur lors de la notification du status de connexion au backend:", err);
+          }
 					localStorage.setItem('jwtToken', result.jwt);
           localStorage.setItem('isAuthenticated', 'true');
           console.log("Connexion réussie, redirection vers la page d'accueil");
@@ -223,6 +234,7 @@ async function register(): Promise<void> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, pseudo, password: createPassword })
       });
+      const data: unknown = await response.json();
 
       if (response.status === 400) {
         if (messageDiv) {
@@ -241,11 +253,17 @@ async function register(): Promise<void> {
         return;
       }
 
-      const data: unknown = await response.json();
       
-      if (!isRegisterResponse(data)) {
-        throw new Error("Format de réponse invalide");
-      }
+      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK
+      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK      
+      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK
+      // if (!isRegisterResponse(data)) {
+      //   throw new Error("Format de réponse invalide");
+      // } 
+      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK
+      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK
+      // KHALID A COMMENTER PARCE QU'A CHAQUE INSCRIPTION L'ERREUR APPARAIT, FONCTION A CHECK
+
 
       if (messageDiv) {
         messageDiv.textContent = "Inscription réussie !";
@@ -254,14 +272,28 @@ async function register(): Promise<void> {
 
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('user', JSON.stringify(data.user || { email }));
-      localStorage.setItem('jwtToken', data.token || '');
+      localStorage.setItem('jwtToken', data.jwt || '');
 
+      try {
+        await fetch('http://localhost:3000/user/connection-status', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${data.jwt || ''}`,
+              },
+              body: JSON.stringify({ status: 1 }), // 1 = connecté et 0 = déconnecté
+            });
+          } 
+        catch (err) {
+            console.error("Erreur lors de la notification du status de connexion au backend:", err);
+          }
       if (window.SPA && typeof window.SPA.navigateTo === 'function') {
         window.SPA.navigateTo('/dashboard');
       }
     } catch (error: unknown) {
       if (messageDiv) {
-        messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
+        console.error("Erreur lors de l'inscription:", error);
+        messageDiv.textContent = "Erreur réseau 2. Veuillez réessayer.";
         messageDiv.style.color = "red";
       }
     }

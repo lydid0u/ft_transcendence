@@ -59,7 +59,20 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 			console.log("Utilisateur authentifié, redirection vers la page de connexion Google");
 			window.SPA.navigateTo('/googleLogin');
 		}
-		else { 
+		else {
+			try {
+        await fetch('http://localhost:3000/user/connection-status', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${data.jwt || ''}`,
+              },
+              body: JSON.stringify({ status: true }), // 1 = connecté et 0 = déconnecté
+            });
+          } 
+        catch (err) {
+            console.error("Erreur lors de la notification du status de connexion au backend:", err);
+          }
 			localStorage.setItem('jwtToken', data.jwt);
 			window.SPA.navigateTo('/home');
 		}
@@ -70,9 +83,9 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 		localStorage.removeItem('isAuthenticated');
 		localStorage.removeItem('jwtToken');
 
-		if (typeof google !== 'undefined' && google.accounts) {
-			google.accounts.id.disableAutoSelect();
-		}
+		// if (typeof google !== 'undefined' && google.accounts) {
+		// 	google.accounts.id.disableAutoSelect();
+		// }
 
 		if (window.SPA && typeof window.SPA.navigateTo === 'function') {
 			window.SPA.navigateTo('/login');

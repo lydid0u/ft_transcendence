@@ -43,16 +43,24 @@ async function dbFunctionPatch(fastify, options)
                 throw new Error ("Email doesn't exist");
         },
 
-        async addOrChangeAvatar(request)
+        async addOrChangeAvatar(requestOrEmail, def)
         {
-            const file = await request.file()
+            if (def)
+            {
+                const defaultAvatarPath = path.join(__dirname, '..', 'avatar', 'default.png');
+                const defaultAvatar = await fs.promises.readFile(defaultAvatarPath);
+                const dataUrl = `data:image/png;base64,${defaultAvatar.toString('base64')}`;
+                // await fastify.db.connection.run('UPDATE users SET picture = ? WHERE email = ?', dataUrl, requestOrEmail);
+                return dataUrl; 
+            }
+            const file = await requestOrEmail.file()
             if (!file.mimetype.startsWith('image/')) {
                 throw new Error("Le fichier doit être une image.");
             }
             const avatar = await file.toBuffer() // ca throw si limage est trop grande pcq index.js
             if(!avatar)
                 throw new Error("Couldn't find avatar");
-            const user = await fastify.db.connection.get('SELECT * FROM users  WHERE email = ?', request.user.email)
+            const user = await fastify.db.connection.get('SELECT * FROM users  WHERE email = ?', requestOrEmail.user.email)
             if (user.picture) {
                 const oldAvatarPath = path.join(process.cwd(), 'avatar', user.picture);
                 try {
@@ -66,7 +74,7 @@ async function dbFunctionPatch(fastify, options)
             const avatarPath = path.join(__dirname, '..', 'avatar', file.filename);
             console.log("avatarPath", avatarPath);
             await fs.promises.writeFile(avatarPath, avatar);
-            await fastify.db.connection.run('UPDATE users SET picture = ? WHERE email = ?', dataUrl, request.user.email);
+            await fastify.db.connection.run('UPDATE users SET picture = ? WHERE email = ?', dataUrl, requestOrEmail.user.email);
         },
 
         async changeUsername(newusername, email)
@@ -96,6 +104,14 @@ async function dbFunctionPatch(fastify, options)
             await fastify.db.connection.run('UPDATE users SET is_2fa_activated = ? WHERE email = ?', isActivate, email);
             console.log("activate2FA called for user:", email, "isActivate:", user.is_2fa_activated);
             return { success: true, message: "2FA status updated successfully" };
+        },
+
+        async changeOnlineStatus(email, isOnline)
+        {
+            const user = await fastify.db.connection.get('SELECT * FROM users WHERE email = ?', email);
+            if (!user)
+                throw new Error("User not found");
+            await fastify.db.connection.run('UPDATE users SET status = ? WHERE email = ?', isOnline, email);
         }
 
     }
