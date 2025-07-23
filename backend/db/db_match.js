@@ -12,12 +12,13 @@ async function tableMatches(fastify, options)
             await fastify.db.connection.run(
                 `CREATE TABLE IF NOT EXISTS matches (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    uuid TEXT UNIQUE,
                     player1_id INTEGER,
                     player2_id INTEGER,
                     winner_id INTEGER,
                     score_player1 INTEGER,
                     score_player2 INTEGER,
+                    duration INTEGER,
+                    game_mode TEXT,
                     played_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (player1_id) REFERENCES users(id),
                     FOREIGN KEY (player2_id) REFERENCES users(id),

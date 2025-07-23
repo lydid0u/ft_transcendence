@@ -1,6 +1,16 @@
 <div class="flex flex-col items-center rounded-[50px] h-full w-full p-8 bg-gradient-to-b from-stone-200 to-stone-300 no-scrollbar overflow-y-auto">
     <div class="w-full max-w-4xl text-center">
-        <h1 class="text-5xl font-bold mb-12 text-stone-400">HISTORIQUE DES MATCHS</h1>
+        <h1 class="text-5xl font-bold mb-6 text-stone-400">HISTORIQUE DES MATCHS</h1>
+        
+        <!-- Sélection du jeu -->
+        <div class="flex justify-center gap-4 mb-8">
+            <button id="btn-game-pong" type="button" class="px-6 py-3 bg-stone-600 text-white font-medium rounded-xl hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 transform hover:scale-[1.02] transition-all duration-200 shadow-lg active">
+                Pong Classic
+            </button>
+            <button id="btn-game-custom" type="button" class="px-6 py-3 bg-stone-400 text-white font-medium rounded-xl hover:bg-stone-500 focus:outline-none focus:ring-2 focus:ring-stone-500 focus:ring-offset-2 transform hover:scale-[1.02] transition-all duration-200 shadow-lg">
+                Pong Custom
+            </button>
+        </div>
 
         <!-- Stats Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">

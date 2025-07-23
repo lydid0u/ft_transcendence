@@ -59,25 +59,37 @@ class MatchHistoryAPI {
   }
 
   // Récupérer les statistiques globales
-  async getMatchHistory(): Promise<ApiMatchStats> {
+  async getMatchHistory(gameType: string = 'pong'): Promise<ApiMatchStats> {
     try {
-      const data = await this.fetchAPI<ApiMatchStats>('/history-details');
-      console.log("Stats récupérées:", data);
-      return data;
+      // Transmettre le type comme gameType ET game_mode pour compatibilité
+      const data = await this.fetchAPI<ApiMatchStats>(`/history-details?gameType=${gameType}&game_mode=${gameType}`);
+      
+      // Vérifier la structure des données
+      if (!data) {
+        return { matchplayed: 0, victory: 0, defeats: 0, ratio: 0 };
+      }
+      
+      // Convertir les valeurs en nombres si nécessaire
+      const stats = {
+        matchplayed: typeof data.matchplayed === 'number' ? data.matchplayed : Number(data.matchplayed) || 0,
+        victory: typeof data.victory === 'number' ? data.victory : Number(data.victory) || 0,
+        defeats: typeof data.defeats === 'number' ? data.defeats : Number(data.defeats) || 0,
+        ratio: typeof data.ratio === 'number' ? data.ratio : Number(data.ratio) || 0
+      };
+      
+      return stats;
     } catch (error) {
-      console.error("Erreur stats:", error);
       return { matchplayed: 0, victory: 0, defeats: 0, ratio: 0 };
     }
   }
 
   // Récupérer l'historique détaillé des matchs
-  async getHistoryDetails(): Promise<Match[]> {
+  async getHistoryDetails(gameType: string = 'pong'): Promise<Match[]> {
     try {
-      const data = await this.fetchAPI<Match[]>('/match-history');
-      console.log("Historique récupéré:", data);
+      // Transmettre le type comme gameType ET game_mode pour compatibilité
+      const data = await this.fetchAPI<Match[]>(`/match-history?gameType=${gameType}&game_mode=${gameType}`);
       return data;
     } catch (error) {
-      console.error("Erreur historique:", error);
       return [];
     }
   }
@@ -88,6 +100,7 @@ class MatchHistoryApp {
   // Données
   private matchStats: MatchStats | null = null
   private api: MatchHistoryAPI
+  private currentGameType: string = 'pong' // Par défaut: pong classic
 
   // Éléments DOM
   private gamesPlayed: HTMLElement | null
@@ -100,9 +113,10 @@ class MatchHistoryApp {
   private loadingState: HTMLElement | null
   private emptyState: HTMLElement | null
   private messageContainer: HTMLElement | null
+  private btnGamePong: HTMLButtonElement | null
+  private btnGameCustom: HTMLButtonElement | null
 
   constructor() {
-    console.log('🚀 MatchHistoryApp initialisé');
     this.api = new MatchHistoryAPI()
 
     // Récupération des éléments DOM
@@ -116,16 +130,71 @@ class MatchHistoryApp {
     this.loadingState = document.getElementById("loading-state")
     this.emptyState = document.getElementById("empty-state")
     this.messageContainer = document.getElementById("message-container")
+    
+    // Nouveaux boutons pour le type de jeu
+    this.btnGamePong = document.getElementById("btn-game-pong") as HTMLButtonElement
+    this.btnGameCustom = document.getElementById("btn-game-custom") as HTMLButtonElement
 
     this.init()
   }
   
   // Initialisation
   private init(): void {
-    console.log('⚙️ Initialisation...');
     if (!this.validateDomElements()) {
       return;
     }
+    
+    // Ajouter les événements pour les boutons de type de jeu
+    this.setupGameTypeButtons();
+    
+    // Charger l'historique initial
+    this.loadMatchHistory();
+  }
+  
+  // Configuration des boutons de type de jeu
+  private setupGameTypeButtons(): void {
+    if (this.btnGamePong) {
+      this.btnGamePong.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.changeGameType('pong');
+      });
+    }
+    
+    if (this.btnGameCustom) {
+      this.btnGameCustom.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.changeGameType('custom');
+      });
+    }
+  }
+  
+  // Changer le type de jeu et recharger les données
+  private changeGameType(gameType: string): void {
+    
+    // Mise à jour du type de jeu courant
+    this.currentGameType = gameType;
+    
+    // Mise à jour visuelle des boutons - approche plus robuste avec classList
+    if (this.btnGamePong) {
+      this.btnGamePong.classList.remove('bg-stone-600');
+      this.btnGamePong.classList.add('bg-stone-400');
+    }
+    
+    if (this.btnGameCustom) {
+      this.btnGameCustom.classList.remove('bg-stone-600');
+      this.btnGameCustom.classList.add('bg-stone-400');
+    }
+    
+    // Activer uniquement le bouton sélectionné
+    if (gameType === 'pong' && this.btnGamePong) {
+      this.btnGamePong.classList.remove('bg-stone-400');
+      this.btnGamePong.classList.add('bg-stone-600');
+    } else if (gameType === 'custom' && this.btnGameCustom) {
+      this.btnGameCustom.classList.remove('bg-stone-400');
+      this.btnGameCustom.classList.add('bg-stone-600');
+    }
+    
+    // Recharger l'historique avec le nouveau type de jeu
     this.loadMatchHistory();
   }
 
@@ -143,26 +212,24 @@ class MatchHistoryApp {
       emptyState: !!this.emptyState
     };
     
-    const allPresent = Object.values(elements).every(Boolean);
-    if (!allPresent) {
-      console.error("❌ Éléments DOM manquants:", elements);
-    }
-    
-    return allPresent;
+    return Object.values(elements).every(Boolean);
   }
 
   // Chargement des données
   private async loadMatchHistory(): Promise<void> {
     try {
-      console.log('🔄 Chargement de l\'historique...');
+      if (this.loadingState) {
+        this.loadingState.style.display = 'block';
+      }
+      if (this.emptyState) {
+        this.emptyState.style.display = 'none';
+      }
       
-      // 1. Récupération des statistiques
-      const apiStats = await this.api.getMatchHistory();
-      console.log('✅ Statistiques:', apiStats);
+      // 1. Récupération des statistiques avec le type de jeu
+      const apiStats = await this.api.getMatchHistory(this.currentGameType);
       
-      // 2. Récupération des matchs
-      const matchHistory = await this.api.getHistoryDetails();
-      console.log('✅ Matchs:', matchHistory);
+      // 2. Récupération des matchs avec le type de jeu
+      const matchHistory = await this.api.getHistoryDetails(this.currentGameType);
       
       // 3. Préparation des données
       this.matchStats = {
@@ -191,7 +258,6 @@ class MatchHistoryApp {
       }
       
     } catch (error) {
-      console.error('❌ Erreur:', error);
       this.showNotification('Impossible de charger l\'historique des matchs');
       if (this.loadingState) this.loadingState.style.display = 'none';
     }
@@ -199,7 +265,9 @@ class MatchHistoryApp {
   
   // Affichage des statistiques
   private renderStats(): void {
-    if (!this.matchStats) return;
+    if (!this.matchStats) {
+      return;
+    }
     
     const { gamesPlayed, wins, losses, winrate } = this.matchStats;
     
@@ -216,9 +284,17 @@ class MatchHistoryApp {
     
     const { wins, losses, winrate } = this.matchStats;
     
-    // Création d'un affichage simple
+    // Nettoyer les anciens affichages
+    const parent = this.winrateChartEl.parentNode;
+    if (parent) {
+      // Supprimer tous les conteneurs de taux de victoire précédents
+      const existingContainers = parent.querySelectorAll('.win-rate-container');
+      existingContainers.forEach(container => container.remove());
+    }
+    
+    // Création d'un nouvel affichage
     const container = document.createElement('div');
-    container.className = 'flex flex-col items-center justify-center p-4';
+    container.className = 'flex flex-col items-center justify-center p-4 win-rate-container';
     container.innerHTML = `
       <div class="text-2xl font-bold">${wins} V - ${losses} D</div>
       <div class="text-lg text-gray-600 mt-2">Ratio: ${winrate}%</div>
@@ -272,8 +348,6 @@ class MatchHistoryApp {
 
   // Affichage d'une notification
   private showNotification(message: string, type: MessageType = 'error'): void {
-    console.log(`📢 ${message} (${type})`);
-    
     // Si pas de conteneur, utiliser alert
     if (!this.messageContainer) {
       alert(message);
@@ -295,12 +369,8 @@ class MatchHistoryApp {
 
 // Fonction globale pour afficher l'historique des matchs
 function displayMatchHistory(): void {
-  console.log('🏓 Démarrage de l\'application d\'historique des matchs');
   setTimeout(() => new MatchHistoryApp(), 100);
 }
-
-// Exporter les classes et fonctions
-export { MatchHistoryApp, MatchHistoryAPI, displayMatchHistory }
 
 // Déclarer les types globaux
 declare global {
@@ -309,5 +379,10 @@ declare global {
   }
 }
 
-// Exposer la fonction au scope global
-window.displayMatchHistory = displayMatchHistory;
+// Exposer la fonction au scope global IMMÉDIATEMENT
+if (typeof window !== 'undefined') {
+  window.displayMatchHistory = displayMatchHistory;
+}
+
+// Exporter les classes et fonctions
+export { MatchHistoryApp, MatchHistoryAPI, displayMatchHistory };

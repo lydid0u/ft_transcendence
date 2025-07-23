@@ -210,13 +210,18 @@ const SPA = {
     title: 'Historique des matchs',
     content: 'pages/match-history.html',
     routeScript: function(): void {
-      console.log("👉 SPA route /match-history activated");
       setTimeout(() => {
-        if (typeof displayMatchHistory === 'function') {
-          console.log("✅ displayMatchHistory function found");
-          displayMatchHistory();
+        if (typeof window.displayMatchHistory === 'function') {
+          window.displayMatchHistory();
         } else {
-          console.error("❌ displayMatchHistory function NOT found");
+          // Essayer de charger et d'initialiser directement
+          import('./match-history').then(module => {
+            if (module && module.displayMatchHistory) {
+              module.displayMatchHistory();
+              // Définir aussi sur window pour les futurs appels
+              window.displayMatchHistory = module.displayMatchHistory;
+            }
+          });
         }
       }, 100);
     }
