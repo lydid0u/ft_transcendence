@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ft_transcendence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <meta name="google-signin-client_id" content="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com" />
+    <link href="styles.css" rel="stylesheet" />
+    <script type="module" src="main.ts" defer></script>
+  </head>
+  <body class="m-0 p-0 h-full w-full overflow-hidden bg-[#050507]">
+    <div class="bg-crt">
+      <div class="noise"></div>
+      <div class="scanline"></div>
+      <div class="tracking top"><canvas class="tracking-canvas" id="trackingTop"></canvas></div>
+      <div class="tracking bottom"><canvas class="tracking-canvas" id="trackingBottom"></canvas></div>
+    </div>
+    <div class="crt-ui">
+      <div class="playbox">
+        <svg class="play-logo" viewBox="0 0 32 32">
+          <polygon points="8,4 28,16 8,28" fill="#e6fdff" stroke="#e6fdff" stroke-width="2"/>
+        </svg>
+        <span class="vhsfont play-text">PLAY</span>
+      </div>
+      <div class="timebox vhsfont" id="datetime"></div>
+    </div>
+    <div id="content-container" class="w-full h-full flex justify-center items-center z-10">
+      <main id="content" class="relative z-10 h-full w-full max-w-6xl p-6"></main>
+    </div>
+  
+    <script>
+      // Date/Time display
+      function updateDateTime() {
+        const dt = new Date();
+        const pad = v => v.toString().padStart(2, '0');
+        const date = [pad(dt.getDate()), pad(dt.getMonth() + 1), dt.getFullYear()].join('/');
+        const time = [pad(dt.getHours()), pad(dt.getMinutes()), pad(dt.getSeconds())].join(':');
+        document.getElementById('datetime').textContent = date + '  ' + time;
+      }
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+
+      // VHS tracking effect (canvas)
+      function drawTracking(canvas) {
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width = window.innerWidth;
+        const H = canvas.height = canvas.parentElement.offsetHeight || 22;
+        ctx.clearRect(0,0,W,H);
+
+        // Random number of bands for VHS effect
+        const bands = Math.floor(3 + Math.random() * 2); // 3 to 4 bands
+        for (let i=0; i<bands; i++) {
+          // Y position with sine wave for undulation effect
+          const y = Math.floor(H/3) + i * Math.floor(H/3) + Math.sin(Date.now()/270+(i*2)) * 2;
+          ctx.save();
+          ctx.globalAlpha = 0.50 - Math.random()*0.22;
+          // Width and break segments
+          for (let j=0; j<12; j++) {
+            const segW = W/12;
+            const offset = Math.sin(Date.now()/220+(i*1.7)+(j*0.31)) * 4;
+            ctx.beginPath();
+            ctx.moveTo(j*segW, y + offset);
+            ctx.lineTo((j+0.6)*segW, y + offset + Math.random()*2);
+            ctx.lineWidth = Math.random()<0.7 ? 2.4 : 1;
+            ctx.strokeStyle = Math.random()<0.5 ? '#cfeaf2' : '#fff';
+            if(Math.random()<0.2) ctx.strokeStyle = '#a4aab1';
+            ctx.setLineDash(Math.random()<0.5 ? [8,7] : [4,7]);
+            ctx.shadowColor = "#fff";
+            ctx.shadowBlur = 6;
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+      }
+      
+      function animateTracking() {
+        const top = document.getElementById('trackingTop');
+        const bot = document.getElementById('trackingBottom');
+        if(top) drawTracking(top);
+        if(bot) drawTracking(bot);
+        requestAnimationFrame(animateTracking);
+      }
+      
+      window.addEventListener('resize', ()=>{
+        drawTracking(document.getElementById('trackingTop'));
+        drawTracking(document.getElementById('trackingBottom'));
+      });
+      
+      animateTracking();
+    </script>
+  </body>
+</html>

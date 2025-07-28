@@ -1,0 +1,323 @@
+@font-face {
+  font-family: "Heading Pro";
+  src: url(https://manzdev.github.io/twitch-television/fonts/heading-pro.woff) format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'VHS';
+  src: url('https://fonts.cdnfonts.com/s/19515/VHS.woff') format('woff');
+  font-display: swap;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* :root {
+  --television-width: 860px;
+  --television-height: 840px;
+  --television-bgcolor: #b71a11;
+  --television-bgcolor-dark: #88110b;
+  --antenna-gradient: linear-gradient(to top, #444 10%, #999 25% 40%, #444 70%, #2224 90%);
+} */
+
+/* VHS/CRT Effect Styles */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: #050507;
+}
+
+/* Only keeping the animation keyframes and TV state logic that can't be done in Tailwind */
+.tv:not(.on) .off {
+  opacity: 0;
+}
+
+@keyframes moveBand {
+  0% {
+    background-position-y: 0, 0;
+  }
+  100% {
+    background-position-y: -442px, -300px;
+  }
+}
+
+/* VHS CRT Effect Styles */
+.bg-crt {
+  position: fixed;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background: linear-gradient(145deg,#16181c 92%,#000 100%);
+  z-index: 0;
+  overflow: hidden;
+}
+
+.noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.09;
+  z-index: 1;
+  background: url('https://grainy-gradients.vercel.app/noise.svg');
+  background-size: 200% 200%;
+  animation: grainmove 2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes grainmove {
+  0% { background-position: 0 0;}
+  100% { background-position: 100% 100%;}
+}
+
+.scanline {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    rgba(0,0,0,0.14) 2px,
+    transparent 8px,
+    transparent 22px
+  );
+  opacity: 0.14;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* Tracking (Head Switching) Noise - VHS */
+.tracking {
+  position: absolute;
+  left: 0; width: 100vw;
+  height: 22px;
+  z-index: 12;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.tracking.top { top: 0; }
+.tracking.bottom { bottom: 0; transform: scaleY(-1);}
+
+.tracking-canvas {
+  display: block;
+  width: 100vw; height: 22px;
+  pointer-events: none;
+}
+
+.vhsfont {
+  font-family: 'VHS', monospace;
+  color: #e6fdff;
+  text-shadow:
+    0 0 10px #e6fdff,
+    0 0 32px #85e7ff;
+  letter-spacing: 0.12em;
+  font-weight: bold;
+  user-select: none;
+  line-height: 1.2;
+}
+
+.crt-ui {
+  position: relative;
+  width: 100vw; height: 100vh;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.playbox {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: absolute;
+  top: 44px; left: 54px;
+}
+
+.play-logo {
+  width: 48px; height: 48px;
+  filter: drop-shadow(0 0 6px #e6fdff);
+}
+
+.play-text {
+  font-size: 2.5rem;
+}
+
+.timebox {
+  position: absolute;
+  bottom: 54px; right: 54px;
+  font-size: 2.1rem;
+  text-align: right;
+  max-width: 90vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 700px) {
+  .playbox {top: 4vw; left: 4vw;}
+  .play-logo {width: 30px; height: 30px;}
+  .play-text {font-size: 1.4rem;}
+  .timebox {bottom: 4vw; right: 4vw; font-size: 1.1rem;}
+  .tracking, .tracking-canvas {height: 12px;}
+}
+
+
+.landing-container {
+    min-height: 100vh;
+    background: url('media/tv.gif') no-repeat center center;
+    background-size: cover;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.landing-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.landing-content {
+    max-width: 600px;
+    opacity: 0.3;
+    padding: 2rem;
+    z-index: 2;
+    position: relative;
+}
+
+.landing-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    opacity: 0.3;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    animation: slideInDown 1s ease-out;
+}
+
+.landing-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    line-height: 1.6;
+    animation: slideInUp 1s ease-out 0.3s both;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.landing-description {
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+    opacity: 0.8;
+    line-height: 1.8;
+    animation: slideInUp 1s ease-out 0.6s both;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.enter-button {
+    background: linear-gradient(45deg, rgb(192, 177, 177), #726e6c);
+    color: white;
+    border: none;
+    padding: 1.2rem 3rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: slideInUp 1s ease-out 0.9s both;
+    position: relative;
+    overflow: hidden;
+}
+
+.enter-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(45deg, #f7f1ef, #797474);
+}
+
+.enter-button:active {
+    transform: translateY(-1px);
+}
+
+.enter-button::before {
+    content: '';
+    position: absolute;
+    opacity: 0.6;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+    transform: translate(-50%, -50%);
+}
+
+.enter-button:active::before {
+    width: 300px;
+    height: 300px;
+    top: 50%;
+    left: 50%;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.vhs-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.vhs-gif {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
