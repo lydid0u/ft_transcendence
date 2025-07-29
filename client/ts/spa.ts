@@ -43,6 +43,7 @@ declare function displayUserProfile(): Promise<void>;
 declare function changeUsername(): Promise<void>;
 declare function changeAvatar(): Promise<void>;
 declare function displayMatchHistory(): void;
+declare function displayTournamentList(): void;
 declare function otpSubmit(email: string): Promise<void>;
 
 const SPA = {
@@ -112,9 +113,24 @@ const SPA = {
     },
 
     '/tournoi': {
-      title: 'tournoi',
-      content: 'pages/tournoi.html'
+      title: 'Tournois',
+      content: 'pages/tournament.html',
+      routeScript: function(): void {
+        setTimeout(() => {
+          if (typeof window.displayTournamentList === 'function') {
+            window.displayTournamentList();
+          } else {
+            import('./tournament').then(module => {
+              if (module && module.displayTournamentList) {
+                module.displayTournamentList();
+                window.displayTournamentList = module.displayTournamentList;
+              }
+            });
+          }
+        }, 100);
+      }
     },
+
 
     '/dashboard': {
       title: 'dashboard',
@@ -384,6 +400,7 @@ declare global {
     changeUsername: () => Promise<void>;
     changeAvatar: () => Promise<void>;
     otpSubmit: (email: string) => Promise<void>;
+    displayTournamentList: () => void;
     [key: string]: any; 
   }
 }
