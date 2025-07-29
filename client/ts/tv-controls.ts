@@ -1,16 +1,7 @@
+import { initVHSEffects } from './vhs-effects';
+
 interface LabelRouteMap {
   [key: string]: string;
-}
-
-// Global SPA interface
-declare global {
-  interface Window {
-    SPA?: {
-      navigateTo: (route: string) => void;
-      loadRoute: (route: string) => Promise<void>;
-      onPageLoad?: (route: string) => void;
-    };
-  }
 }
 
 document.addEventListener('DOMContentLoaded', function(): void {
@@ -22,112 +13,116 @@ document.addEventListener('DOMContentLoaded', function(): void {
       return;
     }
     
+    // Boutons de contrôle principaux
     const powerButton: HTMLElement | null = document.getElementById("button-2");
     const homeButton: HTMLElement | null = document.getElementById("button-1");
 
-    // Find the nav dial and selector
-    const navDial: HTMLElement | null = document.getElementById('nav-dial');
-    const navSelector: HTMLElement | null = navDial ? navDial.querySelector('#nav-selector') : null;
+    // Remplacer le cadran par des boutons de navigation
+    const navButtonHome: HTMLElement | null = document.getElementById("nav-button-home");
+    const navButtonPong: HTMLElement | null = document.getElementById("nav-button-pong");
+    const navButtonTournoi: HTMLElement | null = document.getElementById("nav-button-tournoi");
+    const navButtonDashboard: HTMLElement | null = document.getElementById("nav-button-dashboard");
+    const navButtonProfile: HTMLElement | null = document.getElementById("nav-button-profile");
+    const navButtonAbout: HTMLElement | null = document.getElementById("nav-button-about");
 
-    if (navDial && navSelector) {
-      // Explicit mapping labelId -> route
-      const labelRouteMap: LabelRouteMap = {
-        'nav-data-1': '/home',           // Accueil
-        'nav-data-3': '/pong',           // Pong
-        'nav-data-5': '/tournoi',        // Tournoi
-        'nav-data-7': '/dashboard',      // Dashboard
-        'nav-data-9': '/profile',        // Profil
-        'nav-data-11': '/about',         // A propos
-      };
+    // Ajouter des écouteurs d'événements pour chaque bouton de navigation
+    if (navButtonHome) {
+      navButtonHome.addEventListener('click', (e: Event): void => {
+        e.preventDefault();
+        clearActiveButtons();
+        navButtonHome.classList.add('active-nav-button');
+        safeNavigate('/home');
+      });
+    }
+
+    if (navButtonPong) {
+      navButtonPong.addEventListener('click', (e: Event): void => {
+        e.preventDefault();
+        clearActiveButtons();
+        navButtonPong.classList.add('active-nav-button');
+        safeNavigate('/pong');
+      });
+    }
+
+    if (navButtonTournoi) {
+      navButtonTournoi.addEventListener('click', (e: Event): void => {
+        e.preventDefault();
+        clearActiveButtons();
+        navButtonTournoi.classList.add('active-nav-button');
+        safeNavigate('/tournoi');
+      });
+    }
+
+    if (navButtonDashboard) {
+      navButtonDashboard.addEventListener('click', (e: Event): void => {
+        e.preventDefault();
+        clearActiveButtons();
+        navButtonDashboard.classList.add('active-nav-button');
+        safeNavigate('/dashboard');
+      });
+    }
+
+    if (navButtonProfile) {
+      navButtonProfile.addEventListener('click', (e: Event): void => {
+        e.preventDefault();
+        clearActiveButtons();
+        navButtonProfile.classList.add('active-nav-button');
+        safeNavigate('/profile');
+      });
+    }
+
+    if (navButtonAbout) {
+      navButtonAbout.addEventListener('click', (e: Event): void => {
+        e.preventDefault();
+        clearActiveButtons();
+        navButtonAbout.classList.add('active-nav-button');
+        safeNavigate('/about');
+      });
+    }
+
+    // Fonction pour effacer la classe active de tous les boutons
+    function clearActiveButtons(): void {
+      const allButtons = [
+        navButtonHome, 
+        navButtonPong, 
+        navButtonTournoi, 
+        navButtonDashboard, 
+        navButtonProfile, 
+        navButtonAbout
+      ];
       
-      const labelIds: string[] = Object.keys(labelRouteMap);
-      const routes: string[] = Object.values(labelRouteMap);
-      let currentIndex: number = 0;
-      const maxIndex: number = routes.length;
-      
-      // Update rotation and black dot
-      const updateRotation = (): void => {
-        navDial.style.setProperty('--value', `${currentIndex * 60}deg`);
-        const oldDot: HTMLElement | null = navSelector.querySelector('.nav-dot');
-        if (oldDot) oldDot.remove();
-        
-        const dot: HTMLSpanElement = document.createElement('span');
-        dot.className = 'nav-dot absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-black shadow';
-        navSelector.appendChild(dot);
-      };
-      updateRotation();
-      
-      // When clicking on a label, synchronize the bar and navigate
-      labelIds.forEach((id: string): void => {
-        const label: HTMLElement | null = document.getElementById(id);
-        if (label) {
-          label.onclick = null;
-          label.style.cursor = 'pointer';
-          label.addEventListener('click', (ev: Event): void => {
-            ev.preventDefault();
-            // Always go up to the parent label (case of span .nav-dot)
-            let target: HTMLElement | null = ev.target as HTMLElement;
-            while (target && !labelIds.includes(target.id)) {
-              target = target.parentElement;
-            }
-            if (!target) return;
-            
-            const realId: string = target.id;
-            const targetRoute: string = labelRouteMap[realId];
-            
-            if (window.SPA && typeof window.SPA.navigateTo === 'function') {
-              window.SPA.navigateTo(targetRoute);
-            }
-          });
+      allButtons.forEach(button => {
+        if (button) {
+          button.classList.remove('active-nav-button');
         }
       });
+    }
+
+    // Synchroniser le bouton actif avec la route actuelle
+    function syncActiveButton(): void {
+      const route = getCurrentRoute();
+      clearActiveButtons();
       
-      // When clicking on the bar, advance one step and navigate
-      navSelector.addEventListener('click', (ev: Event): void => {
-        currentIndex = (currentIndex + 1) % maxIndex;
-        updateRotation();
-        const nextLabelId: string = labelIds[currentIndex];
-        if (window.SPA && typeof window.SPA.navigateTo === 'function') {
-          window.SPA.navigateTo(labelRouteMap[nextLabelId]);
-        }
-      });
-      
-      // Synchronize bar with current page on load (or SPA navigation)
-      const syncBarWithCurrentPage = (): void => {
-        let path: string = window.location.pathname;
-        if (path.length > 1 && path.endsWith('/')) {
-          path = path.slice(0, -1);
-        }
-        
-        // Find the key (labelId) corresponding to the current route
-        const labelId: string | undefined = Object.keys(labelRouteMap).find(
-          (id: string): boolean => labelRouteMap[id] === path
-        );
-        
-        if (labelId) {
-          const newIndex: number = labelIds.indexOf(labelId);
-          if (newIndex !== -1 && newIndex !== currentIndex) {
-            currentIndex = newIndex;
-            updateRotation();
-          }
-        }
-      };
-      
-      // Synchronize on load
-      syncBarWithCurrentPage();
-      // Synchronize on each SPA navigation (listen to popstate)
-      window.addEventListener('popstate', syncBarWithCurrentPage);
-      
-      // Patch SPA.loadRoute to synchronize bar on each navigation
-      if (window.SPA && typeof window.SPA.loadRoute === 'function') {
-        const originalLoadRoute = window.SPA.loadRoute;
-        window.SPA.loadRoute = async function(route: string): Promise<void> {
-          await originalLoadRoute.call(this, route);
-          setTimeout(syncBarWithCurrentPage, 100);
-        };
+      if (route === '/home' && navButtonHome) {
+        navButtonHome.classList.add('active-nav-button');
+      } else if (route === '/pong' && navButtonPong) {
+        navButtonPong.classList.add('active-nav-button');
+      } else if (route === '/tournoi' && navButtonTournoi) {
+        navButtonTournoi.classList.add('active-nav-button');
+      } else if (route === '/dashboard' && navButtonDashboard) {
+        navButtonDashboard.classList.add('active-nav-button');
+      } else if (route === '/profile' && navButtonProfile) {
+        navButtonProfile.classList.add('active-nav-button');
+      } else if (route === '/about' && navButtonAbout) {
+        navButtonAbout.classList.add('active-nav-button');
       }
     }
 
+    // Exécuter syncActiveButton lorsque la page est chargée ou lorsque la route change
+    syncActiveButton();
+    window.addEventListener('popstate', syncActiveButton);
+    
+    // Boutons principaux
     if (powerButton) {
       powerButton.addEventListener("click", (e: Event): void => {
         turnOffTheTv();
@@ -138,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function(): void {
       homeButton.addEventListener("click", (e: Event): void => {
         if (window.SPA && typeof window.SPA.navigateTo === 'function') {
           window.SPA.navigateTo('/home');
+          syncActiveButton();
         }
       });
     } 
@@ -148,30 +144,16 @@ document.addEventListener('DOMContentLoaded', function(): void {
   if (window.SPA) {
     // Try to determine if we are on the landing page
     function handlePageChange(): void {
-      const container: HTMLElement | null = document.querySelector('.container');
+      const isLanding = isOnLandingPage();
+      const tv = document.querySelector('.tv');
       
-      // Test all route cases to the landing page
-      const isLandingPage: boolean = window.location.hash === '#/' || 
-                                    window.location.hash === '' || 
-                                    window.location.pathname === '/' || 
-                                    window.location.pathname === '/landing';
-      
-      if (isLandingPage) {
-        if (container) container.style.display = 'none';
-      } else {
-        if (container) {
-          container.style.display = 'flex';
-          container.style.position = 'fixed';
-          container.style.top = '0';
-          container.style.left = '0'; 
-          container.style.width = '100%';
-          container.style.height = '100%';
-          container.style.zIndex = '1';
+      if (tv) {
+        if (isLanding) {
+          tv.classList.add('off');
+        } else {
+          tv.classList.remove('off');
         }
       }
-      
-      // Reinitialize TV controls in case they got disconnected
-      initTVControls();
     }
     
     // Execute on initial load and on hash changes
@@ -179,13 +161,8 @@ document.addEventListener('DOMContentLoaded', function(): void {
     window.addEventListener('hashchange', handlePageChange);
     
     // Try to integrate with SPA events if available
-    if (window.SPA && typeof window.SPA.onPageLoad === 'function') {
-      const originalOnPageLoad = window.SPA.onPageLoad;
-      window.SPA.onPageLoad = function(route: string): void {
-        originalOnPageLoad(route);
-        handlePageChange();
-      };
-    }
+    // On laisse cette partie vide car on utilise déjà hashchange
+    // Les événements du SPA sont gérés par d'autres moyens
   }
 });
 
@@ -193,8 +170,35 @@ function turnOffTheTv(): void {
   try {
     const tv: HTMLElement | null = document.querySelector('.tv');
     if (tv) {
-      tv.classList.toggle("off");
-      console.log('TV toggled off/on');
+      if (tv.classList.contains('off')) {
+        tv.classList.remove('off');
+        
+        // Afficher l'écran d'attente (waiting screen)
+        const waitingScreen = document.getElementById('waiting-screen');
+        const screenOff = document.getElementById('screen-off');
+        
+        if (waitingScreen && screenOff) {
+          screenOff.style.opacity = '0';
+          waitingScreen.style.opacity = '1';
+          waitingScreen.style.display = 'flex';
+        }
+        
+        // Simuler la mise sous tension avec délai
+        setTimeout(() => {
+          if (waitingScreen) {
+            waitingScreen.style.opacity = '0';
+            setTimeout(() => {
+              if (waitingScreen) {
+                waitingScreen.style.display = 'none';
+              }
+            }, 500);
+          }
+        }, 2500);
+      } else {
+        // Éteindre la télévision
+        tv.classList.add('off');
+        logout();
+      }
     } else {
       console.error('TV element not found');
     }
@@ -206,41 +210,35 @@ function turnOffTheTv(): void {
 async function logout(): Promise<void> {
   try {
     try {
-      await fetch('http://localhost:3000/user/connection-status', {
-        method: 'PATCH',
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('jwtToken') || ''}`,
         },
-        body: JSON.stringify({ status: 0 }), // 0 = déconnecté et 1 = connecté
       });
+      
+      if (!response.ok) {
+        console.error('Logout failed');
+      }
     } catch (error) {
-      console.error('Erreur lors de la notification du status de connexion au backend:', error);
+      console.error('Error during logout:', error);
     }
 
     localStorage.removeItem("user");
     localStorage.removeItem("jwtToken");
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("googleUser");
-    localStorage.removeItem("email");
     
-    // Disable Google auto-select if available
-    if (window.google && window.google.accounts) {
-      window.google.accounts.id.disableAutoSelect();
+    // Afficher l'écran d'attente avant de rediriger vers la page de login
+    const screenOff = document.getElementById('screen-off');
+    if (screenOff) {
+      screenOff.style.opacity = '1';
     }
     
-    console.log('User logged out successfully');
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 1500);
     
-    // Navigate to login page using SPA if available
-    if (window.SPA && typeof window.SPA.navigateTo === 'function') {
-      window.SPA.navigateTo('/login');
-    } else {
-      // Fallback to direct navigation
-      window.location.href = "/login.html";
-    }
   } catch (error) {
-    console.error('Error during logout:', error);
-    window.location.href = "/login.html";
+    console.error('Error during logout process:', error);
   }
 }
 
@@ -248,10 +246,43 @@ async function logout(): Promise<void> {
 document.addEventListener('DOMContentLoaded', function(): void {
   const deconnectBtn: HTMLElement | null = document.getElementById("button-2");
   if (deconnectBtn) {
-    deconnectBtn.addEventListener("click", function(): void {
-      logout();
+    deconnectBtn.addEventListener('click', async () => {
+      await logout();
     });
   }
+});
+
+// Fonction pour gérer l'affichage/masquage du menu de navigation
+document.addEventListener('DOMContentLoaded', function(): void {
+  const toggleNavMenu: HTMLElement | null = document.getElementById('toggle-nav-menu');
+  const navMenu: HTMLElement | null = document.getElementById('dial-container');
+  
+  // Masquer le menu de navigation par défaut
+  if (navMenu) {
+    navMenu.style.display = 'none';
+  }
+  
+  // Ajouter l'événement de clic sur le bouton de toggle
+  if (toggleNavMenu && navMenu) {
+    toggleNavMenu.addEventListener('click', () => {
+      if (navMenu.style.display === 'none' || navMenu.style.display === '') {
+        navMenu.style.display = 'flex';
+      } else {
+        navMenu.style.display = 'none';
+      }
+    });
+  }
+  
+  // Masquer le menu si on clique en dehors
+  document.addEventListener('click', (event: MouseEvent) => {
+    if (navMenu && 
+        navMenu.style.display !== 'none' && 
+        event.target instanceof HTMLElement &&
+        !navMenu.contains(event.target) && 
+        event.target !== toggleNavMenu) {
+      navMenu.style.display = 'none';
+    }
+  });
 });
 
 // Helper function to check if user is on landing page

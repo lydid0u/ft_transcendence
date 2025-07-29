@@ -53,33 +53,32 @@ const SPA = {
   } as SPAAttributes,
 
   handleLayout: function(route: string): void {
-    const tvContainer: HTMLElement | null = document.querySelector('#tv-container');
-    const content: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
-    const isLanding: boolean = route === '/';
+  const content: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
+  const isLanding: boolean = route === '/';
 
-    if (isLanding) {
-      if (tvContainer) tvContainer.style.display = 'none';
-      document.body.style.cssText = 'overflow: auto; height: auto; background: white;';
+  if (isLanding) {
+    // Style pour la page d'accueil
+    document.body.style.cssText = 'overflow: auto; height: auto; background: white;';
 
-      if (content) {
-        if (!this.SPAattribute.contentParent) {
-          this.SPAattribute.contentParent = content.parentNode;
-        }
-        if (content.parentNode !== document.body) {
-          document.body.appendChild(content);
-        }
-        content.style.cssText = 'position: static; margin: 0; max-width: none; background: transparent; box-shadow: none; border-radius: 0; min-height: 100vh; padding: 0;';
+    if (content) {
+      if (!this.SPAattribute.contentParent) {
+        this.SPAattribute.contentParent = content.parentNode;
       }
-    } else {
-      if (tvContainer) tvContainer.style.display = 'flex';
-      document.body.style.cssText = 'overflow: hidden; height: 100vh; background: #c3c1a8;';
-
-      if (content && this.SPAattribute.contentParent && content.parentNode !== this.SPAattribute.contentParent) {
-        this.SPAattribute.contentParent.appendChild(content);
-        content.style.cssText = '';
+      if (content.parentNode !== document.body) {
+        document.body.appendChild(content);
       }
+      content.style.cssText = 'position: static; margin: 0; max-width: none; background: transparent; box-shadow: none; border-radius: 0; min-height: 100vh; padding: 0;';
     }
-  },
+  } else {
+    // Style pour les autres pages
+    document.body.style.cssText = 'overflow: hidden; height: 100vh; background: #050507;';
+
+    if (content && this.SPAattribute.contentParent && content.parentNode !== this.SPAattribute.contentParent) {
+      this.SPAattribute.contentParent.appendChild(content);
+      content.style.cssText = '';
+    }
+  }
+},
 
   VhsTransition: function(): void {
     const app: HTMLElement | null = document.querySelector('#content');
@@ -268,66 +267,64 @@ const SPA = {
     this.setCurrentPageToActive(route);
   },
 
-  loadRoute: async function(route: string): Promise<void> {
-    const isAuthenticated: boolean = localStorage.getItem('jwtToken') != null;
-    const publicRoutes: string[] = ['/', '/login', '/register', '/about', '/otp', '/googleLogin'];
-
-    if (!isAuthenticated && !publicRoutes.includes(route)) {
-      this.navigateTo('/login');
-      return;
-    }
-
-    if (isAuthenticated && (route === '/login' || route === '/register')) {
-      this.navigateTo('/home');
-      return;
-    }
-
-    this.handleLayout(route);
-
-    const routeToLoad: RouteConfig | undefined = this.routes[route];
-    if (!routeToLoad) {
+loadRoute: async function(route: string): Promise<void> {
+  try {
+    // Vérifier si la route existe
+    if (!(route in this.routes)) {
       this.error404();
       return;
     }
- 
-    document.title = routeToLoad.title;
-    const contentDiv: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
+
+    const routeConfig = this.routes[route];
     
-    if (!contentDiv) {
-      console.error('Content div not found');
-      return;
-    }
-
-    // Check if content is a path to an .html file
-    if (typeof routeToLoad.content === 'string' && routeToLoad.content.endsWith('.html')) {
-      try {
-        const response: Response = await fetch(routeToLoad.content);
-        if (!response.ok) {
-          throw new Error(`Erreur lors du chargement de ${routeToLoad.content}: ${response.statusText}`);
-        }
-        const html: string = await response.text();
-        contentDiv.innerHTML = html;
-      } catch (error) {
-        console.error('Erreur de chargement:', error);
-        contentDiv.innerHTML = '<p>Erreur de chargement du contenu.</p>';
-        this.error404();
-        return;
+    // Définir le titre de la page
+    document.title = routeConfig.title || "ft_transcendence";
+    
+    // Appliquer la mise en page
+    this.handleLayout(route);
+    
+    try {
+      // Tenter de charger le contenu HTML
+      const contentPath = routeConfig.content;
+      
+      const response = await fetch(contentPath);
+      
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
       }
-    } else if (typeof routeToLoad.content === 'string') {
-      contentDiv.innerHTML = routeToLoad.content;
-    } else {
-      this.error404();
-      return;
-    }
-
-    if (routeToLoad.routeScript && typeof routeToLoad.routeScript === 'function') {
-      try {
-        routeToLoad.routeScript();
-      } catch (error) {
-        console.error('Erreur lors de l\'exécution du script de route:', error);
+      
+      const html = await response.text();
+      
+      // Injecter le HTML dans le conteneur de contenu
+      const contentElement = document.querySelector(this.SPAattribute.contentDiv);
+      if (!contentElement) {
+        throw new Error("Élément de contenu non trouvé");
+      }
+      
+      contentElement.innerHTML = html;
+      
+      // Exécuter le script de route s'il existe
+      if (typeof routeConfig.routeScript === "function") {
+        routeConfig.routeScript();
+      }
+      
+    } catch (error) {
+      // Afficher un message d'erreur dans le conteneur
+      const contentElement = document.querySelector(this.SPAattribute.contentDiv);
+      if (contentElement) {
+        contentElement.innerHTML = `
+          <div style="background: #ffdddd; color: #990000; padding: 20px; border-radius: 5px; margin: 20px;">
+            <h2>Erreur de chargement</h2>
+            <p>Impossible de charger le contenu de la page: ${route}</p>
+            <p>Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}</p>
+          </div>
+        `;
       }
     }
-  },
+  } catch (error) {
+    // Une erreur est survenue
+  }
+},
 
   setCurrentPageToActive: function(currentPath: string): void {
     // Reset all active links
@@ -359,6 +356,15 @@ const SPA = {
 
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
+  
+  // Initialiser les effets VHS/CRT après le chargement du SPA
+  import('./vhs-effects').then(module => {
+    if (module && module.initVHSEffects) {
+      module.initVHSEffects();
+    }
+  }).catch(err => {
+    console.error('Erreur lors du chargement des effets VHS:', err);
+  });
 });
 
 export { SPA };

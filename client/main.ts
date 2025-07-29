@@ -6,3 +6,4 @@ import './ts/tv-controls';
 import './ts/dashboard';
 import './ts/google-auth';
 import './ts/spa';
+import './ts/vhs-effects';

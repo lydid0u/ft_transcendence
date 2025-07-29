@@ -1,32 +1,36 @@
-<div class="flex flex-col items-center min-h-screen bg-gradient-to-br from-slate-50 via-stone-100 to-slate-200 p-4 sm:p-6 lg:p-8">
-  <div class="w-full max-w-4xl space-y-8">
+<div class="h-full w-full p-6">
+  <h1 class="vhsfont text-center text-[#e6fdff] text-3xl mb-6" style="text-shadow: 0 0 10px #e6fdff, 0 0 20px #85e7ff;">
+    Profil
+  </h1>
+  
+  <div class="w-full max-w-4xl mx-auto space-y-8">
     <!-- Profile Header Card -->
-    <div class="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-white/20">
+    <div class="bg-[#111] bg-opacity-40 backdrop-blur-sm p-8 rounded shadow-[0_0_15px_rgba(134,231,255,0.2)]">
       <div class="flex flex-col items-center text-center">
         <div class="relative mb-6">
-          <img id="user-avatar" alt="Avatar utilisateur" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"/>
+          <img id="user-avatar" alt="Avatar utilisateur" class="w-32 h-32 rounded-full shadow-[0_0_15px_rgba(134,231,255,0.4)] object-cover"/>
 
           <!-- Status Indicator -->
-          <div id="status-indicator" class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center" title="Statut actuel">
+          <div id="status-indicator" class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full shadow-[0_0_10px_rgba(134,231,255,0.3)] flex items-center justify-center" title="Statut actuel">
             <div class="w-3 h-3 bg-white rounded-full"></div>
           </div>
         </div>
-        <h2 id="user-greeting" class="text-3xl font-bold text-slate-800 mb-2"></h2>
-        <p id="user-email" class="text-slate-600 text-lg"></p>
+        <h2 id="user-greeting" class="text-2xl font-bold text-[#e6fdff] mb-2" style="text-shadow: 0 0 5px #85e7ff"></h2>
+        <p id="user-email" class="text-[#b3f0ff] text-lg"></p>
       </div>
     </div>
 
     <!-- 2FA Section -->
-    <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20">
+    <div class="bg-[#111] bg-opacity-40 backdrop-blur-sm p-6 rounded shadow-[0_0_15px_rgba(134,231,255,0.2)]">
       <div class="flex items-start justify-between mb-4">
         <div class="flex-1">
-          <h3 class="text-xl font-semibold text-slate-800 mb-2 flex items-center">
-            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="text-xl font-semibold text-[#e6fdff] mb-2 flex items-center" style="text-shadow: 0 0 5px #85e7ff">
+            <svg class="w-5 h-5 mr-2 text-[#85e7ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
             </svg>
             Double authentification (2FA)
           </h3>
-          <p class="text-slate-600 text-sm leading-relaxed">
+          <p class="text-[#b3f0ff] text-sm leading-relaxed">
             Activez la double authentification pour sécuriser votre compte avec une couche de protection supplémentaire.
           </p>
         </div>
