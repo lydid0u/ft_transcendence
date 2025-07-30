@@ -297,7 +297,7 @@ const SPA = {
 
     '/ai-landing': {
       title: 'Choix de la difficulté',
-      content: 'pages/ai-landing.html',
+      content: 'pages/pong-landing.html',
       routeScript: function () {
         // Attach event listeners to difficulty buttons
         setTimeout(() => {
@@ -311,8 +311,27 @@ const SPA = {
           });
         }, 0);
       }
-    }
+    },
+
+	'/1v1-landing': {
+      title: 'Choix de la difficulté',
+      content: 'pages/pong-landing.html',
+      routeScript: function () {
+        // Attach event listeners to difficulty buttons
+        setTimeout(() => {
+          document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const difficulty = (e.target as HTMLElement).getAttribute('data-difficulty');
+              // Save difficulty to localStorage or SPA attribute
+              localStorage.setItem('Difficulty', difficulty || 'EASY');
+              SPA.navigateTo('/1v1');
+            });
+          });
+        }, 0);
+      }
+    },
   } as Record<string, RouteConfig>,
+  
 
   init: function(): void {
     document.addEventListener('click', (event: Event) => {
