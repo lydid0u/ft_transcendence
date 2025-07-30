@@ -9,7 +9,7 @@ interface SPAAttributes {
   defaultRoute: string;
   contentDiv: string;
   contentParent?: Node | null;
-  currentGameInstance?: Game | null;
+  currentGameInstance?: Game | Game1v1 | null;
 
 }
 
@@ -26,6 +26,7 @@ interface GoogleAccounts {
 }
 
 import { Game } from './gameAI';
+import { Game1v1 } from './game1v1';
 
 declare global {
   interface Window {
@@ -53,7 +54,7 @@ const SPA = {
     defaultRoute: '/', // page par défaut
     contentDiv: '#content', // id de l'html où le contenu sera chargé
     contentParent: null as Node | null,
-	currentGameInstance: null as Game | null
+	currentGameInstance: null as Game | Game1v1 | null
   } as SPAAttributes,
 
   handleLayout: function(route: string): void {
@@ -126,12 +127,12 @@ const SPA = {
 			content: 'pages/gameAI.html',
 			routeScript: function ()
 			{
-				function tryInitGame() {
+				function tryInitGameAI() {
 					const canvas = document.getElementById('game-canvas');
 					if (!canvas)
 					{
 						console.error('Game-canvas not found');
-						setTimeout(tryInitGame, 50);
+						setTimeout(tryInitGameAI, 50);
 						return;
 					}
 					if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
@@ -161,7 +162,51 @@ const SPA = {
 						console.error('Game init failed:', e);
 					}
 				}
-				tryInitGame();
+				tryInitGameAI();
+			}
+		},
+
+	'/1v1': {
+			title: 'Pong 1v1',
+			content: 'pages/game1v1.html',
+			routeScript: function ()
+			{
+				function tryInitGame1v1() {
+					const canvas = document.getElementById('game-canvas');
+					const p1Score = document.getElementById('player1-score');
+					const p2Score = document.getElementById('player2-score');
+					if (!canvas || !p1Score || !p2Score) {
+						setTimeout(tryInitGame1v1, 50);
+						return;
+					}
+					if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
+					{
+						SPA.SPAattribute.currentGameInstance.destroy();
+						console.log("Game instance destroyed");
+					}
+					try
+					{
+						let difficulty = localStorage.getItem('Difficulty') || 'EASY';
+						let diffEnum = 1;
+						if (difficulty === 'MEDIUM')
+							diffEnum = 2;
+						else if (difficulty === 'HARD')
+							diffEnum = 3;
+						const game = new Game1v1(diffEnum);
+						SPA.SPAattribute.currentGameInstance = game;
+						if (SPA.SPAattribute.currentGameInstance === null)
+						{
+							throw new Error("current game didn't load");
+							return;
+						}
+						requestAnimationFrame(() => SPA.SPAattribute.currentGameInstance.gameLoop());
+					}
+					catch (e)
+					{
+						console.error('Game init failed:', e);
+					}
+				}
+				tryInitGame1v1();
 			}
 		},
 

@@ -5,6 +5,7 @@ import './ts/password';
 import './ts/profile';
 import './ts/spa';
 import './ts/gameAI';
+import './ts/game1v1';
 // import './ts/tv-controls';
 // import './ts/google-auth';
 // import './ts/dashboard';
