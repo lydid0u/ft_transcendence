@@ -136,14 +136,18 @@ const SPA = {
 					}
 					if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
 					{
-						console.log("Game instance destroyed");
 						SPA.SPAattribute.currentGameInstance.destroy();
 						console.log("Game instance destroyed");
 					}
 					try
 					{
-						const game = new Game();
-						console.log("Created a new game instance")
+						let difficulty = localStorage.getItem('aiDifficulty') || 'EASY';
+						let diffEnum = 1;
+						if (difficulty === 'MEDIUM')
+							diffEnum = 2;
+						else if (difficulty === 'HARD')
+							diffEnum = 3;
+						const game = new Game(diffEnum);
 						SPA.SPAattribute.currentGameInstance = game;
 						if (SPA.SPAattribute.currentGameInstance === null)
 						{
@@ -242,6 +246,24 @@ const SPA = {
           displayUserProfile();
           changeUsername();
           changeAvatar();
+        }, 0);
+      }
+    },
+
+    '/ai-landing': {
+      title: 'Choix de la difficulté',
+      content: 'pages/ai-landing.html',
+      routeScript: function () {
+        // Attach event listeners to difficulty buttons
+        setTimeout(() => {
+          document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const difficulty = (e.target as HTMLElement).getAttribute('data-difficulty');
+              // Save difficulty to localStorage or SPA attribute
+              localStorage.setItem('aiDifficulty', difficulty || 'EASY');
+              SPA.navigateTo('/gameAI');
+            });
+          });
         }, 0);
       }
     }
