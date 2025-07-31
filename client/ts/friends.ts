@@ -37,9 +37,7 @@ class FriendsAPI {
         },
         credentials: "include", // Include cookies for authentication
       });
-      console.log("HERE");
       const responseText = await response.text();
-      console.log("Server friends response:", responseText);
       
       // Parse la réponse à nouveau car .text() a déjà consommé le body
       return JSON.parse(responseText);

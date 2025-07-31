@@ -1,16 +1,17 @@
 // Interface simplifiée pour un tournoi
 interface Tournament {
-  id: string
-  name: string
+  id: number
+  creator_name: string
   participants: number
   maxParticipants: number
+  status: string // "open", "in_progress", "finished"
   isFull: boolean
   creatorId: number
 }
 
 // Format des données reçues du backend
 interface ApiTournament {
-  id: string
+  id: number
   name: string
   participants: number
   maxParticipants: number
@@ -69,13 +70,59 @@ class TournamentAPI {
           "Authorization": `Bearer ${this.token}`,
         },
         credentials: "include",
-        body: JSON.stringify({ tournament_id: tournamentId }),
+        body: JSON.stringify({ tournamentId : tournamentId }),
       });
       return await response.json();
     } catch (error) {
       return { success: false, message: "Erreur pour rejoindre le tournoi" };
     }
   }
+
+ async createTournament(): Promise<{ success: boolean; message?: string; data?: any }> {
+  try {
+    // Vérifier si le token est disponible
+    if (!this.token) {
+      console.error("No authentication token found");
+      return { success: false, message: "Authentification requise" };
+    }
+
+      console.log("EJSUILEOKENLA ", this.token);
+      const response = await fetch(`${this.baseUrl}/tournament/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${this.token}`,
+      },
+      credentials: "include",
+      body: JSON.stringify({}), // Ajoute ceci
+    });
+    console.log(response);
+    const result = await response.json();
+    console.log("Response JSON:", result);
+
+    if (!response.ok) {
+      // Si le backend a renvoyé un message, on l'affiche, sinon message générique
+      return { 
+        success: false, 
+        message: result.message || `Erreur serveur (${response.status})`
+      };
+    }
+
+    // La réponse du backend contient { status: 'success', data: { tournamentId } }
+    // OU peut aussi être { success: true, ... } si vous avez modifié le backend
+    const isSuccess = result.status === 'success' || result.success === true;
+    return {
+      success: isSuccess,
+      message: isSuccess ? "Tournoi créé avec succès" : "Erreur lors de la création du tournoi",
+      data: result.data || {}
+    };
+    //  La réponse du backend contient { status: 'success', data: { tournamentId } }
+    // OU peut aussi être { success: true, ... } si vous avez modifié le backend
+  } catch (error) {
+    console.error("Error creating tournament:", error);
+    return { success: false, message: "Erreur de connexion au serveur" };
+  }
+}
 }
 
 // Classe pour l'affichage de la liste des tournois
@@ -88,6 +135,7 @@ class TournamentListApp {
   private loadingState: HTMLElement | null
   private emptyState: HTMLElement | null
   private messageContainer: HTMLElement | null
+  private createTournamentBtn: HTMLElement | null
 
   constructor() {
     this.api = new TournamentAPI()
@@ -95,11 +143,21 @@ class TournamentListApp {
     this.loadingState = document.getElementById("loading-state")
     this.emptyState = document.getElementById("empty-state")
     this.messageContainer = document.getElementById("message-container")
+    this.createTournamentBtn = document.getElementById("create-tournament-btn")
+    
     this.init()
   }
 
   private init(): void {
     if (!this.tournamentList || !this.loadingState || !this.emptyState) return
+    
+    // Ajout de l'écouteur d'événement pour le bouton de création de tournoi
+    if (this.createTournamentBtn) {
+      this.createTournamentBtn.addEventListener("click", () => {
+        this.handleCreateTournament()
+      })
+    }
+    
     this.loadTournamentList()
   }
 
@@ -108,7 +166,6 @@ class TournamentListApp {
       if (this.loadingState) this.loadingState.style.display = "block"
       if (this.emptyState) this.emptyState.style.display = "none"
       this.tournaments = await this.api.getTournamentList()
-      console.log("Tournois chargés :", this.tournaments)
       this.renderTournamentList()
       if (this.loadingState) this.loadingState.style.display = "none"
       if (this.emptyState) this.emptyState.style.display = this.tournaments.length === 0 ? "block" : "none"
@@ -119,7 +176,6 @@ class TournamentListApp {
   }
 
   private renderTournamentList(): void {
-    console.log("Rendu de la liste des tournois :", this.tournaments)
     if (!this.tournamentList) return
     if (this.tournaments.length === 0) {
       this.tournamentList.innerHTML = ""
@@ -136,10 +192,10 @@ class TournamentListApp {
 
       return `
         <div class="flex items-center justify-between p-4 bg-[#111] bg-opacity-40 backdrop-blur-sm rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] mb-2">
-          <div>
-            <h3 class="font-bold text-[#e6fdff]">${tournament.name}</h3>
-            <p class="text-sm text-[#b3f0ff]">${tournament.participants}/${tournament.maxParticipants} participants</p>
-          </div>
+        <div>
+          <h3 class="font-bold text-[#e6fdff]">${tournament.creator_name}</h3>
+          <p class="text-sm text-[#b3f0ff]">Statut: ${tournament.status}</p>
+        </div>
           <button 
             class="${buttonClass}" 
             data-tournament-id="${tournament.id}" 
@@ -171,6 +227,33 @@ class TournamentListApp {
       this.showNotification(result.message || "Erreur d'inscription", "error")
       btnEl.disabled = false
       btnEl.textContent = "Rejoindre"
+    }
+  }
+
+  private async handleCreateTournament(): Promise<void> {
+    if (!this.createTournamentBtn) return
+    
+    // Désactiver le bouton pendant la création
+    const originalText = this.createTournamentBtn.textContent || "Créer un tournoi"
+    this.createTournamentBtn.textContent = "Création..."
+    this.createTournamentBtn.classList.add("opacity-50", "cursor-not-allowed")
+    
+    try {
+      const result = await this.api.createTournament()
+      
+      if (result.success) {
+        this.showNotification("Tournoi créé avec succès!", "success")
+        // Recharger la liste des tournois pour afficher le nouveau tournoi
+        await this.loadTournamentList()
+      } else {
+        this.showNotification(result.message || "Erreur lors de la création du tournoi3", "error")
+      }
+    } catch (error) {
+      this.showNotification("Une erreur est survenue", "error")
+    } finally {
+      // Réactiver le bouton
+      this.createTournamentBtn.textContent = originalText
+      this.createTournamentBtn.classList.remove("opacity-50", "cursor-not-allowed")
     }
   }
 

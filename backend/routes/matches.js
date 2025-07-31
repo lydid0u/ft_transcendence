@@ -19,7 +19,7 @@ async function matchesRoutes(fastify, options)
             await fastify.db.connection.run('INSERT INTO matches(player1_id, player2_id, winner_id, score_player1, score_player2, game_mode) VALUES (?, ?, ?, ?, ?, ?)',
                 data.player1_id, data.player2_id, data.winner_id, data.score_player1, data.score_player2, gameMode);
             
-            return { success: true };
+            return { success: true, message: 'Match added successfully' };
         } catch (error) {
             return reply.status(400).send({ success: false, error: error.message });
         }
