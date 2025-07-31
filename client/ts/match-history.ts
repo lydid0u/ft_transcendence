@@ -369,6 +369,15 @@ class MatchHistoryApp {
 
 // Fonction globale pour afficher l'historique des matchs
 function displayMatchHistory(): void {
+  const jwtToken = localStorage.getItem("jwtToken");
+  if (!jwtToken) {
+    if (window.SPA && typeof window.SPA.navigateTo === "function") {
+      window.SPA.navigateTo("/login");
+    } else {
+      window.location.href = "login.html";
+    }
+    return;
+  }
   setTimeout(() => new MatchHistoryApp(), 100);
 }
 

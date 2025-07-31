@@ -92,6 +92,7 @@ class FriendsAPI {
 }
 
 class FriendsApp {
+  
   private friends: Friend[] = []
   private filteredFriends: Friend[] = []
   private api: FriendsAPI
@@ -317,10 +318,19 @@ class FriendsApp {
   }
 }
 
-// Fonction qui sera appelée par le SPA router
 function displayFriendsList() {
+  // Protection : redirige si pas connecté
+  const jwtToken = localStorage.getItem("jwtToken");
+  if (!jwtToken) {
+    if (window.SPA && typeof window.SPA.navigateTo === "function") {
+      window.SPA.navigateTo("/login");
+    } else {
+      window.location.href = "login.html";
+    }
+    return;
+  }
+
   console.log("🔄 Initialisation de la liste d'amis via displayFriendsList()");
-  // Petite temporisation pour s'assurer que le DOM est complètement chargé
   setTimeout(() => {
     if (document.getElementById("friends-list") && 
         document.getElementById("search-input")) {
