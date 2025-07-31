@@ -167,6 +167,18 @@ const SPA = {
   }
 },
 
+    '/reset-password': {
+  title: 'Réinitialiser le mot de passe',
+  content: 'pages/reset-password.html',
+  routeScript: function(): void {
+    import('./reset-password').then(module => {
+      if (module && module.setupResetEmailForm) {
+        module.setupResetEmailForm();
+      }
+    });
+  }
+},
+
     '/otp': {
       title: 'Double Authentification',
       content: 'pages/otp.html',
@@ -182,6 +194,31 @@ const SPA = {
           otpInput.focus(); // ca met le curseur directement dans le champ de saisie
         }
         otpSubmit(email);
+      }
+    },
+
+    '/otp-password': {
+      title: 'Réinitialiser le mot de passe',
+      content: 'pages/otp-password.html',
+      routeScript: function(): void {
+        console.log('Initialisation du formulaire OTP pour la réinitialisation de mot de passe');
+        import('./otpPassword').then(module => {
+          if (module && module.setupOtpForm) {
+            module.setupOtpForm();
+          }
+        });
+      }
+    },
+
+    '/resetNewPassword': {
+      title: 'Nouveau mot de passe',
+      content: 'pages/newPasswordReset.html',
+      routeScript: function(): void {
+        import('./resetNewPassword').then(module => {
+          if (module && module.setupNewPasswordForm) {
+            module.setupNewPasswordForm();
+          }
+        });
       }
     },
 

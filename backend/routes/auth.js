@@ -250,9 +250,41 @@ async function authGoogle(fastify, options) {
     }
   );
 
+  fastify.patch('/auth/reset-new-password', async (request, reply) => {
+    try {
+      console.log("Reseting new password for user:", request.body.email);
+      const { email, password } = request.body;
+      if (!email || !password) {
+        return reply.status(400).send({
+          success: false,
+          message: "Email and password are required",
+        });
+      }
+      const user = await fastify.utilsDb.checkEmail(email);
+      if (!user) {
+        return reply.status(404).send({
+          success: false,
+          message: "Utilisateur non trouvé",
+        });
+      }
+      await fastify.dbPatch.changePassword(email, password);
+      reply.send({ success: true, message: "Password changed" });
+    } catch (err) {
+      console.error("Error resetting password:", err);
+      reply.status(500).send({
+        success: false,
+        message: "Erreur lors de la réinitialisation du mot de passe",
+        error: err.message,
+      });
+    }
+  });
+
   fastify.post("/auth/2FA-code/pass", async (request, reply) => {
     try {
+
+      console.log("Sending 2FA code to email:");
       const { email } = request.body;
+      console.log("Email:", email);
       const user = await fastify.utilsDb.checkEmail(email);
       if (!user) {
         return reply.status(404).send({
@@ -290,6 +322,7 @@ async function authGoogle(fastify, options) {
   });
 
   fastify.post("/auth/2FA-verify/pass", async (request, reply) => {
+    console.log("Verifying 2FA code for email:", request.body.email);
     const { email, code } = request.body;
     const real_code = fastify.twoFactorCodes.get(email);
     if (Date.now() > real_code.expiresAt) {
@@ -306,9 +339,8 @@ async function authGoogle(fastify, options) {
       });
       return;
     } else if (code == real_code.code) {
-      const jwt = await fastify.auth.createJWTtoken(real_code.user);
       fastify.twoFactorCodes.delete(email);
-      reply.send({ jwt, user: real_code.user });
+      reply.send({ success:true, message: "2FA code verified"});
     }
   });
 }

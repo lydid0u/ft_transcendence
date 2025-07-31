@@ -33,17 +33,17 @@ function displayDashboardData(userData: any): void {
 
   // Create statistics cards
   const statsHTML = `
-    <div class="bg-white p-6 rounded-xl shadow-md">
-      <h3 class="text-xl font-bold mb-3 text-stone-700">Profil</h3>
-      <p class="text-stone-600"><strong>Pseudo:</strong> ${userData.username || 'Non défini'}</p>
-      <p class="text-stone-600"><strong>Email:</strong> ${userData.email || 'Non défini'}</p>
-      <p class="text-stone-600"><strong>Membre depuis:</strong> ${new Date(userData.created_at).toLocaleDateString() || 'Inconnu'}</p>
+    <div class="bg-[#111] bg-opacity-80 rounded-2xl shadow-lg border border-[#85e7ff33] overflow-hidden backdrop-blur-sm p-6">
+      <h3 class="text-xl font-bold mb-3 text-[#e6fdff]">Profil</h3>
+      <p class="text-[#b3f0ff]"><strong>Pseudo:</strong> ${userData.username || 'Non défini'}</p>
+      <p class="text-[#b3f0ff]"><strong>Email:</strong> ${userData.email || 'Non défini'}</p>
+      <p class="text-[#b3f0ff]"><strong>Membre depuis:</strong> ${new Date(userData.created_at).toLocaleDateString() || 'Inconnu'}</p>
     </div>
-    <div class="bg-white p-6 rounded-xl shadow-md">
-      <h3 class="text-xl font-bold mb-3 text-stone-700">Statistiques</h3>
-      <p class="text-stone-600"><strong>Parties jouées:</strong> ${userData.games_played || 0}</p>
-      <p class="text-stone-600"><strong>Victoires:</strong> ${userData.wins || 0}</p>
-      <p class="text-stone-600"><strong>Défaites:</strong> ${userData.losses || 0}</p>
+    <div class="bg-[#111] bg-opacity-80 rounded-2xl shadow-lg border border-[#85e7ff33] overflow-hidden backdrop-blur-sm p-6">
+      <h3 class="text-xl font-bold mb-3 text-[#e6fdff]">Statistiques</h3>
+      <p class="text-[#b3f0ff]"><strong>Parties jouées:</strong> ${userData.games_played || 0}</p>
+      <p class="text-[#b3f0ff]"><strong>Victoires:</strong> ${userData.wins || 0}</p>
+      <p class="text-[#b3f0ff]"><strong>Défaites:</strong> ${userData.losses || 0}</p>
     </div>
   `;
 
