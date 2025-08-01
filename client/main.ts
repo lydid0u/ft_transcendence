@@ -9,3 +9,5 @@ import './ts/spa';
 import './ts/reset-password';
 import './ts/vhs-effects';
 import './ts/tournament';
+import './ts/gameAI';
+import './ts/game1v1';
