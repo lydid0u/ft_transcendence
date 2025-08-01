@@ -9,6 +9,10 @@
     <meta name="google-signin-client_id" content="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com" />
     <link href="styles.css" rel="stylesheet" />
     <script type="module" src="main.ts" defer></script>
+    <script type="module">
+      import { animatePlayAndTimebox } from './js/vhs-playbox-bug.js';
+      window.addEventListener('DOMContentLoaded', animatePlayAndTimebox);
+    </script>
   </head>
   <body class="m-0 p-0 h-full w-full overflow-hidden bg-[#050507]">
     <!-- VHS/CRT Background Effects -->
