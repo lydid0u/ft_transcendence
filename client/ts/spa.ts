@@ -1,4 +1,5 @@
 import { activate2fa } from "./profile";
+import i18n from './i18n';
 
 interface RouteConfig {
   title: string;
@@ -108,17 +109,17 @@ const SPA = {
     },
 
     '/home': {
-      title: 'Accueil',
+      title: 'common.home',
       content: 'pages/home.html'
     },
 
     '/about': {
-      title: 'Qui sommes-nous ?',
+      title: 'common.about',
       content: 'pages/about.html'
     },
 
     '/tournoi': {
-      title: 'Tournois',
+      title: 'common.tournament',
       content: 'pages/tournament.html',
       routeScript: function(): void {
         setTimeout(() => {
@@ -157,7 +158,7 @@ const SPA = {
 
 
     '/dashboard': {
-      title: 'dashboard',
+      title: 'home.dashboard',
       content: 'pages/dashboard.html',
       routeScript: function(): void {
         getUserDataFromBackend();
@@ -165,8 +166,8 @@ const SPA = {
     },
 
     '/login': {
-  title: 'login',
-  content: 'pages/login.html',
+      title: 'common.login',
+      content: 'pages/login.html',
   routeScript: function(): void {
       if (typeof window.google !== 'undefined' && window.google.accounts) {
         window.google.accounts.id.initialize({
@@ -192,9 +193,9 @@ const SPA = {
 },
 
     '/reset-password': {
-  title: 'Réinitialiser le mot de passe',
-  content: 'pages/reset-password.html',
-  routeScript: function(): void {
+      title: 'resetPassword.title',
+      content: 'pages/reset-password.html',
+      routeScript: function(): void {
     import('./reset-password').then(module => {
       if (module && module.setupResetEmailForm) {
         module.setupResetEmailForm();
@@ -211,7 +212,7 @@ const SPA = {
         const email = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}').email : '';
         console.log('email', email);
         if (!email) {
-          console.error('Aucun utilisateur trouvé dans le localStorage.');
+          console.error(i18n.t('errors.noUserFound'));
           return;
         }
         if (otpInput) {
@@ -479,8 +480,12 @@ loadRoute: async function(route: string): Promise<void> {
 
     const routeConfig = this.routes[route];
     
-    // Définir le titre de la page
-    document.title = routeConfig.title || "ft_transcendence";
+    // Set the page title with translation if needed
+    if (routeConfig.title && routeConfig.title.includes('.') && window.i18n) {
+      document.title = window.i18n.t(routeConfig.title) || "ft_transcendence";
+    } else {
+      document.title = routeConfig.title || "ft_transcendence";
+    }
     
     // Appliquer la mise en page
     this.handleLayout(route);
@@ -504,6 +509,21 @@ loadRoute: async function(route: string): Promise<void> {
       }
       
       contentElement.innerHTML = html;
+      
+      // Initialize language switcher on first load
+      if (route === '/' && !document.querySelector('.language-switcher')) {
+        const languageSwitcherContainer = document.getElementById('language-switcher-container');
+        if (languageSwitcherContainer && window.i18n) {
+          languageSwitcherContainer.appendChild(window.i18n.createLanguageSwitcher());
+        }
+      }
+      
+      // Apply translations after content is loaded
+      if (window.i18n) {
+        setTimeout(() => {
+          window.i18n.initializePageTranslations();
+        }, 100);
+      }
       
       // Exécuter le script de route s'il existe
       if (typeof routeConfig.routeScript === "function") {
@@ -558,6 +578,25 @@ loadRoute: async function(route: string): Promise<void> {
 
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
+  
+  // Initialize language system
+  if (window.i18n) {
+    // Initialize language switcher
+    const languageSwitcherContainer = document.getElementById('language-switcher-container');
+    if (languageSwitcherContainer && !document.querySelector('.language-switcher')) {
+      languageSwitcherContainer.appendChild(window.i18n.createLanguageSwitcher());
+    }
+    
+    // Initialize translations
+    window.i18n.initializePageTranslations();
+    
+    // Listen for language changes to update content
+    window.addEventListener('languageChanged', function(event: CustomEvent) {
+      console.log('Language changed to:', event.detail.language);
+      // Update document language attribute
+      document.documentElement.lang = event.detail.language;
+    } as EventListener);
+  }
   
   // Initialiser les effets VHS/CRT après le chargement du SPA
   import('./vhs-effects').then(module => {

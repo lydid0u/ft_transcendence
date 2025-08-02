@@ -1,3 +1,5 @@
+import i18n from './i18n';
+
 interface User {
   username?: string
   email?: string
@@ -48,7 +50,7 @@ async function displayUserProfile(): Promise<void> {
 
     const userGreeting: HTMLElement | null = document.getElementById("user-greeting")
     if (userGreeting && user?.username) {
-      userGreeting.textContent = `Salut ${user.username}`
+      userGreeting.textContent = `${i18n.t('profile.greeting')} ${user.username}`
     }
 
     const userEmail: HTMLElement | null = document.getElementById("user-email")
@@ -252,7 +254,7 @@ async function activate2fa() {
         throw new Error("Échec de la requête")
 
       localStorage.setItem("2fa_enabled", boolean.toString())
-      messageDiv.textContent = isActivate ? "2FA activée avec succès." : "2FA désactivée avec succès."
+      messageDiv.textContent = isActivate ? i18n.t('profile.tfa_enabled_success') : i18n.t('profile.tfa_disabled_success')
       messageDiv.classList.remove("hidden")
 
       setTimeout(() => {
@@ -260,7 +262,7 @@ async function activate2fa() {
       }, 5000)
     } catch (error) {
       console.log("LERREUR", error)
-      messageDiv.textContent = "Erreur lors de la mise à jour de la 2FA."
+      messageDiv.textContent = i18n.t('profile.tfa_update_error')
       messageDiv.classList.remove("hidden")
       checkbox.checked = !isActivate
     }

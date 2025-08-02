@@ -1,3 +1,4 @@
+import './ts/i18n';
 import './ts/api';
 import './ts/friends';
 import './ts/loginOrRegister';

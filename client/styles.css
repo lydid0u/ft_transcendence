@@ -3,6 +3,9 @@
  * VHS/CRT Visual Theme
  */
 
+/* Import language switcher styles */
+@import 'css/language-switcher.css';
+
 /* Base Styles */
 @font-face {
   font-family: "Heading Pro";

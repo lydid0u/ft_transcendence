@@ -1,3 +1,4 @@
+import './ts/i18n'; // Import this first to make translations available
 import './ts/password';
 import './ts/profile'; 
 import './ts/friends';

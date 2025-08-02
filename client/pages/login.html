@@ -1,29 +1,29 @@
 <div class="h-full w-full p-6">
-    <h1 class="vhsfont text-center text-[#e6fdff] text-3xl mb-8" style="text-shadow: 0 0 10px #e6fdff, 0 0 20px #85e7ff;">
+    <h1 class="vhsfont text-center text-[#e6fdff] text-3xl mb-8" style="text-shadow: 0 0 10px #e6fdff, 0 0 20px #85e7ff;" data-i18n="login.title">
         Connexion
     </h1>
 
     <div class="w-full max-w-md mx-auto bg-[#111] bg-opacity-30 p-6 rounded-lg backdrop-blur-sm">
         <div class="text-center mb-6">
-            <p class="text-[#e6fdff] mt-2">Accédez à votre compte</p>
+            <p class="text-[#e6fdff] mt-2" data-i18n="login.access_account">Accédez à votre compte</p>
         </div>
 
         <div id="loginWithAccountSection">
             <form id="login-form" class="space-y-4">
                 <div>
-                    <input type="email" id="email" placeholder="Email" required class="w-full px-3 py-2 bg-[#161616] text-[#e6fdff] border-none rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] focus:shadow-[0_0_15px_rgba(134,231,255,0.4)] placeholder-[#85e7ff] placeholder-opacity-50 focus:outline-none">
+                    <input type="email" id="email" data-i18n-placeholder="login.email_placeholder" placeholder="Email" required class="w-full px-3 py-2 bg-[#161616] text-[#e6fdff] border-none rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] focus:shadow-[0_0_15px_rgba(134,231,255,0.4)] placeholder-[#85e7ff] placeholder-opacity-50 focus:outline-none">
                 </div>
                 <div>
-                    <input type="password" id="password" placeholder="Mot de passe" required class="w-full px-3 py-2 bg-[#161616] text-[#e6fdff] border-none rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] focus:shadow-[0_0_15px_rgba(134,231,255,0.4)] placeholder-[#85e7ff] placeholder-opacity-50 focus:outline-none">
+                    <input type="password" id="password" data-i18n-placeholder="login.password_placeholder" placeholder="Mot de passe" required class="w-full px-3 py-2 bg-[#161616] text-[#e6fdff] border-none rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] focus:shadow-[0_0_15px_rgba(134,231,255,0.4)] placeholder-[#85e7ff] placeholder-opacity-50 focus:outline-none">
                 </div>
-                <button type="submit" class="w-full flex justify-center py-2 px-4 rounded text-sm font-medium text-[#e6fdff] bg-[#222] hover:bg-[#2a2a2a] transition-all duration-300 shadow-[0_0_10px_rgba(134,231,255,0.3)] hover:shadow-[0_0_15px_rgba(134,231,255,0.5)]">Se connecter</button>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 rounded text-sm font-medium text-[#e6fdff] bg-[#222] hover:bg-[#2a2a2a] transition-all duration-300 shadow-[0_0_10px_rgba(134,231,255,0.3)] hover:shadow-[0_0_15px_rgba(134,231,255,0.5)]" data-i18n="login.submit">Se connecter</button>
             </form>
             <div id="message" class="mt-4 text-center text-[#ff6b6b]"></div>
             <p class="mt-4 text-sm text-center text-[#e6fdff]">
-                Mot de passe oublié ? <a href="/reset-password" data-route="/reset-password" class="font-medium text-[#85e7ff] hover:text-[#b3f0ff] transition-colors">Réinitialiser</a>
+                <span data-i18n="login.forgot_password">Mot de passe oublié ?</span> <a href="/reset-password" data-route="/reset-password" class="font-medium text-[#85e7ff] hover:text-[#b3f0ff] transition-colors" data-i18n="login.reset">Réinitialiser</a>
             </p>
             <p class="mt-2 text-sm text-center text-[#e6fdff]">
-                Pas de compte ? <a href="/register" data-route="/register" class="font-medium text-[#85e7ff] hover:text-[#b3f0ff] transition-colors">Inscrivez-vous</a>
+                <span data-i18n="login.no_account">Pas de compte ?</span> <a href="/register" data-route="/register" class="font-medium text-[#85e7ff] hover:text-[#b3f0ff] transition-colors" data-i18n="login.register">Inscrivez-vous</a>
             </p>
         </div>
 

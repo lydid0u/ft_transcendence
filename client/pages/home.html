@@ -2,8 +2,8 @@
   <div class="w-full max-w-4xl mx-auto">
     <!-- Hero Section -->
     <div class="mb-12 text-center">
-      <h1 class="vhsfont text-4xl mb-6 text-[#e6fdff]" style="text-shadow: 0 0 10px #e6fdff, 0 0 20px #85e7ff;">Bienvenue sur ft_transcendence</h1>
-      <div class="inline-block px-6 py-3 bg-[#222] text-[#e6fdff] font-bold rounded shadow-[0_0_15px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(134,231,255,0.5)]">
+      <h1 class="vhsfont text-4xl mb-6 text-[#e6fdff]" style="text-shadow: 0 0 10px #e6fdff, 0 0 20px #85e7ff;" data-i18n="home.welcome">Bienvenue sur ft_transcendence</h1>
+      <div class="inline-block px-6 py-3 bg-[#222] text-[#e6fdff] font-bold rounded shadow-[0_0_15px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(134,231,255,0.5)]" data-i18n="home.start_playing">
         Commencer à jouer
       </div>
     </div>
@@ -11,53 +11,51 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
       <div class="bg-[#111] bg-opacity-40 p-6 rounded shadow-[0_0_15px_rgba(134,231,255,0.2)] backdrop-blur-sm hover:shadow-[0_0_20px_rgba(134,231,255,0.4)] transition-all duration-300">
         <div class="text-[#85e7ff] text-3xl mb-4">🎮</div>
-        <h3 class="text-xl font-bold text-[#e6fdff] mb-2" style="text-shadow: 0 0 5px #85e7ff">Pong en ligne</h3>
-        <p class="text-[#b3f0ff]">Affrontez d'autres joueurs dans des parties de Pong passionnantes</p>
+        <h3 class="text-xl font-bold text-[#e6fdff] mb-2" style="text-shadow: 0 0 5px #85e7ff" data-i18n="home.pong_online">Pong en ligne</h3>
+        <p class="text-[#b3f0ff]" data-i18n="home.pong_description">Affrontez d'autres joueurs dans des parties de Pong passionnantes</p>
       </div>
       
       <div class="bg-[#111] bg-opacity-40 p-6 rounded shadow-[0_0_15px_rgba(134,231,255,0.2)] backdrop-blur-sm hover:shadow-[0_0_20px_rgba(134,231,255,0.4)] transition-all duration-300">
         <div class="text-[#85e7ff] text-3xl mb-4">🏆</div>
-        <h3 class="text-xl font-bold text-[#e6fdff] mb-2" style="text-shadow: 0 0 5px #85e7ff">Tournois</h3>
-        <p class="text-[#b3f0ff]">Participez à des tournois et grimpez dans le classement</p>
+        <h3 class="text-xl font-bold text-[#e6fdff] mb-2" style="text-shadow: 0 0 5px #85e7ff" data-i18n="home.tournaments">Tournois</h3>
+        <p class="text-[#b3f0ff]" data-i18n="home.tournaments_description">Participez à des tournois et grimpez dans le classement</p>
       </div>
     </div>
   </div>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
       <button onclick="SPA.navigateTo('/1v1-landing')" class="bg-stone-600 hover:bg-stone-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
         <div class="text-2xl mb-2">🧠</div>
-        <div>Partie de pong 1v1</div>
+        <div data-i18n="home.game_1v1">Partie de pong 1v1</div>
       </button>
 
       <button onclick="SPA.navigateTo('/tournoi')" class="bg-[#161616] hover:bg-[#222] text-[#e6fdff] font-bold py-4 px-6 rounded shadow-[0_0_10px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(134,231,255,0.5)]">
         <div class="text-2xl mb-2">🏆</div>
-        <div>Tournoi</div>
+        <div data-i18n="home.tournament">Tournoi</div>
       </button>
       
       <button onclick="SPA.navigateTo('/friends')" class="bg-[#161616] hover:bg-[#222] text-[#e6fdff] font-bold py-4 px-6 rounded shadow-[0_0_10px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(134,231,255,0.5)]">
         <div class="text-2xl mb-2">👥</div>
-        <div>Amis</div>
+        <div data-i18n="home.friends">Amis</div>
       </button>
       
       <button onclick="SPA.navigateTo('/profile')" class="bg-[#161616] hover:bg-[#222] text-[#e6fdff] font-bold py-4 px-6 rounded shadow-[0_0_10px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(134,231,255,0.5)]">
         <div class="text-2xl mb-2">👤</div>
-        <div>Profil</div>
+        <div data-i18n="home.profile">Profil</div>
       </button>
       
       <button onclick="SPA.navigateTo('/dashboard')" class="bg-[#161616] hover:bg-[#222] text-[#e6fdff] font-bold py-4 px-6 rounded shadow-[0_0_10px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(134,231,255,0.5)]">
         <div class="text-2xl mb-2">📊</div>
-        <div>Dashboard</div>
+        <div data-i18n="home.dashboard">Dashboard</div>
       </button> 
 
-	  <button onclick="SPA.navigateTo('/ai-landing')" class="bg-stone-600 hover:bg-stone-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+      <button onclick="SPA.navigateTo('/ai-landing')" class="bg-stone-600 hover:bg-stone-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
         <div class="text-2xl mb-2">📊</div>
-        <div>Jouer contre l'ordinateur</div>
+        <div data-i18n="common.playAgainstAI">Jouer contre l'ordinateur</div>
       </button>
 
       <button onclick="SPA.navigateTo('/match-history')" class="bg-[#161616] hover:bg-[#222] text-[#e6fdff] font-bold py-4 px-6 rounded shadow-[0_0_10px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(134,231,255,0.5)]">
         <div class="text-2xl mb-2">📜</div>
-        <div>Historique des matchs</div>
-      </button>
-
-    </div>
+        <div data-i18n="common.matchHistory">Historique des matchs</div>
+      </button>    </div>
   </div>
 </div>
