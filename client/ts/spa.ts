@@ -136,6 +136,25 @@ const SPA = {
       }
     },
 
+    '/tournamenthome': {
+      title: 'Démarrer un tournoi',
+      content: 'pages/tournamenthome.html',
+      routeScript: function(): void {
+        setTimeout(() => {
+          if (typeof window.initTournamentHome === 'function') {
+            window.initTournamentHome();
+          } else {
+            import('./tournamenthome').then(module => {
+              if (module && module.initTournamentHome) {
+                module.initTournamentHome();
+                window.initTournamentHome = module.initTournamentHome;
+              }
+            });
+          }
+        }, 100);
+      }
+    },
+
 
     '/dashboard': {
       title: 'dashboard',

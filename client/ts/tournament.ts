@@ -243,8 +243,15 @@ class TournamentListApp {
       
       if (result.success) {
         this.showNotification("Tournoi créé avec succès!", "success")
-        // Recharger la liste des tournois pour afficher le nouveau tournoi
-        await this.loadTournamentList()
+        
+        // Redirection vers la page de gestion du tournoi
+        setTimeout(() => {
+          if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
+            window.SPA.navigateTo('/tournamenthome');
+          } else {
+            window.location.href = '/tournamenthome';
+          }
+        }, 1000);
       } else {
         this.showNotification(result.message || "Erreur lors de la création du tournoi3", "error")
       }

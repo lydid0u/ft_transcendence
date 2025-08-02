@@ -1,0 +1,30 @@
+<div class="h-full w-full p-6">
+  <h1 class="vhsfont text-center text-[#e6fdff] text-3xl mb-6" style="text-shadow: 0 0 10px #e6fdff, 0 0 20px #85e7ff;">
+    Gestion du Tournoi
+  </h1>
+  
+  <div class="w-full max-w-4xl mx-auto">
+    <!-- Hero Section -->
+    <div class="mb-12 text-center">
+      <p class="text-[#b3f0ff] mb-8">Votre tournoi a été créé ! Gérez vos participants et démarrez le tournoi.</p>
+    </div>
+
+    <!-- Player List -->
+    <div>
+        <h2 class="text-2xl font-bold text-[#e6fdff] mb-6" style="text-shadow: 0 0 5px #85e7ff">Joueurs inscrits</h2>
+        <div id="message-container" class="mb-4"></div>
+        <div id="player-list" class="space-y-4 mb-6">
+          <!-- Les joueurs seront injectés ici dynamiquement -->
+        </div>
+        <div id="add-player-container" class="mt-6">
+          <input type="text" id="player-name" class="border border-[#85e7ff] bg-transparent text-[#e6fdff] rounded px-4 py-2" placeholder="Alias du joueur" />
+          <button id="add-player-btn" class="ml-2 px-4 py-2 bg-[#161616] hover:bg-[#222] text-[#e6fdff] font-bold rounded shadow-[0_0_10px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(134,231,255,0.5)] cursor-pointer">
+            Ajouter un joueur
+          </button>
+        </div>
+        <button id="tournament-start-btn" class="w-full mt-8 px-6 py-3 bg-[#161616] hover:bg-[#222] text-[#e6fdff] font-bold rounded shadow-[0_0_10px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(134,231,255,0.5)] cursor-pointer text-center">
+          Lancer le tournoi
+        </button>
+    </div>
+  </div>
+</div>

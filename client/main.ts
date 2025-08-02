@@ -11,3 +11,4 @@ import './ts/vhs-effects';
 import './ts/tournament';
 import './ts/gameAI';
 import './ts/game1v1';
+import './ts/tournamenthome';

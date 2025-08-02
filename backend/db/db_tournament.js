@@ -24,6 +24,7 @@ async function tableMatches(fastify, options)
                 `CREATE TABLE IF NOT EXISTS tournament_participants (
                     tournament_id INTEGER,
                     user_id INTEGER,
+                    alias TEXT,
                     PRIMARY KEY (tournament_id, user_id),
                     FOREIGN KEY (tournament_id) REFERENCES tournaments(id),
                     FOREIGN KEY (user_id) REFERENCES users(id));`)
@@ -71,6 +72,72 @@ async function tableMatches(fastify, options)
             return true;
         },
 
+        async addAliasToTournament(tournamentId, alias)
+        {
+            // Vérifier si le tournoi existe
+            const tournament = await fastify.dbTournament.getTournamentById(tournamentId);
+            if (!tournament) {
+                throw new Error('Tournament not found');
+            }
+            
+            // Vérifier si le tournoi est plein (maximum 4 participants)
+            const participants = await fastify.db.connection.all(
+                'SELECT COUNT(*) as count FROM tournament_participants WHERE tournament_id = ?', 
+                [tournamentId]
+            );
+            
+            if (participants[0].count >= 4) {
+                throw new Error('Tournament is already full with 4 participants');
+            }
+            
+            // Ajouter l'alias au tournoi
+            await fastify.db.connection.run(
+                `INSERT INTO tournament_participants (tournament_id, alias)
+                VALUES (?, ?);`, 
+                [tournamentId, alias]
+            );
+            return true;
+        },
+        
+        async addAliasToParticipant(tournamentId, alias)
+        {
+            // Vérifier si le tournoi existe
+            const tournament = await fastify.dbTournament.getTournamentById(tournamentId);
+            if (!tournament) {
+                throw new Error('Tournament not found');
+            }
+            
+            // Vérifier si l'alias existe déjà dans ce tournoi
+            const aliasExists = await fastify.db.connection.get(
+                `SELECT * FROM tournament_participants 
+                 WHERE tournament_id = ? AND alias = ?`, 
+                [tournamentId, alias]
+            );
+            
+            if (aliasExists) {
+                throw new Error('This alias is already used in this tournament');
+            }
+            
+            // Vérifier si le tournoi est plein (maximum 4 participants)
+            const participantCount = await fastify.db.connection.get(
+                'SELECT COUNT(*) as count FROM tournament_participants WHERE tournament_id = ?', 
+                [tournamentId]
+            );
+            
+            if (participantCount.count >= 4) {
+                throw new Error('Tournament is already full with 4 participants');
+            }
+            
+            // Ajouter l'alias au tournoi
+            await fastify.db.connection.run(
+                `INSERT INTO tournament_participants (tournament_id, alias)
+                VALUES (?, ?);`, 
+                [tournamentId, alias]
+            );
+            
+            return true;
+        },
+
         async removePlayerFromTournament(tournamentId, userId)
         {
             await fastify.db.connection.run(
@@ -100,6 +167,15 @@ async function tableMatches(fastify, options)
             return await fastify.db.connection.all(
                 `SELECT user_id FROM tournament_participants
                  WHERE tournament_id = ?;`, [tournamentId]);
+        },
+
+        async getTournamentParticipantsWithDetails(tournamentId)
+        {
+            return await fastify.db.connection.all(
+                `SELECT tp.user_id as userId, u.username, u.avatar
+                 FROM tournament_participants tp
+                 JOIN users u ON tp.user_id = u.id
+                 WHERE tp.tournament_id = ?;`, [tournamentId]);
         },
         async getTournamentById(tournamentId)
         {

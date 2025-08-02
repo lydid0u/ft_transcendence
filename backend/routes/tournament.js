@@ -25,6 +25,36 @@ async function tournamentRoute(fastify, options)
         reply.send(tournaments);
     });
 
+    // Nouveau endpoint pour récupérer les détails du tournoi de l'utilisateur
+    fastify.get('/tournament/get-my-tournament', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    {
+        const userId = request.user.id;
+        
+        try {
+            // Récupérer le tournoi créé par l'utilisateur
+            const tournament = await fastify.dbTournament.getTournamentByCreatorId(userId);
+            
+            if (!tournament) {
+                return reply.status(404).send({ status: 'error', message: 'No tournament found' });
+            }
+            
+            // Récupérer les participants du tournoi
+            const participants = await fastify.dbTournament.getTournamentParticipantsWithDetails(tournament.id);
+            
+            // Retourner les détails du tournoi avec la liste des participants
+            reply.send({
+                id: tournament.id,
+                creator_id: tournament.creator_id,
+                status: tournament.status,
+                created_at: tournament.created_at,
+                participants: participants || []
+            });
+        } catch (error) {
+            console.error('Error fetching tournament details:', error);
+            return reply.status(500).send({ status: 'error', message: 'Failed to fetch tournament details' });
+        }
+    });
+
     fastify.post('/tournament/create', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
         // const { name } = request.body;
@@ -40,6 +70,38 @@ async function tournamentRoute(fastify, options)
         reply.send({ status: 'success', data: { tournamentId } });
     });
 
+    fastify.post('/tournament/add-player-alias', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    {
+        const { tournamentId, alias } = request.body;
+        const userId = request.user.id; // L'utilisateur qui fait la demande (créateur du tournoi)
+
+        try {
+            // Vérifier si l'utilisateur est le créateur du tournoi
+            const tournament = await fastify.dbTournament.getTournamentById(tournamentId);
+            if (!tournament) {
+                return reply.status(404).send({ status: 'error', message: 'Tournament not found' });
+            }
+            
+            if (tournament.creator_id !== userId) {
+                return reply.status(403).send({ 
+                    status: 'error', 
+                    message: 'Only the tournament creator can add players with aliases' 
+                });
+            }
+
+            // Ajouter un joueur avec un alias au tournoi
+            await fastify.dbTournament.addAliasToParticipant(tournamentId, alias);
+            
+            reply.status(200).send({ 
+                status: 'success', 
+                message: `Player with alias "${alias}" added to tournament successfully` 
+            });
+        } catch (error) {
+            console.error('Error adding player with alias to tournament:', error);
+            return reply.status(400).send({ status: 'error', message: error.message });
+        }
+    });
+
     fastify.get('/tournament/get-all-tournaments', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
         const tournaments = await fastify.dbTournament.getAllTournaments();
@@ -49,7 +111,7 @@ async function tournamentRoute(fastify, options)
     fastify.get('/tournament/get-participants', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
         const participants = await fastify.dbTournament.getAllParticipants();
-        reply.send(participants);
+        reply.send({ participants });
     });
 
     fastify.delete('/tournament/clear-all', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
