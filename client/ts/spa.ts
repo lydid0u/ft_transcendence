@@ -25,6 +25,7 @@ interface GoogleAccounts {
   id: {
     initialize: (config: GoogleAuthConfig) => void;
     renderButton: (element: Element | null, options: any) => void;
+    disableAutoSelect: () => void;
   };
 }
 
@@ -68,6 +69,14 @@ const SPA = {
     const loginBtn = document.getElementById('nav-login-btn');
     const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
     
+    // Use the same authentication check as in loadRoute
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const hasValidToken = localStorage.getItem('jwtToken') !== null;
+    const isLoggedIn = isAuthenticated && hasValidToken;
+    
+    // Log authentication state for debugging
+    console.log('Navbar auth state:', { isAuthenticated, hasValidToken, isLoggedIn });
+    
     if (loginBtn) {
       // Get page title based on current route
       let pageTitle = '';
@@ -77,7 +86,6 @@ const SPA = {
       
       // Only show login/profile on the landing page or if no page title is available
       if (isLanding || !pageTitle) {
-        const isLoggedIn = localStorage.getItem('user') !== null;
         loginBtn.textContent = isLoggedIn ? 'Profile' : 'Login';
         loginBtn.onclick = () => {
           this.navigateTo(isLoggedIn ? '/dashboard' : '/login');
@@ -90,7 +98,7 @@ const SPA = {
       
       // Show/hide dropdown toggle based on login status
       if (profileDropdownToggle) {
-        const isLoggedIn = localStorage.getItem('user') !== null;
+        console.log('Setting profile dropdown visibility:', isLoggedIn ? 'visible' : 'hidden');
         profileDropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
       }
     }
@@ -100,24 +108,6 @@ const SPA = {
         this.SPAattribute.contentParent = content.parentNode;
       }
     }
-  },
-
-  VhsTransition: function(): void {
-    const app: HTMLElement | null = document.querySelector('#content');
-    if (!app) return;
-
-    app.innerHTML = `
-      <div class="flex items-center justify-center w-full h-64">
-        <div class="transition-animation">
-          <div class="w-16 h-16 border-4 border-pink-medium rounded-full border-t-transparent animate-spin"></div>
-          <p class="mt-4 text-lg font-medium text-gray-700">Loading experience...</p>
-        </div>
-      </div>
-    `;
-
-    setTimeout(() => {
-      this.navigateTo('/home');
-    }, 2000);
   },
 
   routes: {
@@ -471,6 +461,27 @@ const SPA = {
 
 loadRoute: async function(route: string): Promise<void> {
   try {
+    const isAuthenticated: boolean = localStorage.getItem('isAuthenticated') === 'true';
+    const publicRoutes: string[] = ['/', '/login', '/register', '/reset-password', '/otp-password', '/otp', '/about', '/resetNewPassword'];
+    const hasValidToken = localStorage.getItem('jwtToken') !== null;
+
+    // Rediriger vers /login si non authentifié et route protégée
+    if ((!isAuthenticated || !hasValidToken) && !publicRoutes.includes(route)) {
+      console.log('Access denied: redirecting to login');
+      history.pushState("", "", '/login'); // Direct history manipulation to avoid loops
+      this.loadRoute('/login');
+      return;
+    }
+
+    // Rediriger vers /home si authentifié et sur une page d'auth
+    if (isAuthenticated && ['/login', '/register', '/reset-password'].includes(route)) {
+      console.log('Already authenticated: redirecting to home');
+      history.pushState("", "", '/home'); // Direct history manipulation to avoid loops
+      this.loadRoute('/home');
+      return;
+    }
+
+
     // Vérifier si la route existe
     if (!(route in this.routes)) {
       this.error404();
@@ -479,52 +490,60 @@ loadRoute: async function(route: string): Promise<void> {
 
     const routeConfig = this.routes[route];
     
-    // Définir le titre de la page
     document.title = routeConfig.title || "ft_transcendence";
     
-    // Appliquer la mise en page
     this.handleLayout(route);
     
+    const contentElement = document.querySelector(this.SPAattribute.contentDiv);
+    if (!contentElement) {
+      console.error('Content div not found');
+      return;
+    }
+
     try {
-      // Tenter de charger le contenu HTML
-      const contentPath = routeConfig.content;
-      
-      const response = await fetch(contentPath);
-      
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
+      // Charger le contenu selon son type
+      if (typeof routeConfig.content === 'string' && routeConfig.content.endsWith('.html')) {
+        // Charger depuis un fichier HTML
+        const response = await fetch(routeConfig.content);
+        
+        if (!response.ok) {
+          throw new Error(`Erreur lors du chargement de ${routeConfig.content}: ${response.statusText}`);
+        }
+        
+        const html = await response.text();
+        contentElement.innerHTML = html;
+        
+      } else if (typeof routeConfig.content === 'string') {
+        // Contenu HTML direct
+        contentElement.innerHTML = routeConfig.content;
+        
+      } else {
+        throw new Error('Type de contenu non supporté');
       }
-      
-      const html = await response.text();
-      
-      // Injecter le HTML dans le conteneur de contenu
-      const contentElement = document.querySelector(this.SPAattribute.contentDiv);
-      if (!contentElement) {
-        throw new Error("Élément de contenu non trouvé");
-      }
-      
-      contentElement.innerHTML = html;
       
       // Exécuter le script de route s'il existe
-      if (typeof routeConfig.routeScript === "function") {
-        routeConfig.routeScript();
+      if (routeConfig.routeScript && typeof routeConfig.routeScript === 'function') {
+        try {
+          routeConfig.routeScript();
+        } catch (scriptError) {
+          console.error('Erreur lors de l\'exécution du script de route:', scriptError);
+        }
       }
       
-    } catch (error) {
-      // Afficher un message d'erreur dans le conteneur
-      const contentElement = document.querySelector(this.SPAattribute.contentDiv);
-      if (contentElement) {
-        contentElement.innerHTML = `
-          <div style="background: #ffdddd; color: #990000; padding: 20px; border-radius: 5px; margin: 20px;">
-            <h2>Erreur de chargement</h2>
-            <p>Impossible de charger le contenu de la page: ${route}</p>
-            <p>Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}</p>
-          </div>
-        `;
-      }
+    } catch (contentError) {
+      console.error('Erreur de chargement:', contentError);
+      contentElement.innerHTML = `
+        <div style="background: #ffdddd; color: #990000; padding: 20px; border-radius: 5px; margin: 20px;">
+          <h2>Erreur de chargement</h2>
+          <p>Impossible de charger le contenu de la page: ${route}</p>
+          <p>Erreur: ${contentError instanceof Error ? contentError.message : 'Erreur inconnue'}</p>
+        </div>
+      `;
     }
+    
   } catch (error) {
-    // Une erreur est survenue
+    console.error('Erreur critique dans loadRoute:', error);
+    this.error404();
   }
 },
 
@@ -542,13 +561,64 @@ loadRoute: async function(route: string): Promise<void> {
     }
   },
 
+    checkAuthAndNavigate: function() : void {
+        const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+        const hasValidToken = localStorage.getItem('jwtToken') !== null;
+        
+        if (isAuthenticated && hasValidToken) {
+            SPA.navigateTo('/home');
+        } else {
+            SPA.navigateTo('/login');
+        }
+    },
+
+
+  signOut: function(): void {
+    // Clear all authentication data
+    localStorage.removeItem('googleUser');
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    
+    // Disable Google authentication
+    if (typeof window.google !== 'undefined' && window.google.accounts) {
+      console.log('Google accounts found, disabling auto-select');
+      window.google.accounts.id.disableAutoSelect();
+    }
+    
+    // Hide user section
+    const userSection = document.getElementById('user-section');
+    if (userSection) {
+        userSection.style.display = 'none';
+    }
+    
+    // Show login sections
+    const signinSection = document.getElementById('signin-section');
+    const loginWithAccountSection = document.getElementById('loginWithAccountSection');
+
+    if (signinSection) {
+        signinSection.style.display = 'block';
+    }
+    if (loginWithAccountSection) {
+        loginWithAccountSection.style.display = 'block';
+    }
+
+    console.log('User logged out successfully');
+    
+    // Update navbar visibility
+    this.handleLayout(window.location.pathname);
+  },
+
   error404: function(): void {
     console.error('error 404 - page not found');
     const contentDiv: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
     if (contentDiv) {
       contentDiv.innerHTML = `
-        <div class="vhs-transition">
-          <img src="media/error404.gif" class="vhs-gif" alt="Transition VHS">
+        <div style="text-align: center; margin-top: 50px;">
+          <h1>404 - Page Not Found</h1>
+          <p>Sorry, the page you are looking for does not exist.</p>
+          <a href="/" class="btn btn-primary">Go to Home</a>
         </div>
       `;
     }
@@ -559,14 +629,6 @@ loadRoute: async function(route: string): Promise<void> {
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
   
-  // Initialiser les effets VHS/CRT après le chargement du SPA
-  import('./vhs-effects').then(module => {
-    if (module && module.initVHSEffects) {
-      module.initVHSEffects();
-    }
-  }).catch(err => {
-    console.error('Erreur lors du chargement des effets VHS:', err);
-  });
 });
 
 export { SPA };
@@ -587,8 +649,10 @@ declare global {
     changeAvatar: () => Promise<void>;
     otpSubmit: (email: string) => Promise<void>;
     displayTournamentList: () => void;
+    signOut: () => void;
     [key: string]: any; 
   }
 }
 
 window.SPA = SPA;
+window.signOut = SPA.signOut.bind(SPA);

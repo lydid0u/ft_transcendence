@@ -122,9 +122,8 @@
             </div>
         </div>
         
-        <!-- Main Content Area -->
+        <!-- Div de la spa, le contenu sera injecte ici -->
         <div id="content-container" class="bg-gradient-to-b from-purple-100 via-pink-50 to-pink-100 rounded-b-xl px-8 py-8 min-h-[600px]">
-            <!-- Content will be loaded here by SPA -->
             <main id="content" class="relative w-full mx-auto"></main>
         </div>
     </div>
@@ -183,8 +182,13 @@
                         // Handle logout option
                         if (route === '/') {
                             if (confirm('Are you sure you want to log out?')) {
-                                localStorage.removeItem('user');
-                                localStorage.removeItem('token');
+                                // Use the signOut function from SPA
+                                if (typeof SPA.signOut === 'function') {
+                                    SPA.signOut();
+                                    console.log('User logged out using SPA.signOut()');
+                                } else {
+                                    console.error('SPA.signOut function not found');
+                                }
                                 SPA.navigateTo(route);
                             }
                         } else {
@@ -203,7 +207,6 @@
                 dropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
             }
             
-            // Initial check
             updateDropdownVisibility();
         });
     </script>

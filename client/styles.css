@@ -1,4 +1,3 @@
-/* All styling is now handled by Tailwind CSS */
 
 /* Keep the no-scrollbar utility class */
 .no-scrollbar::-webkit-scrollbar {
@@ -146,20 +145,6 @@
   pointer-events: none;
 }
 
-/* VHS Typography */
-.vhsfont {
-  font-family: 'Courier New', Courier, monospace;
-  color: #e6fdff;
-  text-shadow:
-    0 0 10px #e6fdff,
-    0 0 32px #85e7ff;
-  letter-spacing: 0.12em;
-  font-weight: bold;
-  user-select: none;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
 /* UI Container */
 .crt-ui {
   position: relative;
@@ -170,144 +155,6 @@
   flex-direction: column;
   justify-content: space-between;
   pointer-events: none;
-}
-
-/* Play Status */
-.playbox {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  position: absolute;
-  top: 44px; 
-  left: 54px;
-}
-
-.play-logo {
-  width: 48px; 
-  height: 48px;
-  filter: drop-shadow(0 0 6px #e6fdff);
-}
-
-.play-text {
-  font-size: 2.5rem;
-}
-
-/* Time Display */
-.timebox {
-  position: absolute;
-  bottom: 54px; 
-  right: 54px;
-  font-size: 2.1rem;
-  text-align: right;
-  max-width: 90vw;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-
-/* ====== Landing Page ====== */
-.landing-container {
-    min-height: 100vh;
-    background: url('media/tv.gif') no-repeat center center;
-    background-size: cover;
-    background-color: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
-    position: relative;
-    overflow: hidden;
-}
-
-.landing-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 1;
-}
-
-.landing-content {
-    max-width: 600px;
-    padding: 2rem;
-    z-index: 2;
-    position: relative;
-}
-
-.landing-title {
-    font-size: 3.5rem;
-    font-weight: 900;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    animation: slideInDown 1s ease-out;
-}
-
-.landing-subtitle {
-    font-size: 1.3rem;
-    margin-bottom: 2rem;
-    line-height: 1.6;
-    animation: slideInUp 1s ease-out 0.3s both;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-}
-
-.landing-description {
-    font-size: 1.1rem;
-    margin-bottom: 3rem;
-    line-height: 1.8;
-    animation: slideInUp 1s ease-out 0.6s both;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-}
-
-/* Enter Button */
-.enter-button {
-    background: linear-gradient(45deg, rgb(192, 177, 177), #726e6c);
-    color: white;
-    border: none;
-    padding: 1.2rem 3rem;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    animation: slideInUp 1s ease-out 0.9s both;
-    position: relative;
-    overflow: hidden;
-}
-
-.enter-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-    background: linear-gradient(45deg, #f7f1ef, #797474);
-}
-
-.enter-button:active {
-    transform: translateY(-1px);
-}
-
-.enter-button::before {
-    content: '';
-    position: absolute;
-    opacity: 0.6;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
-    transform: translate(-50%, -50%);
-}
-
-.enter-button:active::before {
-    width: 300px;
-    height: 300px;
-    top: 50%;
-    left: 50%;
 }
 
 /* Animations */
@@ -326,28 +173,6 @@
     100% { background-position: 100% 100%; }
 }
 
-/* VHS Transition Effect */
-.vhs-transition {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    overflow: hidden;
-}
-
-.vhs-gif {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* ====== Navigation and UI Components ====== */
 
 /* Content Container */
 [id="content"] {
