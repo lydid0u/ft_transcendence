@@ -6,6 +6,11 @@ import userRoutes from './routes/user.js';
 import authGoogle from './routes/auth.js'
 import tableFriends from './db/db_friends.js'
 import friendsRoutes from './routes/friends.js'
+import matchesRoutes from './routes/matches.js'
+import matchesTable from './db/db_match.js';
+import tournamentRoutes from './routes/tournament.js';
+import dbTournament from './db/db_tournament.js';
+import dbPong from './db/db_pong.js';
 import fastifyJwt from '@fastify/jwt';
 import utilsDbFunc from './db/utils.js'
 import dotenv from 'dotenv';
@@ -77,6 +82,11 @@ fastify.register(userRoutes);
 fastify.register(friendsRoutes);
 fastify.register(authGoogle);
 fastify.register(tableFriends);
+fastify.register(matchesTable);
+fastify.register(dbPong);  // Enregistrement du plugin dbPong
+fastify.register(matchesRoutes);
+fastify.register(tournamentRoutes);
+fastify.register(dbTournament);
 fastify.register(fastifyStatic, {
   root: avatarDir,         // Le dossier où sont stockés tes avatars
   prefix: '/avatar/',      // L’URL publique pour accéder aux fichiers

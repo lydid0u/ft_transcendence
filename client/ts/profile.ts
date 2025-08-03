@@ -1,3 +1,5 @@
+import i18n from './i18n';
+
 interface User {
   username?: string
   email?: string
@@ -48,7 +50,7 @@ async function displayUserProfile(): Promise<void> {
 
     const userGreeting: HTMLElement | null = document.getElementById("user-greeting")
     if (userGreeting && user?.username) {
-      userGreeting.textContent = `Salut ${user.username}`
+      userGreeting.textContent = `${i18n.t('profile.greeting')} ${user.username}`
     }
 
     const userEmail: HTMLElement | null = document.getElementById("user-email")
@@ -160,7 +162,7 @@ async function changeUsername(): Promise<void> {
       }
     } catch (error) {
       console.error("Erreur lors du changement de pseudo:", error)
-      showMessage("message-username", "Erreur réseau. Veuillez réessayer.", "error")
+      showMessage("message-username", "Erreur réseau 3. Veuillez réessayer.", "error")
     }
   })
 }
@@ -202,7 +204,7 @@ async function changeAvatar() {
         form.reset()
       }
     } catch (error) {
-      showMessage("message-avatar", "Erreur réseau. Veuillez réessayer.", "error")
+      showMessage("message-avatar", "Erreur réseau 4. Veuillez réessayer.", "error")
     }
   })
 }
@@ -229,32 +231,38 @@ async function activate2fa() {
 
     const isActivate = button.checked
     const boolean = isActivate
-
+    console.log("isActivate:", isActivate, "boolean:", boolean)
     try {
-      const response: Response = await fetch("http://localhost:3000/user/2fa-verify", {
-        method: "POST",
+      const response: Response = await fetch("http://localhost:3000/user/2fa-activate", {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
         },
-        body: JSON.stringify({
-          email: localStorage.getItem("email"),
-          boolean: boolean,
+        body: JSON.stringify({email: localStorage.getItem("email"), isActivate: boolean,
         }),
       })
 
-      if (!response.ok) throw new Error("Échec de la requête")
+      console.log("Response status:", localStorage.getItem("email"), boolean)
+      if (response.status === 400) {
+        showMessage("message-2fa", "Erreur lors de la mise à jour de la 2FA.", "error")
+        console.log("Response status 400, returning")
+        return
+      }
+
+      if (!response.ok) 
+        throw new Error("Échec de la requête")
 
       localStorage.setItem("2fa_enabled", boolean.toString())
-      messageDiv.textContent = isActivate ? "2FA activée avec succès." : "2FA désactivée avec succès."
+      messageDiv.textContent = isActivate ? i18n.t('profile.tfa_enabled_success') : i18n.t('profile.tfa_disabled_success')
       messageDiv.classList.remove("hidden")
 
       setTimeout(() => {
         messageDiv.classList.add("hidden")
       }, 5000)
     } catch (error) {
-      console.error(error)
-      messageDiv.textContent = "Erreur lors de la mise à jour de la 2FA."
+      console.log("LERREUR", error)
+      messageDiv.textContent = i18n.t('profile.tfa_update_error')
       messageDiv.classList.remove("hidden")
       checkbox.checked = !isActivate
     }
@@ -298,12 +306,11 @@ async function changePassword(): Promise<void> {
         showMessage("message-password", "Mot de passe actuel incorrect.", "error")
       }
     } catch (error) {
-      showMessage("message-password", "Erreur réseau. Veuillez réessayer.", "error")
+      showMessage("message-password", "Erreur réseau 5. Veuillez réessayer.", "error")
     }
   })
 }
 
-// Initialize everything when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   displayUserProfile()
   changeUsername()

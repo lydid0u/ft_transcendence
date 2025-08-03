@@ -18,10 +18,10 @@ async function tableFriends(fastify, options)
                 )`)
         },
 
-       async showTableFriends() 
+       async showTableFriends(userId) 
        {
             console.log("Récupération de tous les amis");
-    
+            console.log("User ID:", userId);
             const friends = await fastify.db.connection.all(`
                 SELECT 
                     f.id, 
@@ -33,27 +33,41 @@ async function tableFriends(fastify, options)
                     friends f
                 JOIN 
                     users u ON f.friend_id = u.id
-            `);
-    
+                WHERE
+                    f.user_id = ?
+            `, [userId]);
             console.log("Amis trouvés:", friends.length);
             return { status: 'success', friends: friends };
         },
 
         async addFriends(request, friend_nickname)
         {
-            const friend_id = await fastify.db.connection.get('SELECT id FROM users WHERE nickname = ?', friend_nickname);
-            await fastify.db.connection.run('INSERT INTO friends (user_id, friend_id) VALUES (?, ?)', request.user.id, friend_id.id);
-        },
-
-        async deletefriend(request, friend_delete)
-        {
-            const friend_id = await fastify.db.connection.get('SELECT id FROM users WHERE nickname = ?', friend_delete);
-            if (friend_id) {
-                await fastify.db.connection.run('DELETE FROM friends WHERE user_id = ? AND friend_id = ?', request.user.id, friend_id.id);
-            } else {
-                console.error(`Friend with nickname ${friend_delete} not found.`);
+            const friend_id = await fastify.db.connection.get('SELECT id FROM users WHERE username = ?', friend_nickname);
+            if (!friend_id) {
+                return reply.status(404).send({ status: 'error', message: 'Friend not found' });
             }
+            const existingFriendship = await fastify.db.connection.get(
+                'SELECT * FROM friends WHERE user_id = ? AND friend_id = ?',
+                request.user.id, friend_id.id
+            );
+            if (existingFriendship) {
+                return reply.status(409).send({ status: 'error', message: 'Friendship already exists' });
+            }
+            if (request.user.id === friend_id.id) {
+                return reply.status(400).send({ status: 'error', message: 'Cannot add yourself as a friend' });
+            }
+            await fastify.db.connection.run('INSERT INTO friends (user_id, friend_id) VALUES (?, ?)', request.user.id, friend_id.id);
         }
+
+        // async deletefriend(request, friend_delete)
+        // {
+        //     const friend_id = await fastify.db.connection.get('SELECT id FROM users WHERE nickname = ?', friend_delete);
+        //     if (friend_id) {
+        //         await fastify.db.connection.run('DELETE FROM friends WHERE user_id = ? AND friend_id = ?', request.user.id, friend_id.id);
+        //     } else {
+        //         console.error(`Friend with nickname ${friend_delete} not found.`);
+        //     }
+        // }
     }
     fastify.decorate('dbFriends', dbFriends);
     await dbFriends.createTableFriends();

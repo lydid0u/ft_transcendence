@@ -62,7 +62,7 @@ async function changePassword(): Promise<void> {
       messageDiv.textContent = "Mot de passe changé avec succès !";
       messageDiv.style.color = "green";
     } catch (error: unknown) {
-      messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
+      messageDiv.textContent = "Erreur réseau 2. Veuillez réessayer.";
       messageDiv.style.color = "red";
     }
   });

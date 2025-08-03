@@ -1,6 +1,5 @@
 import { activate2fa } from "./profile";
-import { Game } from './Game';
-import { Game1v1 } from './Game1v1';
+import i18n from './i18n';
 
 interface RouteConfig {
   title: string;
@@ -29,8 +28,8 @@ interface GoogleAccounts {
   };
 }
 
-// import { Game } from './gameAI';
-// import { Game1v1 } from './game1v1';
+import { Game } from './gameAI';
+import { Game1v1 } from './game1v1';
 
 declare global {
   interface Window {
@@ -101,6 +100,7 @@ const SPA = {
         console.log('Setting profile dropdown visibility:', isLoggedIn ? 'visible' : 'hidden');
         profileDropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
       }
+      content.style.cssText = 'position: static; margin: 0; max-width: none; background: transparent; box-shadow: none; border-radius: 0; min-height: 100vh; padding: 0;';
     }
 
     if (content) {
@@ -117,18 +117,18 @@ const SPA = {
     },
 
     '/home': {
-      title: 'Accueil',
+      title: 'common.home',
       content: 'pages/home.html'
     },
 
     '/about': {
-      title: 'Qui sommes-nous ?',
+      title: 'common.about',
       content: 'pages/about.html'
     },
 
     '/tournoi': {
-      title: 'Tournois',
-      content: 'pages/tournoi.html',
+      title: 'common.tournament',
+      content: 'pages/tournament.html',
       routeScript: function(): void {
         setTimeout(() => {
           if (typeof window.displayTournamentList === 'function') {
@@ -145,9 +145,28 @@ const SPA = {
       }
     },
 
+    '/tournamenthome': {
+      title: 'Démarrer un tournoi',
+      content: 'pages/tournamenthome.html',
+      routeScript: function(): void {
+        setTimeout(() => {
+          if (typeof window.initTournamentHome === 'function') {
+            window.initTournamentHome();
+          } else {
+            import('./tournamenthome').then(module => {
+              if (module && module.initTournamentHome) {
+                module.initTournamentHome();
+                window.initTournamentHome = module.initTournamentHome;
+              }
+            });
+          }
+        }, 100);
+      }
+    },
+
 
     '/dashboard': {
-      title: 'dashboard',
+      title: 'home.dashboard',
       content: 'pages/dashboard.html',
       routeScript: function(): void {
         getUserDataFromBackend();
@@ -155,8 +174,8 @@ const SPA = {
     },
 
     '/login': {
-  title: 'login',
-  content: 'pages/login.html',
+      title: 'common.login',
+      content: 'pages/login.html',
   routeScript: function(): void {
       if (typeof window.google !== 'undefined' && window.google.accounts) {
         window.google.accounts.id.initialize({
@@ -182,14 +201,14 @@ const SPA = {
 },
 
     '/reset-password': {
-  title: 'Réinitialiser le mot de passe',
-  content: 'pages/reset-password.html',
-  routeScript: function(): void {
-    // import('./reset-password').then(module => {
-    //   if (module && module.setupResetEmailForm) {
-    //     module.setupResetEmailForm();
-    //   }
-    // });
+      title: 'resetPassword.title',
+      content: 'pages/reset-password.html',
+      routeScript: function(): void {
+    import('./reset-password').then(module => {
+      if (module && module.setupResetEmailForm) {
+        module.setupResetEmailForm();
+      }
+    });
   }
 },
 
@@ -201,7 +220,7 @@ const SPA = {
         const email = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}').email : '';
         console.log('email', email);
         if (!email) {
-          console.error('Aucun utilisateur trouvé dans le localStorage.');
+          console.error(i18n.t('errors.noUserFound'));
           return;
         }
         if (otpInput) {
@@ -216,11 +235,11 @@ const SPA = {
       content: 'pages/otp-password.html',
       routeScript: function(): void {
         console.log('Initialisation du formulaire OTP pour la réinitialisation de mot de passe');
-        // import('./otpPassword').then(module => {
-        //   if (module && module.setupOtpForm) {
-        //     module.setupOtpForm();
-        //   }
-        // });
+        import('./otpPassword').then(module => {
+          if (module && module.setupOtpForm) {
+            module.setupOtpForm();
+          }
+        });
       }
     },
 
@@ -228,11 +247,11 @@ const SPA = {
       title: 'Nouveau mot de passe',
       content: 'pages/newPasswordReset.html',
       routeScript: function(): void {
-        // import('./resetNewPassword').then(module => {
-        //   if (module && module.setupNewPasswordForm) {
-        //     module.setupNewPasswordForm();
-        //   }
-        // });
+        import('./resetNewPassword').then(module => {
+          if (module && module.setupNewPasswordForm) {
+            module.setupNewPasswordForm();
+          }
+        });
       }
     },
 
@@ -279,15 +298,15 @@ const SPA = {
       setTimeout(() => {
         if (typeof window.displayMatchHistory === 'function') {
           window.displayMatchHistory();
-        // } else {
-        //   // Essayer de charger et d'initialiser directement
-        //   import('./match-history').then(module => {
-        //     if (module && module.displayMatchHistory) {
-        //       module.displayMatchHistory();
-        //       // Définir aussi sur window pour les futurs appels
-        //       window.displayMatchHistory = module.displayMatchHistory;
-        //     }
-        //   });
+        } else {
+          // Essayer de charger et d'initialiser directement
+          import('./match-history').then(module => {
+            if (module && module.displayMatchHistory) {
+              module.displayMatchHistory();
+              // Définir aussi sur window pour les futurs appels
+              window.displayMatchHistory = module.displayMatchHistory;
+            }
+          });
         }
       }, 100);
     }
@@ -490,55 +509,68 @@ loadRoute: async function(route: string): Promise<void> {
 
     const routeConfig = this.routes[route];
     
-    document.title = routeConfig.title || "ft_transcendence";
+    // Set the page title with translation if needed
+    if (routeConfig.title && routeConfig.title.includes('.') && window.i18n) {
+      document.title = window.i18n.t(routeConfig.title) || "ft_transcendence";
+    } else {
+      document.title = routeConfig.title || "ft_transcendence";
+    }
     
+    // Appliquer la mise en page
     this.handleLayout(route);
     
-    const contentElement = document.querySelector(this.SPAattribute.contentDiv);
-    if (!contentElement) {
-      console.error('Content div not found');
-      return;
-    }
-
     try {
-      // Charger le contenu selon son type
-      if (typeof routeConfig.content === 'string' && routeConfig.content.endsWith('.html')) {
-        // Charger depuis un fichier HTML
-        const response = await fetch(routeConfig.content);
-        
-        if (!response.ok) {
-          throw new Error(`Erreur lors du chargement de ${routeConfig.content}: ${response.statusText}`);
+      // Tenter de charger le contenu HTML
+      const contentPath = routeConfig.content;
+      
+      const response = await fetch(contentPath);
+      
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+      
+      const html = await response.text();
+      
+      // Injecter le HTML dans le conteneur de contenu
+      const contentElement = document.querySelector(this.SPAattribute.contentDiv);
+      if (!contentElement) {
+        throw new Error("Élément de contenu non trouvé");
+      }
+      
+      contentElement.innerHTML = html;
+      
+      // Initialize language switcher on first load
+      if (route === '/' && !document.querySelector('.language-switcher')) {
+        const languageSwitcherContainer = document.getElementById('language-switcher-container');
+        if (languageSwitcherContainer && window.i18n) {
+          languageSwitcherContainer.appendChild(window.i18n.createLanguageSwitcher());
         }
-        
-        const html = await response.text();
-        contentElement.innerHTML = html;
-        
-      } else if (typeof routeConfig.content === 'string') {
-        // Contenu HTML direct
-        contentElement.innerHTML = routeConfig.content;
-        
-      } else {
-        throw new Error('Type de contenu non supporté');
+      }
+      
+      // Apply translations after content is loaded
+      if (window.i18n) {
+        setTimeout(() => {
+          window.i18n.initializePageTranslations();
+        }, 100);
       }
       
       // Exécuter le script de route s'il existe
-      if (routeConfig.routeScript && typeof routeConfig.routeScript === 'function') {
-        try {
-          routeConfig.routeScript();
-        } catch (scriptError) {
-          console.error('Erreur lors de l\'exécution du script de route:', scriptError);
-        }
+      if (typeof routeConfig.routeScript === "function") {
+        routeConfig.routeScript();
       }
       
-    } catch (contentError) {
-      console.error('Erreur de chargement:', contentError);
-      contentElement.innerHTML = `
-        <div style="background: #ffdddd; color: #990000; padding: 20px; border-radius: 5px; margin: 20px;">
-          <h2>Erreur de chargement</h2>
-          <p>Impossible de charger le contenu de la page: ${route}</p>
-          <p>Erreur: ${contentError instanceof Error ? contentError.message : 'Erreur inconnue'}</p>
-        </div>
-      `;
+    } catch (error) {
+      // Afficher un message d'erreur dans le conteneur
+      const contentElement = document.querySelector(this.SPAattribute.contentDiv);
+      if (contentElement) {
+        contentElement.innerHTML = `
+          <div style="background: #ffdddd; color: #990000; padding: 20px; border-radius: 5px; margin: 20px;">
+            <h2>Erreur de chargement</h2>
+            <p>Impossible de charger le contenu de la page: ${route}</p>
+            <p>Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}</p>
+          </div>
+        `;
+      }
     }
     
   } catch (error) {
@@ -629,6 +661,33 @@ loadRoute: async function(route: string): Promise<void> {
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
   
+  // Initialize language system
+  if (window.i18n) {
+    // Initialize language switcher
+    const languageSwitcherContainer = document.getElementById('language-switcher-container');
+    if (languageSwitcherContainer && !document.querySelector('.language-switcher')) {
+      languageSwitcherContainer.appendChild(window.i18n.createLanguageSwitcher());
+    }
+    
+    // Initialize translations
+    window.i18n.initializePageTranslations();
+    
+    // Listen for language changes to update content
+    window.addEventListener('languageChanged', function(event: CustomEvent) {
+      console.log('Language changed to:', event.detail.language);
+      // Update document language attribute
+      document.documentElement.lang = event.detail.language;
+    } as EventListener);
+  }
+  
+  // Initialiser les effets VHS/CRT après le chargement du SPA
+  import('./vhs-effects').then(module => {
+    if (module && module.initVHSEffects) {
+      module.initVHSEffects();
+    }
+  }).catch(err => {
+    console.error('Erreur lors du chargement des effets VHS:', err);
+  });
 });
 
 export { SPA };

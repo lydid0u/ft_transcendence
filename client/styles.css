@@ -15,7 +15,15 @@
 /* Page title styling */
 #nav-login-btn {
   position: relative;
+/* Root Elements */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
   overflow: hidden;
+  background: #050507;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 #nav-login-btn.page-title {
@@ -59,6 +67,8 @@
 
 /* Dropdown menu animation */
 #profile-dropdown {
+/* TV State Logic */
+.tv:not(.on) .off {
   opacity: 0;
   transform: scale(0.95);
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -173,6 +183,253 @@
     100% { background-position: 100% 100%; }
 }
 
+@keyframes grainmove {
+    0% { background-position: 0 0; }
+    100% { background-position: 100% 100%; }
+}
+
+/* Content Container */
+[id="content"] {
+  position: relative;
+  z-index: 100;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: #e6fdff;
+  text-shadow: 0 0 5px #85e7ff;
+}
+
+/* Content Structure */
+.content-container {
+  background-color: transparent !important;
+  z-index: 200;
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow-y: auto;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+/* Content Box */
+.content-box {
+  width: 100%;
+  max-width: 4xl;
+  text-align: center;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2rem !important;
+}
+
+/* Navigation Button Animation */
+@keyframes navPulse {
+  0% { box-shadow: 0 0 10px rgba(134, 231, 255, 0.4); }
+  50% { box-shadow: 0 0 18px rgba(134, 231, 255, 0.7); }
+  100% { box-shadow: 0 0 10px rgba(134, 231, 255, 0.4); }
+}
+
+/* Navigation Menu */
+#dial-container {
+  background: rgba(10, 10, 12, 0.5) !important;
+  backdrop-filter: blur(5px);
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 0 25px rgba(134, 231, 255, 0.3);
+}
+
+/* Navigation Button */
+.nav-button {
+  background-color: rgba(26, 26, 26, 0.7);
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(134, 231, 255, 0.3);
+}
+
+.nav-button span {
+  color: #e6fdff;
+  font-size: 0.875rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px #85e7ff;
+}
+
+.nav-button:hover {
+  background-color: rgba(40, 40, 40, 0.9);
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Active Navigation Button */
+.active-nav-button {
+  background-color: #1a1a1a !important;
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.6) !important;
+  transform: scale(1.05);
+  text-shadow: 0 0 8px #e6fdff;
+  animation: navPulse 2s infinite;
+}
+
+/* Toggle Navigation Menu */
+.toggle-menu-button {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(26, 26, 26, 0.8);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 150;
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4);
+  transition: all 0.3s;
+}
+
+.toggle-menu-button svg {
+  color: #85e7ff;
+}
+
+.toggle-menu-button:hover {
+  box-shadow: 0 0 20px rgba(134, 231, 255, 0.8);
+  transform: translateX(-50%) scale(1.1);
+}
+
+/* Action Button */
+.action-button-container {
+  position: relative;
+  z-index: 20;
+}
+
+.action-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: rgba(26, 26, 26, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.action-button svg {
+  color: #85e7ff;
+}
+
+.action-button:hover {
+  box-shadow: 0 0 20px rgba(134, 231, 255, 0.7);
+  transform: translateY(-2px);
+}
+
+/* Global Content Containers */
+#television-screen-container,
+#television-crt,
+#television-screen {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ====== Typography ====== */
+
+/* Headings */
+#content h1, #content h2, #content h3, #content h4 {
+  color: #e6fdff !important;
+  text-shadow: 
+    0 0 10px #e6fdff, 
+    0 0 20px #85e7ff !important;
+  margin-bottom: 1rem;
+}
+
+#content h1 {
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+}
+
+#content h2 {
+  font-size: 2rem;
+  letter-spacing: 1.5px;
+}
+
+/* Text Elements */
+#content p, #content span, #content div {
+  color: #e6fdff !important;
+  text-shadow: 0 0 5px #85e7ff !important;
+  line-height: 1.6;
+}
+
+/* ====== Form Elements ====== */
+
+/* Interactive Elements */
+button, 
+input[type="submit"],
+input[type="button"],
+.button {
+  padding: 0.75rem 1.5rem;
+  border: none !important;
+  border-radius: 8px;
+  background-color: #111 !important;
+  color: #e6fdff !important;
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.3) !important;
+  text-shadow: 0 0 5px #85e7ff !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+button:hover, 
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.button:hover {
+  box-shadow: 0 0 20px rgba(134, 231, 255, 0.6) !important;
+  transform: scale(1.03);
+  background-color: #1a1a1a !important;
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  background-color: rgba(10, 10, 12, 0.7) !important;
+  border: none !important;
+  color: #e6fdff !important;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(134, 231, 255, 0.2) inset !important;
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4) inset !important;
+  outline: none;
+}
+
+/* Glow Effect for Important Text */
+.glow-text, 
+.vhsfont, 
+h1, h2, h3 {
+  text-shadow: 
+    0 0 5px #e6fdff,
+    0 0 15px #85e7ff,
+    0 0 25px rgba(134, 231, 255, 0.5) !important;
+}
+
+/* ====== Navigation and UI Components ====== */
 
 /* Content Container */
 [id="content"] {
