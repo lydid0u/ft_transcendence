@@ -1,166 +1,211 @@
 <!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ft_transcendence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="google-signin-client_id" content="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com" />
-    <link href="styles.css" rel="stylesheet" />
-
     <script type="module" src="main.ts" defer></script>
-
-  </head>
-  <body class="m-0 p-0 h-full w-full overflow-hidden bg-[#c3c1a8]">
-    <div id="tv-container" class="fixed top-0 left-0 w-full h-full flex justify-center items-center z-[1]">
-      <div id="tv-main" class="tv w-[1860px] h-[840px] flex flex-col items-center">
-        <!-- <div id="antenna-container" class="w-[470px] h-[170px] flex flex-col justify-end">
-          <div
-            id="antenna"
-            class="antenna w-full h-2 bg-gradient-to-t from-[#444] via-[#999] to-[#444] transform origin-right rotate-[20deg] translate-y-[6px] z-0 flex items-center before:content-[''] before:block before:w-4 before:h-[20px] before:bg-gradient-to-t before:from-[#444] before:via-[#999] before:to-[#444] before:rounded-[24%_53%_53%_24%/36%_40%_40%_36%] before:border-2 before:border-[#444] before:border-l-0 before:border-b-0 before:-translate-y-0.5"></div>
-        </div> -->
-        <div id="television-container" class="flex flex-col items-center z-[1]">
-          <div
-            id="television"
-            class="w-[1550px] h-[1095px] rounded-[96px/123px] shadow-[4px_4px_10px_#0004,4px_-4px_4px_#7a8471_inset,4px_2px_2px_#fff_inset,0_0_6px_10px_#0002] bg-gradient-to-b from-[#9aad8e] to-[#6b7a5f] flex justify-center items-center z-[2]">
-            <div
-              id="television-inner"
-              class="w-[93%] h-[90%] bg-gradient-to-b from-[#454c45] via-[#232522] to-[#232522] border-b-2 border-white shadow-[0_2px_4px_#4a5c42_inset] rounded-[50px] relative grid grid-cols-[3fr_1fr] grid-rows-[0.8fr] content-center gap-[6px]">
-              <div
-                id="television-screen-container"
-                class="border-2 border-[#222] shadow-[0_4px_4px_#888,4px_0_4px_#444,-4px_0_4px_#444,0_-4px_4px_#111] rounded-[70px/50px] m-[20px] overflow-hidden flex justify-center items-center">
-                <div
-                  id="television-crt"
-                  class="w-full h-full bg-[#111] shadow-[0_0_10px_4px_#111,0_0_20px_4px_#1112] roxunded-[170px/200px] overflow-hidden flex justify-center items-center">
-                  <div id="television-screen" class="bg-black w-[100%] h-[100%] shadow-[0_0_10px_4px_#111_inset] overflow-y-scroll relative no-scrollbar p-6">
-                    <main id="content" class="relative z-10 h-full"></main>
-
-                    <div id="screen-off" class="off absolute top-0 w-full h-full bg-[radial-gradient(#222,#1a1a1a,#111)] z-[5] transition-opacity duration-500 opacity-100"></div>
-
-                    <!-- <div id="screen-noise" class="noise w-full h-full z-[4] relative bg-[linear-gradient(to_bottom,transparent,#aaa4,#8881,#6664,#4445,#2228,#4443,transparent),repeating-linear-gradient(transparent_0_4px,#25242950_4px_8px)] animate-[moveBand_8s_linear_infinite]"></div> -->
-                  </div>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'purple-light': '#e8e0ff',
+                        'purple-medium': '#d4c5ff',
+                        'purple-dark': '#9b6dff',
+                        'pink-light': '#ffb3d9',
+                        'pink-medium': '#ff69b4',
+                        'pink-dark': '#ff1493'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-purple-200 via-purple-100 to-pink-200">
+    <!-- Browser Window Container -->
+    <div class="max-w-6xl mx-auto pt-8 px-4">
+        <!-- Browser Header -->
+        <div class="bg-white rounded-t-xl px-4 py-3 flex items-center justify-between shadow-sm">
+            <!-- Traffic Light Buttons -->
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+            </div>
+            
+            <!-- URL Bar -->
+            <div class="flex items-center space-x-4 flex-1 justify-center">
+                <div class="flex items-center space-x-2 bg-gray-200 rounded-md px-20 py-1.5">
+                  <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
+                  <button onclick="SPA.navigateTo('/home')" class="text-sm font-medium">https://ft_transcendence.com</button>
                 </div>
-              </div>
-              <div id="television-lateral" class="grid grid-rows-[1.1fr_1fr] gap-6 m-[30px] ml-0">
-                <div
-                  id="dial-container"
-                  class="border-4 border-[#333] border-l-2 border-l-[#444] border-b-4 border-b-[#444] rounded-[10px] shadow-[-4px_4px_12px_#111_inset,-2px_4px_6px_#aaa] flex flex-col justify-center gap-[12px] items-center">
-                  <div
-                    id="nav-dial"
-                    class="w-[164px] h-[164px] border-4 border-[#6e706f] rounded-full shadow-[-8px_4px_8px_#111,0_0_2px_4px_#000] flex justify-center items-center relative cursor-grab bg-[#ccc]"
-                    style="--value: 0deg">
-                    <div id="nav-data-container" class="flex justify-center w-full h-full">
-                      <div id="nav-data-1" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center">Accueil</div>
-                      <div id="nav-data-3" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center rotate-[60deg]">Pong</div>
-                      <div id="nav-data-5" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center rotate-[120deg]">Tournoi</div>
-                      <div id="nav-data-7" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center rotate-[180deg]">Dashboard</div>
-                      <div id="nav-data-9" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center rotate-[240deg]">Profil</div>
-                      <div id="nav-data-11" class="text-[#444] text-[12px] [text-shadow:0_0_4px_#888] absolute top-0 h-full origin-center rotate-[300deg]">A propos</div>
+                
+                <div class="text-gray-400">•••</div>
+            </div>
+            
+            <!-- User Account Section -->
+            <div class="flex items-center space-x-4 relative">
+                <button id="nav-login-btn" class="text-sm font-medium px-3 py-1.5 rounded-md hover:bg-purple-light hover:text-purple-dark transition-colors"></button>
+                <div class="flex items-center space-x-1 cursor-pointer relative group" id="profile-dropdown-toggle">
+                    <div class="w-8 h-8 bg-gradient-to-r from-purple-dark to-pink-medium rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
                     </div>
-                    <div id="nav-dial-core" class="w-28 h-28 rounded-full absolute bg-[conic-gradient(#eee_0deg_45deg,#666_70deg_285deg,#eee_320deg)]"></div>
-                    <div
-                      id="nav-selector"
-                      class="absolute w-3/4 h-3 bg-[linear-gradient(#666_30%,#aaa_40%)] border-2 border-[#666] rounded-[8px/16px] [transform:rotate(calc(var(--value)_-_90deg))] transition-transform duration-[250ms] linear"></div>
-                  </div>
-                </div>
-                <div id="speaker-container" class="grid grid-cols-6 gap-y-0.5 gap-x-0 mb-6 mx-1">
-                  <div id="speaker-1" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-2" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-3" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-4" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-5" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-6" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-7" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-8" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-9" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-10" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-11" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-12" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-13" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-14" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-15" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-16" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-17" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-18" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-19" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-20" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-21" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-22" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-23" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-24" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-25" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-26" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-27" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-28" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-29" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-30" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-31" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-32" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-33" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-34" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-35" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-36" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-37" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-38" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-39" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-40" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-41" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-42" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-43" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-44" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-45" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-46" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-47" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                  <div id="speaker-48" class="w-6 h-6 bg-[radial-gradient(#000,#222)] rounded-full border-b-2 border-white"></div>
-                </div>
-              </div>
-              <div id="buttons-container" class="absolute bottom-[60px] right-[90px] w-[120px] flex justify-between">
-                <div id="button-container-1" class="w-12 h-12 bg-[linear-gradient(to_bottom,#fff_40%,#aaa_50%_55%,#666_70%)] rounded-full flex justify-center items-center">
-                  <div
-                    id="button-1"
-                    class="w-7 h-7 rounded-full bg-[linear-gradient(to_top,#fff_40%,#aaa_50%_55%,#666_70%)] shadow-[-2px_-2px_2px_4px_#000] transform translate-x-1 translate-y-0.5 transition-all duration-100 cursor-pointer active:translate-x-0 active:translate-y-0 active:shadow-[0_0_2px_4px_#000] flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12L12 5l8 7M5 12v7a1 1 0 001 1h3m10-8v7a1 1 0 01-1 1h-3m-6 0h6"/>
+                    <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-dark transition-colors transform group-hover:-rotate-180 duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                  </div>
                 </div>
-                <div id="button-container-2" class="w-12 h-12 bg-[linear-gradient(to_bottom,#fff_40%,#aaa_50%_55%,#666_70%)] rounded-full flex justify-center items-center">
-                  <div
-                    id="button-2"
-                    class="w-7 h-7 rounded-full bg-[linear-gradient(to_top,#fff_40%,#aaa_50%_55%,#666_70%)] shadow-[-2px_-2px_2px_4px_#000] transform translate-x-1 translate-y-0.5 transition-all duration-100 cursor-pointer active:translate-x-0 active:translate-y-0 active:shadow-[0_0_2px_4px_#000] flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m6.364-4.364a9 9 0 11-12.728 0"/>
-                    </svg>
-                  </div>
+                <!-- Dropdown Menu -->
+                <div id="profile-dropdown" class="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 hidden transition-all duration-200 transform origin-top-right">
+                    <div class="py-1">
+                        <a href="/profile" data-route="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-light hover:text-purple-dark transition-colors">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                Profile
+                            </div>
+                        </a>
+                        <a href="/friends" data-route="/friends" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-light hover:text-purple-dark transition-colors">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                                Friends
+                            </div>
+                        </a>
+                        <a href="/match-history" data-route="/match-history" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-light hover:text-purple-dark transition-colors">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                                Match History
+                            </div>
+                        </a>
+                        <a href="/pong" data-route="/pong" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-light hover:text-purple-dark transition-colors">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Pong
+                            </div>
+                        </a>
+                        <a href="/tournoi" data-route="/tournoi" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-light hover:text-purple-dark transition-colors">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path>
+                                </svg>
+                                Tournament
+                            </div>
+                        </a>
+                    </div>
+                    <div class="border-t border-gray-100 my-1"></div>
+                    <div class="py-1">
+                        <a href="/" data-route="/" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Logout
+                            </div>
+                        </a>
+                    </div>
                 </div>
-                </div>
-              </div>
             </div>
-          </div>
-          <div
-            id="television-base"
-            class="w-[700px] h-[50px] bg-gradient-to-b from-[#9aad8e] to-[#6b7a5f] shadow-[0_16px_8px_#0009] flex justify-between items-center before:content-[''] before:block before:w-4 before:h-full before:bg-gradient-to-b before:from-[#9aad8e] before:to-[#6b7a5f] before:transform before:-translate-x-1 before:skew-x-[10deg] after:content-[''] after:block after:w-4 after:h-full after:bg-gradient-to-b after:from-[#9aad8e] after:to-[#6b7a5f] after:transform after:translate-x-1 after:-skew-x-[10deg]">
-            <div id="slots-left" class="w-1/2 h-[30px] flex justify-center">
-              <div id="slot-left-1" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
-              <div id="slot-left-2" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
-              <div id="slot-left-3" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
-            </div>
-            <div id="slots-right" class="w-1/2 h-[30px] flex justify-center">
-              <div id="slot-right-1" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
-              <div id="slot-right-2" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
-              <div id="slot-right-3" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
-              <div id="slot-right-4" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
-              <div id="slot-right-5" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
-              <div id="slot-right-6" class="w-2 h-full bg-[#0b0000] ml-[6px] rounded-[4px/2px]"></div>
-            </div>
-          </div>
-          <div id="foot-container" class="w-[50%] flex justify-between">
-            <div id="foot-left" class="w-12 h-6 bg-[#9aad8e] shadow-[8px_0_#6b7a5f]"></div>
-            <div id="foot-right" class="w-12 h-6 bg-[#9aad8e] shadow-[-8px_0_#6b7a5f]"></div>
-          </div>
         </div>
-      </div>
+        
+        <!-- Main Content Area -->
+        <div id="content-container" class="bg-gradient-to-b from-purple-100 via-pink-50 to-pink-100 rounded-b-xl px-8 py-8 min-h-[600px]">
+            <!-- Content will be loaded here by SPA -->
+            <main id="content" class="relative w-full mx-auto"></main>
+        </div>
     </div>
-  </body>
+    
+
+
+    <!-- Dropdown Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.getElementById('profile-dropdown-toggle');
+            const dropdown = document.getElementById('profile-dropdown');
+            
+            // Toggle dropdown visibility with animation
+            dropdownToggle.addEventListener('click', function() {
+                if (dropdown.classList.contains('hidden')) {
+                    // Show dropdown
+                    dropdown.classList.remove('hidden');
+                    dropdown.classList.add('scale-95', 'opacity-0');
+                    
+                    // Trigger animation
+                    setTimeout(() => {
+                        dropdown.classList.remove('scale-95', 'opacity-0');
+                        dropdown.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                } else {
+                    // Hide dropdown
+                    dropdown.classList.remove('scale-100', 'opacity-100');
+                    dropdown.classList.add('scale-95', 'opacity-0');
+                    
+                    // After animation completes, hide it completely
+                    setTimeout(() => {
+                        dropdown.classList.add('hidden');
+                    }, 200);
+                }
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!dropdownToggle.contains(event.target) && !dropdown.contains(event.target) && !dropdown.classList.contains('hidden')) {
+                    // Hide dropdown with animation
+                    dropdown.classList.remove('scale-100', 'opacity-100');
+                    dropdown.classList.add('scale-95', 'opacity-0');
+                    
+                    setTimeout(() => {
+                        dropdown.classList.add('hidden');
+                    }, 200);
+                }
+            });
+
+            // Handle dropdown links with SPA navigation
+            dropdown.querySelectorAll('a[data-route]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const route = this.getAttribute('data-route');
+                    if (route && typeof SPA !== 'undefined' && SPA.navigateTo) {
+                        // Handle logout option
+                        if (route === '/') {
+                            if (confirm('Are you sure you want to log out?')) {
+                                localStorage.removeItem('user');
+                                localStorage.removeItem('token');
+                                SPA.navigateTo(route);
+                            }
+                        } else {
+                            SPA.navigateTo(route);
+                        }
+                        
+                        // Hide dropdown
+                        dropdown.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Only show dropdown when user is logged in
+            function updateDropdownVisibility() {
+                const isLoggedIn = localStorage.getItem('user') !== null;
+                dropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
+            }
+            
+            // Initial check
+            updateDropdownVisibility();
+        });
+    </script>
+</body>
 </html>

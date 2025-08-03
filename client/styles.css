@@ -1,53 +1,212 @@
-@font-face {
-  font-family: "Heading Pro";
-  src: url(https://manzdev.github.io/twitch-television/fonts/heading-pro.woff) format("woff");
-  font-display: swap;
-}
+/* All styling is now handled by Tailwind CSS */
 
+/* Keep the no-scrollbar utility class */
 .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
-/* :root {
-  --television-width: 860px;
-  --television-height: 840px;
-  --television-bgcolor: #b71a11;
-  --television-bgcolor-dark: #88110b;
-  --antenna-gradient: linear-gradient(to top, #444 10%, #999 25% 40%, #444 70%, #2224 90%);
-} */
+/* Transition animation */
+.transition-animation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
-:root {
-  --television-width: 860px;
-  --television-height: 840px;
-  --television-bgcolor: #d688c3;
-  --television-bgcolor-dark: #e284bb;
-  --antenna-gradient: linear-gradient(to top, #444 10%, #999 25% 40%, #444 70%, #2224 90%);
-} 
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
+/* Page title styling */
+#nav-login-btn {
+  position: relative;
   overflow: hidden;
 }
 
-/* Only keeping the animation keyframes and TV state logic that can't be done in Tailwind */
-.tv:not(.on) .off {
+#nav-login-btn.page-title {
+  background: linear-gradient(to right, #9b6dff, #ff69b4);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+}
+
+/* Gazpacho font family */
+@font-face {
+  font-family: 'Gazpacho';
+  src: url('./Gazpacho-Font/Gazpacho/Gazpacho\ Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gazpacho';
+  src: url('./Gazpacho-Font/Gazpacho/Gazpacho\ Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gazpacho';
+  src: url('./Gazpacho-Font/Gazpacho/Gazpacho\ Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* Custom gradient text (fallback for browsers that don't support bg-clip-text) */
+.gradient-text {
+  background: linear-gradient(to right, #ff69b4, #9b6dff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Dropdown menu animation */
+#profile-dropdown {
   opacity: 0;
+  transform: scale(0.95);
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-@keyframes moveBand {
-  0% {
-    background-position-y: 0, 0;
-  }
-  100% {
-    background-position-y: -442px, -300px;
-  }
+#profile-dropdown.opacity-100 {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Form elements styling */
+.input-field {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+}
+.input-field:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #d4c5ff;
+}
+
+.btn-primary {
+  padding: 0.5rem 1.5rem;
+  background: linear-gradient(to right, #9b6dff, #ff69b4);
+  color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+.btn-primary:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary {
+  padding: 0.5rem 1.5rem;
+  background-color: white;
+  color: #1f2937;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+.btn-secondary:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Scanlines */
+.scanline {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    rgba(0,0,0,0.14) 2px,
+    transparent 8px,
+    transparent 22px
+  );
+  opacity: 0.14;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* Tracking Effect */
+.tracking {
+  position: absolute;
+  left: 0; 
+  width: 100vw;
+  height: 22px;
+  z-index: 12;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.tracking.top { top: 0; }
+.tracking.bottom { bottom: 0; transform: scaleY(-1); }
+
+.tracking-canvas {
+  display: block;
+  width: 100vw; 
+  height: 22px;
+  pointer-events: none;
+}
+
+/* VHS Typography */
+.vhsfont {
+  font-family: 'Courier New', Courier, monospace;
+  color: #e6fdff;
+  text-shadow:
+    0 0 10px #e6fdff,
+    0 0 32px #85e7ff;
+  letter-spacing: 0.12em;
+  font-weight: bold;
+  user-select: none;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* UI Container */
+.crt-ui {
+  position: relative;
+  width: 100vw; 
+  height: 100vh;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+/* Play Status */
+.playbox {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: absolute;
+  top: 44px; 
+  left: 54px;
+}
+
+.play-logo {
+  width: 48px; 
+  height: 48px;
+  filter: drop-shadow(0 0 6px #e6fdff);
+}
+
+.play-text {
+  font-size: 2.5rem;
+}
+
+/* Time Display */
+.timebox {
+  position: absolute;
+  bottom: 54px; 
+  right: 54px;
+  font-size: 2.1rem;
+  text-align: right;
+  max-width: 90vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 
+/* ====== Landing Page ====== */
 .landing-container {
     min-height: 100vh;
     background: url('media/tv.gif') no-repeat center center;
@@ -65,17 +224,13 @@ body {
 .landing-container::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: rgba(0, 0, 0, 0.4);
     z-index: 1;
 }
 
 .landing-content {
     max-width: 600px;
-    opacity: 0.3;
     padding: 2rem;
     z-index: 2;
     position: relative;
@@ -84,7 +239,6 @@ body {
 .landing-title {
     font-size: 3.5rem;
     font-weight: 900;
-    opacity: 0.3;
     margin-bottom: 1rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     animation: slideInDown 1s ease-out;
@@ -93,7 +247,6 @@ body {
 .landing-subtitle {
     font-size: 1.3rem;
     margin-bottom: 2rem;
-    opacity: 0.9;
     line-height: 1.6;
     animation: slideInUp 1s ease-out 0.3s both;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
@@ -102,12 +255,12 @@ body {
 .landing-description {
     font-size: 1.1rem;
     margin-bottom: 3rem;
-    opacity: 0.8;
     line-height: 1.8;
     animation: slideInUp 1s ease-out 0.6s both;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
+/* Enter Button */
 .enter-button {
     background: linear-gradient(45deg, rgb(192, 177, 177), #726e6c);
     color: white;
@@ -157,31 +310,23 @@ body {
     left: 50%;
 }
 
+/* Animations */
 @keyframes slideInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes grainmove {
+    0% { background-position: 0 0; }
+    100% { background-position: 100% 100%; }
+}
 
+/* VHS Transition Effect */
 .vhs-transition {
     position: fixed;
     top: 0;
@@ -200,4 +345,247 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* ====== Navigation and UI Components ====== */
+
+/* Content Container */
+[id="content"] {
+  position: relative;
+  z-index: 100;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: #e6fdff;
+  text-shadow: 0 0 5px #85e7ff;
+}
+
+/* Content Structure */
+.content-container {
+  background-color: transparent !important;
+  z-index: 200;
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow-y: auto;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+/* Content Box */
+.content-box {
+  width: 100%;
+  max-width: 4xl;
+  text-align: center;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2rem !important;
+}
+
+/* Navigation Button Animation */
+@keyframes navPulse {
+  0% { box-shadow: 0 0 10px rgba(134, 231, 255, 0.4); }
+  50% { box-shadow: 0 0 18px rgba(134, 231, 255, 0.7); }
+  100% { box-shadow: 0 0 10px rgba(134, 231, 255, 0.4); }
+}
+
+/* Navigation Menu */
+#dial-container {
+  background: rgba(10, 10, 12, 0.5) !important;
+  backdrop-filter: blur(5px);
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 0 25px rgba(134, 231, 255, 0.3);
+}
+
+/* Navigation Button */
+.nav-button {
+  background-color: rgba(26, 26, 26, 0.7);
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(134, 231, 255, 0.3);
+}
+
+.nav-button span {
+  color: #e6fdff;
+  font-size: 0.875rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px #85e7ff;
+}
+
+.nav-button:hover {
+  background-color: rgba(40, 40, 40, 0.9);
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Active Navigation Button */
+.active-nav-button {
+  background-color: #1a1a1a !important;
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.6) !important;
+  transform: scale(1.05);
+  text-shadow: 0 0 8px #e6fdff;
+  animation: navPulse 2s infinite;
+}
+
+/* Toggle Navigation Menu */
+.toggle-menu-button {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(26, 26, 26, 0.8);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 150;
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4);
+  transition: all 0.3s;
+}
+
+.toggle-menu-button svg {
+  color: #85e7ff;
+}
+
+.toggle-menu-button:hover {
+  box-shadow: 0 0 20px rgba(134, 231, 255, 0.8);
+  transform: translateX(-50%) scale(1.1);
+}
+
+/* Action Button */
+.action-button-container {
+  position: relative;
+  z-index: 20;
+}
+
+.action-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: rgba(26, 26, 26, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.action-button svg {
+  color: #85e7ff;
+}
+
+.action-button:hover {
+  box-shadow: 0 0 20px rgba(134, 231, 255, 0.7);
+  transform: translateY(-2px);
+}
+
+/* Global Content Containers */
+#television-screen-container,
+#television-crt,
+#television-screen {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ====== Typography ====== */
+
+/* Headings */
+#content h1, #content h2, #content h3, #content h4 {
+  color: #e6fdff !important;
+  text-shadow: 
+    0 0 10px #e6fdff, 
+    0 0 20px #85e7ff !important;
+  margin-bottom: 1rem;
+}
+
+#content h1 {
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+}
+
+#content h2 {
+  font-size: 2rem;
+  letter-spacing: 1.5px;
+}
+
+/* Text Elements */
+#content p, #content span, #content div {
+  color: #e6fdff !important;
+  text-shadow: 0 0 5px #85e7ff !important;
+  line-height: 1.6;
+}
+
+/* ====== Form Elements ====== */
+
+/* Interactive Elements */
+button, 
+input[type="submit"],
+input[type="button"],
+.button {
+  padding: 0.75rem 1.5rem;
+  border: none !important;
+  border-radius: 8px;
+  background-color: #111 !important;
+  color: #e6fdff !important;
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.3) !important;
+  text-shadow: 0 0 5px #85e7ff !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+button:hover, 
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.button:hover {
+  box-shadow: 0 0 20px rgba(134, 231, 255, 0.6) !important;
+  transform: scale(1.03);
+  background-color: #1a1a1a !important;
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  background-color: rgba(10, 10, 12, 0.7) !important;
+  border: none !important;
+  color: #e6fdff !important;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(134, 231, 255, 0.2) inset !important;
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4) inset !important;
+  outline: none;
+}
+
+/* Glow Effect for Important Text */
+.glow-text, 
+.vhsfont, 
+h1, h2, h3 {
+  text-shadow: 
+    0 0 5px #e6fdff,
+    0 0 15px #85e7ff,
+    0 0 25px rgba(134, 231, 255, 0.5) !important;
 }

@@ -1,3 +1,7 @@
+import { activate2fa } from "./profile";
+import { Game } from './Game';
+import { Game1v1 } from './Game1v1';
+
 interface RouteConfig {
   title: string;
   content: string;
@@ -8,6 +12,8 @@ interface SPAAttributes {
   defaultRoute: string;
   contentDiv: string;
   contentParent?: Node | null;
+  currentGameInstance?: Game | Game1v1 | null;
+
 }
 
 interface GoogleAuthConfig {
@@ -21,6 +27,9 @@ interface GoogleAccounts {
     renderButton: (element: Element | null, options: any) => void;
   };
 }
+
+// import { Game } from './gameAI';
+// import { Game1v1 } from './game1v1';
 
 declare global {
   interface Window {
@@ -40,6 +49,9 @@ declare function changePassword(): Promise<void>;
 declare function displayUserProfile(): Promise<void>;
 declare function changeUsername(): Promise<void>;
 declare function changeAvatar(): Promise<void>;
+declare function displayMatchHistory(): void;
+declare function displayTournamentList(): void;
+declare function otpSubmit(email: string): Promise<void>;
 
 const SPA = {
   SPAattribute: {
@@ -49,30 +61,43 @@ const SPA = {
   } as SPAAttributes,
 
   handleLayout: function(route: string): void {
-    const tvContainer: HTMLElement | null = document.querySelector('#tv-container');
     const content: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
     const isLanding: boolean = route === '/';
-
-    if (isLanding) {
-      if (tvContainer) tvContainer.style.display = 'none';
-      document.body.style.cssText = 'overflow: auto; height: auto; background: white;';
-
-      if (content) {
-        if (!this.SPAattribute.contentParent) {
-          this.SPAattribute.contentParent = content.parentNode;
-        }
-        if (content.parentNode !== document.body) {
-          document.body.appendChild(content);
-        }
-        content.style.cssText = 'position: static; margin: 0; max-width: none; background: transparent; box-shadow: none; border-radius: 0; min-height: 100vh; padding: 0;';
+    
+    // Update the login button text to show current page
+    const loginBtn = document.getElementById('nav-login-btn');
+    const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
+    
+    if (loginBtn) {
+      // Get page title based on current route
+      let pageTitle = '';
+      if (route in this.routes) {
+        pageTitle = this.routes[route].title;
       }
-    } else {
-      if (tvContainer) tvContainer.style.display = 'flex';
-      document.body.style.cssText = 'overflow: hidden; height: 100vh; background: #c3c1a8;';
+      
+      // Only show login/profile on the landing page or if no page title is available
+      if (isLanding || !pageTitle) {
+        const isLoggedIn = localStorage.getItem('user') !== null;
+        loginBtn.textContent = isLoggedIn ? 'Profile' : 'Login';
+        loginBtn.onclick = () => {
+          this.navigateTo(isLoggedIn ? '/dashboard' : '/login');
+        };
+      } else {
+        // Show current page title
+        loginBtn.textContent = pageTitle;
+        loginBtn.onclick = null; // Remove click handler when showing page name
+      }
+      
+      // Show/hide dropdown toggle based on login status
+      if (profileDropdownToggle) {
+        const isLoggedIn = localStorage.getItem('user') !== null;
+        profileDropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
+      }
+    }
 
-      if (content && this.SPAattribute.contentParent && content.parentNode !== this.SPAattribute.contentParent) {
-        this.SPAattribute.contentParent.appendChild(content);
-        content.style.cssText = '';
+    if (content) {
+      if (!this.SPAattribute.contentParent) {
+        this.SPAattribute.contentParent = content.parentNode;
       }
     }
   },
@@ -82,8 +107,11 @@ const SPA = {
     if (!app) return;
 
     app.innerHTML = `
-      <div class="vhs-transition">
-        <img src="media/vhs.gif" class="vhs-gif" alt="Transition VHS">
+      <div class="flex items-center justify-center w-full h-64">
+        <div class="transition-animation">
+          <div class="w-16 h-16 border-4 border-pink-medium rounded-full border-t-transparent animate-spin"></div>
+          <p class="mt-4 text-lg font-medium text-gray-700">Loading experience...</p>
+        </div>
       </div>
     `;
 
@@ -109,9 +137,24 @@ const SPA = {
     },
 
     '/tournoi': {
-      title: 'tournoi',
-      content: 'pages/tournoi.html'
+      title: 'Tournois',
+      content: 'pages/tournoi.html',
+      routeScript: function(): void {
+        setTimeout(() => {
+          if (typeof window.displayTournamentList === 'function') {
+            window.displayTournamentList();
+          } else {
+            import('./tournament').then(module => {
+              if (module && module.displayTournamentList) {
+                module.displayTournamentList();
+                window.displayTournamentList = module.displayTournamentList;
+              }
+            }).catch(err => console.error('Failed to load tournament module:', err));
+          }
+        }, 100);
+      }
     },
+
 
     '/dashboard': {
       title: 'dashboard',
@@ -148,6 +191,61 @@ const SPA = {
   }
 },
 
+    '/reset-password': {
+  title: 'Réinitialiser le mot de passe',
+  content: 'pages/reset-password.html',
+  routeScript: function(): void {
+    // import('./reset-password').then(module => {
+    //   if (module && module.setupResetEmailForm) {
+    //     module.setupResetEmailForm();
+    //   }
+    // });
+  }
+},
+
+    '/otp': {
+      title: 'Double Authentification',
+      content: 'pages/otp.html',
+      routeScript: function(): void {
+        const otpInput: HTMLInputElement | null = document.querySelector('#otp-input');
+        const email = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}').email : '';
+        console.log('email', email);
+        if (!email) {
+          console.error('Aucun utilisateur trouvé dans le localStorage.');
+          return;
+        }
+        if (otpInput) {
+          otpInput.focus(); // ca met le curseur directement dans le champ de saisie
+        }
+        otpSubmit(email);
+      }
+    },
+
+    '/otp-password': {
+      title: 'Réinitialiser le mot de passe',
+      content: 'pages/otp-password.html',
+      routeScript: function(): void {
+        console.log('Initialisation du formulaire OTP pour la réinitialisation de mot de passe');
+        // import('./otpPassword').then(module => {
+        //   if (module && module.setupOtpForm) {
+        //     module.setupOtpForm();
+        //   }
+        // });
+      }
+    },
+
+    '/resetNewPassword': {
+      title: 'Nouveau mot de passe',
+      content: 'pages/newPasswordReset.html',
+      routeScript: function(): void {
+        // import('./resetNewPassword').then(module => {
+        //   if (module && module.setupNewPasswordForm) {
+        //     module.setupNewPasswordForm();
+        //   }
+        // });
+      }
+    },
+
     '/googleLogin': {
       title: 'Google Login',
       content: 'pages/googleLogin.html',
@@ -183,6 +281,152 @@ const SPA = {
         changePassword();
       }
     },
+    
+      '/match-history': {
+    title: 'Historique des matchs',
+    content: 'pages/match-history.html',
+    routeScript: function(): void {
+      setTimeout(() => {
+        if (typeof window.displayMatchHistory === 'function') {
+          window.displayMatchHistory();
+        // } else {
+        //   // Essayer de charger et d'initialiser directement
+        //   import('./match-history').then(module => {
+        //     if (module && module.displayMatchHistory) {
+        //       module.displayMatchHistory();
+        //       // Définir aussi sur window pour les futurs appels
+        //       window.displayMatchHistory = module.displayMatchHistory;
+        //     }
+        //   });
+        }
+      }, 100);
+    }
+  },
+
+  
+	'/gameAI': {
+			title: 'Pong AI Game',
+			content: 'pages/gameAI.html',
+			routeScript: function ()
+			{
+				function tryInitGameAI() {
+					const canvas = document.getElementById('game-canvas');
+					if (!canvas)
+					{
+						console.error('Game-canvas not found');
+						setTimeout(tryInitGameAI, 50);
+						return;
+					}
+					if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
+					{
+						SPA.SPAattribute.currentGameInstance.destroy();
+						console.log("Game instance destroyed");
+					}
+					try
+					{
+						let difficulty = localStorage.getItem('aiDifficulty') || 'EASY';
+						let diffEnum = 1;
+						if (difficulty === 'MEDIUM')
+							diffEnum = 2;
+						else if (difficulty === 'HARD')
+							diffEnum = 3;
+						const game = new Game(diffEnum);
+						SPA.SPAattribute.currentGameInstance = game;
+						if (SPA.SPAattribute.currentGameInstance === null)
+						{
+							throw new Error("current game didn't load");
+							return;
+						}
+						requestAnimationFrame(() => SPA.SPAattribute.currentGameInstance.gameLoop());
+					}
+					catch (e)
+					{
+						console.error('Game init failed:', e);
+					}
+				}
+				tryInitGameAI();
+			}
+		},
+
+	'/1v1': {
+			title: 'Pong 1v1',
+			content: 'pages/game1v1.html',
+			routeScript: function ()
+			{
+				function tryInitGame1v1() {
+					const canvas = document.getElementById('game-canvas');
+					const p1Score = document.getElementById('player1-score');
+					const p2Score = document.getElementById('player2-score');
+					if (!canvas || !p1Score || !p2Score) {
+						setTimeout(tryInitGame1v1, 50);
+						return;
+					}
+					if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
+					{
+						SPA.SPAattribute.currentGameInstance.destroy();
+						console.log("Game instance destroyed");
+					}
+					try
+					{
+						let difficulty = localStorage.getItem('Difficulty') || 'EASY';
+						let diffEnum = 1;
+						if (difficulty === 'MEDIUM')
+							diffEnum = 2;
+						else if (difficulty === 'HARD')
+							diffEnum = 3;
+						const game = new Game1v1(diffEnum);
+						SPA.SPAattribute.currentGameInstance = game;
+						if (SPA.SPAattribute.currentGameInstance === null)
+						{
+							throw new Error("current game didn't load");
+							return;
+						}
+						requestAnimationFrame(() => SPA.SPAattribute.currentGameInstance.gameLoop());
+					}
+					catch (e)
+					{
+						console.error('Game init failed:', e);
+					}
+				}
+				tryInitGame1v1();
+			}
+		},
+
+    '/ai-landing': {
+      title: 'Choix de la difficulté',
+      content: 'pages/pong-landing.html',
+      routeScript: function () {
+        // Attach event listeners to difficulty buttons
+        setTimeout(() => {
+          document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const difficulty = (e.target as HTMLElement).getAttribute('data-difficulty');
+              // Save difficulty to localStorage or SPA attribute
+              localStorage.setItem('aiDifficulty', difficulty || 'EASY');
+              SPA.navigateTo('/gameAI');
+            });
+          });
+        }, 0);
+      }
+    },
+	 
+    '/1v1-landing': {
+      title: 'Choix de la difficulté',
+      content: 'pages/pong-landing.html',
+      routeScript: function () {
+        // Attach event listeners to difficulty buttons
+        setTimeout(() => {
+          document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const difficulty = (e.target as HTMLElement).getAttribute('data-difficulty');
+              // Save difficulty to localStorage or SPA attribute
+              localStorage.setItem('Difficulty', difficulty || 'EASY');
+              SPA.navigateTo('/1v1');
+            });
+          });
+        }, 0);
+      }
+    },
 
     '/profile': {
       title: 'profile',
@@ -192,6 +436,7 @@ const SPA = {
           displayUserProfile();
           changeUsername();
           changeAvatar();
+          activate2fa();
         }, 50);
       }
     }
@@ -224,66 +469,64 @@ const SPA = {
     this.setCurrentPageToActive(route);
   },
 
-  loadRoute: async function(route: string): Promise<void> {
-    const isAuthenticated: string | null = localStorage.getItem('isAuthenticated');
-    const publicRoutes: string[] = ['/', '/login', '/register'];
-
-    if (!isAuthenticated && !publicRoutes.includes(route)) {
-      this.navigateTo('/login');
-      return;
-    }
-
-    if (isAuthenticated && (route === '/login' || route === '/register')) {
-      this.navigateTo('/home');
-      return;
-    }
-
-    this.handleLayout(route);
-
-    const routeToLoad: RouteConfig | undefined = this.routes[route];
-    if (!routeToLoad) {
+loadRoute: async function(route: string): Promise<void> {
+  try {
+    // Vérifier si la route existe
+    if (!(route in this.routes)) {
       this.error404();
       return;
     }
- 
-    document.title = routeToLoad.title;
-    const contentDiv: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
+
+    const routeConfig = this.routes[route];
     
-    if (!contentDiv) {
-      console.error('Content div not found');
-      return;
-    }
-
-    // Check if content is a path to an .html file
-    if (typeof routeToLoad.content === 'string' && routeToLoad.content.endsWith('.html')) {
-      try {
-        const response: Response = await fetch(routeToLoad.content);
-        if (!response.ok) {
-          throw new Error(`Erreur lors du chargement de ${routeToLoad.content}: ${response.statusText}`);
-        }
-        const html: string = await response.text();
-        contentDiv.innerHTML = html;
-      } catch (error) {
-        console.error('Erreur de chargement:', error);
-        contentDiv.innerHTML = '<p>Erreur de chargement du contenu.</p>';
-        this.error404();
-        return;
+    // Définir le titre de la page
+    document.title = routeConfig.title || "ft_transcendence";
+    
+    // Appliquer la mise en page
+    this.handleLayout(route);
+    
+    try {
+      // Tenter de charger le contenu HTML
+      const contentPath = routeConfig.content;
+      
+      const response = await fetch(contentPath);
+      
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
       }
-    } else if (typeof routeToLoad.content === 'string') {
-      contentDiv.innerHTML = routeToLoad.content;
-    } else {
-      this.error404();
-      return;
-    }
-
-    if (routeToLoad.routeScript && typeof routeToLoad.routeScript === 'function') {
-      try {
-        routeToLoad.routeScript();
-      } catch (error) {
-        console.error('Erreur lors de l\'exécution du script de route:', error);
+      
+      const html = await response.text();
+      
+      // Injecter le HTML dans le conteneur de contenu
+      const contentElement = document.querySelector(this.SPAattribute.contentDiv);
+      if (!contentElement) {
+        throw new Error("Élément de contenu non trouvé");
+      }
+      
+      contentElement.innerHTML = html;
+      
+      // Exécuter le script de route s'il existe
+      if (typeof routeConfig.routeScript === "function") {
+        routeConfig.routeScript();
+      }
+      
+    } catch (error) {
+      // Afficher un message d'erreur dans le conteneur
+      const contentElement = document.querySelector(this.SPAattribute.contentDiv);
+      if (contentElement) {
+        contentElement.innerHTML = `
+          <div style="background: #ffdddd; color: #990000; padding: 20px; border-radius: 5px; margin: 20px;">
+            <h2>Erreur de chargement</h2>
+            <p>Impossible de charger le contenu de la page: ${route}</p>
+            <p>Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}</p>
+          </div>
+        `;
       }
     }
-  },
+  } catch (error) {
+    // Une erreur est survenue
+  }
+},
 
   setCurrentPageToActive: function(currentPath: string): void {
     // Reset all active links
@@ -315,6 +558,15 @@ const SPA = {
 
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
+  
+  // Initialiser les effets VHS/CRT après le chargement du SPA
+  import('./vhs-effects').then(module => {
+    if (module && module.initVHSEffects) {
+      module.initVHSEffects();
+    }
+  }).catch(err => {
+    console.error('Erreur lors du chargement des effets VHS:', err);
+  });
 });
 
 export { SPA };
@@ -333,6 +585,8 @@ declare global {
     displayUserProfile: () => Promise<void>;
     changeUsername: () => Promise<void>;
     changeAvatar: () => Promise<void>;
+    otpSubmit: (email: string) => Promise<void>;
+    displayTournamentList: () => void;
     [key: string]: any; 
   }
 }
