@@ -74,7 +74,30 @@ class TournamentAPI {
         credentials: "include",
         body: JSON.stringify({ tournamentId : tournamentId }),
       });
-      return await response.json();
+      console.log("Réponse du serveur pour rejoindre le tournoi :", response);
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        if (window.SPA && window.SPA.navigateTo) {
+          window.SPA.navigateTo('/tournamenthome');
+        }
+        return { success: true, message: data.message || "Tournoi rejoint avec succès" }; 
+      }
+      
+      // Vérifier si l'erreur est liée au créateur
+      if (response.status === 400 && data.message && data.message.includes("not the creator")) {
+        return { 
+          success: false, 
+          message: "Seul le créateur du tournoi peut rejoindre ce tournoi" 
+        };
+      }
+      
+      return { 
+        success: false, 
+        message: data.message || "Erreur lors de la tentative de rejoindre le tournoi" 
+      }; 
+
     } catch (error) {
       return { success: false, message: "Erreur pour rejoindre le tournoi" };
     }
@@ -84,11 +107,9 @@ class TournamentAPI {
   try {
     // Vérifier si le token est disponible
     if (!this.token) {
-      console.error("No authentication token found");
       return { success: false, message: "Authentification requise" };
     }
 
-      console.log("EJSUILEOKENLA ", this.token);
       const response = await fetch(`${this.baseUrl}/tournament/create`, {
       method: "POST",
       headers: {
@@ -96,14 +117,11 @@ class TournamentAPI {
         "Authorization": `Bearer ${this.token}`,
       },
       credentials: "include",
-      body: JSON.stringify({}), // Ajoute ceci
+      body: JSON.stringify({}),
     });
-    console.log(response);
     const result = await response.json();
-    console.log("Response JSON:", result);
 
     if (!response.ok) {
-      // Si le backend a renvoyé un message, on l'affiche, sinon message générique
       return { 
         success: false, 
         message: result.message || `Erreur serveur (${response.status})`
@@ -224,7 +242,12 @@ class TournamentListApp {
     const result = await this.api.joinTournament(tournamentId)
     if (result.success) {
       this.showNotification(window.i18n.translate('tournament.join_success'), "success")
-      await this.loadTournamentList()
+      console.log("Tournoi rejoint avec succès :", tournamentId)
+      if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
+            window.SPA.navigateTo('/tournamenthome');
+          } else {
+            window.location.href = '/tournamenthome';
+          }
     } else {
       this.showNotification(result.message || window.i18n.translate('tournament.join_error'), "error")
       btnEl.disabled = false

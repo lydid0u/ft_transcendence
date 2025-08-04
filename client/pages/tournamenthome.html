@@ -1,30 +1,62 @@
-<div class="h-full w-full p-6">
-  <h1 class="vhsfont text-center text-[#e6fdff] text-3xl mb-6" style="text-shadow: 0 0 10px #e6fdff, 0 0 20px #85e7ff;">
-    Gestion du Tournoi
-  </h1>
-  
-  <div class="w-full max-w-4xl mx-auto">
-    <!-- Hero Section -->
-    <div class="mb-12 text-center">
-      <p class="text-[#b3f0ff] mb-8">Votre tournoi a été créé ! Gérez vos participants et démarrez le tournoi.</p>
+<div class="w-full max-w-4xl mx-auto p-6">
+  <!-- Hero Section -->
+  <div class="text-center mb-12 mt-8">
+    <h1 class="text-4xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-6 font-gazpacho">
+      Gestion du Tournoi
+    </h1>
+    <p class="text-gray-600 text-lg mb-10">
+      Votre tournoi a été créé ! Gérez vos participants et démarrez le tournoi.
+    </p>
+  </div>
+
+  <!-- Main Content Container -->
+  <div class="bg-white rounded-xl p-8 shadow-lg mb-10">
+    <!-- Notification Area -->
+    <div id="message-container" class="mb-6"></div>
+
+    <!-- Player List Section -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6">Joueurs inscrits</h2>
+      <div id="player-list" class="space-y-3 mb-6">
+        <!-- Les joueurs seront injectés ici dynamiquement -->
+      </div>
     </div>
 
-    <!-- Player List -->
-    <div>
-        <h2 class="text-2xl font-bold text-[#e6fdff] mb-6" style="text-shadow: 0 0 5px #85e7ff">Joueurs inscrits</h2>
-        <div id="message-container" class="mb-4"></div>
-        <div id="player-list" class="space-y-4 mb-6">
-          <!-- Les joueurs seront injectés ici dynamiquement -->
-        </div>
-        <div id="add-player-container" class="mt-6">
-          <input type="text" id="player-name" class="border border-[#85e7ff] bg-transparent text-[#e6fdff] rounded px-4 py-2" placeholder="Alias du joueur" />
-          <button id="add-player-btn" class="ml-2 px-4 py-2 bg-[#161616] hover:bg-[#222] text-[#e6fdff] font-bold rounded shadow-[0_0_10px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(134,231,255,0.5)] cursor-pointer">
-            Ajouter un joueur
-          </button>
-        </div>
-        <button id="tournament-start-btn" class="w-full mt-8 px-6 py-3 bg-[#161616] hover:bg-[#222] text-[#e6fdff] font-bold rounded shadow-[0_0_10px_rgba(134,231,255,0.3)] transform transition duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(134,231,255,0.5)] cursor-pointer text-center">
-          Lancer le tournoi
+    <!-- Add Player Section -->
+    <div class="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-100">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Ajouter un joueur</h3>
+      <div id="add-player-container" class="flex flex-col sm:flex-row gap-4">
+        <input type="text" id="player-name" class="flex-grow border border-gray-300 bg-white text-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Alias du joueur" />
+        <button id="add-player-btn" class="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">
+          Ajouter un joueur
         </button>
+      </div>
+    </div>
+
+    <!-- Login Player Form -->
+    <div id="player-login-form" class="hidden mb-8 p-6 bg-gray-50 rounded-lg border border-gray-100">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Connexion</h3>
+      <div class="flex flex-col items-center justify-center gap-4">
+        <input type="email" id="player-login-email" class="w-full max-w-md border border-gray-300 bg-white text-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Email du joueur" />
+        <input type="password" id="player-login-password" class="w-full max-w-md border border-gray-300 bg-white text-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Mot de passe" />
+        <div class="flex gap-4 mt-2">
+          <button id="player-login-submit" class="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all">Valider</button>
+          <button id="player-login-cancel" class="px-6 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-all">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <button id="login-player-btn" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+        Se connecter en tant que joueur
+      </button>
+      <button id="tournament-start-btn" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+        Lancer le tournoi
+      </button>
+      <button id="tournament-quit-btn" class="col-span-1 md:col-span-2 px-6 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-medium rounded-lg shadow-sm hover:shadow transition-all duration-300 mt-2">
+        Quitter le tournoi
+      </button>
     </div>
   </div>
 </div>
