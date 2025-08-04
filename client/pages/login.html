@@ -11,20 +11,19 @@
         <div id="loginWithAccountSection">
             <form id="login-form" class="space-y-4">
                 <div>
-
-                    <input type="email" id="email" placeholder="Email" required class="input-field">
+                    <input type="email" id="email" placeholder="Email" required class="input-field" data-i18n-placeholder="login.email">
                 </div>
                 <div>
-                    <input type="password" id="password" placeholder="Password" required class="input-field">
+                    <input type="password" id="password" placeholder="Password" required class="input-field" data-i18n-placeholder="login.password">
                 </div>
-                <button type="submit" class="btn-primary w-full">Login</button>
+                <button type="submit" class="btn-primary w-full" data-i18n="common.login">Login</button>
             </form>
             <div id="message" class="mt-4 text-center text-red-500"></div>
             <p class="mt-4 text-sm text-center text-gray-600">
-                Forgot password? <a href="/reset-password" data-route="/reset-password" class="font-medium text-purple-dark hover:text-purple-500 transition-colors">Reset</a>
+                <span data-i18n="login.forgot_password">Forgot password?</span> <a href="/reset-password" data-route="/reset-password" class="font-medium text-purple-dark hover:text-purple-500 transition-colors" data-i18n="login.reset">Reset</a>
             </p>
             <p class="mt-2 text-sm text-center text-gray-600">
-                Don't have an account? <a href="/register" data-route="/register" class="font-medium text-purple-dark hover:text-purple-500 transition-colors">Sign up</a>
+                <span data-i18n="login.no_account">Don't have an account?</span> <a href="/register" data-route="/register" class="font-medium text-purple-dark hover:text-purple-500 transition-colors" data-i18n="login.sign_up">Sign up</a>
             </p>
         </div>
 
@@ -35,7 +34,7 @@
                     <div class="w-full border-t border-gray-200"></div>
                 </div>
                 <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    <span class="px-2 bg-white text-gray-500" data-i18n="login.or_continue_with">Or continue with</span>
                 </div>
             </div>
             <div id="signin-section" class="mt-4 flex justify-center">
@@ -50,16 +49,10 @@
                      data-theme="outline"
                      data-text="sign_in_with"
                      data-shape="rectangular"
-                     data-logo_alignment="left">
+                     data*t">
                 </div>
             </div>
         </div>
     </div>
 </div>
-                     data-shape="rectangular"
-                     data-logo_alignment="left">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+

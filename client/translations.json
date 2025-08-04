@@ -1,0 +1,362 @@
+{
+  "en": {
+    "common": {
+      "home": "Home",
+      "profile": "Profile",
+      "friends": "Friends",
+      "matches": "Matches",
+      "pong": "Pong",
+      "tournament": "Tournament",
+      "dashboard": "Dashboard",
+      "about": "About",
+      "login": "Login",
+      "logout": "Logout",
+      "settings": "Settings",
+      "loading": "Loading..."
+    },
+    "landing": {
+      "title": "FT_TRANSCENDENCE",
+      "welcome": "Welcome to the ultimate Pong experience!",
+      "enter": "Enter Experience",
+      "play_friends": "Play with Friends",
+      "challenge_friends": "Challenge your friends to exciting Pong matches and track your scores.",
+      "real_time_matches": "Real-time Matches",
+      "smooth_gameplay": "Experience smooth gameplay with our real-time multiplayer technology.",
+      "track_progress": "Track Progress",
+      "improve_skills": "Keep track of your stats and improve your Pong skills over time."
+    },
+    "login": {
+      "title": "Login",
+      "access_account": "Access your account",
+      "email": "Email",
+      "password": "Password",
+      "forgot_password": "Forgot password?",
+      "reset": "Reset",
+      "no_account": "Don't have an account?",
+      "sign_up": "Sign up",
+      "or_continue_with": "Or continue with"
+    },
+    "register": {
+      "title": "Create Account",
+      "email": "Email",
+      "username": "Username",
+      "choose_username": "Choose a username",
+      "password": "Password",
+      "create_password": "Create a password",
+      "confirm_password": "Confirm Password",
+      "create_account": "Create Account",
+      "already_account": "Already have an account?",
+      "sign_in": "Sign in"
+    },
+    "home": {
+      "welcome": "Ready to Play?",
+      "start_playing": "Choose your game mode and start the challenge",
+      "play_ai": "Play Against AI",
+      "choose_difficulty": "Choose your difficulty level and improve your skills",
+      "play_now": "Play Now",
+      "local_match": "Local Match",
+      "challenge": "Challenge other player in a real-time pong match",
+      "find_opponent": "Find Opponent",
+      "tournament": "Tournament",
+      "participate": "Participate in tournaments and climb the leaderboard",
+      "join_tournament": "Join Tournament",
+      "dashboard": "Dashboard"
+    },
+    "friends": {
+      "all_friends": "My Friends",
+      "add_friend": "Add Friend",
+      "loading": "Loading friends...",
+      "empty_state": "You don't have any friends yet. Add some!"
+    },
+    "profile": {
+      "greeting": "Hello",
+      "two_factor": "Two-Factor Authentication",
+      "2fa_updated": "2FA settings updated",
+      "change_username": "Change Username",
+      "update_username": "Update your username that's visible to other users.",
+      "update_btn": "Update Username",
+      "change_picture": "Change Profile Picture",
+      "upload_picture": "Upload a new profile picture",
+      "choose_file": "Choose File",
+      "upload": "Upload",
+      "success_username": "Username changed successfully!",
+      "success_avatar": "Avatar updated successfully!"
+    },
+    "game": {
+      "choose_difficulty": "Choose Difficulty",
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "otp": {
+      "title": "Two-Factor Authentication",
+      "enter_code": "Verification code",
+      "verify": "Verify"
+    },
+    "about": {
+      "title": "Who are we?",
+      "lydia_role": "Front End, designer...",
+      "khalid_role": "Back End, user management..."
+    },
+    "errors": {
+      "noUserFound": "No user found"
+    },
+    "matchHistory": {
+      "title": "Match History",
+      "subtitle": "Review your performance and analyze your games",
+      "win_rate": "Win Rate",
+      "games_played": "Games Played",
+      "wins": "Wins",
+      "losses": "Losses",
+      "recent_matches": "Recent Matches",
+      "opponent": "Opponent",
+      "result": "Result",
+      "score": "Score",
+      "date": "Date",
+      "no_matches": "No matches found. Play some games!",
+      "snake": "Snake",
+      "victory": "Victory",
+      "defeat": "Defeat"
+    }
+  },
+  "fr": {
+    "common": {
+      "home": "Accueil",
+      "profile": "Profil",
+      "friends": "Amis",
+      "matches": "Matchs",
+      "pong": "Pong",
+      "tournament": "Tournoi",
+      "dashboard": "Tableau de bord",
+      "about": "À propos",
+      "login": "Connexion",
+      "logout": "Déconnexion",
+      "settings": "Paramètres",
+      "loading": "Chargement..."
+    },
+    "landing": {
+      "title": "FT_TRANSCENDENCE",
+      "welcome": "Bienvenue dans l'expérience Pong ultime !",
+      "enter": "Entrer dans l'Expérience",
+      "play_friends": "Jouer avec des amis",
+      "challenge_friends": "Défiez vos amis dans des matchs de Pong passionnants et suivez vos scores.",
+      "real_time_matches": "Matchs en temps réel",
+      "smooth_gameplay": "Profitez d'un gameplay fluide avec notre technologie multijoueur en temps réel.",
+      "track_progress": "Suivre la progression",
+      "improve_skills": "Gardez une trace de vos statistiques et améliorez vos compétences Pong au fil du temps."
+    },
+    "login": {
+      "title": "Connexion",
+      "access_account": "Accédez à votre compte",
+      "email": "Email",
+      "password": "Mot de passe",
+      "forgot_password": "Mot de passe oublié ?",
+      "reset": "Réinitialiser",
+      "no_account": "Vous n'avez pas de compte ?",
+      "sign_up": "S'inscrire",
+      "or_continue_with": "Ou continuer avec"
+    },
+    "register": {
+      "title": "Créer un Compte",
+      "email": "Email",
+      "username": "Nom d'utilisateur",
+      "choose_username": "Choisissez un nom d'utilisateur",
+      "password": "Mot de passe",
+      "create_password": "Créez un mot de passe",
+      "confirm_password": "Confirmez le mot de passe",
+      "create_account": "Créer un compte",
+      "already_account": "Vous avez déjà un compte ?",
+      "sign_in": "Se connecter"
+    },
+    "home": {
+      "welcome": "Prêt à jouer ?",
+      "start_playing": "Choisissez votre mode de jeu et commencez le défi",
+      "play_ai": "Jouer contre l'IA",
+      "choose_difficulty": "Choisissez votre niveau de difficulté et améliorez vos compétences",
+      "play_now": "Jouer maintenant",
+      "local_match": "Match local",
+      "challenge": "Défiez un autre joueur dans un match de pong en temps réel",
+      "find_opponent": "Trouver un adversaire",
+      "tournament": "Tournoi",
+      "participate": "Participez à des tournois et montez dans le classement",
+      "join_tournament": "Rejoindre un tournoi",
+      "dashboard": "Tableau de bord"
+    },
+    "friends": {
+      "all_friends": "Mes amis",
+      "add_friend": "Ajouter",
+      "loading": "Chargement des amis...",
+      "empty_state": "Vous n'avez pas encore d'amis. Ajoutez-en !"
+    },
+    "profile": {
+      "greeting": "Bonjour",
+      "two_factor": "Authentification à deux facteurs",
+      "2fa_updated": "Paramètres 2FA mis à jour",
+      "change_username": "Changer de nom d'utilisateur",
+      "update_username": "Mettez à jour votre nom d'utilisateur visible par les autres utilisateurs.",
+      "update_btn": "Mettre à jour le nom",
+      "change_picture": "Changer la photo de profil",
+      "upload_picture": "Téléchargez une nouvelle photo de profil",
+      "choose_file": "Choisir un fichier",
+      "upload": "Télécharger",
+      "success_username": "Nom d'utilisateur changé avec succès !",
+      "success_avatar": "Avatar mis à jour avec succès !"
+    },
+    "game": {
+      "choose_difficulty": "Choisissez la difficulté",
+      "easy": "Facile",
+      "medium": "Moyen",
+      "hard": "Difficile"
+    },
+    "otp": {
+      "title": "Double Authentification",
+      "enter_code": "Code de vérification",
+      "verify": "Valider"
+    },
+    "about": {
+      "title": "Qui sommes-nous ?",
+      "lydia_role": "Front End, designer...",
+      "khalid_role": "Back End, gestion des utilisateurs..."
+    },
+    "errors": {
+      "noUserFound": "Aucun utilisateur trouvé"
+    },
+    "matchHistory": {
+      "title": "Historique des Matchs",
+      "subtitle": "Consultez vos performances et analysez vos parties",
+      "win_rate": "Taux de Victoire",
+      "games_played": "Parties Jouées",
+      "wins": "Victoires",
+      "losses": "Défaites",
+      "recent_matches": "Matchs Récents",
+      "opponent": "Adversaire",
+      "result": "Résultat",
+      "score": "Score",
+      "date": "Date",
+      "no_matches": "Aucun match trouvé. Jouez quelques parties !",
+      "snake": "Serpent",
+      "victory": "Victoire",
+      "defeat": "Défaite"
+    }
+  },
+  "es": {
+    "common": {
+      "home": "Inicio",
+      "profile": "Perfil",
+      "friends": "Amigos",
+      "matches": "Partidos",
+      "pong": "Pong",
+      "tournament": "Torneo",
+      "dashboard": "Panel",
+      "about": "Acerca de",
+      "login": "Iniciar sesión",
+      "logout": "Cerrar sesión",
+      "settings": "Ajustes",
+      "loading": "Cargando..."
+    },
+    "landing": {
+      "title": "FT_TRANSCENDENCE",
+      "welcome": "¡Bienvenido a la experiencia definitiva de Pong!",
+      "enter": "Entrar a la Experiencia",
+      "play_friends": "Juega con amigos",
+      "challenge_friends": "Desafía a tus amigos en emocionantes partidas de Pong y registra tus puntuaciones.",
+      "real_time_matches": "Partidas en tiempo real",
+      "smooth_gameplay": "Disfruta de un juego fluido con nuestra tecnología multijugador en tiempo real.",
+      "track_progress": "Seguimiento de progreso",
+      "improve_skills": "Lleva un registro de tus estadísticas y mejora tus habilidades de Pong con el tiempo."
+    },
+    "login": {
+      "title": "Iniciar sesión",
+      "access_account": "Accede a tu cuenta",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "forgot_password": "¿Olvidaste tu contraseña?",
+      "reset": "Restablecer",
+      "no_account": "¿No tienes una cuenta?",
+      "sign_up": "Regístrate",
+      "or_continue_with": "O continuar con"
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "email": "Correo electrónico",
+      "username": "Nombre de usuario",
+      "choose_username": "Elige un nombre de usuario",
+      "password": "Contraseña",
+      "create_password": "Crea una contraseña",
+      "confirm_password": "Confirma la contraseña",
+      "create_account": "Crear cuenta",
+      "already_account": "¿Ya tienes una cuenta?",
+      "sign_in": "Iniciar sesión"
+    },
+    "home": {
+      "welcome": "¿Listo para jugar?",
+      "start_playing": "Elige tu modo de juego y comienza el desafío",
+      "play_ai": "Jugar contra la IA",
+      "choose_difficulty": "Elige tu nivel de dificultad y mejora tus habilidades",
+      "play_now": "Jugar ahora",
+      "local_match": "Partida local",
+      "challenge": "Desafía a otro jugador en una partida de pong en tiempo real",
+      "find_opponent": "Encontrar oponente",
+      "tournament": "Torneo",
+      "participate": "Participa en torneos y sube en la clasificación",
+      "join_tournament": "Unirse al torneo",
+      "dashboard": "Panel"
+    },
+    "friends": {
+      "all_friends": "Mis amigos",
+      "add_friend": "Añadir",
+      "loading": "Cargando amigos...",
+      "empty_state": "Aún no tienes amigos. ¡Añade algunos!"
+    },
+    "profile": {
+      "greeting": "Hola",
+      "two_factor": "Autenticación de dos factores",
+      "2fa_updated": "Configuración 2FA actualizada",
+      "change_username": "Cambiar nombre de usuario",
+      "update_username": "Actualiza tu nombre de usuario visible para otros usuarios.",
+      "update_btn": "Actualizar nombre",
+      "change_picture": "Cambiar foto de perfil",
+      "upload_picture": "Sube una nueva foto de perfil",
+      "choose_file": "Elegir archivo",
+      "upload": "Subir",
+      "success_username": "¡Nombre de usuario cambiado con éxito!",
+      "success_avatar": "¡Avatar actualizado con éxito!"
+    },
+    "game": {
+      "choose_difficulty": "Elige la dificultad",
+      "easy": "Fácil",
+      "medium": "Medio",
+      "hard": "Difícil"
+    },
+    "otp": {
+      "title": "Autenticación de dos factores",
+      "enter_code": "Código de verificación",
+      "verify": "Verificar"
+    },
+    "about": {
+      "title": "¿Quiénes somos?",
+      "lydia_role": "Front End, diseñador...",
+      "khalid_role": "Back End, gestión de usuarios..."
+    },
+    "errors": {
+      "noUserFound": "No se encontró ningún usuario"
+    },
+    "matchHistory": {
+      "title": "Historial de Partidas",
+      "subtitle": "Revisa tu rendimiento y analiza tus juegos",
+      "win_rate": "Porcentaje de Victorias",
+      "games_played": "Partidas Jugadas",
+      "wins": "Victorias",
+      "losses": "Derrotas",
+      "recent_matches": "Partidas Recientes",
+      "opponent": "Oponente",
+      "result": "Resultado",
+      "score": "Puntuación",
+      "date": "Fecha",
+      "no_matches": "No se encontraron partidas. ¡Juega algunas partidas!",
+      "snake": "Serpiente",
+      "victory": "Victoria",
+      "defeat": "Derrota"
+    }
+  }
+}

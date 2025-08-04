@@ -36,6 +36,12 @@ declare global {
     google?: {
       accounts: GoogleAccounts;
     };
+    i18n?: {
+      translate: (key: string) => string;
+      setLanguage: (lang: string) => void;
+      getLanguage: () => string;
+      initializePageTranslations: () => void;
+    };
   }
 }
 
@@ -220,7 +226,7 @@ const SPA = {
         const email = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}').email : '';
         console.log('email', email);
         if (!email) {
-          console.error(i18n.t('errors.noUserFound'));
+          console.error('No user found');
           return;
         }
         if (otpInput) {
@@ -511,7 +517,7 @@ loadRoute: async function(route: string): Promise<void> {
     
     // Set the page title with translation if needed
     if (routeConfig.title && routeConfig.title.includes('.') && window.i18n) {
-      document.title = window.i18n.t(routeConfig.title) || "ft_transcendence";
+      document.title = window.i18n.translate(routeConfig.title) || "ft_transcendence";
     } else {
       document.title = routeConfig.title || "ft_transcendence";
     }
@@ -539,15 +545,10 @@ loadRoute: async function(route: string): Promise<void> {
       
       contentElement.innerHTML = html;
       
-      // Initialize language switcher on first load
-      if (route === '/' && !document.querySelector('.language-switcher')) {
-        const languageSwitcherContainer = document.getElementById('language-switcher-container');
-        if (languageSwitcherContainer && window.i18n) {
-          languageSwitcherContainer.appendChild(window.i18n.createLanguageSwitcher());
-        }
-      }
-      
       // Apply translations after content is loaded
+      if (window.i18n && typeof window.i18n.initializePageTranslations === 'function') {
+        window.i18n.initializePageTranslations();
+      }
       if (window.i18n) {
         setTimeout(() => {
           window.i18n.initializePageTranslations();
@@ -663,12 +664,6 @@ document.addEventListener('DOMContentLoaded', function(): void {
   
   // Initialize language system
   if (window.i18n) {
-    // Initialize language switcher
-    const languageSwitcherContainer = document.getElementById('language-switcher-container');
-    if (languageSwitcherContainer && !document.querySelector('.language-switcher')) {
-      languageSwitcherContainer.appendChild(window.i18n.createLanguageSwitcher());
-    }
-    
     // Initialize translations
     window.i18n.initializePageTranslations();
     
