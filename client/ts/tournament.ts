@@ -223,12 +223,12 @@ class TournamentListApp {
     btnEl.textContent = "..."
     const result = await this.api.joinTournament(tournamentId)
     if (result.success) {
-      this.showNotification(i18n.t('tournament.join_success'), "success")
+      this.showNotification(window.i18n.translate('tournament.join_success'), "success")
       await this.loadTournamentList()
     } else {
-      this.showNotification(result.message || i18n.t('tournament.join_error'), "error")
+      this.showNotification(result.message || window.i18n.translate('tournament.join_error'), "error")
       btnEl.disabled = false
-      btnEl.textContent = i18n.t('tournament.join')
+      btnEl.textContent = window.i18n.translate('tournament.join')
     }
   }
 
@@ -236,16 +236,16 @@ class TournamentListApp {
     if (!this.createTournamentBtn) return
     
     // Désactiver le bouton pendant la création
-    const originalText = this.createTournamentBtn.textContent || i18n.t('tournament.create')
-    this.createTournamentBtn.textContent = i18n.t('tournament.creating')
+    const originalText = this.createTournamentBtn.textContent || window.i18n.translate('tournament.create')
+    this.createTournamentBtn.textContent = window.i18n.translate('tournament.creating')
     this.createTournamentBtn.classList.add("opacity-50", "cursor-not-allowed")
     
     try {
       const result = await this.api.createTournament()
       
       if (result.success) {
-        this.showNotification(i18n.t('tournament.create_success'),  "success")
-        
+        this.showNotification(window.i18n.translate('tournament.create_success'),  "success")
+
         // Redirection vers la page de gestion du tournoi
         setTimeout(() => {
           if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
@@ -255,10 +255,10 @@ class TournamentListApp {
           }
         }, 1000);
       } else {
-        this.showNotification(result.message || i18n.t('tournament.create_error'), "error")
+        this.showNotification(result.message || window.i18n.translate('tournament.create_error'), "error")
       }
     } catch (error) {
-      this.showNotification(i18n.t('common.error'), "error")
+      this.showNotification(window.i18n.translate('common.error'), "error")
     } finally {
       // Réactiver le bouton
       this.createTournamentBtn.textContent = originalText
