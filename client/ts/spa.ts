@@ -674,15 +674,6 @@ document.addEventListener('DOMContentLoaded', function(): void {
       document.documentElement.lang = event.detail.language;
     } as EventListener);
   }
-  
-  // Initialiser les effets VHS/CRT après le chargement du SPA
-  import('./vhs-effects').then(module => {
-    if (module && module.initVHSEffects) {
-      module.initVHSEffects();
-    }
-  }).catch(err => {
-    console.error('Erreur lors du chargement des effets VHS:', err);
-  });
 });
 
 export { SPA };
