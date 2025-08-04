@@ -1,9 +1,17 @@
-// import './ts/i18n'; // Import this first to make translations available
+import * as i18n from './ts/i18n';
+
+declare global {
+  interface Window {
+    i18n: typeof i18n;
+  }
+}
+
+window.i18n = i18n;
+
 import './ts/password';
 import './ts/profile'; 
 import './ts/friends';
 import './ts/loginOrRegister';
-import './ts/tv-controls';
 import './ts/dashboard';
 import './ts/google-auth';
 import './ts/spa';

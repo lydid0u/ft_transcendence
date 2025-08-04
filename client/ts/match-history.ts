@@ -329,12 +329,15 @@ class MatchHistoryApp {
       const isWin = match.winner_id === match.player1_id;
       const rowClass = isWin ? 'bg-blue-50' : 'bg-red-50';
       const resultClass = isWin ? 'text-blue-600' : 'text-red-600';
-      const resultText = isWin ? 'Victoire' : 'Défaite';
+      // Use i18n translations if available
+      const resultText = isWin 
+        ? (window.i18n ? window.i18n.translate('matchHistory.victory') : 'Victory') 
+        : (window.i18n ? window.i18n.translate('matchHistory.defeat') : 'Defeat');
       
       return `
         <tr class="${rowClass}">
           <td class="px-4 py-3 text-sm">${match.date}</td>
-          <td class="px-4 py-3 text-sm font-medium">${match.player2_name || 'Adversaire'}</td>
+          <td class="px-4 py-3 text-sm font-medium">${match.player2_name || (window.i18n ? window.i18n.translate('matchHistory.opponent') : 'Opponent')}</td>
           <td class="px-4 py-3 text-sm">${match.score_player1} - ${match.score_player2}</td>
           <td class="px-4 py-3">
             <span class="px-2 py-1 rounded-full ${resultClass} text-sm font-medium">

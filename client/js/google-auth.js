@@ -76,6 +76,8 @@ function signOut() {
     if (loginWithAccountSection) {
         loginWithAccountSection.style.display = 'block';
     }
-
+        if (window.SPA && typeof window.SPA.navigateTo === 'function') {
+        window.SPA.navigateTo('/');
+    }
     console.log('Utilisateur déconnecté');
 }

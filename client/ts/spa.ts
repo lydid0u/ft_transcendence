@@ -24,6 +24,7 @@ interface GoogleAccounts {
   id: {
     initialize: (config: GoogleAuthConfig) => void;
     renderButton: (element: Element | null, options: any) => void;
+    disableAutoSelect: () => void;
   };
 }
 
@@ -34,6 +35,12 @@ declare global {
   interface Window {
     google?: {
       accounts: GoogleAccounts;
+    };
+    i18n?: {
+      translate: (key: string) => string;
+      setLanguage: (lang: string) => void;
+      getLanguage: () => string;
+      initializePageTranslations: () => void;
     };
   }
 }
@@ -60,46 +67,53 @@ const SPA = {
   } as SPAAttributes,
 
   handleLayout: function(route: string): void {
-  const content: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
-  const isLanding: boolean = route === '/';
-
-  if (isLanding) {
-    // Style pour la page d'accueil
-    document.body.style.cssText = 'overflow: auto; height: auto; background: white;';
+    const content: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
+    const isLanding: boolean = route === '/';
+    
+    // Update the login button text to show current page
+    const loginBtn = document.getElementById('nav-login-btn');
+    const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
+    
+    // Use the same authentication check as in loadRoute
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const hasValidToken = localStorage.getItem('jwtToken') !== null;
+    const isLoggedIn = isAuthenticated && hasValidToken;
+    
+    // Log authentication state for debugging
+    console.log('Navbar auth state:', { isAuthenticated, hasValidToken, isLoggedIn });
+    
+    if (loginBtn) {
+      // Get page title based on current route
+      let pageTitle = '';
+      if (route in this.routes) {
+        pageTitle = this.routes[route].title;
+      }
+      
+      // Only show login/profile on the landing page or if no page title is available
+      if (isLanding || !pageTitle) {
+        loginBtn.textContent = isLoggedIn ? 'Profile' : 'Login';
+        loginBtn.onclick = () => {
+          this.navigateTo(isLoggedIn ? '/dashboard' : '/login');
+        };
+      } else {
+        // Show current page title
+        loginBtn.textContent = pageTitle;
+        loginBtn.onclick = null; // Remove click handler when showing page name
+      }
+      
+      // Show/hide dropdown toggle based on login status
+      if (profileDropdownToggle) {
+        console.log('Setting profile dropdown visibility:', isLoggedIn ? 'visible' : 'hidden');
+        profileDropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
+      }
+      content.style.cssText = 'position: static; margin: 0; max-width: none; background: transparent; box-shadow: none; border-radius: 0; min-height: 100vh; padding: 0;';
+    }
 
     if (content) {
       if (!this.SPAattribute.contentParent) {
         this.SPAattribute.contentParent = content.parentNode;
       }
-      if (content.parentNode !== document.body) {
-        document.body.appendChild(content);
-      }
-      content.style.cssText = 'position: static; margin: 0; max-width: none; background: transparent; box-shadow: none; border-radius: 0; min-height: 100vh; padding: 0;';
     }
-  } else {
-    // Style pour les autres pages
-    document.body.style.cssText = 'overflow: hidden; height: 100vh; background: #050507;';
-
-    if (content && this.SPAattribute.contentParent && content.parentNode !== this.SPAattribute.contentParent) {
-      this.SPAattribute.contentParent.appendChild(content);
-      content.style.cssText = '';
-    }
-  }
-},
-
-  VhsTransition: function(): void {
-    const app: HTMLElement | null = document.querySelector('#content');
-    if (!app) return;
-
-    app.innerHTML = `
-      <div class="vhs-transition">
-        <img src="media/vhs.gif" class="vhs-gif" alt="Transition VHS">
-      </div>
-    `;
-
-    setTimeout(() => {
-      this.navigateTo('/home');
-    }, 2000);
   },
 
   routes: {
@@ -131,7 +145,7 @@ const SPA = {
                 module.displayTournamentList();
                 window.displayTournamentList = module.displayTournamentList;
               }
-            });
+            }).catch(err => console.error('Failed to load tournament module:', err));
           }
         }, 100);
       }
@@ -212,7 +226,7 @@ const SPA = {
         const email = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}').email : '';
         console.log('email', email);
         if (!email) {
-          console.error(i18n.t('errors.noUserFound'));
+          console.error('No user found');
           return;
         }
         if (otpInput) {
@@ -472,6 +486,27 @@ const SPA = {
 
 loadRoute: async function(route: string): Promise<void> {
   try {
+    const isAuthenticated: boolean = localStorage.getItem('isAuthenticated') === 'true';
+    const publicRoutes: string[] = ['/', '/login', '/register', '/reset-password', '/otp-password', '/otp', '/about', '/resetNewPassword'];
+    const hasValidToken = localStorage.getItem('jwtToken') !== null;
+
+    // Rediriger vers /login si non authentifié et route protégée
+    // if ((!isAuthenticated || !hasValidToken) && !publicRoutes.includes(route)) {
+    //   console.log('Access denied: redirecting to login');
+    //   history.pushState("", "", '/login'); // Direct history manipulation to avoid loops
+    //   this.loadRoute('/login');
+    //   return;
+    // }
+
+    // // Rediriger vers /home si authentifié et sur une page d'auth
+    // if (isAuthenticated && ['/login', '/register', '/reset-password'].includes(route)) {
+    //   console.log('Already authenticated: redirecting to home');
+    //   history.pushState("", "", '/home'); // Direct history manipulation to avoid loops
+    //   this.loadRoute('/home');
+    //   return;
+    // }
+
+
     // Vérifier si la route existe
     if (!(route in this.routes)) {
       this.error404();
@@ -482,7 +517,7 @@ loadRoute: async function(route: string): Promise<void> {
     
     // Set the page title with translation if needed
     if (routeConfig.title && routeConfig.title.includes('.') && window.i18n) {
-      document.title = window.i18n.t(routeConfig.title) || "ft_transcendence";
+      document.title = window.i18n.translate(routeConfig.title) || "ft_transcendence";
     } else {
       document.title = routeConfig.title || "ft_transcendence";
     }
@@ -510,15 +545,10 @@ loadRoute: async function(route: string): Promise<void> {
       
       contentElement.innerHTML = html;
       
-      // Initialize language switcher on first load
-      if (route === '/' && !document.querySelector('.language-switcher')) {
-        const languageSwitcherContainer = document.getElementById('language-switcher-container');
-        if (languageSwitcherContainer && window.i18n) {
-          languageSwitcherContainer.appendChild(window.i18n.createLanguageSwitcher());
-        }
-      }
-      
       // Apply translations after content is loaded
+      if (window.i18n && typeof window.i18n.initializePageTranslations === 'function') {
+        window.i18n.initializePageTranslations();
+      }
       if (window.i18n) {
         setTimeout(() => {
           window.i18n.initializePageTranslations();
@@ -543,8 +573,10 @@ loadRoute: async function(route: string): Promise<void> {
         `;
       }
     }
+    
   } catch (error) {
-    // Une erreur est survenue
+    console.error('Erreur critique dans loadRoute:', error);
+    this.error404();
   }
 },
 
@@ -562,13 +594,64 @@ loadRoute: async function(route: string): Promise<void> {
     }
   },
 
+    checkAuthAndNavigate: function() : void {
+        const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+        const hasValidToken = localStorage.getItem('jwtToken') !== null;
+        
+        if (isAuthenticated && hasValidToken) {
+            SPA.navigateTo('/home');
+        } else {
+            SPA.navigateTo('/login');
+        }
+    },
+
+
+  signOut: function(): void {
+    // Clear all authentication data
+    localStorage.removeItem('googleUser');
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    
+    // Disable Google authentication
+    if (typeof window.google !== 'undefined' && window.google.accounts) {
+      console.log('Google accounts found, disabling auto-select');
+      window.google.accounts.id.disableAutoSelect();
+    }
+    
+    // Hide user section
+    const userSection = document.getElementById('user-section');
+    if (userSection) {
+        userSection.style.display = 'none';
+    }
+    
+    // Show login sections
+    const signinSection = document.getElementById('signin-section');
+    const loginWithAccountSection = document.getElementById('loginWithAccountSection');
+
+    if (signinSection) {
+        signinSection.style.display = 'block';
+    }
+    if (loginWithAccountSection) {
+        loginWithAccountSection.style.display = 'block';
+    }
+
+    console.log('User logged out successfully');
+    
+    // Update navbar visibility
+    this.handleLayout(window.location.pathname);
+  },
+
   error404: function(): void {
     console.error('error 404 - page not found');
     const contentDiv: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
     if (contentDiv) {
       contentDiv.innerHTML = `
-        <div class="vhs-transition">
-          <img src="media/error404.gif" class="vhs-gif" alt="Transition VHS">
+        <div style="text-align: center; margin-top: 50px;">
+          <h1>404 - Page Not Found</h1>
+          <p>Sorry, the page you are looking for does not exist.</p>
+          <a href="/" class="btn btn-primary">Go to Home</a>
         </div>
       `;
     }
@@ -581,12 +664,6 @@ document.addEventListener('DOMContentLoaded', function(): void {
   
   // Initialize language system
   if (window.i18n) {
-    // Initialize language switcher
-    const languageSwitcherContainer = document.getElementById('language-switcher-container');
-    if (languageSwitcherContainer && !document.querySelector('.language-switcher')) {
-      languageSwitcherContainer.appendChild(window.i18n.createLanguageSwitcher());
-    }
-    
     // Initialize translations
     window.i18n.initializePageTranslations();
     
@@ -626,8 +703,10 @@ declare global {
     changeAvatar: () => Promise<void>;
     otpSubmit: (email: string) => Promise<void>;
     displayTournamentList: () => void;
+    signOut: () => void;
     [key: string]: any; 
   }
 }
 
 window.SPA = SPA;
+window.signOut = SPA.signOut.bind(SPA);

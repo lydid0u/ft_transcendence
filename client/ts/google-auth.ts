@@ -20,7 +20,7 @@ interface UserData {
 	email: string;
 	picture: string;
 	token: string;
-	jwt: string;
+	jwt?: string;
 }
 
 // Global Google API interface
@@ -137,14 +137,12 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
 							Authorization: `Bearer ${result.jwt || ''}`,
 						},
 						body: JSON.stringify({ status: true }), // 1 = connecté et 0 = déconnecté
-						});
-					} 
+					});
 					window.SPA.navigateTo('/home');
-				} 
-				catch (error) 
-				{
-					console.error("Erreur lors de l'envoi au backend:", error);
 				}
+			} catch (error) {
+				console.error("Erreur lors de l'envoi au backend:", error);
+			}
 		})
 	}, 100);
 }

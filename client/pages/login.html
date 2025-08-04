@@ -1,40 +1,40 @@
-<div class="h-full w-full p-6">
-    <h1 class="vhsfont text-center text-[#e6fdff] text-3xl mb-8" style="text-shadow: 0 0 10px #e6fdff, 0 0 20px #85e7ff;" data-i18n="login.title">
+<div class="max-w-md mx-auto p-6">
+    <h1 class="text-4xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-6 text-center"  data-i18n="login.title">
         Connexion
     </h1>
 
-    <div class="w-full max-w-md mx-auto bg-[#111] bg-opacity-30 p-6 rounded-lg backdrop-blur-sm">
+    <div class="bg-white rounded-xl p-8 shadow-lg">
         <div class="text-center mb-6">
-            <p class="text-[#e6fdff] mt-2" data-i18n="login.access_account">Accédez à votre compte</p>
+            <p class="text-gray-700 mt-2" data-i18n="login.access_account">Accédez à votre compte</p>
         </div>
 
         <div id="loginWithAccountSection">
             <form id="login-form" class="space-y-4">
                 <div>
-                    <input type="email" id="email" data-i18n-placeholder="login.email_placeholder" placeholder="Email" required class="w-full px-3 py-2 bg-[#161616] text-[#e6fdff] border-none rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] focus:shadow-[0_0_15px_rgba(134,231,255,0.4)] placeholder-[#85e7ff] placeholder-opacity-50 focus:outline-none">
+                    <input type="email" id="email" placeholder="Email" required class="input-field" data-i18n-placeholder="login.email">
                 </div>
                 <div>
-                    <input type="password" id="password" data-i18n-placeholder="login.password_placeholder" placeholder="Mot de passe" required class="w-full px-3 py-2 bg-[#161616] text-[#e6fdff] border-none rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] focus:shadow-[0_0_15px_rgba(134,231,255,0.4)] placeholder-[#85e7ff] placeholder-opacity-50 focus:outline-none">
+                    <input type="password" id="password" placeholder="Password" required class="input-field" data-i18n-placeholder="login.password">
                 </div>
-                <button type="submit" class="w-full flex justify-center py-2 px-4 rounded text-sm font-medium text-[#e6fdff] bg-[#222] hover:bg-[#2a2a2a] transition-all duration-300 shadow-[0_0_10px_rgba(134,231,255,0.3)] hover:shadow-[0_0_15px_rgba(134,231,255,0.5)]" data-i18n="login.submit">Se connecter</button>
+                <button type="submit" class="btn-primary w-full" data-i18n="common.login">Login</button>
             </form>
-            <div id="message" class="mt-4 text-center text-[#ff6b6b]"></div>
-            <p class="mt-4 text-sm text-center text-[#e6fdff]">
-                <span data-i18n="login.forgot_password">Mot de passe oublié ?</span> <a href="/reset-password" data-route="/reset-password" class="font-medium text-[#85e7ff] hover:text-[#b3f0ff] transition-colors" data-i18n="login.reset">Réinitialiser</a>
+            <div id="message" class="mt-4 text-center text-red-500"></div>
+            <p class="mt-4 text-sm text-center text-gray-600">
+                <span data-i18n="login.forgot_password">Forgot password?</span> <a href="/reset-password" data-route="/reset-password" class="font-medium text-purple-dark hover:text-purple-500 transition-colors" data-i18n="login.reset">Reset</a>
             </p>
-            <p class="mt-2 text-sm text-center text-[#e6fdff]">
-                <span data-i18n="login.no_account">Pas de compte ?</span> <a href="/register" data-route="/register" class="font-medium text-[#85e7ff] hover:text-[#b3f0ff] transition-colors" data-i18n="login.register">Inscrivez-vous</a>
+            <p class="mt-2 text-sm text-center text-gray-600">
+                <span data-i18n="login.no_account">Don't have an account?</span> <a href="/register" data-route="/register" class="font-medium text-purple-dark hover:text-purple-500 transition-colors" data-i18n="login.sign_up">Sign up</a>
             </p>
         </div>
 
-        <!-- bouton de connexion google -->
+        <!-- Google login button -->
         <div id="auth-section" class="mt-6">
             <div class="relative my-4">
                 <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-[#2a2a2a]"></div>
+                    <div class="w-full border-t border-gray-200"></div>
                 </div>
                 <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-[#111] bg-opacity-70 text-[#85e7ff]">Ou continuez avec</span>
+                    <span class="px-2 bg-white text-gray-500" data-i18n="login.or_continue_with">Or continue with</span>
                 </div>
             </div>
             <div id="signin-section" class="mt-4 flex justify-center">
@@ -48,10 +48,10 @@
                      data-size="large"
                      data-theme="outline"
                      data-text="sign_in_with"
-                     data-shape="rectangular"
-                     data-logo_alignment="left">
+                     data-shape="rectangular">
                 </div>
             </div>
         </div>
     </div>
 </div>
+

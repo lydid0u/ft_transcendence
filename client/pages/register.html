@@ -1,36 +1,36 @@
-<div class="h-full w-full p-6">
-    <h1 class="vhsfont text-center text-[#e6fdff] text-3xl mb-6" style="text-shadow: 0 0 10px #e6fdff, 0 0 20px #85e7ff;" data-i18n="register.title">
+<div class="max-w-md mx-auto p-6">
+    <h1 class="text-4xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-6 text-center" data-i18n="register.title">
         Inscription
     </h1>
     
-    <div class="w-full max-w-md mx-auto bg-[#111] bg-opacity-30 p-6 rounded backdrop-blur-sm">
+    <div class="bg-white rounded-xl p-8 shadow-lg">
         <div class="text-center mb-6">
-            <p class="text-[#e6fdff] mt-2" data-i18n="register.create_account">Créez votre compte</p>
+            <p class="text-gray-700 mt-2" data-i18n="register.create_account">Créez votre compte</p>
         </div>
 
         <form class="space-y-4" id="register-form">
             <div>
-                <label for="emailRegister" class="block text-sm font-medium text-[#85e7ff]" data-i18n="register.email_placeholder">Email</label>
-                <input type="text" id="emailRegister" name="email" data-i18n-placeholder="register.email_placeholder" placeholder="..." class="mt-1 block w-full px-3 py-2 bg-[#161616] text-[#e6fdff] border-none rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] focus:shadow-[0_0_15px_rgba(134,231,255,0.4)] placeholder-[#85e7ff] placeholder-opacity-50 focus:outline-none">
+                <label for="emailRegister" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="text" id="emailRegister" name="email" placeholder="Your email" class="input-field mt-1">
             </div>
             <div>
-                <label for="pseudo" class="block text-sm font-medium text-[#85e7ff]" data-i18n="register.username_placeholder">Pseudo</label>
-                <input type="text" id="pseudo" name="pseudo" data-i18n-placeholder="register.username_placeholder" placeholder="..." class="mt-1 block w-full px-3 py-2 bg-[#161616] text-[#e6fdff] border-none rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] focus:shadow-[0_0_15px_rgba(134,231,255,0.4)] placeholder-[#85e7ff] placeholder-opacity-50 focus:outline-none">
+                <label for="pseudo" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="pseudo" name="pseudo" placeholder="Choose a username" class="input-field mt-1">
             </div>
             <div>
-                <label for="createPassword" class="block text-sm font-medium text-[#85e7ff]" data-i18n="register.password_placeholder">Mot de passe</label>
-                <input type="password" id="createPassword" name="createPassword" data-i18n-placeholder="register.password_placeholder" placeholder="..." class="mt-1 block w-full px-3 py-2 bg-[#161616] text-[#e6fdff] border-none rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] focus:shadow-[0_0_15px_rgba(134,231,255,0.4)] placeholder-[#85e7ff] placeholder-opacity-50 focus:outline-none">
+                <label for="createPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="createPassword" name="createPassword" placeholder="Create a password" class="input-field mt-1">
             </div>
             <div>
-                <label for="confirmPassword" class="block text-sm font-medium text-[#85e7ff]" data-i18n="register.confirm_password_placeholder">Confirmer le mot de passe</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" data-i18n-placeholder="register.confirm_password_placeholder" placeholder="..." class="mt-1 block w-full px-3 py-2 bg-[#161616] text-[#e6fdff] border-none rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] focus:shadow-[0_0_15px_rgba(134,231,255,0.4)] placeholder-[#85e7ff] placeholder-opacity-50 focus:outline-none">
+                <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" class="input-field mt-1">
             </div>
             
-            <button type="submit" id="submitRegister" class="w-full flex justify-center py-2 px-4 rounded text-sm font-medium text-[#e6fdff] bg-[#222] hover:bg-[#2a2a2a] transition-all duration-300 shadow-[0_0_10px_rgba(134,231,255,0.3)] hover:shadow-[0_0_15px_rgba(134,231,255,0.5)]" data-i18n="register.submit">Valider</button>
+            <button type="submit" id="submitRegister" class="btn-primary w-full">Create Account</button>
         </form>        
-        <div id="message" class="mt-4 text-center text-[#ff6b6b]"></div>
-        <div class="mt-4 text-sm text-center text-[#e6fdff]">
-          <p><span data-i18n="register.already_account">Déjà un compte?</span> <a href="/login" data-route="/login" class="font-medium text-[#85e7ff] hover:text-[#b3f0ff] transition-colors" data-i18n="register.login">Connectez-vous</a>.</p>
+        <div id="message" class="mt-4 text-center text-red-500"></div>
+        <div class="mt-4 text-sm text-center text-gray-600">
+          <p>Already have an account? <a href="/login" data-route="/login" class="font-medium text-purple-dark hover:text-purple-500 transition-colors">Log in</a></p>
         </div>
     </div>
 </div>
