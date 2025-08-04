@@ -141,7 +141,7 @@ class TournamentHomeApp {
     this.setupEventListeners();
   }
 
-  private renderParticipants(participants: TournamentParticipant[]): void {
+  private   renderParticipants(participants: TournamentParticipant[]): void {
     console.log("Rendering participants:", participants);
     if (!this.playerListElement) return;
     

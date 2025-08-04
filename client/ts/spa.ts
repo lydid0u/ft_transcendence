@@ -1,5 +1,5 @@
 import { activate2fa } from "./profile";
-import i18n from './i18n';
+// import i18n from './i18n';
 
 interface RouteConfig {
   title: string;

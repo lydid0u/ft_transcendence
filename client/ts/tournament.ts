@@ -1,4 +1,4 @@
-import i18n from './i18n';
+// import i18n from './i18n';
 
 // Interface pour représenter la structure d'un tournoi
 export interface Tournament {
