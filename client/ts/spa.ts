@@ -491,20 +491,20 @@ loadRoute: async function(route: string): Promise<void> {
     const hasValidToken = localStorage.getItem('jwtToken') !== null;
 
     // Rediriger vers /login si non authentifié et route protégée
-    if ((!isAuthenticated || !hasValidToken) && !publicRoutes.includes(route)) {
-      console.log('Access denied: redirecting to login');
-      history.pushState("", "", '/login'); // Direct history manipulation to avoid loops
-      this.loadRoute('/login');
-      return;
-    }
+    // if ((!isAuthenticated || !hasValidToken) && !publicRoutes.includes(route)) {
+    //   console.log('Access denied: redirecting to login');
+    //   history.pushState("", "", '/login'); // Direct history manipulation to avoid loops
+    //   this.loadRoute('/login');
+    //   return;
+    // }
 
-    // Rediriger vers /home si authentifié et sur une page d'auth
-    if (isAuthenticated && ['/login', '/register', '/reset-password'].includes(route)) {
-      console.log('Already authenticated: redirecting to home');
-      history.pushState("", "", '/home'); // Direct history manipulation to avoid loops
-      this.loadRoute('/home');
-      return;
-    }
+    // // Rediriger vers /home si authentifié et sur une page d'auth
+    // if (isAuthenticated && ['/login', '/register', '/reset-password'].includes(route)) {
+    //   console.log('Already authenticated: redirecting to home');
+    //   history.pushState("", "", '/home'); // Direct history manipulation to avoid loops
+    //   this.loadRoute('/home');
+    //   return;
+    // }
 
 
     // Vérifier si la route existe
