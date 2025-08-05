@@ -17,9 +17,17 @@ async function friendsRoute(fastify, options)
 
     fastify.post('/friends-add', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        const { friend_nickname } = request.body;
-        await fastify.dbFriends.addFriends(request, friend_nickname);
-        reply.send({ status: 'success' });
+        try
+        {
+            const { friend_nickname } = request.body;
+            await fastify.dbFriends.addFriends(request, friend_nickname);
+            reply.send({ status: 'success' });
+        }
+        catch (error)
+        {
+            console.error('Error adding friend:', error);
+            reply.status(400).send({ error: 'Failed to add friend' });
+        }
     })
 }
 

@@ -42,6 +42,7 @@ async function tableFriends(fastify, options)
 
         async addFriends(request, friend_nickname)
         {
+            console.log("Ajout d'un ami avec le pseudo:", friend_nickname);
             const friend_id = await fastify.db.connection.get('SELECT id FROM users WHERE username = ?', friend_nickname);
             if (!friend_id) {
                 return reply.status(404).send({ status: 'error', message: 'Friend not found' });
