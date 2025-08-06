@@ -126,7 +126,7 @@ export class Game
 	{
 		document.getElementById('player-score')!.textContent = Game.playerScore.toString();
 		document.getElementById('ai-score')!.textContent = Game.computerScore.toString();
-		if (Game.playerScore >= 10 || Game.computerScore >= 10)
+		if (Game.playerScore >= 2 || Game.computerScore >= 2)
 		{
 			// this.postFinalResults();
 			this.running = false;

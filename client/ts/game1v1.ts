@@ -137,7 +137,7 @@ export class Game1v1
 	{
 		const p1Score = document.getElementById('player1-score');
 		const p2Score = document.getElementById('player2-score');
-		if (Game1v1.player1Score >= 10 || Game1v1.player2Score >= 10)
+		if (Game1v1.player1Score >= 2 || Game1v1.player2Score >= 2)
 		{
 			// this.postFinalResults();
 			this.running = false;
