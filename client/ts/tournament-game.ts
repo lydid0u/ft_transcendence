@@ -175,8 +175,6 @@ class TournamentLaunch
   // player_1 et player_2 html element
   private player1_name: HTMLElement | null;
   private player2_name: HTMLElement | null;
-  private score1: HTMLElement | null;
-  private score2: HTMLElement | null;
 
   constructor() {
     this.api = new TournamentLaunchAPI();

@@ -9,6 +9,7 @@ async function tableMatches(fastify, options)
     {
         async createTableMatches()
         {
+            //player2_id, player2_name, score_player1, score_player2, game_mode
             await fastify.db.connection.run(
                 `CREATE TABLE IF NOT EXISTS matches (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -24,10 +24,8 @@ async function MatchData(fastify, options)
     {
         async getMatchNamesForTournament(tournamentId)
         {
-            console.log("Fetching match names for tournament ID:", tournamentId);
             // Utiliser .all() au lieu de .get() pour obtenir tous les participants
             const participants = await fastify.db.connection.all ('SELECT * FROM tournament_participants WHERE tournament_id = ?', tournamentId);
-            console.log("Match data retrieved:", participants);
             
             if (!participants || participants.length === 0) {
                 console.log("0");
@@ -51,6 +49,49 @@ async function MatchData(fastify, options)
             if (user)
                 return true;
             return false;
+        },
+
+        async createMatch(match, first_user, second_user)
+        {
+            // console.log("Creating match with players:", match);
+            const game_mode = 'tournament';
+            const user_one = first_user;
+            const user_two = second_user;
+            let winner_id = null;
+            if (match.score_player1 > match.score_player2)
+            {
+                winner_id = user_one.id;
+            }
+            else if (match.score_player1 < match.score_player2)
+            {
+                winner_id = user_two.id;
+            }
+            // console.log(user_two.id);
+            if (user_one && user_two)
+            {
+                await fastify.db.connection.run(
+                    `INSERT INTO matches (player1_id, player1_name, player2_id, player2_name, winner_id, score_player1, score_player2, game_mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
+                    [user_one.id, match.player1_name, user_two.id, match.player2_name, winner_id, match.score_player1, match.score_player2, game_mode]
+                );
+            }
+            else if (user_one && !user_two) 
+            {
+                await fastify.db.connection.run(
+                    `INSERT INTO matches (player1_id, player1_name, winner_id, score_player1, score_player2, game_mode) VALUES (?, ?, ?, ?, ?, ?)`, 
+                    [user_one.id, match.player1_name, winner_id, match.score_player1, match.score_player2, game_mode]
+                );
+            }
+            else if (!user_one && user_two)
+            {
+                await fastify.db.connection.run(
+                `INSERT INTO matches (player2_id, player2_name, winner_id, score_player1, score_player2, game_mode) VALUES (?, ?, ?, ?, ?, ?)`, 
+                [user_two.id, match.player2_name, winner_id, match.player1_score, match.player2_score, game_mode]
+                );        
+            }
+            else
+            {
+                console.error("Both players are missing, cannot create match.");
+            }
         }
     };
     fastify.decorate('dbMatchData', dbMatchData);
