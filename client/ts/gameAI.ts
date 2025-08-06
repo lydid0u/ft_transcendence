@@ -59,9 +59,9 @@ export class Game
 		console.log("Game difficulty set to: " + Difficulty[this.difficulty]);
 		const paddleWidth:number = 20, paddleHeight:number = 70, ballSize:number = 10, wallOffset:number = WALL_OFFSET;
 
-		this.player1 = new Paddle(paddleWidth,paddleHeight,wallOffset,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed); 
+		this.player1 = new Paddle(paddleWidth,paddleHeight,wallOffset,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed);
 		this.computerPlayer = new ComputerPaddle(paddleWidth,paddleHeight,this.gameCanvas.width - (wallOffset + paddleWidth) ,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed);
-		this.ball = new Ball(ballSize,ballSize,this.gameCanvas.width / 2 - ballSize / 2, this.gameCanvas.height / 2 - ballSize / 2, ballSpeed);    
+		this.ball = new Ball(ballSize,ballSize,this.gameCanvas.width / 2 - ballSize / 2, this.gameCanvas.height / 2 - ballSize / 2, ballSpeed);
 	}
 	handleKeyDown(e:any)
 	{
@@ -124,12 +124,17 @@ export class Game
 	}
 	gameLoop()
 	{
+		document.getElementById('player-score')!.textContent = Game.playerScore.toString();
+		document.getElementById('ai-score')!.textContent = Game.computerScore.toString();
+		if (Game.playerScore >= 10 || Game.computerScore >= 10)
+		{
+			// this.postFinalResults();
+			this.running = false;
+		}
 		if (!this.running)
 			return;
 		this.update();
 		this.draw();
-		document.getElementById('player-score')!.textContent = Game.playerScore.toString();
-		document.getElementById('ai-score')!.textContent = Game.computerScore.toString();
 		requestAnimationFrame(() => this.gameLoop());
 	}
 }
@@ -258,7 +263,7 @@ class ComputerPaddle extends Entity
 				this.y = canvas.height - WALL_OFFSET + 10 - this.height;
 				this.yVel = -1;
 				return ;
-			}	
+			}
 		}
 		this.y += this.yVel * this.speed;
 	}
@@ -270,8 +275,8 @@ class Ball extends Entity
 	constructor(w:number,h:number,x:number,y:number,speed:number)
 	{
 		super(w,h,x,y,speed);
-		var randomDirection = Math.floor(Math.random() * 2) + 1; 
-		if(randomDirection % 2) 
+		var randomDirection = Math.floor(Math.random() * 2) + 1;
+		if(randomDirection % 2)
 		{
 			this.xVel = 1;
 		}
@@ -328,7 +333,7 @@ class Ball extends Entity
 		if (this.x <= player.x + player.width &&
 			this.x + this.width >= player.x &&
 			this.y < player.y + player.height &&
-			this.y + this.height > player.y) 
+			this.y + this.height > player.y)
 		{
 			this.xVel = 1;
 			this.yVel += player.yVel * 0.5;

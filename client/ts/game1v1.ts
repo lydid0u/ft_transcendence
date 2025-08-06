@@ -61,9 +61,9 @@ export class Game1v1
 		console.log("Game1v1 difficulty set to: " + Difficulty[this.difficulty]);
 		const paddleWidth:number = 20, paddleHeight:number = 70, ballSize:number = 10, wallOffset:number = WALL_OFFSET;
 
-		this.player1 = new Paddle(paddleWidth,paddleHeight,wallOffset,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed, 1); 
+		this.player1 = new Paddle(paddleWidth,paddleHeight,wallOffset,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed, 1);
 		this.player2 = new Paddle(paddleWidth,paddleHeight,this.gameCanvas.width - (wallOffset + paddleWidth) ,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed, 2);
-		this.ball = new Ball(ballSize,ballSize,this.gameCanvas.width / 2 - ballSize / 2, this.gameCanvas.height / 2 - ballSize / 2, ballSpeed);    
+		this.ball = new Ball(ballSize,ballSize,this.gameCanvas.width / 2 - ballSize / 2, this.gameCanvas.height / 2 - ballSize / 2, ballSpeed);
 	}
 	handleKeyDown(e:any)
 	{
@@ -135,18 +135,53 @@ export class Game1v1
 	}
 	gameLoop()
 	{
+		const p1Score = document.getElementById('player1-score');
+		const p2Score = document.getElementById('player2-score');
+		if (Game1v1.player1Score >= 10 || Game1v1.player2Score >= 10)
+		{
+			// this.postFinalResults();
+			this.running = false;
+		}
 		if (!this.running)
 			return;
 		this.update();
 		this.draw();
-		const p1Score = document.getElementById('player1-score');
-		const p2Score = document.getElementById('player2-score');
 		if (p1Score && p2Score) {
-		    p1Score.textContent = Game1v1.player1Score.toString();
-		    p2Score.textContent = Game1v1.player2Score.toString();
+			p1Score.textContent = Game1v1.player1Score.toString();
+			p2Score.textContent = Game1v1.player2Score.toString();
 		}
 		requestAnimationFrame(() => this.gameLoop());
 	}
+
+// 	async postFinalGameResults()
+// 	{
+// 		const gameResults = {
+// 			player1_id: 1,
+// 			player2_id: 2,
+// 			winner_id: Game1v1.player1Score > Game1v1.player2Score ? 1 : 2,
+// 			score_player1: Game1v1.player1Score,
+// 			score_player2: Game1v1.player2Score,
+// 			game_type: "pong" // This gets stored as game_mode in the database
+// 	};
+// 		try
+// 		{
+// 			const response = await fetch('https://your-api-endpoint.com/pong-results', {
+// 				method: 'POST',
+// 				headers: {
+// 					'Content-Type': 'application/json',
+// 				},
+// 				body: JSON.stringify(gameResults)
+// 			});
+// 			if (!response.ok) {
+// 				throw new Error(`HTTP error! status: ${response.status}`);
+// 			}
+// 			console.log('Final game results posted successfully');
+// 		}
+// 		catch (error)
+// 		{
+// 			console.error('Error posting final results:', error);
+// 	}
+// }
 }
 
 class Entity
@@ -181,7 +216,7 @@ class Paddle extends Entity
 		super(w,h,x,y,speed);
 		this.playerNumber = playerNumber;
 	}
-	
+
 	update(canvas: HTMLCanvasElement): void
 	{
 		const keysPressed = this.playerNumber === 1 ? Game1v1.keys1Pressed : Game1v1.keys2Pressed;
@@ -277,7 +312,7 @@ class Paddle extends Entity
 // 				this.y = canvas.height - WALL_OFFSET + 10 - this.height;
 // 				this.yVel = -1;
 // 				return ;
-// 			}	
+// 			}
 // 		}
 // 		this.y += this.yVel * this.speed;
 // 	}
@@ -289,8 +324,8 @@ class Ball extends Entity
 	constructor(w:number,h:number,x:number,y:number,speed:number)
 	{
 		super(w,h,x,y,speed);
-		var randomDirection = Math.floor(Math.random() * 2) + 1; 
-		if(randomDirection % 2) 
+		var randomDirection = Math.floor(Math.random() * 2) + 1;
+		if(randomDirection % 2)
 		{
 			this.xVel = 1;
 		}
@@ -347,7 +382,7 @@ class Ball extends Entity
 		if (this.x <= player1.x + player1.width &&
 			this.x + this.width >= player1.x &&
 			this.y < player1.y + player1.height &&
-			this.y + this.height > player1.y) 
+			this.y + this.height > player1.y)
 		{
 			this.xVel = 1;
 			this.yVel += player1.yVel * 0.5;
