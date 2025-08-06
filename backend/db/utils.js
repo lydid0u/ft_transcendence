@@ -10,6 +10,13 @@ async function utilsDbFunc(fastify, options)
             const user = await fastify.db.connection.get('SELECT * FROM users WHERE email = ?', email);
             return user;
         },
+
+        async getUserByUsername(username)
+        {
+            const user = await fastify.db.connection.get('SELECT * FROM users WHERE username = ?', username);
+            return user;
+        },
+
         async checkEmail(email)
         {
             const user = await fastify.db.connection.get('SELECT * FROM users WHERE email = ?', email);

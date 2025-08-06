@@ -7,10 +7,7 @@ interface TournamentParticipant {
 }
 
 interface TournamentMatch {
-  id: number;
   tournament_id: number;
-  player1_id: number;
-  player2_id: number;
   player1_name: string;
   player2_name: string;
   player1_score: number;

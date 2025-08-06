@@ -36,13 +36,21 @@ async function MatchData(fastify, options)
             
             // Maintenant participants est un tableau, donc .length fonctionnera
             if (participants.length == 4)
-                return ({player_1_name: participants[0].username || participants[0].alias, player_2_name: participants[1].username || participants[1].alias});
+                return ({tournamentId : tournamentId, player_1_name: participants[2].username || participants[2].alias, player_2_name: participants[3].username || participants[3].alias});
             else if (participants.length == 3)
-                return ({player_1_name: participants[1].username || participants[1].alias, player_2_name: participants[2].username || participants[2].alias});
+                return ({tournamentId : tournamentId, player_1_name: participants[1].username || participants[1].alias, player_2_name: participants[2].username || participants[2].alias});
             else if (participants.length == 2)
-                return ({player_1_name: participants[0].username || participants[0].alias, player_2_name: participants[1].username || participants[1].alias});
+                return ({tournamentId : tournamentId, player_1_name: participants[0].username || participants[0].alias, player_2_name: participants[1].username || participants[1].alias});
             else
                 throw new Error(`Unexpected number of participants: ${participants.length}`);
+        },
+
+        async isRegisterOrNot(name_player, tournament_id)
+        {
+            const user = await fastify.db.connection.get('SELECT * FROM tournament_participants WHERE username = ? AND tournament_id = ?', name_player, tournament_id);
+            if (user)
+                return true;
+            return false;
         }
     };
     fastify.decorate('dbMatchData', dbMatchData);

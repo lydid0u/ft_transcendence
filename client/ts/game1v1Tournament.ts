@@ -25,7 +25,7 @@ export async function startTournamentFlow() {
     // logique pour lancer une game
     // Avoir la data des participants
     const participants = await api.getTournamentDetails();
-	console.log("Participants du tournoi:", participants);
+    console.log("Participants du tournoi:", participants);
     // prendre les 2 premiers participants
     await tournament.fetchMatch();
     // lancer une game avec eux
@@ -97,7 +97,7 @@ async function handleNextGame(event) {
             // Puis revenir à la page du jeu après un court délai
             setTimeout(() => {
                 window.SPA.navigateTo('/game1v1Tournament');
-				console.log("Redirection vers le prochain match...");
+                console.log("Redirection vers le prochain match...");
             }, 100);
         } 
         // Option 2: Rechargement simple de la page
@@ -258,15 +258,11 @@ export class Game1v1
             
             // Arrêter les animations et les contrôles
             window.removeEventListener("keydown", this.keyDownHandler);
-            window.removeEventListener("keyup", this.keyUpHandler);
-			
-			const nextGameContainer = document.getElementById('next-game-container');
-			if (nextGameContainer) {
-				nextGameContainer.classList.remove('hidden');
-				// Ajouter l'écouteur d'événement au bouton après l'avoir rendu visible
-				addNextGameButtonListener();
-			}
+            window.removeEventListener("keyup", this.keyUpHandler);  
+            handleMatchEnd(winner, player1Name, player2Name);
+            return;
         }
+
         if (!this.running)
             return;
         this.update();
@@ -278,6 +274,46 @@ export class Game1v1
         requestAnimationFrame(() => this.gameLoop());
     }
 }
+
+async function handleMatchEnd(winner: number, player1Name: string, player2Name: string) { // Fonction globale, pas une méthode de classe
+    try {
+        const match = await api.getTournamentMatch();
+        console.log("Match récupéré pour la finalisation:", match);
+        
+        if (match) {
+            // Créer l'objet de résultat du match
+            const matchResult = {
+                tournament_id: match.tournamentId || 0,
+                player1_name: player1Name,
+                player2_name: player2Name,
+                player1_score: Game1v1.player1Score,
+                player2_score: Game1v1.player2Score,
+                winner_id: winner === 1 ? match.player1_id : match.player2_id,
+                status: "completed",
+                created_at: match.created_at || new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            };
+            console.log ("Résultat du match à envoyer:", matchResult);            
+            await api.sendMatchResults(matchResult);
+            
+            // Supprimer le perdant du tournoi
+            const loser = {
+                tournament_id: match.tournament_id,
+                user_id: winner === 1 ? match.player2_id : match.player1_id
+            };
+            await tournament.deleteLosers(loser);
+        }
+        
+        // Afficher le bouton "Prochain match"
+        const nextGameContainer = document.getElementById('next-game-container');
+        if (nextGameContainer) {
+            nextGameContainer.classList.remove('hidden');
+            addNextGameButtonListener();
+        }
+    } catch (error) {
+        console.error("Erreur lors de la finalisation du match:", error);
+    }
+} // Accolade fermante ajoutée ici
 
 class Entity
 {
