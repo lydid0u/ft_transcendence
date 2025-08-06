@@ -275,7 +275,7 @@ export class Game1v1
     }
 }
 
-async function handleMatchEnd(winner: number, player1Name: string, player2Name: string) { // Fonction globale, pas une méthode de classe
+async function handleMatchEnd(winnerNumber: number, player1Name: string, player2Name: string) { // Fonction globale, pas une méthode de classe
     try {
         const match = await api.getTournamentMatch();
         console.log("Match récupéré pour la finalisation:", match);
@@ -288,20 +288,19 @@ async function handleMatchEnd(winner: number, player1Name: string, player2Name: 
                 player2_name: player2Name,
                 player1_score: Game1v1.player1Score,
                 player2_score: Game1v1.player2Score,
-                winner_id: winner === 1 ? match.player1_id : match.player2_id,
+                winner_id: winnerNumber === 1 ? match.player1_id : match.player2_id,
                 status: "completed",
                 created_at: match.created_at || new Date().toISOString(),
                 updated_at: new Date().toISOString()
             };
             console.log ("Résultat du match à envoyer:", matchResult);            
             await api.sendMatchResults(matchResult);
-            
-            // Supprimer le perdant du tournoi
-            const loser = {
-                tournament_id: match.tournament_id,
-                user_id: winner === 1 ? match.player2_id : match.player1_id
-            };
-            await tournament.deleteLosers(loser);
+            const winner = await api.findWinnerOfTournament(matchResult);
+            if (winner) {
+                console.log("Vainqueur du tournoi trouvé:", winner);
+                SPA.navigateTo('/home');
+            }
+            await tournament.deleteLosers(matchResult);
         }
         
         // Afficher le bouton "Prochain match"

@@ -92,6 +92,41 @@ async function MatchData(fastify, options)
             {
                 console.error("Both players are missing, cannot create match.");
             }
+        },
+
+        async deleteLosers(match)
+        {
+            let loser = null;
+            console.log("JE SUIS LE MATCH", match);
+            if (match.player1_score > match.player2_score)
+                loser = match.player2_name;
+            else
+                loser = match.player1_name;
+            console.log('Deleting loser:', loser);
+            const user = await fastify.db.connection.get('SELECT * FROM tournament_participants WHERE username = ? OR alias = ? AND tournament_id = ?', loser, loser, match.tournament_id);
+            if (!user) {
+                console.error(`User ${loser} not found in tournament participants.`);
+                return false;
+            }
+            console.log('DELETING LOSER:', loser);
+            await fastify.db.connection.run(`DELETE FROM tournament_participants WHERE username = ? OR alias = ? AND tournament_id = ?`, 
+            [loser, loser, match.tournament_id]);
+            return true;
+        },
+
+        async findWinnerOfTournament(tournament_id)
+        {
+            // compter le nombre de row et prend le nom du seul participant restant
+            const count = await fastify.db.connection.get('SELECT COUNT(*) as count FROM tournament_participants WHERE tournament_id = ?', tournament_id);
+            if (count.count !== 1){
+                return null;
+            }
+            const winner = await fastify.db.connection.get('SELECT * FROM tournament_participants WHERE tournament_id = ?', tournament_id);
+            if (!winner) {
+                console.error(`No winner found for tournament ID: ${tournament_id}`);
+                return null;
+            }
+            return winner.username || winner.alias;
         }
     };
     fastify.decorate('dbMatchData', dbMatchData);

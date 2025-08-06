@@ -38,6 +38,37 @@ async function tournamentLaunchRoute(fastify, options)
             return reply.status(400).send({ error: 'Bad Request' });
         }
     });
+
+    fastify.delete('/tournament/delete-losers', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    {
+        const match = request.body;
+        try {
+            const deleted = await fastify.dbMatchData.deleteLosers(match);
+            if (deleted) {
+                return reply.send({ message: 'Losers deleted successfully' });
+            } else {
+                return reply.status(404).send({ error: 'No losers found to delete' });
+            }
+        } catch (error) {
+            return reply.status(450).send({ error: 'Bad Request' });
+        }
+    });
+
+    fastify.get('/tournament/find-winner', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    {
+        const {tournament_id} = request.query;
+        console.log("Finding winner for tournament ID:", tournament_id);
+        try {
+            const winner = await fastify.dbMatchData.findWinnerOfTournament(tournament_id);
+            if (winner) {
+                return reply.send({ winner });
+            } else {
+                return reply.status(404).send({ error: 'No winner found for this tournament' });
+            }
+        } catch (error) {
+            return reply.status(450).send({ error: 'Bad Request' });
+        }
+    });
 }
 
 export default fp(tournamentLaunchRoute)

@@ -66,6 +66,32 @@ class TournamentLaunchAPI {
     }
   }
 
+  async findWinnerOfTournament(match: TournamentMatch): Promise<number | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}/tournament/find-winner?tournament_id=${match.tournament_id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.token}`,
+        },
+        credentials: "include",
+      });
+      if (!response.ok) {
+        console.error(`Erreur HTTP: ${response.status}`);
+        return null;
+      }
+      const data = await response.json();
+      if (!data || !data.winner) {
+        return null;
+      }
+      console.log("Gagnant du tournoi trouvé:", data.winner);
+      return data.winner;
+    } catch (error) {
+      console.error("Erreur lors de la recherche du gagnant du tournoi:", error);
+      return null;
+    }
+  }
+
   // Creer une route pour changer le status du tournoi
   async setTournamentStatus(status: string): Promise<string | null> {
     try {
@@ -117,9 +143,8 @@ class TournamentLaunchAPI {
 }
 
   // Delete les perdants du tournoi
-  async deleteTournamentLosers(loser: TournamentParticipant): Promise<boolean> {
+  async deleteTournamentLosers(match: TournamentMatch): Promise<boolean> {
     try {
-      const losername = loser.username || loser.alias;
       const response = await fetch(`${this.baseUrl}/tournament/delete-losers`, {
         method: "DELETE",
         headers: {
@@ -127,7 +152,7 @@ class TournamentLaunchAPI {
           "Authorization": `Bearer ${this.token}`,
         },
         credentials: "include",
-        body: JSON.stringify({ losername })
+        body: JSON.stringify(match)
       });
       if (!response.ok) {
         console.error(`Erreur HTTP: ${response.status}`);
@@ -220,17 +245,15 @@ class TournamentLaunch
       console.error("Erreur lors de la récupération du match du tournoi.");
     }
   }
-  
-  async deleteLosers(loser: TournamentParticipant) {
-    const result = await this.api.deleteTournamentLosers(loser);
+
+  async deleteLosers(match: TournamentMatch) {
+    const result = await this.api.deleteTournamentLosers(match);
     if (result) {
-      console.log("Perdants du tournoi supprimés:", loser);
-      // Logique pour gérer la suppression des perdants
+      console.log("Perdants du tournoi supprimés:");
     } else {
       console.error("Erreur lors de la suppression des perdants du tournoi.");
     }
   } 
-
 }
 
 export { TournamentParticipant, TournamentMatch, TournamentLaunchAPI, TournamentLaunch };
