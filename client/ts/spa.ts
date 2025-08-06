@@ -57,6 +57,7 @@ declare function changeUsername(): Promise<void>;
 declare function changeAvatar(): Promise<void>;
 declare function displayMatchHistory(): void;
 declare function displayTournamentList(): void;
+declare function startTournamentFlow(): void;
 declare function otpSubmit(email: string): Promise<void>;
 
 const SPA = {
@@ -169,6 +170,25 @@ const SPA = {
         }, 100);
       }
     },
+
+    '/game1v1Tournament': {
+  title: 'Pong 1v1 Tournament',
+  content: 'pages/game1v1Tournament.html',
+  routeScript: function (): void {
+    setTimeout(() => {
+      // Importer dynamiquement le module game1v1Tournament.ts
+      import('./game1v1Tournament').then(module => {
+        if (typeof module.startTournamentFlow === 'function') {
+          module.startTournamentFlow();
+        } else {
+          console.error("startTournamentFlow function not found in module");
+        }
+      }).catch(err => {
+        console.error("Failed to load game1v1Tournament module:", err);
+      });
+    }, 50);
+  }
+},
 
 
     '/dashboard': {
@@ -490,23 +510,6 @@ loadRoute: async function(route: string): Promise<void> {
     const publicRoutes: string[] = ['/', '/login', '/register', '/reset-password', '/otp-password', '/otp', '/about', '/resetNewPassword'];
     const hasValidToken = localStorage.getItem('jwtToken') !== null;
 
-    // Rediriger vers /login si non authentifié et route protégée
-    // if ((!isAuthenticated || !hasValidToken) && !publicRoutes.includes(route)) {
-    //   console.log('Access denied: redirecting to login');
-    //   history.pushState("", "", '/login'); // Direct history manipulation to avoid loops
-    //   this.loadRoute('/login');
-    //   return;
-    // }
-
-    // // Rediriger vers /home si authentifié et sur une page d'auth
-    // if (isAuthenticated && ['/login', '/register', '/reset-password'].includes(route)) {
-    //   console.log('Already authenticated: redirecting to home');
-    //   history.pushState("", "", '/home'); // Direct history manipulation to avoid loops
-    //   this.loadRoute('/home');
-    //   return;
-    // }
-
-
     // Vérifier si la route existe
     if (!(route in this.routes)) {
       this.error404();
@@ -695,6 +698,7 @@ declare global {
     otpSubmit: (email: string) => Promise<void>;
     displayTournamentList: () => void;
     signOut: () => void;
+    startTournamentFlow: () => void;
     [key: string]: any; 
   }
 }
