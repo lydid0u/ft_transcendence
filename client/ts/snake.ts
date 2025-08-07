@@ -164,6 +164,10 @@ export class SnakeGame {
 	constructor() {
 		this.canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 		this.ctx = this.canvas.getContext('2d')!;
+		if (!this.ctx)
+		{
+			throw new Error('Failed to get 2D context for Canvas');
+		}
 		this.gridWidth = this.canvas.width / this.gridSize;
 		this.gridHeight = this.canvas.height / this.gridSize;
 
