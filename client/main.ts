@@ -9,7 +9,7 @@ declare global {
 window.i18n = i18n;
 
 import './ts/password';
-import './ts/profile'; 
+import './ts/profile';
 import './ts/friends';
 import './ts/loginOrRegister';
 import './ts/dashboard';
@@ -20,3 +20,4 @@ import './ts/tournament';
 import './ts/gameAI';
 import './ts/game1v1';
 import './ts/tournamenthome';
+import './ts/snake';

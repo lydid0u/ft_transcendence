@@ -12,6 +12,8 @@ enum Difficulty {
 
 const WALL_OFFSET = 20;
 
+import { SPA } from './spa';
+
 export class Game1v1
 {
 	private gameCanvas: HTMLCanvasElement;
@@ -30,6 +32,9 @@ export class Game1v1
 	private player1: Paddle;
 	private player2: Paddle;
 	private ball: Ball;
+
+	private static currentInstance: Game1v1 | null = null;
+
 	constructor(difficulty: Difficulty = Difficulty.EASY)
 	{
 		this.gameCanvas = document.getElementById("game-canvas") as HTMLCanvasElement;
@@ -68,9 +73,15 @@ export class Game1v1
 	handleKeyDown(e:any)
 	{
 		if (e.code == "ArrowUp")
+		{
 			Game1v1.keys2Pressed[KeyBindings.UP] = true;
+			e.preventDefault();
+		}
 		if (e.code == "ArrowDown")
+		{
 			Game1v1.keys2Pressed[KeyBindings.DOWN] = true;
+			e.preventDefault();
+		}
 		if (e.code == "KeyW")
 			Game1v1.keys1Pressed[KeyBindings.UP] = true;
 		if (e.code == "KeyS")
@@ -107,16 +118,23 @@ export class Game1v1
 	}
 	drawBoardDetails()
 	{
-		//draw court outline
-		this.gameContext.strokeStyle = "#000";
-		this.gameContext.lineWidth = 5;
+		// Draw glowing court outline
+		const gradient = this.gameContext.createLinearGradient(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+		gradient.addColorStop(0, "#00f0ff");
+		gradient.addColorStop(1, "#0a1a2f");
+		this.gameContext.strokeStyle = gradient;
+		this.gameContext.lineWidth = 6;
+		this.gameContext.shadowColor = "#00f0ff";
+		this.gameContext.shadowBlur = 16;
 		this.gameContext.strokeRect(8,8,this.gameCanvas.width - 15,this.gameCanvas.height - 15);
 
-		//draw center lines
-		for (var i = 0; i + 30 < this.gameCanvas.height; i += 31) {
-			this.gameContext.fillStyle = "#aaa";
-			this.gameContext.fillRect(this.gameCanvas.width / 2 - 10, i + 10, 15, 20);
+		// Draw center dashed line with glow
+		this.gameContext.shadowBlur = 8;
+		this.gameContext.fillStyle = "#00f0ff";
+		for (let i = 0; i + 30 < this.gameCanvas.height; i += 31) {
+			this.gameContext.fillRect(this.gameCanvas.width / 2 - 4, i + 10, 8, 20);
 		}
+		this.gameContext.shadowBlur = 0;
 	}
 	update()
 	{
@@ -139,8 +157,10 @@ export class Game1v1
 		const p2Score = document.getElementById('player2-score');
 		if (Game1v1.player1Score >= 2 || Game1v1.player2Score >= 2)
 		{
-			// this.postFinalResults();
 			this.running = false;
+			this.showEndScreen(); // UI improvement
+			this.postFinalGameResults(); // Send results
+			return;
 		}
 		if (!this.running)
 			return;
@@ -153,35 +173,78 @@ export class Game1v1
 		requestAnimationFrame(() => this.gameLoop());
 	}
 
-// 	async postFinalGameResults()
-// 	{
-// 		const gameResults = {
-// 			player1_id: 1,
-// 			player2_id: 2,
-// 			winner_id: Game1v1.player1Score > Game1v1.player2Score ? 1 : 2,
-// 			score_player1: Game1v1.player1Score,
-// 			score_player2: Game1v1.player2Score,
-// 			game_type: "pong" // This gets stored as game_mode in the database
-// 	};
-// 		try
-// 		{
-// 			const response = await fetch('https://your-api-endpoint.com/pong-results', {
-// 				method: 'POST',
-// 				headers: {
-// 					'Content-Type': 'application/json',
-// 				},
-// 				body: JSON.stringify(gameResults)
-// 			});
-// 			if (!response.ok) {
-// 				throw new Error(`HTTP error! status: ${response.status}`);
-// 			}
-// 			console.log('Final game results posted successfully');
-// 		}
-// 		catch (error)
-// 		{
-// 			console.error('Error posting final results:', error);
-// 	}
-// }
+	async postFinalGameResults() {
+		const gameResults = {
+			player1_score: Game1v1.player1Score,
+			player2_score: Game1v1.player2Score,
+			winner: Game1v1.player1Score > Game1v1.player2Score ? "player1" : "player2",
+			game_type: "pong"
+		};
+		try {
+			const response = await fetch('http://localhost:3000/api/pong-results', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(gameResults)
+			});
+			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+			console.log('Final game results posted successfully');
+		} catch (error) {
+			console.error('Error posting final results:', error);
+		}
+	}
+
+	showEndScreen() {
+		const container = document.querySelector('.page-content');
+		if (!container) return;
+
+		// Remove old end screen if present
+		const oldEnd = document.getElementById('end-screen');
+		if (oldEnd) oldEnd.remove();
+
+		const winner = Game1v1.player1Score > Game1v1.player2Score ? "Player 1" : "Player 2";
+		const endDiv = document.createElement('div');
+		endDiv.id = 'end-screen';
+		endDiv.className = 'flex flex-col items-center mt-6';
+
+		const msg = document.createElement('div');
+		msg.className = 'text-3xl font-bold text-[#00f0ff] mb-4';
+		msg.textContent = `${winner} wins!`;
+
+		const restartBtn = document.createElement('button');
+		restartBtn.className = 'px-6 py-2 bg-[#00f0ff] text-[#050507] font-bold rounded-lg shadow hover:bg-[#85e7ff] transition mb-2';
+		restartBtn.textContent = 'Restart';
+		restartBtn.onclick = () => Game1v1.startNewGame(this.difficulty);
+
+		const homeBtn = document.createElement('button');
+		homeBtn.className = 'px-6 py-2 bg-[#00f0ff] text-[#050507] font-bold rounded-lg shadow hover:bg-[#85e7ff] transition';
+		homeBtn.textContent = 'Home';
+		homeBtn.onclick = () => SPA.navigateTo('/home');
+
+		endDiv.appendChild(msg);
+		endDiv.appendChild(restartBtn);
+		endDiv.appendChild(homeBtn);
+		container.appendChild(endDiv);
+
+		const canvas = document.getElementById('game-canvas');
+		if (canvas) canvas.style.display = 'none';
+	}
+
+	public static startNewGame(difficulty: Difficulty = Difficulty.EASY) {
+		// Destroy previous instance if it exists
+		if (Game1v1.currentInstance) {
+			Game1v1.currentInstance.destroy();
+		}
+		// Show canvas again if hidden
+		const canvas = document.getElementById('game-canvas');
+		if (canvas) canvas.style.display = '';
+		// Remove end screen if present
+		const oldEnd = document.getElementById('end-screen');
+		if (oldEnd) oldEnd.remove();
+		// Start new game
+		const game = new Game1v1(difficulty);
+		Game1v1.currentInstance = game;
+		game.gameLoop();
+	}
 }
 
 class Entity
@@ -242,81 +305,16 @@ class Paddle extends Entity
 		}
 		this.y += this.yVel * this.speed;
 	}
+	draw(context: CanvasRenderingContext2D): void
+	{
+		context.save();
+		context.shadowColor = "#00f0ff";
+		context.shadowBlur = 12;
+		context.fillStyle = this.playerNumber === 1 ? "#e6fdff" : "#00f0ff";
+		context.fillRect(this.x,this.y,this.width,this.height);
+		context.restore();
+	}
 }
-
-// class ComputerPaddle extends Entity
-// {
-// 	private reactionCount: number = 0;
-// 	private reactionTime: number =  2;
-// 	private parasiticMvmnt: number = 0;
-// 	private idleDirection: number = 1;
-// 	private idleTimer: number = 0;
-// 	constructor(w:number,h:number,x:number,y:number, speed:number)
-// 	{
-// 		super(w,h,x,y, speed);
-// 	}
-// 	update(ball:Ball, canvas: HTMLCanvasElement): void
-// 	{
-// 		this.reactionCount++;
-// 		if (this.reactionCount < this.reactionTime)
-// 		{
-// 			return ;
-// 		}
-// 		this.reactionCount = 0;
-// 		//chase ball
-// 		if (ball.xVel == 1 && ball.x > canvas.width / 2)
-// 		{
-// 			this.parasiticMvmnt = (Math.random() - 0.5) * 10;
-// 			if (ball.y + this.parasiticMvmnt < this.y && ball.xVel == 1)
-// 			{
-// 				this.yVel = -1;
-// 				if (this.y <= WALL_OFFSET)
-// 				{
-// 					this.yVel = 0;
-// 				}
-// 			}
-// 			else if (ball.y + this.parasiticMvmnt > this.y + this.height && ball.xVel == 1)
-// 			{
-// 				this.yVel = 1;
-// 				if (this.y + this.height >= canvas.height - WALL_OFFSET)
-// 				{
-// 					this.yVel = 0;
-// 				}
-// 			}
-// 			else
-// 			{
-// 				this.yVel = 0;
-// 			}
-// 		}
-// 		else
-// 		{
-// 			this.idleTimer++;
-// 			if (this.idleTimer > 6) { // Change direction every 30 frames
-// 				const ballTarget = ball.y +  (Math.random() - 0.5) * 40;
-// 				if (ballTarget < this.y)
-// 					this.idleDirection = -1;
-// 				else if (ballTarget > this.y + this.height)
-// 					this.idleDirection = 1;
-// 				else
-// 					this.idleDirection = 0;
-// 				this.idleTimer = 0;
-// 			}
-// 			this.yVel = this.idleDirection;
-// 			if (this.y <= WALL_OFFSET - 10)
-// 			{
-// 				this.y = WALL_OFFSET - 10;
-// 				this.yVel = 1;
-// 			}
-// 			if (this.y + this.height >= canvas.height - WALL_OFFSET + 10)
-// 			{
-// 				this.y = canvas.height - WALL_OFFSET + 10 - this.height;
-// 				this.yVel = -1;
-// 				return ;
-// 			}
-// 		}
-// 		this.y += this.yVel * this.speed;
-// 	}
-// }
 
 class Ball extends Entity
 {
@@ -399,5 +397,16 @@ class Ball extends Entity
 		this.x += this.xVel * this.speed;
 		this.y += this.yVel * this.speed;
 		this.speed += 0.001;
+	}
+	draw(context: CanvasRenderingContext2D): void
+	{
+		context.save();
+		context.shadowColor = "#fff";
+		context.shadowBlur = 16;
+		context.fillStyle = "#fff";
+		context.beginPath();
+		context.arc(this.x + this.width/2, this.y + this.height/2, this.width/2, 0, 2 * Math.PI);
+		context.fill();
+		context.restore();
 	}
 }

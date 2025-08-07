@@ -124,7 +124,7 @@ class Snake {
 }
 
 // Main game class
-class SnakeGame {
+export class SnakeGame {
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
 	private readonly gridSize: number = 20;

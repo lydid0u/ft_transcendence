@@ -11,7 +11,7 @@ interface SPAAttributes {
   defaultRoute: string;
   contentDiv: string;
   contentParent?: Node | null;
-  currentGameInstance?: Game | Game1v1 | null;
+  currentGameInstance?: Game | Game1v1 | SnakeGame | null;
 
 }
 
@@ -30,6 +30,7 @@ interface GoogleAccounts {
 
 import { Game } from './gameAI';
 import { Game1v1 } from './game1v1';
+import { SnakeGame } from './snake';
 
 declare global {
   interface Window {
@@ -57,7 +58,6 @@ declare function changeUsername(): Promise<void>;
 declare function changeAvatar(): Promise<void>;
 declare function displayMatchHistory(): void;
 declare function displayTournamentList(): void;
-declare function startTournamentFlow(): void;
 declare function otpSubmit(email: string): Promise<void>;
 
 const SPA = {
@@ -70,26 +70,26 @@ const SPA = {
   handleLayout: function(route: string): void {
     const content: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
     const isLanding: boolean = route === '/';
-    
+
     // Update the login button text to show current page
     const loginBtn = document.getElementById('nav-login-btn');
     const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
-    
+
     // Use the same authentication check as in loadRoute
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     const hasValidToken = localStorage.getItem('jwtToken') !== null;
     const isLoggedIn = isAuthenticated && hasValidToken;
-    
+
     // Log authentication state for debugging
     console.log('Navbar auth state:', { isAuthenticated, hasValidToken, isLoggedIn });
-    
+
     if (loginBtn) {
       // Get page title based on current route
       let pageTitle = '';
       if (route in this.routes) {
         pageTitle = this.routes[route].title;
       }
-      
+
       // Only show login/profile on the landing page or if no page title is available
       if (isLanding || !pageTitle) {
         loginBtn.textContent = isLoggedIn ? 'Profile' : 'Login';
@@ -101,7 +101,7 @@ const SPA = {
         loginBtn.textContent = pageTitle;
         loginBtn.onclick = null; // Remove click handler when showing page name
       }
-      
+
       // Show/hide dropdown toggle based on login status
       if (profileDropdownToggle) {
         console.log('Setting profile dropdown visibility:', isLoggedIn ? 'visible' : 'hidden');
@@ -170,25 +170,6 @@ const SPA = {
         }, 100);
       }
     },
-
-    '/game1v1Tournament': {
-  title: 'Pong 1v1 Tournament',
-  content: 'pages/game1v1Tournament.html',
-  routeScript: function (): void {
-    setTimeout(() => {
-      // Importer dynamiquement le module game1v1Tournament.ts
-      import('./game1v1Tournament').then(module => {
-        if (typeof module.startTournamentFlow === 'function') {
-          module.startTournamentFlow();
-        } else {
-          console.error("startTournamentFlow function not found in module");
-        }
-      }).catch(err => {
-        console.error("Failed to load game1v1Tournament module:", err);
-      });
-    }, 50);
-  }
-},
 
 
     '/dashboard': {
@@ -316,7 +297,7 @@ const SPA = {
         changePassword();
       }
     },
-    
+
       '/match-history': {
     title: 'Historique des matchs',
     content: 'pages/match-history.html',
@@ -337,8 +318,44 @@ const SPA = {
       }, 100);
     }
   },
+	'/snake': {
+	title: 'Snake Game',
+	content: 'pages/snake.html',
+	routeScript: function (): void {
+	function tryInitSnakeGame() {
+		const canvas = document.getElementById('gameCanvas');
+		if (!canvas)
+		{
+			console.error('gameCanvas not found');
+			setTimeout(tryInitSnakeGame, 50);
+			return;
+		}
 
-  
+		// Destroy previous game instance if any
+		if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
+		{
+			SPA.SPAattribute.currentGameInstance.destroy();
+			console.log("Previous Snake instance destroyed");
+		}
+
+		try
+		{
+			// If your class has no destroy method, you can still manage it this way
+			const snakeGame = new SnakeGame();
+			SPA.SPAattribute.currentGameInstance = snakeGame;
+		}
+		catch (e)
+		{
+			console.error('Snake Game init failed:', e);
+		}
+	}
+
+	tryInitSnakeGame();
+	},
+},
+
+
+
 	'/gameAI': {
 			title: 'Pong AI Game',
 			content: 'pages/gameAI.html',
@@ -409,14 +426,8 @@ const SPA = {
 							diffEnum = 2;
 						else if (difficulty === 'HARD')
 							diffEnum = 3;
-						const game = new Game1v1(diffEnum);
-						SPA.SPAattribute.currentGameInstance = game;
-						if (SPA.SPAattribute.currentGameInstance === null)
-						{
-							throw new Error("current game didn't load");
-							return;
-						}
-						requestAnimationFrame(() => SPA.SPAattribute.currentGameInstance.gameLoop());
+						Game1v1.startNewGame(diffEnum);
+						SPA.SPAattribute.currentGameInstance = Game1v1['currentInstance'];
 					}
 					catch (e)
 					{
@@ -444,7 +455,7 @@ const SPA = {
         }, 0);
       }
     },
-	 
+
     '/1v1-landing': {
       title: 'Choix de la difficulté',
       content: 'pages/pong-landing.html',
@@ -480,7 +491,7 @@ const SPA = {
   init: function(): void {
     document.addEventListener('click', (event: Event) => {
       const target = event.target as HTMLElement;
-      
+
       if (target.tagName === 'A' && target.hasAttribute('data-route')) {
         event.preventDefault();
         const route: string | null = target.getAttribute('data-route');
@@ -489,7 +500,7 @@ const SPA = {
         }
       }
     });
-    
+
     window.addEventListener('popstate', () => {
       this.loadRoute(window.location.pathname);
     });
@@ -510,6 +521,23 @@ loadRoute: async function(route: string): Promise<void> {
     const publicRoutes: string[] = ['/', '/login', '/register', '/reset-password', '/otp-password', '/otp', '/about', '/resetNewPassword'];
     const hasValidToken = localStorage.getItem('jwtToken') !== null;
 
+    // Rediriger vers /login si non authentifié et route protégée
+    // if ((!isAuthenticated || !hasValidToken) && !publicRoutes.includes(route)) {
+    //   console.log('Access denied: redirecting to login');
+    //   history.pushState("", "", '/login'); // Direct history manipulation to avoid loops
+    //   this.loadRoute('/login');
+    //   return;
+    // }
+
+    // // Rediriger vers /home si authentifié et sur une page d'auth
+    // if (isAuthenticated && ['/login', '/register', '/reset-password'].includes(route)) {
+    //   console.log('Already authenticated: redirecting to home');
+    //   history.pushState("", "", '/home'); // Direct history manipulation to avoid loops
+    //   this.loadRoute('/home');
+    //   return;
+    // }
+
+
     // Vérifier si la route existe
     if (!(route in this.routes)) {
       this.error404();
@@ -517,37 +545,37 @@ loadRoute: async function(route: string): Promise<void> {
     }
 
     const routeConfig = this.routes[route];
-    
+
     // Set the page title with translation if needed
     if (routeConfig.title && routeConfig.title.includes('.') && window.i18n) {
       document.title = window.i18n.translate(routeConfig.title) || "ft_transcendence";
     } else {
       document.title = routeConfig.title || "ft_transcendence";
     }
-    
+
     // Appliquer la mise en page
     this.handleLayout(route);
-    
+
     try {
       // Tenter de charger le contenu HTML
       const contentPath = routeConfig.content;
-      
+
       const response = await fetch(contentPath);
-      
+
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
-      
+
       const html = await response.text();
-      
+
       // Injecter le HTML dans le conteneur de contenu
       const contentElement = document.querySelector(this.SPAattribute.contentDiv);
       if (!contentElement) {
         throw new Error("Élément de contenu non trouvé");
       }
-      
+
       contentElement.innerHTML = html;
-      
+
       // Apply translations after content is loaded
       if (window.i18n && typeof window.i18n.initializePageTranslations === 'function') {
         window.i18n.initializePageTranslations();
@@ -557,12 +585,12 @@ loadRoute: async function(route: string): Promise<void> {
           window.i18n.initializePageTranslations();
         }, 100);
       }
-      
+
       // Exécuter le script de route s'il existe
       if (typeof routeConfig.routeScript === "function") {
         routeConfig.routeScript();
       }
-      
+
     } catch (error) {
       // Afficher un message d'erreur dans le conteneur
       const contentElement = document.querySelector(this.SPAattribute.contentDiv);
@@ -576,7 +604,7 @@ loadRoute: async function(route: string): Promise<void> {
         `;
       }
     }
-    
+
   } catch (error) {
     console.error('Erreur critique dans loadRoute:', error);
     this.error404();
@@ -589,7 +617,7 @@ loadRoute: async function(route: string): Promise<void> {
     links.forEach((link: HTMLAnchorElement) => {
       link.classList.remove('active');
     });
-    
+
     // Find and set the current active link
     const activeLink: HTMLAnchorElement | null = document.querySelector(`a[data-route="${currentPath}"]`);
     if (activeLink) {
@@ -600,7 +628,7 @@ loadRoute: async function(route: string): Promise<void> {
     checkAuthAndNavigate: function() : void {
         const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
         const hasValidToken = localStorage.getItem('jwtToken') !== null;
-        
+
         if (isAuthenticated && hasValidToken) {
             SPA.navigateTo('/home');
         } else {
@@ -616,19 +644,19 @@ loadRoute: async function(route: string): Promise<void> {
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('user');
     localStorage.removeItem('token');
-    
+
     // Disable Google authentication
     if (typeof window.google !== 'undefined' && window.google.accounts) {
       console.log('Google accounts found, disabling auto-select');
       window.google.accounts.id.disableAutoSelect();
     }
-    
+
     // Hide user section
     const userSection = document.getElementById('user-section');
     if (userSection) {
         userSection.style.display = 'none';
     }
-    
+
     // Show login sections
     const signinSection = document.getElementById('signin-section');
     const loginWithAccountSection = document.getElementById('loginWithAccountSection');
@@ -641,7 +669,7 @@ loadRoute: async function(route: string): Promise<void> {
     }
 
     console.log('User logged out successfully');
-    
+
     // Update navbar visibility
     this.handleLayout(window.location.pathname);
   },
@@ -664,12 +692,12 @@ loadRoute: async function(route: string): Promise<void> {
 
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
-  
+
   // Initialize language system
   if (window.i18n) {
     // Initialize translations
     window.i18n.initializePageTranslations();
-    
+
     // Listen for language changes to update content
     window.addEventListener('languageChanged', function(event: CustomEvent) {
       console.log('Language changed to:', event.detail.language);
@@ -687,7 +715,7 @@ declare global {
     getUserDataFromBackend: () => Promise<void>;
     handleGoogleAuth: (response: any) => void;
     displayUserInfo: (userData: any) => void;
-    login: () => void; 
+    login: () => void;
     register: () => void;
     displayFriendsList: () => void;
     addPseudoForGoogleLogin: (userData: UserData) => Promise<void>;
@@ -698,8 +726,7 @@ declare global {
     otpSubmit: (email: string) => Promise<void>;
     displayTournamentList: () => void;
     signOut: () => void;
-    startTournamentFlow: () => void;
-    [key: string]: any; 
+    [key: string]: any;
   }
 }
 
