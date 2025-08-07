@@ -55,18 +55,14 @@ async function dbFunction(fastify, options)
         async loginUser(email, password)
         {
             let user = null;
-            console.log("Login attempt with email:", email);
             user = await db.get('SELECT * FROM users WHERE email = ?', email);
-            console.log("User found:", user);
             if (!user)
             {
-                console.log("ZABORMOK");
                 throw new Error('Wrong mail or password');
             }
             const valid = await bcrypt.compare(password, user.password);
             if (!valid)
             {
-                console.log("ZABORMOK2");
                 throw new Error('Wrong mail or password');
             }
             return user;

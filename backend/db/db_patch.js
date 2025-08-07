@@ -112,7 +112,10 @@ async function dbFunctionPatch(fastify, options)
             const user = await fastify.db.connection.get('SELECT * FROM users WHERE email = ?', email);
             if (!user)
                 throw new Error("User not found");
+            console.log("changeOnlineStatus called for user:", email, "isOnline:", isOnline);
             await fastify.db.connection.run('UPDATE users SET status = ? WHERE email = ?', isOnline, email);
+            console.log("changeOnlineStatus called for user:", email, "isOnline:", isOnline);
+            return { success: true, message: "Online status updated successfully" };
         }
 
     }

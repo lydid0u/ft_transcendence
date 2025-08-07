@@ -81,11 +81,12 @@ async function userRoutes(fastify, options)
     fastify.patch('/user/connection-status', {preValidation : [fastify.prevalidate]}, async (request, reply) => {
         try {
             const { status : isOnline } = request.body;
+            console.log("status", isOnline);
+            // const user = await fastify.utilsDb.getOneUser(request.user.email);
+            // if (!user) {
+            //     return reply.status(404).send({ success: false, message: "User not found" });
+            // }
             await fastify.dbPatch.changeOnlineStatus(request.user.email, isOnline);
-            const user = await fastify.utilsDb.getOneUser(request.user.email);
-            if (!user) {
-                return reply.status(404).send({ success: false, message: "User not found" });
-            }
             reply.send({ success: true, message: "Online status updated successfully"});
         } catch (err) {
             return reply.status(400).send({ success: false, message: "Erreur lors de la mise à jour du statut en ligne", error: err.message });

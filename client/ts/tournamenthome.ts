@@ -2,7 +2,9 @@
 interface TournamentParticipant {
   tournament_id: number;
   user_id: number;   // Changé de userId à user_id pour correspondre à la réponse API
-  username?: string; // Rendu optionnel car peut ne pas être présent
+  username?: string;
+  alias?: string; // Rendu optionnel car peut ne pas être présent
+  success?: boolean;
 }
 
 // Classe API pour gérer les interactions avec le backend pour le tournoi
@@ -76,6 +78,28 @@ class TournamentHomeAPI {
     }
   }
 
+  async addPlayerByEmail(tournamentId: number, email: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const response = await fetch(`${this.baseUrl}/tournament/add-player-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.token}`,
+        },
+        credentials: "include",
+        body: JSON.stringify({ tournamentId, email }),
+      });
+      const result = await response.json();
+      return {
+        success: response.ok,
+        message: result.message || (response.ok ? "Joueur ajouté avec succès" : "Erreur lors de l'ajout du joueur")
+      };
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du joueur:", error);
+      return { success: false, message: "Erreur de connexion au serveur" };
+    }
+  }
+
   // Méthode pour lancer le tournoi
   async launchTournament(tournamentId: number): Promise<{ success: boolean; message: string }> {
     try {
@@ -112,6 +136,13 @@ class TournamentHomeApp {
   private playerNameInput: HTMLInputElement | null;
   private tournamentStartBtn: HTMLElement | null;
   private messageContainer: HTMLElement | null;
+  private tournamentQuitBtn: HTMLElement | null;
+  private loginPlayerBtn: HTMLElement | null;
+  private playerLoginForm: HTMLElement | null;
+  private playerLoginEmail: HTMLInputElement | null;
+  private playerLoginPassword: HTMLInputElement | null;
+  private playerLoginSubmit: HTMLElement | null;
+  private playerLoginCancel: HTMLElement | null;
 
   constructor() {
     this.api = new TournamentHomeAPI();
@@ -122,9 +153,44 @@ class TournamentHomeApp {
     this.playerNameInput = document.getElementById("player-name") as HTMLInputElement;
     this.tournamentStartBtn = document.getElementById("tournament-start-btn");
     this.messageContainer = document.getElementById("message-container");
-    
+    this.tournamentQuitBtn = document.getElementById("tournament-quit-btn");
+    this.loginPlayerBtn = document.getElementById("login-player-btn");
+    this.playerLoginForm = document.getElementById("player-login-form");
+    this.playerLoginEmail = document.getElementById("player-login-email") as HTMLInputElement;
+    this.playerLoginPassword = document.getElementById("player-login-password") as HTMLInputElement;
+    this.playerLoginSubmit = document.getElementById("player-login-submit");
+    this.playerLoginCancel = document.getElementById("player-login-cancel");
+
     this.init();
   }
+
+  private setupEventListeners(): void {
+    // Écouteur pour le bouton d'ajout de joueur
+    if (this.addPlayerBtn) {
+        console.log("Add Player Button found");
+      this.addPlayerBtn.addEventListener("click", () => this.handleAddPlayer());
+    }
+    
+    // Écouteur pour le bouton de lancement du tournoi
+    if (this.tournamentStartBtn) {
+      this.tournamentStartBtn.addEventListener("click", () => this.handleLaunchTournament());
+    }
+    if (this.tournamentQuitBtn){
+      this.tournamentQuitBtn.addEventListener("click", () => this.deleteTournament());
+    }
+    if (this.loginPlayerBtn) {
+      this.loginPlayerBtn.addEventListener("click", () => this.loginPlayerTournament());
+    }
+    if (this.playerLoginSubmit) {
+  this.playerLoginSubmit.addEventListener("click", () => this.handlePlayerLogin());
+    }
+    if (this.playerLoginCancel) {
+      this.playerLoginCancel.addEventListener("click", () => {
+    if (this.playerLoginForm)
+      this.playerLoginForm.classList.add("hidden");
+    });
+  }
+}
 
   private async init(): Promise<void> {
     // Récupération des détails du tournoi
@@ -146,37 +212,120 @@ class TournamentHomeApp {
     if (!this.playerListElement) return;
     
     if (participants.length === 0) {
-      this.playerListElement.innerHTML = "<p class='text-center text-[#b3f0ff]'>Aucun joueur inscrit pour le moment</p>";
+      this.playerListElement.innerHTML = "<p class='text-center text-gray-500'>Aucun joueur inscrit pour le moment</p>";
       return;
     }
     
     this.playerListElement.innerHTML = participants.map(participant => {
       // Déterminer quel nom afficher (username si disponible, sinon user_id)
-      const displayName = participant.username || 
+      const displayName = participant.username || participant.alias ||
                          (participant.user_id ? `Joueur #${participant.user_id}` : 'Joueur inconnu');
       
       return `
-      <div class="flex items-center justify-between p-4 bg-[#111] bg-opacity-40 backdrop-blur-sm rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] mb-2">
+      <div class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow transition-all">
         <div class="flex items-center">
-          <span class="text-[#e6fdff] font-medium">${displayName}</span>
+          <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+            ${displayName.charAt(0).toUpperCase()}
+          </div>
+          <span class="ml-3 text-gray-800 font-medium">${displayName}</span>
+        </div>
+        <div class="text-sm text-gray-500">
+          Participant
         </div>
       </div>
       `;
     }).join("");
   }
 
-  private setupEventListeners(): void {
-    // Écouteur pour le bouton d'ajout de joueur
-    if (this.addPlayerBtn) {
-        console.log("Add Player Button found");
-      this.addPlayerBtn.addEventListener("click", () => this.handleAddPlayer());
-    }
-    
-    // Écouteur pour le bouton de lancement du tournoi
-    if (this.tournamentStartBtn) {
-      this.tournamentStartBtn.addEventListener("click", () => this.handleLaunchTournament());
+  private async deleteTournament(): Promise<void> {
+    if (!this.tournamentId) return;
+    try {
+      const response = await fetch(`http://localhost:3000/tournament/delete`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+        },
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        this.showMessage("Tournoi supprimé avec succès", "success");
+        // Redirection vers la page d'accueil ou une autre page appropriée
+        window.location.href = '/home';
+      } else {
+        const errorData = await response.json();
+        this.showMessage(errorData.message || "Erreur lors de la suppression du tournoi", "error");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression du tournoi:", error);
+      this.showMessage("Erreur de connexion au serveur", "error");
     }
   }
+
+  private loginPlayerTournament(): void {
+  if (!this.playerLoginForm) return;
+  this.playerLoginForm.classList.remove("hidden");
+}
+
+private async handlePlayerLogin(): Promise<void> {
+  console.log
+  if (!this.playerLoginEmail || !this.playerLoginPassword) return;
+  const email = this.playerLoginEmail.value.trim();
+  const password = this.playerLoginPassword.value;
+
+  if (!email || !password) {
+    this.showMessage("Veuillez remplir tous les champs", "error");
+    return;
+  }
+
+  // Met ici ta logique de login joueur local (API ou simulation front)
+  this.showMessage(`Tentative de connexion pour ${email}...`, "info");
+  const response = await fetch("http://localhost:3000/tournament/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+    },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await response.json();
+  if (data.success === true) {
+
+    console.log("Connexion réussie:", data.data.email);
+    
+    // Vérifier si le tournoi existe et l'id est valide
+    if (!this.tournamentId) {
+      this.showMessage("Erreur: Tournoi non trouvé", "error");
+      if (this.playerLoginForm) this.playerLoginForm.classList.add("hidden");
+      return;
+    }
+    
+    // Recharger la liste des participants après connexion
+    try {
+      const result = await this.api.addPlayerByEmail(this.tournamentId, data.data.email);
+      if (result.success) {
+        this.showMessage(`Joueur "${data.data.email}" ajouté avec succès!`, "success");
+        
+        // Actualiser la liste des participants
+        const updatedParticipants = await this.api.getTournamentDetails();
+        if (updatedParticipants) {
+          this.renderParticipants(updatedParticipants);
+        }
+      } else {
+        // Affichage du message d'erreur spécifique (comme "tournoi plein")
+        this.showMessage(result.message, "error");
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du joueur:", error);
+      this.showMessage("Erreur lors de l'ajout du joueur au tournoi", "error");
+    }
+  } else {
+    console.log("Erreur de connexion:", data.data);
+    this.showMessage(data.data.message || "Veuillez réessayer", "error");
+  }
+  // Ferme le formulaire après (optionnel)
+  if (this.playerLoginForm) this.playerLoginForm.classList.add("hidden");
+}
 
   private async handleAddPlayer(): Promise<void> {
     if (!this.playerNameInput || !this.tournamentId) return;

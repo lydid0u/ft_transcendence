@@ -62,12 +62,12 @@ class FriendsAPI {
           friend_nickname: username, // Le backend attend friend_nickname
         }),
       });
-
-      const responseText = await response.text();
+      console.log("Response status:", response.status);
+      const responseText = await response.text(); 
+      console.log("Response text:", responseText);
       if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error("Impossible d'ajouter cet ami");
       }
-
       const result: ApiResponse = JSON.parse(responseText);
       return result;
     } catch (error) {

@@ -10,6 +10,8 @@ enum Difficulty {
 	HARD = 3
 }
 
+import { SPA } from './spa';
+
 const WALL_OFFSET = 20;
 
 export class Game
@@ -20,6 +22,7 @@ export class Game
 	public static keysPressed: boolean[] = [];
 	public static playerScore: number = 0;
 	public static computerScore: number = 0;
+	public static currentInstance: Game | null = null;
 
 	public running:boolean = false;
 	public requestFrameID:number = 0;
@@ -59,16 +62,22 @@ export class Game
 		console.log("Game difficulty set to: " + Difficulty[this.difficulty]);
 		const paddleWidth:number = 20, paddleHeight:number = 70, ballSize:number = 10, wallOffset:number = WALL_OFFSET;
 
-		this.player1 = new Paddle(paddleWidth,paddleHeight,wallOffset,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed); 
+		this.player1 = new Paddle(paddleWidth,paddleHeight,wallOffset,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed);
 		this.computerPlayer = new ComputerPaddle(paddleWidth,paddleHeight,this.gameCanvas.width - (wallOffset + paddleWidth) ,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed);
-		this.ball = new Ball(ballSize,ballSize,this.gameCanvas.width / 2 - ballSize / 2, this.gameCanvas.height / 2 - ballSize / 2, ballSpeed);    
+		this.ball = new Ball(ballSize,ballSize,this.gameCanvas.width / 2 - ballSize / 2, this.gameCanvas.height / 2 - ballSize / 2, ballSpeed);
 	}
 	handleKeyDown(e:any)
 	{
 		if (e.code == "ArrowUp")
+		{
 			Game.keysPressed[KeyBindings.UP] = true;
+			e.preventDefault();
+		}
 		if (e.code == "ArrowDown")
+		{
 			Game.keysPressed[KeyBindings.DOWN] = true;
+			e.preventDefault();
+		}
 	}
 	handleKeyUp(e:any)
 	{
@@ -96,16 +105,23 @@ export class Game
 	}
 	drawBoardDetails()
 	{
-		//draw court outline
-		this.gameContext.strokeStyle = "#000";
-		this.gameContext.lineWidth = 5;
+		// Draw glowing court outline
+		const gradient = this.gameContext.createLinearGradient(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+		gradient.addColorStop(0, "#00f0ff");
+		gradient.addColorStop(1, "#0a1a2f");
+		this.gameContext.strokeStyle = gradient;
+		this.gameContext.lineWidth = 6;
+		this.gameContext.shadowColor = "#00f0ff";
+		this.gameContext.shadowBlur = 16;
 		this.gameContext.strokeRect(8,8,this.gameCanvas.width - 15,this.gameCanvas.height - 15);
 
-		//draw center lines
-		for (var i = 0; i + 30 < this.gameCanvas.height; i += 31) {
-			this.gameContext.fillStyle = "#aaa";
-			this.gameContext.fillRect(this.gameCanvas.width / 2 - 10, i + 10, 15, 20);
+		// Draw center dashed line with glow
+		this.gameContext.shadowBlur = 8;
+		this.gameContext.fillStyle = "#00f0ff";
+		for (let i = 0; i + 30 < this.gameCanvas.height; i += 31) {
+			this.gameContext.fillRect(this.gameCanvas.width / 2 - 4, i + 10, 8, 20);
 		}
+		this.gameContext.shadowBlur = 0;
 	}
 	update()
 	{
@@ -124,13 +140,73 @@ export class Game
 	}
 	gameLoop()
 	{
+		const pScore = document.getElementById('player-score');
+		const aiScore = document.getElementById('ai-score');
+		if (Game.playerScore >= 2 || Game.computerScore >= 2)
+		{
+			this.running = false;
+			this.showEndScreen();
+			return;
+		}
 		if (!this.running)
 			return;
 		this.update();
 		this.draw();
-		document.getElementById('player-score')!.textContent = Game.playerScore.toString();
-		document.getElementById('ai-score')!.textContent = Game.computerScore.toString();
+		if (pScore && aiScore) {
+			pScore.textContent = Game.playerScore.toString();
+			aiScore.textContent = Game.computerScore.toString();
+		}
 		requestAnimationFrame(() => this.gameLoop());
+	}
+	showEndScreen() {
+		const container = document.querySelector('.page-content');
+		if (!container) return;
+
+		const oldEnd = document.getElementById('end-screen');
+		if (oldEnd) oldEnd.remove();
+
+		const winner = Game.playerScore > Game.computerScore ? "You" : "Computer";
+		const endDiv = document.createElement('div');
+		endDiv.id = 'end-screen';
+		endDiv.className = 'flex flex-col items-center mt-6';
+
+		const msg = document.createElement('div');
+		msg.className = 'text-3xl font-bold text-[#00f0ff] mb-4';
+		if (winner === "You")
+			msg.textContent = `${winner} get the win!`;
+		else
+			msg.textContent = '${winner} gets the win!'
+		
+		const restartBtn = document.createElement('button');
+		restartBtn.className = 'px-6 py-2 bg-[#00f0ff] text-[#050507] font-bold rounded-lg shadow hover:bg-[#85e7ff] transition mb-2';
+		restartBtn.textContent = 'Restart';
+		restartBtn.onclick = () => Game.startNewGame(this.difficulty);
+
+		const homeBtn = document.createElement('button');
+		homeBtn.className = 'px-6 py-2 bg-[#00f0ff] text-[#050507] font-bold rounded-lg shadow hover:bg-[#85e7ff] transition';
+		homeBtn.textContent = 'Home';
+		homeBtn.onclick = () => SPA.navigateTo('/home');
+
+		endDiv.appendChild(msg);
+		endDiv.appendChild(restartBtn);
+		endDiv.appendChild(homeBtn);
+		container.appendChild(endDiv);
+
+		const canvas = document.getElementById('game-canvas');
+		if (canvas) canvas.style.display = 'none';
+	}
+
+	public static startNewGame(difficulty: Difficulty = Difficulty.EASY) {
+		if (Game.currentInstance) {
+			Game.currentInstance.destroy();
+		}
+		const canvas = document.getElementById('game-canvas');
+		if (canvas) canvas.style.display = '';
+		const oldEnd = document.getElementById('end-screen');
+		if (oldEnd) oldEnd.remove();
+		const game = new Game(difficulty);
+		Game.currentInstance = game;
+		game.gameLoop();
 	}
 }
 
@@ -187,6 +263,15 @@ class Paddle extends Entity
 			this.yVel = 0;
 		}
 		this.y += this.yVel * this.speed;
+	}
+	draw(context: CanvasRenderingContext2D): void
+	{
+		context.save();
+		context.shadowColor = "#00f0ff";
+		context.shadowBlur = 12;
+		context.fillStyle = "#e6fdff";
+		context.fillRect(this.x,this.y,this.width,this.height);
+		context.restore();
 	}
 }
 
@@ -258,9 +343,18 @@ class ComputerPaddle extends Entity
 				this.y = canvas.height - WALL_OFFSET + 10 - this.height;
 				this.yVel = -1;
 				return ;
-			}	
+			}
 		}
 		this.y += this.yVel * this.speed;
+	}
+	draw(context: CanvasRenderingContext2D): void
+	{
+		context.save();
+		context.shadowColor = "#00f0ff";
+		context.shadowBlur = 12;
+		context.fillStyle = "#00f0ff";
+		context.fillRect(this.x,this.y,this.width,this.height);
+		context.restore();
 	}
 }
 
@@ -270,8 +364,8 @@ class Ball extends Entity
 	constructor(w:number,h:number,x:number,y:number,speed:number)
 	{
 		super(w,h,x,y,speed);
-		var randomDirection = Math.floor(Math.random() * 2) + 1; 
-		if(randomDirection % 2) 
+		var randomDirection = Math.floor(Math.random() * 2) + 1;
+		if(randomDirection % 2)
 		{
 			this.xVel = 1;
 		}
@@ -323,20 +417,14 @@ class Ball extends Entity
 			this.y = canvas.height - 10 - this.height;
 				this.yVel = -Math.abs(this.yVel); // always positive after bounce
 		}
-		//check player collision
 		// Player paddle collision
 		if (this.x <= player.x + player.width &&
 			this.x + this.width >= player.x &&
 			this.y < player.y + player.height &&
-			this.y + this.height > player.y) 
+			this.y + this.height > player.y)
 		{
 			this.xVel = 1;
 			this.yVel += player.yVel * 0.5;
-			// const hitPos = (this.y + this.height / 2) - (player.y + player.height / 2);
-			// const edgeThreshold = player.height * 0.45;
-			// if (Math.abs(hitPos) > edgeThreshold) {
-			// 	this.speed += 1;
-			// }
 		}
 		// Computer paddle collision
 		if (this.x + this.width >= computer.x &&
@@ -346,14 +434,20 @@ class Ball extends Entity
 		{
 			this.xVel = -1;
 			this.yVel += computer.yVel * 0.5;
-			// const hitPos = (this.y + this.height / 2) - (computer.y + computer.height / 2);
-			// const edgeThreshold = computer.height * 0.45;
-			// if (Math.abs(hitPos) > edgeThreshold) {
-			// 	this.speed += 1;
-        // }
 		}
 		this.x += this.xVel * this.speed;
 		this.y += this.yVel * this.speed;
 		this.speed += 0.001;
+	}
+	draw(context: CanvasRenderingContext2D): void
+	{
+		context.save();
+		context.shadowColor = "#fff";
+		context.shadowBlur = 16;
+		context.fillStyle = "#fff";
+		context.beginPath();
+		context.arc(this.x + this.width/2, this.y + this.height/2, this.width/2, 0, 2 * Math.PI);
+		context.fill();
+		context.restore();
 	}
 }

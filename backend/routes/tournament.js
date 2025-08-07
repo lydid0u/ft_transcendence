@@ -8,9 +8,8 @@ async function tournamentRoute(fastify, options)
         const userId = request.user.id;
 
         // Logic to join the tournament
-        console.log('User ID:', userId, 'Tournament ID:', tournamentId);
         try {
-            await fastify.dbTournament.addPlayerToTournament(tournamentId, userId);
+            await fastify.dbTournament.joinPlayerToTournament(tournamentId, userId);
             reply.status(200).send({ status: 'success', message: 'Joined tournament successfully' });
         } 
         catch (error) {
@@ -102,6 +101,43 @@ async function tournamentRoute(fastify, options)
         }
     });
 
+    fastify.post('/tournament/add-player-email', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    {
+        const { tournamentId, email } = request.body;
+        console.log('Adding player with email:', email);
+        const userId = request.user.id; // L'utilisateur qui fait la demande (créateur du tournoi)
+
+        try {
+            const username = await fastify.dbTournament.getUsernameByEmail(email);
+            if (!username) {
+                return reply.status(404).send({ status: 'error', message: 'Username not found for the provided email' });
+            }
+            // Vérifier si l'utilisateur est le créateur du tournoi
+            const tournament = await fastify.dbTournament.getTournamentById(tournamentId);
+            if (!tournament) {
+                return reply.status(404).send({ status: 'error', message: 'Tournament not found' });
+            }
+            
+            if (tournament.creator_id !== userId) {
+                return reply.status(403).send({ 
+                    status: 'error', 
+                    message: 'Only the tournament creator can add players with accounts' 
+                });
+            }
+
+            // Ajouter un joueur avec un username au tournoi
+            await fastify.dbTournament.addUsernameToParticipant(tournamentId, username);
+            
+            reply.status(200).send({ 
+                status: 'success', 
+                message: `Player with username "${username}" added to tournament successfully` 
+            });
+        } catch (error) {
+            console.error('Error adding player with username to tournament:', error);
+            return reply.status(400).send({ status: 'error', message: error.message });
+        }
+    });
+
     fastify.get('/tournament/get-all-tournaments', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
         const tournaments = await fastify.dbTournament.getAllTournaments();
@@ -114,11 +150,12 @@ async function tournamentRoute(fastify, options)
         reply.send({ participants });
     });
 
-    fastify.delete('/tournament/clear-all', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    fastify.delete('/tournament/delete', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
         // Logic to clear all tournaments and participants
-        const tournamentId = request.body.tournamentId;
-        await fastify.dbTournament.deleteTournament(tournamentId);
+        const user_id = request.user.id;
+        const tournaments = await fastify.dbTournament.getTournamentByCreatorId(user_id);
+        await fastify.dbTournament.deleteTournament(tournaments.id);
         reply.send({ status: 'success', message: 'All tournaments cleared successfully' });
     });
 
@@ -130,6 +167,41 @@ async function tournamentRoute(fastify, options)
         await fastify.dbTournament.clearTournamentParticipants(tournamentId);
         reply.send({ status: 'success', message: 'Participants cleared successfully' });
     });
+
+    fastify.post('/tournament/login', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+{
+    try {
+        console.log('Login request received for tournament');
+        const { email, password } = request.body;
+        
+        // Validation des entrées
+        if (!email || !password) {
+            return reply.status(400).send({
+                success: false, 
+                message: 'Email et mot de passe requis'
+            });
+        }
+
+        // Logic to authenticate the player and join the tournament
+        const result = await fastify.db.loginUser(email, password);
+        if (result) {
+            return reply.send({ success: true, data: result });
+        } else {
+            // Utiliser 401 pour authentification échouée
+            return reply.status(401).send({
+                success: false, 
+                message: 'Identifiants incorrects'
+            });
+        }
+    } catch (error) {
+        console.error('Error in tournament login:', error);
+        // Utiliser 400 pour les erreurs de requête client au lieu de 500
+        return reply.status(400).send({
+            success: false, 
+            message: "Wrong mail or password"
+        });
+    }
+});
 }
 
 export default fp(tournamentRoute)
