@@ -31,8 +31,8 @@ async function matchesRoutes(fastify, options)
         
         // Filtrer les matchs par game_mode
         const match = await fastify.db.connection.all(
-            'SELECT * FROM matches WHERE (player1_id = ? OR player2_id = ?) AND game_mode = ?', 
-            request.user.id, request.user.id, gameMode
+            'SELECT * FROM matches WHERE (player1_id = ? OR player2_id = ?)', 
+            request.user.id, request.user.id
         );
         
         return match;
@@ -40,7 +40,7 @@ async function matchesRoutes(fastify, options)
 
     fastify.get('/history-details', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        const gameMode = request.query.game_mode || request.query.gameType || 'pong';
+        // const gameMode = request.query.game_mode || request.query.gameType || 'pong';
         
         // Vérifier si dbPong est disponible
         if (!fastify.dbPong) {
@@ -49,7 +49,7 @@ async function matchesRoutes(fastify, options)
         
         let data;
         try {
-            data = await fastify.dbPong.findMatchesFromUser(request.user.id, gameMode);
+            data = await fastify.dbPong.findMatchesFromUser(request.user.id);
         } catch (error) {
             return { matchplayed: 0, victory: 0, defeats: 0, ratio: 0 };
         }
@@ -66,6 +66,21 @@ async function matchesRoutes(fastify, options)
         
         return { matchplayed, victory, defeats, ratio };
     })
+
+    fastify.delete('/delete-all', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
+    {
+        // Vérifier si dbPong est disponible
+        if (!fastify.dbPong) {
+            return { success: false, message: 'Database not available' };
+        }
+        
+        try {
+            await fastify.dbPong.deleteAllMatchesFromUser(request.user.id);
+            return { success: true, message: 'All matches deleted successfully' };
+        } catch (error) {
+            return reply.status(400).send({ success: false, error: error.message });
+        }
+    });
 }
     
 export default fp(matchesRoutes);

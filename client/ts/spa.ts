@@ -30,7 +30,7 @@ interface GoogleAccounts {
 
 import { Game } from './gameAI';
 import { Game1v1 } from './game1v1';
-import { SnakeGame } from './snake';
+// import { SnakeGame } from './snake';
 
 declare global {
   interface Window {
@@ -318,41 +318,41 @@ const SPA = {
       }, 100);
     }
   },
-	'/snake': {
-	title: 'Snake Game',
-	content: 'pages/snake.html',
-	routeScript: function (): void {
-	function tryInitSnakeGame() {
-		const canvas = document.getElementById('gameCanvas');
-		if (!canvas)
-		{
-			console.error('gameCanvas not found');
-			setTimeout(tryInitSnakeGame, 50);
-			return;
-		}
+// 	'/snake': {
+// 	title: 'Snake Game',
+// 	content: 'pages/snake.html',
+// 	routeScript: function (): void {
+// 	function tryInitSnakeGame() {
+// 		const canvas = document.getElementById('gameCanvas');
+// 		if (!canvas)
+// 		{
+// 			console.error('gameCanvas not found');
+// 			setTimeout(tryInitSnakeGame, 50);
+// 			return;
+// 		}
 
-		// Destroy previous game instance if any
-		if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
-		{
-			SPA.SPAattribute.currentGameInstance.destroy();
-			console.log("Previous Snake instance destroyed");
-		}
+// 		// Destroy previous game instance if any
+// 		if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
+// 		{
+// 			SPA.SPAattribute.currentGameInstance.destroy();
+// 			console.log("Previous Snake instance destroyed");
+// 		}
 
-		try
-		{
-			// If your class has no destroy method, you can still manage it this way
-			const snakeGame = new SnakeGame();
-			SPA.SPAattribute.currentGameInstance = snakeGame;
-		}
-		catch (e)
-		{
-			console.error('Snake Game init failed:', e);
-		}
-	}
+// 		try
+// 		{
+// 			// If your class has no destroy method, you can still manage it this way
+// 			const snakeGame = new SnakeGame();
+// 			SPA.SPAattribute.currentGameInstance = snakeGame;
+// 		}
+// 		catch (e)
+// 		{
+// 			console.error('Snake Game init failed:', e);
+// 		}
+// 	}
 
-	tryInitSnakeGame();
-	},
-},
+// 	tryInitSnakeGame();
+// 	},
+// },
 
 
 
@@ -399,6 +399,25 @@ const SPA = {
 				tryInitGameAI();
 			}
 		},
+
+    '/game1v1Tournament': {
+  title: 'Pong 1v1 Tournament',
+  content: 'pages/game1v1Tournament.html',
+  routeScript: function (): void {
+    setTimeout(() => {
+      // Importer dynamiquement le module game1v1Tournament.ts
+      import('./game1v1Tournament').then(module => {
+        if (typeof module.startTournamentFlow === 'function') {
+          module.startTournamentFlow();
+        } else {
+          console.error("startTournamentFlow function not found in module");
+        }
+      }).catch(err => {
+        console.error("Failed to load game1v1Tournament module:", err);
+      });
+    }, 50);
+  }
+},
 
 	'/1v1': {
 			title: 'Pong 1v1',

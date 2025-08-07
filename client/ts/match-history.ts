@@ -7,6 +7,7 @@ interface Match {
   score_player2: number
   winner_id: number
   player1_id: number  // Pour déterminer si le joueur a gagné ou perdu
+  game_mode?: string  // Type de jeu: pong, tournament, snake, etc.
 }
 
 // Interface pour les stats de match
@@ -320,8 +321,8 @@ class MatchHistoryApp {
     // Masquer l'état vide
     if (this.emptyState) this.emptyState.style.display = 'none';
     
-    // Limiter à 3 matchs
-    const recentMatches = matches.slice(0, 3);
+    // Limiter à 10 matchs
+    const recentMatches = matches.slice(0, 10);
     
     // Générer le HTML
     this.matchesList.innerHTML = recentMatches.map(match => {
@@ -334,10 +335,14 @@ class MatchHistoryApp {
         ? (window.i18n ? window.i18n.translate('matchHistory.victory') : 'Victory') 
         : (window.i18n ? window.i18n.translate('matchHistory.defeat') : 'Defeat');
       
+      // Formater le mode de jeu pour l'affichage (première lettre majuscule)
+      const gameMode = match.game_mode || this.currentGameType;
+      const formattedGameMode = gameMode.charAt(0).toUpperCase() + gameMode.slice(1);
+      
       return `
         <tr class="${rowClass}">
           <td class="px-4 py-3 text-sm">${match.date}</td>
-          <td class="px-4 py-3 text-sm font-medium">${match.player2_name || (window.i18n ? window.i18n.translate('matchHistory.opponent') : 'Opponent')}</td>
+          <td class="px-4 py-3 text-sm font-medium">${formattedGameMode}</td>
           <td class="px-4 py-3 text-sm">${match.score_player1} - ${match.score_player2}</td>
           <td class="px-4 py-3">
             <span class="px-2 py-1 rounded-full ${resultClass} text-sm font-medium">
