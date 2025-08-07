@@ -68,6 +68,7 @@ class TournamentLaunchAPI {
 
   async findWinnerOfTournament(match: TournamentMatch): Promise<number | null> {
     try {
+      console.log("Recherche du gagnant du tournoi pour le match:", match.tournament_id);
       const response = await fetch(`${this.baseUrl}/tournament/find-winner?tournament_id=${match.tournament_id}`, {
         method: "GET",
         headers: {
@@ -77,7 +78,7 @@ class TournamentLaunchAPI {
         credentials: "include",
       });
       if (!response.ok) {
-        console.error(`Erreur HTTP: ${response.status}`);
+        console.error(`Erreur HTTP: ${response.statusText}`);
         return null;
       }
       const data = await response.json();
@@ -142,6 +143,29 @@ class TournamentLaunchAPI {
   }
 }
 
+async deleteTournament(tournamentId: number): Promise<boolean> {
+  try {
+    const response = await fetch(`${this.baseUrl}/tournament/delete`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${this.token}`,
+      },
+      credentials: "include",
+      body: JSON.stringify({ tournament_id: tournamentId })
+    });
+    if (!response.ok) {
+      console.error(`Erreur HTTP: ${response.status}`);
+      return false;
+    }
+    const result = await response.json();
+    console.log("Résultat de la suppression du tournoi:", result);
+    return result.success || false;
+  } catch (error) {
+    console.error("Erreur lors de la suppression du tournoi:", error);
+    return false;
+  }
+}
   // Delete les perdants du tournoi
   async deleteTournamentLosers(match: TournamentMatch): Promise<boolean> {
     try {
@@ -180,7 +204,7 @@ class TournamentLaunchAPI {
         body: JSON.stringify(match)
       });
       if (!response.ok) {
-        console.error(`Erreur HTTP: ${response.status}`);
+        console.error(`Erreur HTTP: ${response.statusText}`);
         return false;
       }
       const result = await response.json();
@@ -241,6 +265,13 @@ class TournamentLaunch
         this.player2_name.textContent = match.player_2_name.toString();
         console.log("Noms des joueurs mis à jour:", match.player_1_name, match.player_2_name);
       }
+      
+      // Vérifier s'il s'agit du dernier match du tournoi
+      const participants = await this.api.getTournamentDetails();
+      if (participants && participants.length <= 2) {
+        // C'est le dernier match, on prépare l'affichage du bouton "Fin du tournoi"
+        console.log("C'est le dernier match du tournoi!");
+      }
     } else {
       console.error("Erreur lors de la récupération du match du tournoi.");
     }
@@ -250,10 +281,64 @@ class TournamentLaunch
     const result = await this.api.deleteTournamentLosers(match);
     if (result) {
       console.log("Perdants du tournoi supprimés:");
+      
+      // Vérifier s'il ne reste qu'un seul participant (le gagnant du tournoi)
+      const participants = await this.api.getTournamentDetails();
+      if (participants && participants.length === 1) {
+        console.log("Le tournoi est terminé! Affichage du bouton de fin de tournoi.");
+        this.showTournamentEndButton(participants[0]);
+      }
+    } 
+} 
+  
+  // Nouvelle méthode pour afficher le bouton "Fin du tournoi"
+  async showTournamentEndButton(winner: TournamentParticipant) {
+    // Trouver ou créer le conteneur pour le bouton
+    let endButtonContainer = document.getElementById('tournament-end-container');
+    
+    if (!endButtonContainer) {
+      // Créer le conteneur s'il n'existe pas
+      endButtonContainer = document.createElement('div');
+      endButtonContainer.id = 'tournament-end-container';
+      endButtonContainer.className = 'mt-6';
+      
+      // Créer le bouton
+      const endButton = document.createElement('button');
+      endButton.id = 'tournament-end-button';
+      endButton.className = 'px-6 py-3 bg-[#ff5500] text-white font-bold rounded-lg hover:bg-[#ff7700] transition-colors shadow-lg';
+      endButton.style.textShadow = 'none';
+      endButton.textContent = 'Fin du tournoi';
+      
+      // Ajouter un gestionnaire d'événements au bouton
+      endButton.addEventListener('click', () => {
+        // Rediriger vers la page d'accueil du tournoi
+        if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
+          window.SPA.navigateTo('/tournoi');
+        } else {
+          window.location.href = '/tournoi';
+        }
+      });
+      
+      // Ajouter le bouton au conteneur
+      endButtonContainer.appendChild(endButton);
+      
+      // Ajouter le conteneur à la page
+      const gameContent = document.querySelector('.page-content');
+      if (gameContent) {
+        gameContent.appendChild(endButtonContainer);
+      } else {
+        // Si .page-content n'existe pas, ajouter au body
+        document.body.appendChild(endButtonContainer);
+      }
     } else {
-      console.error("Erreur lors de la suppression des perdants du tournoi.");
+      // Si le conteneur existe déjà, le rendre visible
+      endButtonContainer.classList.remove('hidden');
     }
-  } 
+    
+    // Afficher un message indiquant le gagnant
+    const winnerName = winner.username || winner.alias || 'Joueur inconnu';
+    alert(`Félicitations! ${winnerName} a remporté le tournoi!`);
+  }
 }
 
 export { TournamentParticipant, TournamentMatch, TournamentLaunchAPI, TournamentLaunch };

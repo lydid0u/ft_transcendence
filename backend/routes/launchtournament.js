@@ -35,6 +35,7 @@ async function tournamentLaunchRoute(fastify, options)
             await fastify.dbMatchData.createMatch(match, user_one, user_two);
             return reply.send({ message: 'Match results sent successfully' });
         } catch (error) {
+            console.error("Error sending match results:", error.message);
             return reply.status(400).send({ error: 'Bad Request' });
         }
     });
@@ -63,7 +64,7 @@ async function tournamentLaunchRoute(fastify, options)
             if (winner) {
                 return reply.send({ winner });
             } else {
-                return reply.status(404).send({ error: 'No winner found for this tournament' });
+                return reply.status(200).send({ message: 'No winner found for this tournament' });
             }
         } catch (error) {
             return reply.status(450).send({ error: 'Bad Request' });

@@ -34,7 +34,7 @@ async function MatchData(fastify, options)
             
             // Maintenant participants est un tableau, donc .length fonctionnera
             if (participants.length == 4)
-                return ({tournamentId : tournamentId, player_1_name: participants[2].username || participants[2].alias, player_2_name: participants[3].username || participants[3].alias});
+                return ({tournamentId : tournamentId, player_1_name: participants[0].username || participants[0].alias, player_2_name: participants[1].username || participants[1].alias});
             else if (participants.length == 3)
                 return ({tournamentId : tournamentId, player_1_name: participants[1].username || participants[1].alias, player_2_name: participants[2].username || participants[2].alias});
             else if (participants.length == 2)
@@ -117,15 +117,19 @@ async function MatchData(fastify, options)
         async findWinnerOfTournament(tournament_id)
         {
             // compter le nombre de row et prend le nom du seul participant restant
+            console.log("Finding winner for tournament ID:", tournament_id);
             const count = await fastify.db.connection.get('SELECT COUNT(*) as count FROM tournament_participants WHERE tournament_id = ?', tournament_id);
-            if (count.count !== 1){
+            console.log("Nombre de participants restants:", count);
+            if (count.count !== 2){
                 return null;
             }
             const winner = await fastify.db.connection.get('SELECT * FROM tournament_participants WHERE tournament_id = ?', tournament_id);
+            console.log("Winner found:", winner);
             if (!winner) {
                 console.error(`No winner found for tournament ID: ${tournament_id}`);
                 return null;
             }
+            console.log("Winner found:", winner);
             return winner.username || winner.alias;
         }
     };

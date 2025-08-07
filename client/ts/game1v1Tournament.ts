@@ -109,6 +109,69 @@ async function handleNextGame(event) {
     }
 }
 
+// Fonction pour afficher le bouton "Fin du tournoi"
+function showTournamentEndButton() {
+    // Cacher le bouton "Prochain match" s'il est visible
+    const nextGameContainer = document.getElementById('next-game-container');
+    if (nextGameContainer) {
+        nextGameContainer.classList.add('hidden');
+    }
+    
+    // Trouver ou créer le conteneur pour le bouton "Fin du tournoi"
+    let endButtonContainer = document.getElementById('tournament-end-container');
+    
+    if (!endButtonContainer) {
+        // Créer le conteneur s'il n'existe pas
+        endButtonContainer = document.createElement('div');
+        endButtonContainer.id = 'tournament-end-container';
+        endButtonContainer.className = 'mt-6 flex justify-center';
+        
+        // Créer le bouton
+        const endButton = document.createElement('button');
+        endButton.id = 'tournament-end-button';
+        endButton.className = 'px-6 py-3 bg-[#ff5500] text-white font-bold rounded-lg hover:bg-[#ff7700] transition-colors shadow-lg';
+        endButton.style.textShadow = 'none';
+        endButton.textContent = 'Fin du tournoi';
+        
+        // Ajouter un gestionnaire d'événements au bouton
+        endButton.addEventListener('click', handleTournamentEnd);
+        
+        // Ajouter le bouton au conteneur
+        endButtonContainer.appendChild(endButton);
+        
+        // Ajouter le conteneur à la page
+        const gameContent = document.querySelector('.page-content');
+        if (gameContent) {
+            gameContent.appendChild(endButtonContainer);
+        } else {
+            // Si .page-content n'existe pas, ajouter au body
+            document.body.appendChild(endButtonContainer);
+        }
+    } else {
+        // Si le conteneur existe déjà, le rendre visible
+        endButtonContainer.classList.remove('hidden');
+    }
+    
+    // Afficher un message de félicitations
+    setTimeout(() => {
+        alert("Félicitations! Le tournoi est terminé!");
+    }, 500);
+}
+
+// Fonction qui gère le clic sur "Fin du tournoi"
+function handleTournamentEnd(event) {
+    if (event) event.preventDefault();
+    
+    console.log("Bouton Fin du tournoi cliqué!");
+    
+    // Rediriger vers la page d'accueil du tournoi
+    if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
+        window.SPA.navigateTo('/tournoi');
+    } else {
+        window.location.href = '/tournoi';
+    }
+}
+
 export class Game1v1
 {
     private gameCanvas: HTMLCanvasElement;
@@ -298,12 +361,17 @@ async function handleMatchEnd(winnerNumber: number, player1Name: string, player2
             const winner = await api.findWinnerOfTournament(matchResult);
             if (winner) {
                 console.log("Vainqueur du tournoi trouvé:", winner);
-                SPA.navigateTo('/home');
+                // Au lieu de rediriger directement, afficher le bouton "Fin du tournoi"
+                // delete tournament
+
+                const deleted = await api.deleteTournament(matchResult.tournament_id);
+                showTournamentEndButton();
+                return; // Ne pas afficher le bouton "Prochain match" si le tournoi est terminé
             }
             await tournament.deleteLosers(matchResult);
         }
         
-        // Afficher le bouton "Prochain match"
+        // Afficher le bouton "Prochain match" seulement si le tournoi n'est pas terminé
         const nextGameContainer = document.getElementById('next-game-container');
         if (nextGameContainer) {
             nextGameContainer.classList.remove('hidden');
@@ -460,6 +528,14 @@ class Ball extends Entity
 
 // Rendre disponible globalement
 window.startTournamentFlow = startTournamentFlow;
+
+// Déclarer des fonctions supplémentaires sur l'objet Window si nécessaire
+declare global {
+    interface Window {
+        startTournamentFlow: typeof startTournamentFlow;
+        SPA: any;
+    }
+}
 
 // Ajouter l'écouteur d'événements au chargement du document
 document.addEventListener('DOMContentLoaded', () => {
