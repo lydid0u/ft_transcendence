@@ -73,6 +73,7 @@ const SPA = {
 
     // Update the login button text to show current page
     const loginBtn = document.getElementById('nav-login-btn');
+    
     const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
 
     // Use the same authentication check as in loadRoute
@@ -84,31 +85,15 @@ const SPA = {
     console.log('Navbar auth state:', { isAuthenticated, hasValidToken, isLoggedIn });
 
     if (loginBtn) {
-      // Get page title based on current route
-      let pageTitle = '';
-      if (route in this.routes) {
-        pageTitle = this.routes[route].title;
-      }
-
-      // Only show login/profile on the landing page or if no page title is available
-      if (isLanding || !pageTitle) {
-        loginBtn.textContent = isLoggedIn ? 'Profile' : 'Login';
-        loginBtn.onclick = () => {
-          this.navigateTo(isLoggedIn ? '/dashboard' : '/login');
-        };
-      } else {
-        // Show current page title
-        loginBtn.textContent = pageTitle;
-        loginBtn.onclick = null; // Remove click handler when showing page name
-      }
-
-      // Show/hide dropdown toggle based on login status
-      if (profileDropdownToggle) {
-        console.log('Setting profile dropdown visibility:', isLoggedIn ? 'visible' : 'hidden');
-        profileDropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
-      }
-      content.style.cssText = 'position: static; margin: 0; max-width: none; background: transparent; box-shadow: none; border-radius: 0; min-height: 100vh; padding: 0;';
+      this.updateNavLoginBtn(route);
     }
+          // Show/hide dropdown toggle based on login status
+    if (profileDropdownToggle) {
+      console.log('Setting profile dropdown visibility:', isLoggedIn ? 'visible' : 'hidden');
+      profileDropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
+    }
+    else
+      content.style.cssText = 'position: static; margin: 0; max-width: none; background: transparent; box-shadow: none; border-radius: 0; min-height: 100vh; padding: 0;';
 
     if (content) {
       if (!this.SPAattribute.contentParent) {
@@ -116,6 +101,36 @@ const SPA = {
       }
     }
   },
+
+  // Ajoute une méthode pour mettre à jour dynamiquement le texte du bouton nav-login-btn
+  updateNavLoginBtn: function(route?: string): void {
+    const loginBtn = document.getElementById('nav-login-btn');
+    if (!loginBtn) return;
+    const currentRoute = route || window.location.pathname;
+    const isLanding = currentRoute === '/';
+    let pageTitle = '';
+    if (currentRoute in this.routes) {
+      pageTitle = this.routes[currentRoute].title;
+    }
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const hasValidToken = localStorage.getItem('jwtToken') !== null;
+    const isLoggedIn = isAuthenticated && hasValidToken;
+    if (isLanding || !pageTitle) {
+      loginBtn.setAttribute('data-i18n', isLoggedIn ? 'common.profile' : 'common.login');
+      loginBtn.onclick = () => {
+        this.navigateTo(isLoggedIn ? '/home' : '/login');
+      };
+    } else {
+      loginBtn.setAttribute('data-i18n', pageTitle);
+      loginBtn.onclick = null;
+    }
+    // Laisse la fonction de traduction mettre à jour le texte
+    if (window.i18n && typeof window.i18n.initializePageTranslations === 'function') {
+      window.i18n.initializePageTranslations();
+    }
+  },
+
+
 
   routes: {
     '/': {
@@ -168,15 +183,6 @@ const SPA = {
             });
           }
         }, 100);
-      }
-    },
-
-
-    '/dashboard': {
-      title: 'home.dashboard',
-      content: 'pages/dashboard.html',
-      routeScript: function(): void {
-        getUserDataFromBackend();
       }
     },
 
@@ -283,18 +289,10 @@ const SPA = {
     },
 
     '/friends': {
-      title: 'friends',
+      title: 'common.friends',
       content: 'pages/friends.html',
       routeScript: function(): void {
         displayFriendsList();
-      }
-    },
-
-    '/pong': {
-      title: 'Pong',
-      content: 'pages/pong.html',
-      routeScript: function(): void {
-        changePassword();
       }
     },
 
@@ -356,49 +354,49 @@ const SPA = {
 
 
 
-	'/gameAI': {
-			title: 'Pong AI Game',
-			content: 'pages/gameAI.html',
-			routeScript: function ()
-			{
-				function tryInitGameAI() {
-					const canvas = document.getElementById('game-canvas');
-					if (!canvas)
-					{
-						console.error('Game-canvas not found');
-						setTimeout(tryInitGameAI, 50);
-						return;
-					}
-					if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
-					{
-						SPA.SPAattribute.currentGameInstance.destroy();
-						console.log("Game instance destroyed");
-					}
-					try
-					{
-						let difficulty = localStorage.getItem('aiDifficulty') || 'EASY';
-						let diffEnum = 1;
-						if (difficulty === 'MEDIUM')
-							diffEnum = 2;
-						else if (difficulty === 'HARD')
-							diffEnum = 3;
-						const game = new Game(diffEnum);
-						SPA.SPAattribute.currentGameInstance = game;
-						if (SPA.SPAattribute.currentGameInstance === null)
-						{
-							throw new Error("current game didn't load");
-							return;
-						}
-						requestAnimationFrame(() => SPA.SPAattribute.currentGameInstance.gameLoop());
-					}
-					catch (e)
-					{
-						console.error('Game init failed:', e);
-					}
-				}
-				tryInitGameAI();
-			}
-		},
+  '/gameAI': {
+      title: 'Pong AI Game',
+      content: 'pages/gameAI.html',
+      routeScript: function ()
+      {
+        function tryInitGameAI() {
+          const canvas = document.getElementById('game-canvas');
+          if (!canvas)
+          {
+            console.error('Game-canvas not found');
+            setTimeout(tryInitGameAI, 50);
+            return;
+          }
+          if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
+          {
+            SPA.SPAattribute.currentGameInstance.destroy();
+            console.log("Game instance destroyed");
+          }
+          try
+          {
+            let difficulty = localStorage.getItem('aiDifficulty') || 'EASY';
+            let diffEnum = 1;
+            if (difficulty === 'MEDIUM')
+              diffEnum = 2;
+            else if (difficulty === 'HARD')
+              diffEnum = 3;
+            const game = new Game(diffEnum);
+            SPA.SPAattribute.currentGameInstance = game;
+            if (SPA.SPAattribute.currentGameInstance === null)
+            {
+              throw new Error("current game didn't load");
+              return;
+            }
+            requestAnimationFrame(() => SPA.SPAattribute.currentGameInstance.gameLoop());
+          }
+          catch (e)
+          {
+            console.error('Game init failed:', e);
+          }
+        }
+        tryInitGameAI();
+      }
+    },
 
     '/game1v1Tournament': {
   title: 'Pong 1v1 Tournament',
@@ -419,43 +417,43 @@ const SPA = {
   }
 },
 
-	'/1v1': {
-			title: 'Pong 1v1',
-			content: 'pages/game1v1.html',
-			routeScript: function ()
-			{
-				function tryInitGame1v1() {
-					const canvas = document.getElementById('game-canvas');
-					const p1Score = document.getElementById('player1-score');
-					const p2Score = document.getElementById('player2-score');
-					if (!canvas || !p1Score || !p2Score) {
-						setTimeout(tryInitGame1v1, 50);
-						return;
-					}
-					if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
-					{
-						SPA.SPAattribute.currentGameInstance.destroy();
-						console.log("Game instance destroyed");
-					}
-					try
-					{
-						let difficulty = localStorage.getItem('Difficulty') || 'EASY';
-						let diffEnum = 1;
-						if (difficulty === 'MEDIUM')
-							diffEnum = 2;
-						else if (difficulty === 'HARD')
-							diffEnum = 3;
-						Game1v1.startNewGame(diffEnum);
-						SPA.SPAattribute.currentGameInstance = Game1v1['currentInstance'];
-					}
-					catch (e)
-					{
-						console.error('Game init failed:', e);
-					}
-				}
-				tryInitGame1v1();
-			}
-		},
+  '/1v1': {
+      title: 'Pong 1v1',
+      content: 'pages/game1v1.html',
+      routeScript: function ()
+      {
+        function tryInitGame1v1() {
+          const canvas = document.getElementById('game-canvas');
+          const p1Score = document.getElementById('player1-score');
+          const p2Score = document.getElementById('player2-score');
+          if (!canvas || !p1Score || !p2Score) {
+            setTimeout(tryInitGame1v1, 50);
+            return;
+          }
+          if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
+          {
+            SPA.SPAattribute.currentGameInstance.destroy();
+            console.log("Game instance destroyed");
+          }
+          try
+          {
+            let difficulty = localStorage.getItem('Difficulty') || 'EASY';
+            let diffEnum = 1;
+            if (difficulty === 'MEDIUM')
+              diffEnum = 2;
+            else if (difficulty === 'HARD')
+              diffEnum = 3;
+            Game1v1.startNewGame(diffEnum);
+            SPA.SPAattribute.currentGameInstance = Game1v1['currentInstance'];
+          }
+          catch (e)
+          {
+            console.error('Game init failed:', e);
+          }
+        }
+        tryInitGame1v1();
+      }
+    },
 
     '/ai-landing': {
       title: 'Choix de la difficulté',
@@ -717,12 +715,23 @@ document.addEventListener('DOMContentLoaded', function(): void {
     // Initialize translations
     window.i18n.initializePageTranslations();
 
+    // Met à jour le bouton après l'init des traductions
+    setTimeout(() => {
+      SPA.updateNavLoginBtn(window.location.pathname);
+    }, 0);
+
     // Listen for language changes to update content
     window.addEventListener('languageChanged', function(event: CustomEvent) {
       console.log('Language changed to:', event.detail.language);
       // Update document language attribute
       document.documentElement.lang = event.detail.language;
+      SPA.updateNavLoginBtn(window.location.pathname);
     } as EventListener);
+
+    // Écoute l'événement custom qui doit être dispatché par i18n quand les traductions sont prêtes
+    window.addEventListener('translationsReady', function() {
+      SPA.updateNavLoginBtn(window.location.pathname);
+    });
   }
 });
 

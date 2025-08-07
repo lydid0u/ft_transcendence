@@ -1,29 +1,29 @@
 <div class="max-w-md mx-auto p-6">
-    <h1 class="text-4xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-6 text-center"  data-i18n="login.title">
+    <h1 class="text-5xl font-extrabold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-8 text-center drop-shadow-lg"  data-i18n="login.title">
         Connexion
     </h1>
 
-    <div class="bg-white rounded-xl p-8 shadow-lg">
-        <div class="text-center mb-6">
-            <p class="text-gray-700 mt-2" data-i18n="login.access_account">Accédez à votre compte</p>
+    <div class="bg-white rounded-2xl p-10 shadow-2xl">
+        <div class="text-center mb-8">
+            <p class="text-gray-700 mt-2 text-lg font-medium" data-i18n="login.access_account">Accédez à votre compte</p>
         </div>
 
         <div id="loginWithAccountSection">
-            <form id="login-form" class="space-y-4">
+            <form id="login-form" class="space-y-6">
                 <div>
-                    <input type="email" id="email" placeholder="Email" required class="input-field" data-i18n-placeholder="login.email">
+                    <input type="email" id="email" placeholder="Email" required class="input-field border-2 border-pink-400 rounded-lg focus:border-pink-500 focus:ring-2 focus:ring-pink-200 w-full px-4 py-3 text-lg" data-i18n-placeholder="login.email">
                 </div>
                 <div>
-                    <input type="password" id="password" placeholder="Password" required class="input-field" data-i18n-placeholder="login.password">
+                    <input type="password" id="password" placeholder="Password" required class="input-field border-2 border-pink-400 rounded-lg focus:border-pink-500 focus:ring-2 focus:ring-pink-200 w-full px-4 py-3 text-lg" data-i18n-placeholder="login.password">
                 </div>
-                <button type="submit" class="btn-primary w-full" data-i18n="common.login">Login</button>
+                <button type="submit" class="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xl font-bold shadow-md hover:from-pink-600 hover:to-purple-700 transition-all duration-200 border-none outline-none focus:ring-4 focus:ring-pink-200" data-i18n="common.login">Login</button>
             </form>
-            <div id="message" class="mt-4 text-center text-red-500"></div>
-            <p class="mt-4 text-sm text-center text-gray-600">
-                <span data-i18n="login.forgot_password">Forgot password?</span> <a href="/reset-password" data-route="/reset-password" class="font-medium text-purple-dark hover:text-purple-500 transition-colors" data-i18n="login.reset">Reset</a>
+            <div id="message" class="mt-4 text-center text-red-500 text-base"></div>
+            <p class="mt-6 text-base text-center text-gray-600">
+                <span data-i18n="login.forgot_password">Forgot password?</span> <a href="/reset-password" data-route="/reset-password" class="font-semibold text-purple-700 hover:text-purple-500 transition-colors underline" data-i18n="login.reset">Reset</a>
             </p>
-            <p class="mt-2 text-sm text-center text-gray-600">
-                <span data-i18n="login.no_account">Don't have an account?</span> <a href="/register" data-route="/register" class="font-medium text-purple-dark hover:text-purple-500 transition-colors" data-i18n="login.sign_up">Sign up</a>
+            <p class="mt-2 text-base text-center text-gray-600">
+                <span data-i18n="login.no_account">Don't have an account?</span> <a href="/register" data-route="/register" class="font-semibold text-purple-700 hover:text-purple-500 transition-colors underline" data-i18n="login.sign_up">Sign up</a>
             </p>
         </div>
 

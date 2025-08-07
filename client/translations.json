@@ -14,6 +14,11 @@
       "settings": "Settings",
       "loading": "Loading..."
     },
+        "reset": {
+      "title": "Reset Password",
+      "email_placeholder": "Your email",
+      "send": "Send code"
+    },
     "landing": {
       "title": "FT_TRANSCENDENCE",
       "welcome": "Welcome to the ultimate Pong experience!",
@@ -63,11 +68,16 @@
       "dashboard": "Dashboard"
     },
     "friends": {
-      "all_friends": "My Friends",
-      "add_friend": "Add Friend",
-      "loading": "Loading friends...",
-      "empty_state": "You don't have any friends yet. Add some!"
-    },
+  "title": "Friends List",
+  "manage_friends": "Manage your friends list and add new contacts",
+  "search_placeholder": "Search for a username...",
+  "all_friends": "My Friends",
+  "add_friend": "Add Friend",
+  "loading": "Loading friends...",
+  "empty_state": "You don't have any friends yet. Add some!",
+  "noFriends": "No friends found",
+  "start_adding": "Start adding friends to see your list here."
+},
     "profile": {
       "greeting": "Hello",
       "two_factor": "Two-Factor Authentication",
@@ -91,7 +101,12 @@
     "otp": {
       "title": "Two-Factor Authentication",
       "enter_code": "Verification code",
-      "verify": "Verify"
+      "verify": "Verify",
+      "label": "Enter the verification code sent to your email",
+      "submit": "Submit",
+      "message": "Please enter the verification code to continue.",
+      "error": "Incorrect verification code. Please try again.",
+      "placeholder": "Verification Code"
     },
     "about": {
       "title": "Who are we?",
@@ -118,8 +133,32 @@
       "snake": "Snake",
       "victory": "Victory",
       "defeat": "Defeat"
-    }
+    },
+    
+    "tournament": {
+  "title": "Tournaments",
+  "step1_title": "Create or join",
+  "step1_desc": "Create your tournament or join an existing one",
+  "step2_title": "Invite friends",
+  "step2_desc": "Add participants to complete your tournament",
+  "step3_title": "Start competing",
+  "step3_desc": "Launch the tournament and may the best win",
+  "active_tournaments": "Active Tournaments",
+"create_first": "Create your first tournament",
+"no_tournaments": "No tournaments available",
+  "create": "Create tournament",
+  "creating": "Creating...",
+  "create_success": "Tournament created successfully",
+  "create_error": "Error creating tournament",
+  "join": "Join",
+  "join_success": "Tournament joined successfully",
+  "join_error": "Error joining tournament",
+  "ready_to_compete": "Ready to compete"
+}
+
   },
+
+
   "fr": {
     "common": {
       "home": "Accueil",
@@ -145,6 +184,11 @@
       "smooth_gameplay": "Profitez d'un gameplay fluide avec notre technologie multijoueur en temps réel.",
       "track_progress": "Suivre la progression",
       "improve_skills": "Gardez une trace de vos statistiques et améliorez vos compétences Pong au fil du temps."
+    },    
+    "reset": {
+      "title": "Réinitialiser le mot de passe",
+      "email_placeholder": "Votre email",
+      "send": "Envoyer le code"
     },
     "login": {
       "title": "Connexion",
@@ -184,11 +228,17 @@
       "dashboard": "Tableau de bord"
     },
     "friends": {
-      "all_friends": "Mes amis",
-      "add_friend": "Ajouter",
-      "loading": "Chargement des amis...",
-      "empty_state": "Vous n'avez pas encore d'amis. Ajoutez-en !"
-    },
+  "title": "Liste d'amis",
+  "manage_friends": "Gérez votre liste d'amis et ajoutez de nouveaux contacts",
+  "search_placeholder": "Rechercher un pseudo...",
+  "all_friends": "Mes amis",
+  "add_friend": "Ajouter",
+  "loading": "Chargement des amis...",
+  "empty_state": "Vous n'avez pas encore d'amis. Ajoutez-en !",
+  "noFriends": "Aucun ami trouvé",
+  "start_adding": "Commencez par ajouter des amis pour voir votre liste ici."
+},
+
     "profile": {
       "greeting": "Bonjour",
       "two_factor": "Authentification à deux facteurs",
@@ -212,7 +262,12 @@
     "otp": {
       "title": "Double Authentification",
       "enter_code": "Code de vérification",
-      "verify": "Valider"
+      "verify": "Valider",
+      "label": "Entrez le code de vérification envoyé à votre email",
+      "submit": "Envoyer",
+      "message": "Veuillez entrer le code de vérification pour continuer.",
+      "error": "Code de vérification incorrect. Veuillez réessayer.",
+      "placeholder": "Code de vérification"
     },
     "about": {
       "title": "Qui sommes-nous ?",
@@ -222,6 +277,27 @@
     "errors": {
       "noUserFound": "Aucun utilisateur trouvé"
     },
+    "tournament": {
+  "title": "Tournois",
+  "step1_title": "Créer ou rejoindre",
+  "step1_desc": "Créez votre tournoi ou rejoignez un existant",
+  "step2_title": "Inviter des amis",
+  "step2_desc": "Ajoutez des participants pour compléter votre tournoi",
+  "step3_title": "Commencer la compétition",
+  "step3_desc": "Lancez le tournoi et que le meilleur gagne",
+  "active_tournaments": "Tournois actifs",
+"create_first": "Créez votre premier tournoi",
+"no_tournaments": "Aucun tournoi disponible",
+  "create": "Créer un tournoi",
+  "creating": "Création...",
+  "create_success": "Tournoi créé avec succès",
+  "create_error": "Erreur lors de la création du tournoi",
+  "join": "Rejoindre",
+  "join_success": "Tournoi rejoint avec succès",
+  "join_error": "Erreur pour rejoindre le tournoi",
+  "ready_to_compete": "Prêt à concourir"
+},
+
     "matchHistory": {
       "title": "Historique des Matchs",
       "subtitle": "Consultez vos performances et analysez vos parties",
@@ -241,6 +317,10 @@
       "defeat": "Défaite"
     }
   },
+
+
+
+
   "es": {
     "common": {
       "home": "Inicio",
@@ -304,12 +384,42 @@
       "join_tournament": "Unirse al torneo",
       "dashboard": "Panel"
     },
-    "friends": {
-      "all_friends": "Mis amigos",
-      "add_friend": "Añadir",
-      "loading": "Cargando amigos...",
-      "empty_state": "Aún no tienes amigos. ¡Añade algunos!"
+        "reset": {
+      "title": "Restablecer la contraseña",
+      "email_placeholder": "Tu correo electrónico",
+      "send": "Enviar código"
     },
+    "friends": {
+  "title": "Lista de amigos",
+  "manage_friends": "Gestiona tu lista de amigos y añade nuevos contactos",
+  "search_placeholder": "Buscar un usuario...",
+  "all_friends": "Mis amigos",
+  "add_friend": "Añadir",
+  "loading": "Cargando amigos...",
+  "empty_state": "Aún no tienes amigos. ¡Añade algunos!",
+  "noFriends": "No se encontraron amigos",
+  "start_adding": "Comienza a añadir amigos para ver tu lista aquí."
+},
+    "tournament": {
+  "title": "Torneos",
+  "step1_title": "Crear o unirse",
+  "step1_desc": "Crea tu torneo o únete a uno existente",
+  "step2_title": "Invitar amigos",
+  "step2_desc": "Añade participantes para completar tu torneo",
+  "step3_title": "Comenzar a competir",
+  "step3_desc": "Inicia el torneo y que gane el mejor",
+  "active_tournaments": "Torneos activos",
+"create_first": "Crea tu primer torneo",
+"no_tournaments": "No hay torneos disponibles",
+  "create": "Crear torneo",
+  "creating": "Creando...",
+  "create_success": "Torneo creado con éxito",
+  "create_error": "Error al crear el torneo",
+  "join": "Unirse",
+  "join_success": "Te has unido al torneo con éxito",
+  "join_error": "Error al unirse al torneo",
+  "ready_to_compete": "Listo para competir"
+},
     "profile": {
       "greeting": "Hola",
       "two_factor": "Autenticación de dos factores",
@@ -333,7 +443,12 @@
     "otp": {
       "title": "Autenticación de dos factores",
       "enter_code": "Código de verificación",
-      "verify": "Verificar"
+      "verify": "Verificar",
+      "label": "Introduce el código de verificación enviado a tu correo electrónico",
+      "submit": "Enviar",
+      "message": "Por favor, introduce el código de verificación para continuar.",
+      "error": "Código de verificación incorrecto. Por favor, inténtalo de nuevo.",
+      "placeholder": "Código de verificación"
     },
     "about": {
       "title": "¿Quiénes somos?",
