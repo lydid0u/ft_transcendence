@@ -14,6 +14,11 @@
       "settings": "Settings",
       "loading": "Loading..."
     },
+        "reset": {
+      "title": "Reset Password",
+      "email_placeholder": "Your email",
+      "send": "Send code"
+    },
     "landing": {
       "title": "FT_TRANSCENDENCE",
       "welcome": "Welcome to the ultimate Pong experience!",
@@ -174,6 +179,11 @@
       "smooth_gameplay": "Profitez d'un gameplay fluide avec notre technologie multijoueur en temps réel.",
       "track_progress": "Suivre la progression",
       "improve_skills": "Gardez une trace de vos statistiques et améliorez vos compétences Pong au fil du temps."
+    },    
+    "reset": {
+      "title": "Réinitialiser le mot de passe",
+      "email_placeholder": "Votre email",
+      "send": "Envoyer le code"
     },
     "login": {
       "title": "Connexion",
@@ -363,6 +373,11 @@
       "participate": "Participa en torneos y sube en la clasificación",
       "join_tournament": "Unirse al torneo",
       "dashboard": "Panel"
+    },
+        "reset": {
+      "title": "Restablecer la contraseña",
+      "email_placeholder": "Tu correo electrónico",
+      "send": "Enviar código"
     },
     "friends": {
   "title": "Lista de amigos",

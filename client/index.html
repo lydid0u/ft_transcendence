@@ -190,16 +190,12 @@
                     if (route && typeof SPA !== 'undefined' && SPA.navigateTo) {
                         // Handle logout option
                         if (route === '/') {
-                            if (confirm('Are you sure you want to log out?')) {
-                                // Use the signOut function from SPA
-                                if (typeof SPA.signOut === 'function') {
-                                    SPA.signOut();
-                                    console.log('User logged out using SPA.signOut()');
-                                } else {
-                                    console.error('SPA.signOut function not found');
-                                }
-                                SPA.navigateTo(route);
+                            if (typeof SPA.signOut === 'function') {
+                                SPA.signOut();
+                                console.log('User logged out using SPA.signOut()');
                             }
+                        }
+                        SPA.navigateTo(route);
                         } else {
                             SPA.navigateTo(route);
                         }
