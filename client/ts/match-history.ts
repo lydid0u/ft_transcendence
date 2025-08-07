@@ -1,6 +1,6 @@
 // Interface simplifiée pour un match
 interface Match {
-  date: string
+  played_at: string
   player1_name?: string
   player2_name?: string
   score_player1: number
@@ -60,10 +60,10 @@ class MatchHistoryAPI {
   }
 
   // Récupérer les statistiques globales
-  async getMatchHistory(gameType: string = 'pong'): Promise<ApiMatchStats> {
+  async getMatchHistory(): Promise<ApiMatchStats> {
     try {
       // Transmettre le type comme gameType ET game_mode pour compatibilité
-      const data = await this.fetchAPI<ApiMatchStats>(`/history-details?gameType=${gameType}&game_mode=${gameType}`);
+      const data = await this.fetchAPI<ApiMatchStats>(`/history-details`);
       
       // Vérifier la structure des données
       if (!data) {
@@ -101,7 +101,7 @@ class MatchHistoryApp {
   // Données
   private matchStats: MatchStats | null = null
   private api: MatchHistoryAPI
-  private currentGameType: string = 'pong' // Par défaut: pong classic
+  // private currentGameType: string = 'pong' // Par défaut: pong classic
 
   // Éléments DOM
   private gamesPlayed: HTMLElement | null
@@ -173,7 +173,7 @@ class MatchHistoryApp {
   private changeGameType(gameType: string): void {
     
     // Mise à jour du type de jeu courant
-    this.currentGameType = gameType;
+    // this.currentGameType = gameType;
     
     // Mise à jour visuelle des boutons - approche plus robuste avec classList
     if (this.btnGamePong) {
@@ -227,10 +227,10 @@ class MatchHistoryApp {
       }
       
       // 1. Récupération des statistiques avec le type de jeu
-      const apiStats = await this.api.getMatchHistory(this.currentGameType);
+      const apiStats = await this.api.getMatchHistory();
       
       // 2. Récupération des matchs avec le type de jeu
-      const matchHistory = await this.api.getHistoryDetails(this.currentGameType);
+      const matchHistory = await this.api.getHistoryDetails();
       
       // 3. Préparation des données
       this.matchStats = {
@@ -326,8 +326,14 @@ class MatchHistoryApp {
     
     // Générer le HTML
     this.matchesList.innerHTML = recentMatches.map(match => {
+      console.log("HERE JE CHECHE CA : ", match);
       // Déterminer si le joueur a gagné
-      const isWin = match.winner_id === match.player1_id;
+      let isWin = null;
+      if(match.winner_id)
+      {
+        isWin = match.winner_id;
+      }
+      console.log("Match winner ID:", match.winner_id, "Player 1 ID:", match.player1_id, "Is win:", isWin);
       const rowClass = isWin ? 'bg-blue-50' : 'bg-red-50';
       const resultClass = isWin ? 'text-blue-600' : 'text-red-600';
       // Use i18n translations if available
@@ -341,7 +347,7 @@ class MatchHistoryApp {
       
       return `
         <tr class="${rowClass}">
-          <td class="px-4 py-3 text-sm">${match.date}</td>
+          <td class="px-4 py-3 text-sm">${match.played_at}</td>
           <td class="px-4 py-3 text-sm font-medium">${formattedGameMode}</td>
           <td class="px-4 py-3 text-sm">${match.score_player1} - ${match.score_player2}</td>
           <td class="px-4 py-3">

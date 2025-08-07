@@ -54,16 +54,19 @@ async function MatchData(fastify, options)
         async createMatch(match, first_user, second_user)
         {
             // console.log("Creating match with players:", match);
+            console.log("IN THE FUNCTION CREATE MATCH", match);
             const game_mode = 'tournament';
             const user_one = first_user;
             const user_two = second_user;
             let winner_id = null;
-            if (match.score_player1 > match.score_player2)
+            if (match.player1_score > match.player2_score)
             {
+                console.log("Player 1 wins");
                 winner_id = user_one.id;
             }
-            else if (match.score_player1 < match.score_player2)
+            else if (match.player1_score < match.player2_score)
             {
+                console.log("Player 2 wins");
                 winner_id = user_two.id;
             }
             // console.log(user_two.id);
@@ -71,14 +74,14 @@ async function MatchData(fastify, options)
             {
                 await fastify.db.connection.run(
                     `INSERT INTO matches (player1_id, player1_name, player2_id, player2_name, winner_id, score_player1, score_player2, game_mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
-                    [user_one.id, match.player1_name, user_two.id, match.player2_name, winner_id, match.score_player1, match.score_player2, game_mode]
+                    [user_one.id, match.player1_name, user_two.id, match.player2_name, winner_id, match.player1_score, match.player2_score, game_mode]
                 );
             }
             else if (user_one && !user_two) 
             {
                 await fastify.db.connection.run(
                     `INSERT INTO matches (player1_id, player1_name, winner_id, score_player1, score_player2, game_mode) VALUES (?, ?, ?, ?, ?, ?)`, 
-                    [user_one.id, match.player1_name, winner_id, match.score_player1, match.score_player2, game_mode]
+                    [user_one.id, match.player1_name, winner_id, match.player1_score, match.player2_score, game_mode]
                 );
             }
             else if (!user_one && user_two)
@@ -97,15 +100,12 @@ async function MatchData(fastify, options)
         async deleteLosers(match)
         {
             let loser = null;
-            console.log("JE SUIS LE MATCH", match);
             if (match.player1_score > match.player2_score)
                 loser = match.player2_name;
             else
                 loser = match.player1_name;
-            console.log('Deleting loser:', loser);
             const user = await fastify.db.connection.get('SELECT * FROM tournament_participants WHERE username = ? OR alias = ? AND tournament_id = ?', loser, loser, match.tournament_id);
             if (!user) {
-                console.error(`User ${loser} not found in tournament participants.`);
                 return false;
             }
             console.log('DELETING LOSER:', loser);
@@ -119,7 +119,6 @@ async function MatchData(fastify, options)
             // compter le nombre de row et prend le nom du seul participant restant
             console.log("Finding winner for tournament ID:", tournament_id);
             const count = await fastify.db.connection.get('SELECT COUNT(*) as count FROM tournament_participants WHERE tournament_id = ?', tournament_id);
-            console.log("Nombre de participants restants:", count);
             if (count.count !== 2){
                 return null;
             }
