@@ -180,6 +180,15 @@ async function tableMatches(fastify, options)
             if (!tournament) {
                 throw new Error('Tournament not found');
             }
+
+            const usernameExists = await fastify.db.connection.get(
+                `SELECT * FROM tournament_participants 
+                 WHERE tournament_id = ? AND (alias = ? OR username = ?);`, 
+                [tournamentId, username, username]
+            );
+            if (usernameExists) {
+                throw new Error('This account is already used in this tournament');
+            }
             
             // Vérifier si le tournoi est plein (maximum 4 participants)
             const participantCount = await fastify.db.connection.get(
