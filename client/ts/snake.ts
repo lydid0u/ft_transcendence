@@ -24,20 +24,34 @@ class Position {
 }
 
 // Food class
-class Food {
+class Food
+{
 	constructor(public position: Position) {}
 
-	draw(ctx: CanvasRenderingContext2D, gridSize: number): void {
+	draw(ctx: CanvasRenderingContext2D, gridSize: number): void
+	{
 		ctx.fillStyle = '#ff4757';
 		ctx.shadowColor = '#ff4757';
 		ctx.shadowBlur = 10;
+
 		ctx.fillRect(
 			this.position.x * gridSize,
 			this.position.y * gridSize,
 			gridSize - 2,
 			gridSize - 2
 		);
+
 		ctx.shadowBlur = 0;
+
+		// Black border
+		ctx.strokeStyle = '#000';
+		ctx.lineWidth = 1;
+		ctx.strokeRect(
+			this.position.x * gridSize,
+			this.position.y * gridSize,
+			gridSize - 2,
+			gridSize - 2
+		);
 	}
 }
 
@@ -118,6 +132,15 @@ class Snake {
 				gridSize - 2,
 				gridSize - 2
 			);
+			ctx.strokeStyle = '#000';
+			ctx.lineWidth = 1;
+			ctx.strokeRect(
+				segment.x * gridSize,
+				segment.y * gridSize,
+				gridSize - 2,
+				gridSize - 2
+			);
+
 			ctx.shadowBlur = 0;
 		});
 	}
@@ -249,24 +272,21 @@ export class SnakeGame {
 		}
 	}
 
-	private draw(): void {
+	private draw(): void
+	{
 		// Clear canvas
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-		// Draw grid
-		this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-		this.ctx.lineWidth = 1;
-		for (let i = 0; i <= this.gridWidth; i++) {
-			this.ctx.beginPath();
-			this.ctx.moveTo(i * this.gridSize, 0);
-			this.ctx.lineTo(i * this.gridSize, this.canvas.height);
-			this.ctx.stroke();
-		}
-		for (let i = 0; i <= this.gridHeight; i++) {
-			this.ctx.beginPath();
-			this.ctx.moveTo(0, i * this.gridSize);
-			this.ctx.lineTo(this.canvas.width, i * this.gridSize);
-			this.ctx.stroke();
+		// Draw grid cells with black outlines
+		for (let y = 0; y < this.gridHeight; y++) {
+			for (let x = 0; x < this.gridWidth; x++) {
+				this.ctx.fillStyle = '#000'; // fill each square black (optional background)
+				this.ctx.fillRect(x * this.gridSize, y * this.gridSize, this.gridSize, this.gridSize);
+
+				this.ctx.strokeStyle = '#444'; // black border
+				this.ctx.lineWidth = 1;
+				this.ctx.strokeRect(x * this.gridSize, y * this.gridSize, this.gridSize, this.gridSize);
+			}
 		}
 
 		// Draw food
@@ -275,6 +295,34 @@ export class SnakeGame {
 		// Draw snake
 		this.snake.draw(this.ctx, this.gridSize);
 	}
+
+
+	// private draw(): void {
+	// 	// Clear canvas
+	// 	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+	// 	// Draw grid
+	// 	this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+	// 	this.ctx.lineWidth = 1;
+	// 	for (let i = 0; i <= this.gridWidth; i++) {
+	// 		this.ctx.beginPath();
+	// 		this.ctx.moveTo(i * this.gridSize, 0);
+	// 		this.ctx.lineTo(i * this.gridSize, this.canvas.height);
+	// 		this.ctx.stroke();
+	// 	}
+	// 	for (let i = 0; i <= this.gridHeight; i++) {
+	// 		this.ctx.beginPath();
+	// 		this.ctx.moveTo(0, i * this.gridSize);
+	// 		this.ctx.lineTo(this.canvas.width, i * this.gridSize);
+	// 		this.ctx.stroke();
+	// 	}
+
+	// 	// Draw food
+	// 	this.food.draw(this.ctx, this.gridSize);
+
+	// 	// Draw snake
+	// 	this.snake.draw(this.ctx, this.gridSize);
+	// }
 
 	private updateScore(): void {
 		const scoreElement = document.getElementById('score');
@@ -297,7 +345,7 @@ export class SnakeGame {
 		this.showGameOverScreen();
 	}
 
-	private showGameOverScreen(): void {
+	showGameOverScreen(): void {
 		const gameOverDiv = document.createElement('div');
 		gameOverDiv.className = 'game-over';
 		gameOverDiv.innerHTML = `
@@ -324,9 +372,16 @@ export class SnakeGame {
 			setTimeout(() => this.gameLoop(), this.gameSpeed);
 		}
 	}
+
+	destroy(): void {
+		this.gameRunning = false;
+	}
+
 }
 
-// Initialize the game when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-	new SnakeGame();
-});
+let currentGame: SnakeGame | null = null;
+
+// // Initialize the game when DOM is loaded
+// document.addEventListener('DOMContentLoaded', () => {
+// 	currentGame = new SnakeGame();
+// });

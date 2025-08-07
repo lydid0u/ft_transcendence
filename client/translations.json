@@ -54,18 +54,20 @@
       "sign_in": "Sign in"
     },
     "home": {
-      "welcome": "Ready to Play?",
-      "start_playing": "Choose your game mode and start the challenge",
-      "play_ai": "Play Against AI",
-      "choose_difficulty": "Choose your difficulty level and improve your skills",
-      "play_now": "Play Now",
-      "local_match": "Local Match",
-      "challenge": "Challenge other player in a real-time pong match",
-      "find_opponent": "Find Opponent",
-      "tournament": "Tournament",
-      "participate": "Participate in tournaments and climb the leaderboard",
-      "join_tournament": "Join Tournament",
-      "dashboard": "Dashboard"
+      "welcome": "Prêt à jouer ?",
+      "start_playing": "Choisissez votre mode de jeu et commencez le défi",
+      "play_ai": "Jouer contre l'IA",
+      "choose_difficulty": "Choisissez votre niveau de difficulté et améliorez vos compétences",
+      "play_now": "Jouer maintenant",
+      "local_match": "Match local",
+	  "snake_match": "Jouez à Snake",
+      "challenge": "Défiez un autre joueur dans un match de pong en temps réel",
+      "snake_challenge": "Faites une partie de Snake pour atteindre un tout nouveau High Score ",
+      "find_opponent": "Trouver un adversaire",
+      "tournament": "Tournoi",
+      "participate": "Participez à des tournois et montez dans le classement",
+      "join_tournament": "Rejoindre un tournoi",
+      "dashboard": "Tableau de bord"
     },
     "friends": {
   "title": "Friends List",
