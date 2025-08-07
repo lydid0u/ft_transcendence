@@ -24,6 +24,15 @@
             }
         }
     </script>
+    <script>
+      // Met à jour dynamiquement le texte du bouton nav-login-btn lors d'un changement de langue
+      window.addEventListener('languageChanged', function() {
+        const loginBtn = document.getElementById('nav-login-btn');
+        if (loginBtn && window.SPA && typeof window.SPA.updateNavLoginBtn === 'function') {
+          window.SPA.updateNavLoginBtn();
+        }
+      });
+    </script>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-purple-200 via-purple-100 to-pink-200">
     <!-- Browser Window Container -->

@@ -271,7 +271,7 @@ async function register(): Promise<void> {
       }
 
       if (window.SPA && typeof window.SPA.navigateTo === 'function') {
-        window.SPA.navigateTo('/dashboard');
+        window.SPA.navigateTo('/home');
       }
     } catch (error: unknown) {
       if (messageDiv) {
