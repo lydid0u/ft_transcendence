@@ -193,10 +193,9 @@
                             if (typeof SPA.signOut === 'function') {
                                 SPA.signOut();
                                 console.log('User logged out using SPA.signOut()');
-                            } else {
-                                console.error('SPA.signOut function not found');
                             }
-                            SPA.navigateTo(route);
+                        }
+                        SPA.navigateTo(route);
                         } else {
                             SPA.navigateTo(route);
                         }
