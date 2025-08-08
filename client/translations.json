@@ -14,6 +14,11 @@
       "settings": "Settings",
       "loading": "Loading..."
     },
+        "reset": {
+      "title": "Reset Password",
+      "email_placeholder": "Your email",
+      "send": "Send code"
+    },
     "landing": {
       "title": "FT_TRANSCENDENCE",
       "welcome": "Welcome to the ultimate Pong experience!",
@@ -49,18 +54,20 @@
       "sign_in": "Sign in"
     },
     "home": {
-      "welcome": "Ready to Play?",
-      "start_playing": "Choose your game mode and start the challenge",
-      "play_ai": "Play Against AI",
-      "choose_difficulty": "Choose your difficulty level and improve your skills",
-      "play_now": "Play Now",
-      "local_match": "Local Match",
-      "challenge": "Challenge other player in a real-time pong match",
-      "find_opponent": "Find Opponent",
-      "tournament": "Tournament",
-      "participate": "Participate in tournaments and climb the leaderboard",
-      "join_tournament": "Join Tournament",
-      "dashboard": "Dashboard"
+      "welcome": "Prêt à jouer ?",
+      "start_playing": "Choisissez votre mode de jeu et commencez le défi",
+      "play_ai": "Jouer contre l'IA",
+      "choose_difficulty": "Choisissez votre niveau de difficulté et améliorez vos compétences",
+      "play_now": "Jouer maintenant",
+      "local_match": "Match local",
+	  "snake_match": "Jouez à Snake",
+      "challenge": "Défiez un autre joueur dans un match de pong en temps réel",
+      "snake_challenge": "Faites une partie de Snake pour atteindre un tout nouveau High Score ",
+      "find_opponent": "Trouver un adversaire",
+      "tournament": "Tournoi",
+      "participate": "Participez à des tournois et montez dans le classement",
+      "join_tournament": "Rejoindre un tournoi",
+      "dashboard": "Tableau de bord"
     },
     "friends": {
   "title": "Friends List",
@@ -96,7 +103,12 @@
     "otp": {
       "title": "Two-Factor Authentication",
       "enter_code": "Verification code",
-      "verify": "Verify"
+      "verify": "Verify",
+      "label": "Enter the verification code sent to your email",
+      "submit": "Submit",
+      "message": "Please enter the verification code to continue.",
+      "error": "Incorrect verification code. Please try again.",
+      "placeholder": "Verification Code"
     },
     "about": {
       "title": "Who are we?",
@@ -174,6 +186,11 @@
       "smooth_gameplay": "Profitez d'un gameplay fluide avec notre technologie multijoueur en temps réel.",
       "track_progress": "Suivre la progression",
       "improve_skills": "Gardez une trace de vos statistiques et améliorez vos compétences Pong au fil du temps."
+    },    
+    "reset": {
+      "title": "Réinitialiser le mot de passe",
+      "email_placeholder": "Votre email",
+      "send": "Envoyer le code"
     },
     "login": {
       "title": "Connexion",
@@ -247,7 +264,12 @@
     "otp": {
       "title": "Double Authentification",
       "enter_code": "Code de vérification",
-      "verify": "Valider"
+      "verify": "Valider",
+      "label": "Entrez le code de vérification envoyé à votre email",
+      "submit": "Envoyer",
+      "message": "Veuillez entrer le code de vérification pour continuer.",
+      "error": "Code de vérification incorrect. Veuillez réessayer.",
+      "placeholder": "Code de vérification"
     },
     "about": {
       "title": "Qui sommes-nous ?",
@@ -364,6 +386,11 @@
       "join_tournament": "Unirse al torneo",
       "dashboard": "Panel"
     },
+        "reset": {
+      "title": "Restablecer la contraseña",
+      "email_placeholder": "Tu correo electrónico",
+      "send": "Enviar código"
+    },
     "friends": {
   "title": "Lista de amigos",
   "manage_friends": "Gestiona tu lista de amigos y añade nuevos contactos",
@@ -418,7 +445,12 @@
     "otp": {
       "title": "Autenticación de dos factores",
       "enter_code": "Código de verificación",
-      "verify": "Verificar"
+      "verify": "Verificar",
+      "label": "Introduce el código de verificación enviado a tu correo electrónico",
+      "submit": "Enviar",
+      "message": "Por favor, introduce el código de verificación para continuar.",
+      "error": "Código de verificación incorrecto. Por favor, inténtalo de nuevo.",
+      "placeholder": "Código de verificación"
     },
     "about": {
       "title": "¿Quiénes somos?",

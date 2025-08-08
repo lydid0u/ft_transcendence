@@ -203,6 +203,7 @@ async function authGoogle(fastify, options) {
         username,
         null
       );
+      console.log("User registered:", user);
       if (user) {
         const jwt = await fastify.auth.createJWTtoken(user);
         reply.send({success : true, jwt, user });
