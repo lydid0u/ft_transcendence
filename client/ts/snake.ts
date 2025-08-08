@@ -106,7 +106,7 @@ class Snake {
 		const newVector = DirectionVectors[newDirection];
 
 		// Prevent snake from going back into itself
-		if (currentVector.x === -newVector.x && currentVector.y === -newVector.y) {
+		if (currentVector.x === -newVector.x && currentVector.y === -newVector.y && this.body.length > 1) {
 			return;
 		}
 		this.nextDirection = newDirection;
@@ -341,9 +341,58 @@ export class SnakeGame {
 			this.updateScore();
 		}
 
-		// Show game over screen
-		this.showGameOverScreen();
+		this.showGameOverActions();
 	}
+
+	showGameOverActions(): void {
+	const oldOverlay = document.getElementById('gameOverActions');
+	oldOverlay?.remove();
+
+	// Create overlay container
+	const overlay = document.createElement('div');
+	overlay.id = 'gameOverActions';
+	overlay.style.position = 'absolute';
+	overlay.style.top = '50%';
+	overlay.style.left = 'calc(100% + 24px)';
+	overlay.style.transform = 'translateY(-50%)';
+	overlay.style.display = 'flex';
+	overlay.style.flexDirection = 'column';
+	overlay.style.alignItems = 'center';
+	overlay.style.gap = '16px';
+	overlay.style.background = '#232526';
+	overlay.style.borderRadius = '14px';
+	overlay.style.boxShadow = '0 4px 16px #0006';
+	overlay.style.padding = '28px 22px';
+	overlay.style.zIndex = '100';
+	overlay.style.minWidth = '140px';
+
+	// Restart button
+	const restartBtn = document.createElement('button');
+	restartBtn.textContent = 'Restart';
+	restartBtn.className = 'game-action-btn';
+	restartBtn.onclick = () => {
+		overlay.remove();
+		new SnakeGame();
+	};
+	// Home button
+	const homeBtn = document.createElement('button');
+	homeBtn.textContent = 'Home';
+	homeBtn.className = 'game-action-btn';
+	homeBtn.onclick = () => {
+		window.location.href = '/home'; // Change this to your home page path if needed
+	};
+
+	overlay.appendChild(restartBtn);
+	overlay.appendChild(homeBtn);
+
+	// Position overlay relative to canvas
+	const canvas = document.getElementById('gameCanvas');
+	const container = canvas?.parentElement;
+	if (container) {
+		container.style.position = 'relative';
+		container.appendChild(overlay);
+	}
+}
 
 	showGameOverScreen(): void {
 		const gameOverDiv = document.createElement('div');
