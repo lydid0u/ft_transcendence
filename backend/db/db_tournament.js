@@ -281,9 +281,13 @@ async function tableMatches(fastify, options)
 
         async getAllParticipants(userId)
         {
+            const t_id = await this.getTournamentByCreatorId(userId);
+            if (!t_id) {
+                return [];
+            }
             return await fastify.db.connection.all(
                 `SELECT * FROM tournament_participants
-                 WHERE user_id = ?;`, [userId]);
+                 WHERE tournament_id = ?;`, [t_id.id]);
         },
 
         async getAllOpenTournaments() {

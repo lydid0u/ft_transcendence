@@ -101,28 +101,29 @@ class TournamentHomeAPI {
   }
 
   // Méthode pour lancer le tournoi
-  async launchTournament(tournamentId: number): Promise<{ success: boolean; message: string }> {
-    try {
-      const response = await fetch(`${this.baseUrl}/tournament/launch`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.token}`,
-        },
-        credentials: "include",
-        body: JSON.stringify({ tournamentId }),
-      });
+//   async launchTournament(tournamentId: number): Promise<{ success: boolean; message: string }> {
+//     try {
+//       const response = await fetch(`${this.baseUrl}/tournament/launch`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           "Authorization": `Bearer ${this.token}`,
+//         },
+//         credentials: "include",
+//         body: JSON.stringify({ tournamentId }),
+//       });
 
-      const result = await response.json();
-      return {
-        success: response.ok,
-        message: result.message || (response.ok ? "Tournoi lancé avec succès" : "Erreur lors du lancement du tournoi")
-      };
-    } catch (error) {
-      console.error("Erreur lors du lancement du tournoi:", error);
-      return { success: false, message: "Erreur de connexion au serveur" };
-    }
-  }
+//       const result = await response.json();
+//       return {
+//         success: response.ok,
+//         message: result.message || (response.ok ? "Tournoi lancé avec succès" : "Erreur lors du lancement du tournoi")
+//       };
+//     } catch (error) {
+//       console.error("Erreur lors du lancement du tournoi:", error);
+//       return { success: false, message: "Erreur de connexion au serveur" };
+//     }
+//   }
+// }
 }
 
 // Classe pour gérer l'interface utilisateur de la page tournamenthome
@@ -170,10 +171,14 @@ class TournamentHomeApp {
         console.log("Add Player Button found");
       this.addPlayerBtn.addEventListener("click", () => this.handleAddPlayer());
     }
-    
-    // Écouteur pour le bouton de lancement du tournoi
     if (this.tournamentStartBtn) {
-      this.tournamentStartBtn.addEventListener("click", () => this.handleLaunchTournament());
+      this.tournamentStartBtn.addEventListener("click", () => {
+        if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
+          window.SPA.navigateTo('/game1v1Tournament');
+        } else {
+          window.location.href = '/game1v1Tournament';
+        }
+      });
     }
     if (this.tournamentQuitBtn){
       this.tournamentQuitBtn.addEventListener("click", () => this.deleteTournament());
