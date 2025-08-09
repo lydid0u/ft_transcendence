@@ -157,7 +157,6 @@ export class SnakeGame {
 	private snake: Snake;
 	private food: Food;
 	private score: number = 0;
-	private highScore: number;
 	private gameRunning: boolean = true;
 	private gameSpeed: number = 150;
 
@@ -169,10 +168,10 @@ export class SnakeGame {
 
 		this.snake = new Snake(new Position(Math.floor(this.gridWidth / 2), Math.floor(this.gridHeight / 2)));
 		this.food = this.generateFood();
-		this.highScore = parseInt(localStorage.getItem('snakeHighScore') || '0');
 
 		this.updateScore();
 		this.setupEventListeners();
+		this.fetchLeaderboardData(); // Récupérer les données du leaderboard et le classement global
 		this.gameLoop();
 	}
 
@@ -322,20 +321,14 @@ export class SnakeGame {
 
 	private updateScore(): void {
 		const scoreElement = document.getElementById('score');
-		const highScoreElement = document.getElementById('highScore');
-
 		if (scoreElement) scoreElement.textContent = this.score.toString();
-		if (highScoreElement) highScoreElement.textContent = this.highScore.toString();
 	}
 
 	private gameOver(): void {
 		this.gameRunning = false;
-
-		if (this.score > this.highScore) {
-			this.highScore = this.score;
-			localStorage.setItem('snakeHighScore', this.highScore.toString());
-			this.updateScore();
-		}
+		
+		// Send score to backend
+		this.sendScoreToBackend(this.score);
 
 		// Update final score in the game over menu
 		const finalScoreElement = document.getElementById('finalScore');
@@ -364,6 +357,129 @@ export class SnakeGame {
 			homeBtn.onclick = () => {
 				window.location.href = '/home';
 			};
+		}
+	}
+	
+	private async sendScoreToBackend(score: number): Promise<void> {
+		try {
+			const response = await fetch('http://localhost:3000/snake/add-score', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Assurez-vous d'envoyer le token d'authentification
+				},
+				body: JSON.stringify({ score }),
+				credentials: 'include' // Important pour envoyer les cookies d'authentification
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to submit score');
+			}
+
+			const data = await response.json();
+			console.log('Score submitted successfully:', data);
+			
+			// Après avoir envoyé le score, on rafraîchit les données du leaderboard
+			await this.fetchLeaderboardData();
+			
+		} catch (error) {
+			console.error('Error submitting score:', error);
+		}
+	}
+
+	private async fetchLeaderboardData(): Promise<void> {
+		try {
+			const response = await fetch('http://localhost:3000/snake/nearest-score', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Assurez-vous d'envoyer le token d'authentification
+				},
+				credentials: 'include' // Important pour envoyer les cookies d'authentification
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch leaderboard data');
+			}
+
+			const data = await response.json();
+			console.log('Leaderboard data:', data);
+			
+			// Mise à jour des éléments du leaderboard
+			this.updateLeaderboardUI(data);
+			
+			// Fetch the global leaderboard
+			await this.fetchGlobalLeaderboard();
+		} catch (error) {
+			console.error('Error fetching leaderboard data:', error);
+		}
+	}
+	
+	private async fetchGlobalLeaderboard(): Promise<void> {
+		try {
+			const response = await fetch('http://localhost:3000/snake/leaderboard?limit=10', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+				},
+				credentials: 'include'
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch global leaderboard');
+			}
+
+			const data = await response.json();
+			console.log('Global leaderboard:', data);
+			
+			if (data.success && data.leaderboard) {
+				this.updateGlobalLeaderboardUI(data.leaderboard);
+			}
+		} catch (error) {
+			console.error('Error fetching global leaderboard:', error);
+		}
+	}
+	
+	private updateGlobalLeaderboardUI(leaderboard: any[]): void {
+		const leaderboardElement = document.getElementById('snakeLeaderboard');
+		if (!leaderboardElement) return;
+		
+		// Clear current leaderboard
+		leaderboardElement.innerHTML = '';
+		
+		// Add header
+		const header = document.createElement('div');
+		header.className = 'leaderboard-header';
+		header.innerHTML = '<span>Rang</span><span>Joueur</span><span>Score</span>';
+		leaderboardElement.appendChild(header);
+		
+		// Add each player
+		leaderboard.forEach((entry, index) => {
+			const row = document.createElement('div');
+			row.className = 'leaderboard-row';
+			row.innerHTML = `<span>${index + 1}</span><span>${entry.player_name}</span><span>${entry.score}</span>`;
+			leaderboardElement.appendChild(row);
+		});
+	}
+	
+	private updateLeaderboardUI(data: any): void {
+		// Mettre à jour le meilleur score
+		const globalBestElement = document.getElementById('globalBestScore');
+		if (globalBestElement && data.globalBest) {
+			globalBestElement.textContent = data.globalBest.toString();
+		}
+		
+		// Mettre à jour le prochain score à battre
+		const nextScoreElement = document.getElementById('nextScoreToBeat');
+		if (nextScoreElement && data.nextScore) {
+			nextScoreElement.textContent = data.nextScore.toString();
+		}
+		
+		// Mettre à jour le rang du joueur
+		const playerRankElement = document.getElementById('playerRank');
+		if (playerRankElement && data.playerRank) {
+			playerRankElement.textContent = data.playerRank.toString();
 		}
 	}
 
@@ -422,9 +538,8 @@ export class SnakeGame {
 		gameOverDiv.className = 'game-over';
 		gameOverDiv.innerHTML = `
 			<h2>Game Over!</h2>
-			<p>Final Score: ${this.score}</p>
-			${this.score === this.highScore ? '<p style="color: #ffd700;">🎉 New High Score! 🎉</p>' : ''}
-			<button class="restart-btn" id="restartBtn">Play Again</button>
+			<p>Score Final: ${this.score}</p>
+			<button class="restart-btn" id="restartBtn">Rejouer</button>
 		`;
 
 		document.body.appendChild(gameOverDiv);

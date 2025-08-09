@@ -43,6 +43,7 @@ async function tableMatches(fastify, options)
     };
     fastify.decorate('dbMatches', dbMatches);
     await dbMatches.createTableMatches();
+    await dbMatches.createTableSnake();
 };
 
 export default fp(tableMatches);

@@ -115,9 +115,15 @@ async function matchesRoutes(fastify, options)
 
     fastify.get('/snake/nearest-score', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
+        // globalBest
+        // nextScore
+        // playerRank
+        console.log('Fetching nearest score to beat for user:', request.user.id);
         try {
-            const nearestScore = await fastify.dbSnake.findNearestScoreToBeat(request.user.id);
-            return reply.status(200).send({ nearestScore });
+            const nextScore = await fastify.dbSnake.findNearestScoreToBeat(request.user.id);
+            const globalBest = await fastify.dbSnake.findHighScoreOfUser(request.user.id);
+            const playerRank = await fastify.dbSnake.getPlayerRank(request.user.id);
+            return reply.status(200).send({ nextScore, globalBest, playerRank });
         } catch (error) {
             return reply.status(500).send({ error: 'Failed to retrieve nearest score' });
         }
@@ -147,6 +153,17 @@ async function matchesRoutes(fastify, options)
         } catch (error) {
             console.error('Error adding score:', error);
             return reply.status(400).send({ success: false, error: error.message });
+        }
+    });
+
+    fastify.get('/snake/leaderboard', async (request, reply) => {
+        try {
+            const limit = request.query.limit || 10;
+            const leaderboard = await fastify.dbSnake.getLeaderboard(limit);
+            return reply.status(200).send({ success: true, leaderboard });
+        } catch (error) {
+            console.error('Error getting leaderboard:', error);
+            return reply.status(500).send({ success: false, error: 'Failed to retrieve leaderboard' });
         }
     });
 }

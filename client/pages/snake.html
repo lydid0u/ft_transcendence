@@ -32,7 +32,7 @@
     
     .score-container {
         display: flex;
-        justify-content: space-around;
+        justify-content: center;
         margin-bottom: 12px;
     }
     
@@ -47,7 +47,7 @@
         border: 1px solid #444;
     }
     
-    #score, #highScore {
+    #score {
         color: #2ed573;
         font-size: 1.1rem;
     }
@@ -258,6 +258,55 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
+    
+    /* Leaderboard styles */
+    .global-leaderboard {
+        margin-top: 20px;
+        background: #222;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        border: 1px solid #333;
+    }
+    
+    .global-leaderboard h2 {
+        color: #2ed573;
+        font-size: 1.2rem;
+        text-align: center;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+    
+    .leaderboard-header, .leaderboard-row {
+        display: grid;
+        grid-template-columns: 0.5fr 2fr 1fr;
+        padding: 8px 10px;
+        text-align: left;
+    }
+    
+    .leaderboard-header {
+        font-weight: bold;
+        color: #aaa;
+        border-bottom: 1px solid #333;
+        margin-bottom: 5px;
+    }
+    
+    .leaderboard-row {
+        color: #fff;
+        border-bottom: 1px solid #333;
+    }
+    
+    .leaderboard-row:last-child {
+        border-bottom: none;
+    }
+    
+    .leaderboard-row:nth-child(odd) {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .leaderboard-row:hover {
+        background: rgba(46, 213, 115, 0.1);
+    }
 </style>
 
 <div class="game-container">
@@ -266,22 +315,19 @@
         <div class="score-box">
             <div>Score: <span id="score">0</span></div>
         </div>
-        <div class="score-box">
-            <div>High Score: <span id="highScore">0</span></div>
-        </div>
     </div>
     
     <div class="leaderboard-container">
         <div class="leaderboard-box">
-            <div class="leaderboard-title">Global Best</div>
+            <div class="leaderboard-title">Meilleur Score</div>
             <div class="leaderboard-score"><span id="globalBestScore">0</span></div>
         </div>
         <div class="leaderboard-box">
-            <div class="leaderboard-title">Next to Beat</div>
+            <div class="leaderboard-title">Score à Battre</div>
             <div class="leaderboard-score"><span id="nextScoreToBeat">0</span></div>
         </div>
         <div class="leaderboard-box">
-            <div class="leaderboard-title">Your Rank</div>
+            <div class="leaderboard-title">Ton Rang</div>
             <div class="leaderboard-score">#<span id="playerRank">-</span></div>
         </div>
     </div>
@@ -290,10 +336,10 @@
         <canvas id="gameCanvas" width="600" height="510"></canvas>
         <div class="game-over-container" id="gameOverMenu">
             <div class="game-over-title">Game Over</div>
-            <div class="final-score">Your Score: <span id="finalScore">0</span></div>
+            <div class="final-score">Score Final: <span id="finalScore">0</span></div>
             <div class="game-over-buttons">
-                <button class="play-again-btn" id="playAgainBtn">Play Again</button>
-                <button class="home-btn" id="homeBtn">Home</button>
+                <button class="play-again-btn" id="playAgainBtn">Rejouer</button>
+                <button class="home-btn" id="homeBtn">Accueil</button>
             </div>
         </div>
     </div>
@@ -309,8 +355,15 @@
             <button id="rightBtn" style="grid-column: 3; grid-row: 2;">→</button>
         </div>
         <div class="game-info">
-            Use arrow keys or buttons to control the snake<br>
-            Eat the red food to grow and increase your score!
+            Utilisez les flèches ou les boutons pour contrôler le serpent<br>
+            Mangez la nourriture rouge pour grandir et augmenter votre score!
+        </div>
+    </div>
+    
+    <div class="global-leaderboard">
+        <h2>Classement</h2>
+        <div id="snakeLeaderboard" class="leaderboard-content">
+            <!-- Le contenu du leaderboard sera ajouté dynamiquement ici -->
         </div>
     </div>
 </div>
