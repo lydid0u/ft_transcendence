@@ -16,8 +16,7 @@
     },
       "reset": {
       "title": "Reset Password",
-      "email_placeholder": "Your email",
-      "send": "Send code"
+      "new_password": "New Password"
     },
     "landing": {
       "title": "FT_TRANSCENDENCE",
@@ -304,8 +303,8 @@
   "step3_title": "Commencer la compétition",
   "step3_desc": "Lancez le tournoi et que le meilleur gagne",
   "active_tournaments": "Tournois actifs",
-"create_first": "Créez votre premier tournoi",
-"no_tournaments": "Aucun tournoi disponible",
+  "create_first": "Créez votre premier tournoi",
+  "no_tournaments": "Aucun tournoi disponible",
   "create": "Créer un tournoi",
   "creating": "Création...",
   "create_success": "Tournoi créé avec succès",
@@ -402,7 +401,11 @@
       "join_tournament": "Unirse al torneo",
       "dashboard": "Panel"
     },
-        "reset": {
+        "resetPassword": {
+      "title": "Restablecer la contraseña",
+      "new_password": "Nueva contraseña"
+    },
+    "reset": {
       "title": "Restablecer la contraseña",
       "email_placeholder": "Tu correo electrónico",
       "send": "Enviar código"
@@ -427,8 +430,8 @@
   "step3_title": "Comenzar a competir",
   "step3_desc": "Inicia el torneo y que gane el mejor",
   "active_tournaments": "Torneos activos",
-"create_first": "Crea tu primer torneo",
-"no_tournaments": "No hay torneos disponibles",
+  "create_first": "Crea tu primer torneo",
+  "no_tournaments": "No hay torneos disponibles",
   "create": "Crear torneo",
   "creating": "Creando...",
   "create_success": "Torneo creado con éxito",

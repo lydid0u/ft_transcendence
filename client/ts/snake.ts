@@ -529,8 +529,7 @@ export class SnakeGame {
 		}
 	}
 
-	private draw(): void
-	{
+	private draw(): void {
 		// Clear canvas
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
