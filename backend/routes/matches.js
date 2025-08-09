@@ -201,7 +201,7 @@ async function matchesRoutes(fastify, options)
             
             // Obtenir l'historique des parties du joueur
             const history = await fastify.db.connection.all(
-                'SELECT player_id, score, created_at as played_at FROM snake WHERE player_id = ? ORDER BY created_at DESC LIMIT 10',
+                'SELECT player_id, score, played_at as played_at FROM snake WHERE player_id = ? ORDER BY played_at DESC LIMIT 10',
                 userId
             );
             

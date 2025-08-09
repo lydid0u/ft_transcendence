@@ -67,7 +67,7 @@ async function tableSnake(fastify, options)
 
                 // Insérer le score dans la base de données avec la date de création
                 await fastify.db.connection.run(
-                    'INSERT INTO snake (player_id, player_name, score, game_mode, created_at) VALUES (?, ?, ?, ?, ?)',
+                    'INSERT INTO snake (player_id, player_name, score, game_mode, played_at) VALUES (?, ?, ?, ?, ?)',
                     userId, userName, score, gameMode, currentDate
                 );
             } catch (error) {
