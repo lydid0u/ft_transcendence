@@ -81,7 +81,7 @@ async function matchesRoutes(fastify, options)
         const victory = data.filter(m => m.winner_id === request.user.id).length; 
         const defeats = data.length - victory;
         const matchplayed = data.length;
-        const ratio = (victory / data.length) * 100;
+        const ratio = Math.round((victory / data.length) * 100);
         
         return { matchplayed, victory, defeats, ratio };
     })

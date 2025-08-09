@@ -187,7 +187,7 @@ export class Game1v1
 			player1_score: Game1v1.player1Score,
 			player2_score: Game1v1.player2Score,
 			winner: Game1v1.player1Score > Game1v1.player2Score ? "player1" : "player2",
-			game_type: "pong"
+			game_type: "Pong 1v1",
 		};
 		try {
 			const response = await fetch('http://localhost:3000/add-match', {

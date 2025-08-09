@@ -3,11 +3,23 @@
   <div class="w-full max-w-4xl text-center">
     <h1 class="text-5xl font-bold mb-12 text-[#e6fdff] vhsfont" style="text-shadow: 0 0 10px #00f0ff, 0 0 20px #85e7ff;">Game vs AI</h1>
     <div class="page-content">
-      <p class="text-lg text-[#85e7ff] mb-4" style="text-shadow: 0 0 6px #00f0ff;">Faisons un match palpitant.</p>
-      <div id="score-bar" class="flex justify-center items-center text-4xl font-bold text-[#00f0ff] mb-4" style="text-shadow: 0 0 8px #00f0ff;">
-        <span id="player-score" class="mx-8">0</span>
+      <div class="flex justify-between items-center mb-4">
+        <div class="flex-1 text-center">
+          <span id="player-name" class="font-bold text-xl text-[#00f0ff]" style="text-shadow: 0 0 6px #00f0ff;">Joueur</span>
+        </div>
+        <div class="px-4 text-[#85e7ff]">vs</div>
+        <div class="flex-1 text-center">
+          <span class="font-bold text-xl text-[#00f0ff]" style="text-shadow: 0 0 6px #00f0ff;">IA</span>
+        </div>
+      </div>
+      <div id="score-bar" class="flex justify-between items-center text-4xl font-bold text-[#00f0ff] mb-4" style="text-shadow: 0 0 8px #00f0ff;">
+        <div class="flex-1 text-center">
+          <span id="player-score" class="mx-8">0</span>
+        </div>
         <span class="mx-2">:</span>
-        <span id="ai-score" class="mx-8">0</span>
+        <div class="flex-1 text-center">
+          <span id="ai-score" class="mx-8">0</span>
+        </div>
       </div>
       <canvas id="game-canvas" width="800" height="500" class="mx-auto border-4 border-[#00f0ff] shadow-[0_0_20px_#00f0ff] rounded-lg mt-2 mb-2 bg-[#10131a]"></canvas>
     </div>
