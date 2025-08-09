@@ -10,6 +10,15 @@ enum Difficulty {
 	HARD = 3
 }
 
+interface GameResults {
+	player1_id: number;
+	player1_name: string;
+	player1_score: number;
+	player2_score: number;
+	winner: string; // "player1" or "player2"
+	game_type: string; // e.g., "pong"
+}
+
 const WALL_OFFSET = 20;
 
 import { SPA } from './spa';
@@ -201,7 +210,14 @@ export class Game1v1
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
 
-		const winner = Game1v1.player1Score > Game1v1.player2Score ? "Player 1" : "Player 2";
+		// Récupérer le pseudo du joueur 1 depuis l'élément HTML
+		let player1Name = "Player 1";
+		const player1NameElement = document.getElementById("player1-name");
+		if (player1NameElement && player1NameElement.textContent) {
+			player1Name = player1NameElement.textContent;
+		}
+
+		const winner = Game1v1.player1Score > Game1v1.player2Score ? player1Name : "Player 2";
 		const endDiv = document.createElement('div');
 		endDiv.id = 'end-screen';
 		endDiv.className = 'flex flex-col items-center mt-6';
@@ -240,10 +256,29 @@ export class Game1v1
 		// Remove end screen if present
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
+		
+		// Mettre à jour le nom du joueur 1
+		this.updatePlayerName();
+		
 		// Start new game
 		const game = new Game1v1(difficulty);
 		Game1v1.currentInstance = game;
 		game.gameLoop();
+	}
+	
+	// Fonction pour mettre à jour le nom du joueur 1
+	private static updatePlayerName() {
+		const player1NameElement = document.getElementById('player1-name');
+		if (player1NameElement) {
+			// Récupérer le nom d'utilisateur du localStorage ou de la session
+			const username = localStorage.getItem('username') || sessionStorage.getItem('username');
+			if (username) {
+				player1NameElement.textContent = username;
+			} else {
+				// Fallback si aucun nom n'est trouvé
+				player1NameElement.textContent = "Vous";
+			}
+		}
 	}
 }
 

@@ -455,6 +455,8 @@ async function handleMatchEnd(winnerNumber: number, player1Name: string, player2
                 player2_score: Game1v1.player2Score,
                 winner_id: winnerNumber === 1 ? match.player1_id : match.player2_id,
                 status: "completed",
+                game_type: "Tournament",
+                round : match.round,
                 created_at: match.created_at || new Date().toISOString(),
                 updated_at: new Date().toISOString()
             };
