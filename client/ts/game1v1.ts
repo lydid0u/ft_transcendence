@@ -65,7 +65,7 @@ export class Game1v1
 		if (this.difficulty === Difficulty.EASY)
 		{
 			paddleSpeed = 6;
-			ballSpeed = 2;
+			ballSpeed = 3
 		}
 		if (this.difficulty === Difficulty.HARD)
 		{
@@ -164,7 +164,7 @@ export class Game1v1
 	{
 		const p1Score = document.getElementById('player1-score');
 		const p2Score = document.getElementById('player2-score');
-		if (Game1v1.player1Score >= 2 || Game1v1.player2Score >= 2)
+		if (Game1v1.player1Score >= 5 || Game1v1.player2Score >= 5)
 		{
 			this.running = false;
 			this.showEndScreen(); // UI improvement

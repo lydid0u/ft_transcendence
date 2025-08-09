@@ -55,7 +55,48 @@ class Food
 	}
 }
 
-// Snake class
+// Wall class
+class Wall {
+	constructor(public position: Position) {}
+
+	draw(ctx: CanvasRenderingContext2D, gridSize: number): void {
+		ctx.fillStyle = '#34495e';
+		ctx.shadowColor = '#2c3e50';
+		ctx.shadowBlur = 5;
+
+		ctx.fillRect(
+			this.position.x * gridSize,
+			this.position.y * gridSize,
+			gridSize - 2,
+			gridSize - 2
+		);
+
+		ctx.shadowBlur = 0;
+
+		// Dark border
+		ctx.strokeStyle = '#2c3e50';
+		ctx.lineWidth = 2;
+		ctx.strokeRect(
+			this.position.x * gridSize,
+			this.position.y * gridSize,
+			gridSize - 2,
+			gridSize - 2
+		);
+
+		ctx.shadowBlur = 0;
+
+		// Dark border
+		ctx.strokeStyle = '#2c3e50';
+		ctx.lineWidth = 2;
+		ctx.strokeRect(
+			this.position.x * gridSize,
+			this.position.y * gridSize,
+			gridSize - 2,
+			gridSize - 2,
+		);
+	}
+}
+
 class Snake {
 	public body: Position[];
 	private direction: Direction;
@@ -96,9 +137,16 @@ class Snake {
 		return false;
 	}
 
-	checkWallCollision(gridWidth: number, gridHeight: number): boolean {
+	checkWallCollision(gridWidth: number, gridHeight: number, walls: Wall[] = []): boolean {
 		const head = this.body[0];
-		return head.x < 0 || head.x >= gridWidth || head.y < 0 || head.y >= gridHeight;
+		
+		// Check boundary walls
+		if (head.x < 0 || head.x >= gridWidth || head.y < 0 || head.y >= gridHeight) {
+			return true;
+		}
+		
+		// Check custom walls
+		return walls.some(wall => wall.position.x === head.x && wall.position.y === head.y);
 	}
 
 	setDirection(newDirection: Direction): void {
@@ -160,6 +208,11 @@ export class SnakeGame {
 	private gameRunning: boolean = true;
 	private gameSpeed: number = 150;
 
+	// Add these properties
+	private walls: Wall[] = [];
+	private wallSpawnInterval: number = 20; // Spawn wall every 300 points
+	private lastWallSpawn: number = 0;
+
 	constructor() {
 		this.canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 		this.ctx = this.canvas.getContext('2d')!;
@@ -168,11 +221,212 @@ export class SnakeGame {
 
 		this.snake = new Snake(new Position(Math.floor(this.gridWidth / 2), Math.floor(this.gridHeight / 2)));
 		this.food = this.generateFood();
+		this.walls = [];
 
 		this.updateScore();
 		this.setupEventListeners();
 		this.fetchLeaderboardData(); // Récupérer les données du leaderboard et le classement global
 		this.gameLoop();
+	}
+
+	// Add wall collision check to Snake class
+	checkWallCollision(gridWidth: number, gridHeight: number, walls: Wall[] = []): boolean {
+		const head = this.snake.body[0];
+	 	
+		// Check boundary walls
+		if (head.x < 0 || head.x >= gridWidth || head.y < 0 || head.y >= gridHeight) {
+			return true;
+		}
+		
+		// Check custom walls
+		return walls.some(wall => wall.position.x === head.x && wall.position.y === head.y);
+	}
+
+	// Add this method to generate walls
+	private generateWall(): Wall {
+		let position: Position;
+		let attempts = 0;
+		const maxAttempts = 50;
+
+		do {
+			position = new Position(
+				Math.floor(Math.random() * this.gridWidth),
+				Math.floor(Math.random() * this.gridHeight)
+			);
+			attempts++;
+		} while (
+			attempts < maxAttempts &&
+			(this.snake.body.some(segment => segment.x === position.x && segment.y === position.y) ||
+			 this.food.position.x === position.x && this.food.position.y === position.y ||
+			 this.walls.some(wall => wall.position.x === position.x && wall.position.y === position.y))
+		);
+
+		return new Wall(position);
+	}
+
+	private generateWalls(): Wall[] {
+		const newWalls: Wall[] = [];
+		const patterns = ['line', 'cluster', 'L-shape'];
+		const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+		
+		let basePosition: Position;
+		let attempts = 0;
+		const maxAttempts = 50;
+		
+		// Find a valid base position
+		do {
+			basePosition = new Position(
+				Math.floor(Math.random() * (this.gridWidth - 4)) + 2, // Leave some margin
+				Math.floor(Math.random() * (this.gridHeight - 4)) + 2
+			);
+			attempts++;
+		} while (attempts < maxAttempts && !this.isValidBasePosition(basePosition));
+		
+		if (attempts >= maxAttempts) {
+			// Fallback to single wall if no valid position found
+			return [new Wall(basePosition)];
+		}
+		
+		// Generate walls based on pattern
+		switch (pattern) {
+			case 'line':
+				newWalls.push(...this.generateLinePattern(basePosition));
+				break;
+			case 'cluster':
+				newWalls.push(...this.generateClusterPattern(basePosition));
+				break;
+			case 'L-shape':
+				newWalls.push(...this.generateLShapePattern(basePosition));
+				break;
+		}
+		
+		// Filter out invalid positions
+		return newWalls.filter(wall => this.isValidWallPosition(wall.position));
+	}
+
+	private isValidBasePosition(position: Position): boolean {
+		// Check if there's enough space around the base position for patterns
+		for (let dx = -2; dx <= 2; dx++) {
+			for (let dy = -2; dy <= 2; dy++) {
+				const checkPos = new Position(position.x + dx, position.y + dy);
+				if (this.isPositionOccupied(checkPos)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private isValidWallPosition(position: Position): boolean {
+		// Check bounds
+		if (position.x < 0 || position.x >= this.gridWidth || 
+			position.y < 0 || position.y >= this.gridHeight) {
+			return false;
+		}
+		
+		return !this.isPositionOccupied(position);
+	}
+
+	private isPositionOccupied(position: Position): boolean {
+		// Check if position is occupied by snake, food, or existing walls
+		return this.snake.body.some(segment => segment.x === position.x && segment.y === position.y) ||
+			   (this.food.position.x === position.x && this.food.position.y === position.y) ||
+			   this.walls.some(wall => wall.position.x === position.x && wall.position.y === position.y);
+	}
+
+	private generateLinePattern(basePosition: Position): Wall[] {
+		const walls: Wall[] = [];
+		const isHorizontal = Math.random() < 0.5;
+		const length = Math.floor(Math.random() * 3) + 3; // 3-5 blocks
+		
+		if (isHorizontal) {
+			// Horizontal line
+			for (let i = 0; i < length; i++) {
+				walls.push(new Wall(new Position(basePosition.x + i, basePosition.y)));
+			}
+		} else {
+			// Vertical line
+			for (let i = 0; i < length; i++) {
+				walls.push(new Wall(new Position(basePosition.x, basePosition.y + i)));
+			}
+		}
+		
+		return walls;
+	}
+
+	private generateClusterPattern(basePosition: Position): Wall[] {
+		const walls: Wall[] = [];
+		const patterns = [
+			// 2x2 square
+			[
+				{ x: 0, y: 0 }, { x: 1, y: 0 },
+				{ x: 0, y: 1 }, { x: 1, y: 1 }
+			],
+			// Plus shape
+			[
+				{ x: 1, y: 0 },
+				{ x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 },
+				{ x: 1, y: 2 }
+			],
+			// Triangle
+			[
+				{ x: 1, y: 0 },
+				{ x: 0, y: 1 }, { x: 2, y: 1 },
+				{ x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }
+			]
+		];
+		
+		const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
+		
+		selectedPattern.forEach(offset => {
+			walls.push(new Wall(new Position(
+				basePosition.x + offset.x,
+				basePosition.y + offset.y
+			)));
+		});
+		
+		return walls;
+	}
+
+	private generateLShapePattern(basePosition: Position): Wall[] {
+		const walls: Wall[] = [];
+		const variations = [
+			// L shape (top-left)
+			[
+				{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 },
+				{ x: 0, y: 1 },
+				{ x: 0, y: 2 }
+			],
+			// L shape (top-right)
+			[
+				{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 },
+				{ x: 2, y: 1 },
+				{ x: 2, y: 2 }
+			],
+			// L shape (bottom-left)
+			[
+				{ x: 0, y: 0 },
+				{ x: 0, y: 1 },
+				{ x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }
+			],
+			// L shape (bottom-right)
+			[
+				{ x: 2, y: 0 },
+				{ x: 2, y: 1 },
+				{ x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }
+			]
+		];
+		
+		const selectedVariation = variations[Math.floor(Math.random() * variations.length)];
+		
+		selectedVariation.forEach(offset => {
+			walls.push(new Wall(new Position(
+				basePosition.x + offset.x,
+				basePosition.y + offset.y
+			)));
+		});
+		
+		return walls;
 	}
 
 	private generateFood(): Food {
@@ -182,7 +436,10 @@ export class SnakeGame {
 				Math.floor(Math.random() * this.gridWidth),
 				Math.floor(Math.random() * this.gridHeight)
 			);
-		} while (this.snake.body.some(segment => segment.x === position.x && segment.y === position.y));
+		} while (
+			this.snake.body.some(segment => segment.x === position.x && segment.y === position.y) ||
+			this.walls.some(wall => wall.position.x === position.x && wall.position.y === position.y)
+		);
 
 		return new Food(position);
 	}
@@ -244,11 +501,9 @@ export class SnakeGame {
 
 		this.snake.move();
 
-		// Check wall collision
-		if (this.snake.checkWallCollision(this.gridWidth, this.gridHeight) || this.snake.checkSelfCollision()) 
-		{
+		// Check wall collision (updated to include walls)
+		if (this.snake.checkWallCollision(this.gridWidth, this.gridHeight, this.walls) || this.snake.checkSelfCollision()) {
 			this.gameOver();
-			// send data to backend function here
 			return;
 		}
 
@@ -260,6 +515,13 @@ export class SnakeGame {
 			this.food = this.generateFood();
 			this.updateScore();
 
+			// Spawn wall pattern every wallSpawnInterval points
+			if (this.score - this.lastWallSpawn >= this.wallSpawnInterval) {
+				const newWalls = this.generateWalls(); // Changed from generateWall() to generateWalls()
+				this.walls.push(...newWalls); // Spread the array to add multiple walls
+				this.lastWallSpawn = this.score;
+			}
+
 			// Increase speed slightly
 			this.gameSpeed = Math.max(80, this.gameSpeed - 2);
 		} else {
@@ -267,22 +529,24 @@ export class SnakeGame {
 		}
 	}
 
-	private draw(): void
-	{
+	private draw(): void {
 		// Clear canvas
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 		// Draw grid cells with black outlines
 		for (let y = 0; y < this.gridHeight; y++) {
 			for (let x = 0; x < this.gridWidth; x++) {
-				this.ctx.fillStyle = '#000'; // fill each square black (optional background)
+				this.ctx.fillStyle = '#000';
 				this.ctx.fillRect(x * this.gridSize, y * this.gridSize, this.gridSize, this.gridSize);
 
-				this.ctx.strokeStyle = '#444'; // black border
+				this.ctx.strokeStyle = '#444';
 				this.ctx.lineWidth = 1;
 				this.ctx.strokeRect(x * this.gridSize, y * this.gridSize, this.gridSize, this.gridSize);
 			}
 		}
+
+		// Draw walls
+		this.walls.forEach(wall => wall.draw(this.ctx, this.gridSize));
 
 		// Draw food
 		this.food.draw(this.ctx, this.gridSize);
