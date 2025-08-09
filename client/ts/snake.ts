@@ -407,60 +407,9 @@ export class SnakeGame {
 			
 			// Mise à jour des éléments du leaderboard
 			this.updateLeaderboardUI(data);
-			
-			// Fetch the global leaderboard
-			await this.fetchGlobalLeaderboard();
 		} catch (error) {
 			console.error('Error fetching leaderboard data:', error);
 		}
-	}
-	
-	private async fetchGlobalLeaderboard(): Promise<void> {
-		try {
-			const response = await fetch('http://localhost:3000/snake/leaderboard?limit=10', {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
-				},
-				credentials: 'include'
-			});
-
-			if (!response.ok) {
-				throw new Error('Failed to fetch global leaderboard');
-			}
-
-			const data = await response.json();
-			console.log('Global leaderboard:', data);
-			
-			if (data.success && data.leaderboard) {
-				this.updateGlobalLeaderboardUI(data.leaderboard);
-			}
-		} catch (error) {
-			console.error('Error fetching global leaderboard:', error);
-		}
-	}
-	
-	private updateGlobalLeaderboardUI(leaderboard: any[]): void {
-		const leaderboardElement = document.getElementById('snakeLeaderboard');
-		if (!leaderboardElement) return;
-		
-		// Clear current leaderboard
-		leaderboardElement.innerHTML = '';
-		
-		// Add header
-		const header = document.createElement('div');
-		header.className = 'leaderboard-header';
-		header.innerHTML = '<span>Rang</span><span>Joueur</span><span>Score</span>';
-		leaderboardElement.appendChild(header);
-		
-		// Add each player
-		leaderboard.forEach((entry, index) => {
-			const row = document.createElement('div');
-			row.className = 'leaderboard-row';
-			row.innerHTML = `<span>${index + 1}</span><span>${entry.player_name}</span><span>${entry.score}</span>`;
-			leaderboardElement.appendChild(row);
-		});
 	}
 	
 	private updateLeaderboardUI(data: any): void {

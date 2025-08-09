@@ -156,11 +156,75 @@ async function matchesRoutes(fastify, options)
         }
     });
 
+    fastify.get('/snake/player-stats/:userId', async (request, reply) => {
+        try {
+            const userId = parseInt(request.params.userId);
+            
+            // Obtenir le nom du joueur
+            const user = await fastify.db.connection.get('SELECT username FROM users WHERE id = ?', userId);
+            if (!user) {
+                return reply.status(404).send({ success: false, message: 'User not found' });
+            }
+            
+            // Obtenir le nombre total de parties jouées
+            const playCount = await fastify.db.connection.get(
+                'SELECT COUNT(*) as count FROM snake WHERE player_id = ?',
+                userId
+            );
+            
+            // Obtenir le meilleur score du joueur
+            const bestScore = await fastify.dbSnake.findHighScoreOfUser(userId);
+            
+            // Obtenir le classement du joueur
+            const rank = await fastify.dbSnake.getPlayerRank(userId);
+            
+            // Obtenir le score à battre
+            const nextScoreToBeat = await fastify.dbSnake.findNearestScoreToBeat(userId);
+            
+            return reply.status(200).send({
+                player_id: userId,
+                username: user.username,
+                best_score: bestScore,
+                play_count: playCount.count,
+                rank: rank,
+                next_score_to_beat: nextScoreToBeat
+            });
+        } catch (error) {
+            console.error('Error getting player stats:', error);
+            return reply.status(500).send({ success: false, error: 'Failed to retrieve player stats' });
+        }
+    });
+
+    fastify.get('/snake/player-history/:userId', async (request, reply) => {
+        try {
+            const userId = parseInt(request.params.userId);
+            
+            // Obtenir l'historique des parties du joueur
+            const history = await fastify.db.connection.all(
+                'SELECT player_id, score, created_at as played_at FROM snake WHERE player_id = ? ORDER BY created_at DESC LIMIT 10',
+                userId
+            );
+            
+            return reply.status(200).send(history);
+        } catch (error) {
+            console.error('Error getting player history:', error);
+            return reply.status(500).send({ success: false, error: 'Failed to retrieve player history' });
+        }
+    });
+
     fastify.get('/snake/leaderboard', async (request, reply) => {
         try {
-            const limit = request.query.limit || 10;
-            const leaderboard = await fastify.dbSnake.getLeaderboard(limit);
-            return reply.status(200).send({ success: true, leaderboard });
+            const leaderboard = await fastify.db.connection.all(
+                `SELECT s.player_id, u.username, s.max_score as best_score, 
+                (SELECT COUNT(*) FROM (SELECT player_id, MAX(score) as max_score FROM snake GROUP BY player_id) s2 
+                WHERE s2.max_score > s.max_score) + 1 as rank
+                FROM (SELECT player_id, MAX(score) as max_score FROM snake GROUP BY player_id) s
+                JOIN users u ON s.player_id = u.id
+                ORDER BY s.max_score DESC
+                LIMIT 10`
+            );
+            
+            return reply.status(200).send(leaderboard);
         } catch (error) {
             console.error('Error getting leaderboard:', error);
             return reply.status(500).send({ success: false, error: 'Failed to retrieve leaderboard' });

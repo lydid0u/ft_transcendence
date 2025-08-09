@@ -311,10 +311,15 @@
 
 <div class="game-container">
     <h1>Snake Game</h1>
-    <div class="score-container">
-        <div class="score-box">
-            <div>Score: <span id="score">0</span></div>
+    <div class="flex justify-between items-center mb-4">
+        <div class="score-container">
+            <div class="score-box">
+                <div>Score: <span id="score">0</span></div>
+            </div>
         </div>
+        <a href="#" onclick="SPA.navigateTo('/match-history')" class="text-green-500 hover:text-green-600 font-medium">
+            Voir le classement →
+        </a>
     </div>
     
     <div class="leaderboard-container">
@@ -357,13 +362,6 @@
         <div class="game-info">
             Utilisez les flèches ou les boutons pour contrôler le serpent<br>
             Mangez la nourriture rouge pour grandir et augmenter votre score!
-        </div>
-    </div>
-    
-    <div class="global-leaderboard">
-        <h2>Classement</h2>
-        <div id="snakeLeaderboard" class="leaderboard-content">
-            <!-- Le contenu du leaderboard sera ajouté dynamiquement ici -->
         </div>
     </div>
 </div>

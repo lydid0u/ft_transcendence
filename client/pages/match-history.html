@@ -14,13 +14,13 @@
     <button id="btn-game-pong" type="button" class="px-6 py-3 bg-gradient-to-r from-purple-dark to-pink-medium text-white font-medium rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105" data-i18n="common.pong">
       Pong
     </button>
-    <button id="btn-game-custom" type="button" class="px-6 py-3 bg-white text-gray-700 font-medium rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 border border-purple-200/50" data-i18n="matchHistory.snake">
+    <button id="btn-game-snake" type="button" class="px-6 py-3 bg-white text-gray-700 font-medium rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 border border-purple-200/50" data-i18n="matchHistory.snake">
       Snake
     </button>
   </div>
 
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+  <!-- Pong Stats Cards -->
+  <div id="pong-stats" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
     <!-- Win Rate Card -->
     <div class="bg-white rounded-xl shadow-lg p-6 border border-purple-200/50">
       <h3 class="text-2xl font-semibold text-gray-800 text-center mb-4" data-i18n="matchHistory.win_rate">Taux de Victoire</h3>
@@ -46,9 +46,33 @@
       </div>
     </div>
   </div>
+  
+  <!-- Snake Stats Cards -->
+  <div id="snake-stats" class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12" style="display: none;">
+    <!-- Highest Score Card -->
+    <div class="bg-white rounded-xl shadow-lg p-6 border border-green-200/50">
+      <h3 class="text-2xl font-semibold text-gray-800 text-center mb-4">Meilleur Score</h3>
+      <div class="text-5xl font-extrabold text-green-600 mb-4 text-center" id="best-score">--</div>
+      <p class="text-center text-gray-600">Votre record personnel</p>
+    </div>
+    
+    <!-- Score to Beat Card -->
+    <div class="bg-white rounded-xl shadow-lg p-6 border border-green-200/50">
+      <h3 class="text-2xl font-semibold text-gray-800 text-center mb-4">Score à Battre</h3>
+      <div class="text-5xl font-extrabold text-orange-500 mb-4 text-center" id="next-score">--</div>
+      <p class="text-center text-gray-600">Prochain objectif</p>
+    </div>
+    
+    <!-- Rank Card -->
+    <div class="bg-white rounded-xl shadow-lg p-6 border border-green-200/50">
+      <h3 class="text-2xl font-semibold text-gray-800 text-center mb-4">Votre Rang</h3>
+      <div class="text-5xl font-extrabold text-blue-600 mb-4 text-center">#<span id="player-rank">--</span></div>
+      <p class="text-center text-gray-600">Parmi tous les joueurs</p>
+    </div>
+  </div>
 
   <!-- Match History -->
-  <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-purple-200/50">
+  <div id="pong-history" class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-purple-200/50">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-semibold text-gray-800" data-i18n="matchHistory.recent_matches">Derniers Matchs</h2>
       <span id="match-count" class="text-sm bg-purple-light text-purple-dark px-3 py-1 rounded-full font-medium">--</span>
@@ -81,6 +105,64 @@
       </thead>
       <tbody id="matches-list">
         <!-- Matches will be populated here by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Snake Leaderboard -->
+  <div id="snake-leaderboard" class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-green-200/50" style="display: none;">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-semibold text-gray-800">Classement Global</h2>
+      <span id="leaderboard-count" class="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">--</span>
+    </div>
+    
+    <!-- Snake Loading State -->
+    <div id="snake-loading-state" class="p-8 text-center">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+      <p class="text-gray-600">Chargement...</p>
+    </div>
+
+    <!-- Snake Empty State -->
+    <div id="snake-empty-state" class="p-8 text-center hidden">
+      <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <h3 class="text-lg font-medium text-gray-800 mb-2">Aucun score enregistré</h3>
+      <p class="text-gray-600">Jouez quelques parties pour voir apparaître des scores</p>
+    </div>
+    
+    <!-- Leaderboard Table -->
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="text-gray-600 text-sm border-b border-gray-200">
+          <th class="py-3 px-4">Rang</th>
+          <th class="py-3 px-4">Joueur</th>
+          <th class="py-3 px-4">Score</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-list">
+        <!-- Leaderboard entries will be populated here by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Snake History -->
+  <div id="snake-history" class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-green-200/50" style="display: none;">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-semibold text-gray-800">Vos Parties</h2>
+      <span id="history-count" class="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">--</span>
+    </div>
+    
+    <!-- History Table -->
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="text-gray-600 text-sm border-b border-gray-200">
+          <th class="py-3 px-4">Date</th>
+          <th class="py-3 px-4">Score</th>
+        </tr>
+      </thead>
+      <tbody id="history-list">
+        <!-- Player's history will be populated here by JavaScript -->
       </tbody>
     </table>
   </div>

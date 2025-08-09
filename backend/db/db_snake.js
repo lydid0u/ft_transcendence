@@ -63,11 +63,12 @@ async function tableSnake(fastify, options)
                 const userName = game.playerName;
                 const score = game.score;
                 const gameMode = game.gameMode;
+                const currentDate = new Date().toISOString();
 
-                // Insérer le score dans la base de données
+                // Insérer le score dans la base de données avec la date de création
                 await fastify.db.connection.run(
-                    'INSERT INTO snake (player_id, player_name, score, game_mode) VALUES (?, ?, ?, ?)',
-                    userId, userName, score, gameMode
+                    'INSERT INTO snake (player_id, player_name, score, game_mode, created_at) VALUES (?, ?, ?, ?, ?)',
+                    userId, userName, score, gameMode, currentDate
                 );
             } catch (error) {
                 console.error('Error adding score to database:', error);

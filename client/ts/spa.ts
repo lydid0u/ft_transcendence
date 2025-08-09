@@ -352,8 +352,6 @@ const SPA = {
 	},
 },
 
-
-
   '/gameAI': {
       title: 'Pong AI Game',
       content: 'pages/gameAI.html',
