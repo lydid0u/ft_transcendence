@@ -1,6 +1,7 @@
 import { activate2fa } from "./profile";
 /// <reference types="vite/client" />
 
+
 interface RouteConfig {
   title: string;
   content: string;
@@ -633,6 +634,44 @@ loadRoute: async function(route: string): Promise<void> {
         }
     },
 
+
+  async checkJwtValidity(): Promise<boolean> {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) return false;
+
+    try {
+      const response = await fetch('http://localhost:3000/check-jwt', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+
+      if (!response.ok) {
+        this.clearAuthAndRedirect();
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error checking JWT:', error);
+      this.clearAuthAndRedirect();
+      return false;
+    }
+  },
+
+  clearAuthAndRedirect(): void {
+    localStorage.removeItem('googleUser');
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    
+    this.navigateTo('/login');
+  },
+
+  //await SPA.checkJwtValidity();
 
   signOut: async function(): Promise<void> {
     try {

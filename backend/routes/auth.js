@@ -344,6 +344,11 @@ async function authGoogle(fastify, options) {
       reply.send({ success:true, message: "2FA code verified"});
     }
   });
+
+  fastify.get("/check-jwt", {preValidation : fastify.prevalidate}, async (request, reply) => {
+    reply.status(200).send({ success: true });
+  });
+
 }
 
 export default fp(authGoogle);
