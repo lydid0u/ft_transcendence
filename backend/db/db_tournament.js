@@ -279,10 +279,11 @@ async function tableMatches(fastify, options)
                 `SELECT * FROM tournaments;`);
         },
 
-        async getAllParticipants()
+        async getAllParticipants(userId)
         {
             return await fastify.db.connection.all(
-                `SELECT * FROM tournament_participants;`);
+                `SELECT * FROM tournament_participants
+                 WHERE user_id = ?;`, [userId]);
         },
 
         async getAllOpenTournaments() {
