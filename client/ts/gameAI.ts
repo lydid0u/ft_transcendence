@@ -144,8 +144,8 @@ export class Game
 	}
 	gameLoop()
 	{
-		const pScore = document.getElementById('player-score');
-		const aiScore = document.getElementById('ai-score');
+	const pScore = document.getElementById('player-score');
+	const aiScore = document.getElementById('computer-score');
 		if (Game.playerScore >= 2 || Game.computerScore >= 2)
 		{
 			this.running = false;
@@ -224,16 +224,16 @@ export class Game
 		endDiv.className = 'flex flex-col items-center mt-6';
 
 		const msg = document.createElement('div');
-		msg.className = 'text-3xl font-bold text-[#00f0ff] mb-4';
+		msg.className = 'text-3xl font-bold text-pink-500 mb-4';
 		msg.textContent = `${winner} gagne!`;
 
 		const restartBtn = document.createElement('button');
-		restartBtn.className = 'px-6 py-2 bg-[#00f0ff] text-[#050507] font-bold rounded-lg shadow hover:bg-[#85e7ff] transition mb-2';
+		restartBtn.className = 'px-6 py-2 bg-pink-500 text-white font-bold rounded-lg shadow hover:bg-pink-400 transition mb-2';
 		restartBtn.textContent = 'Restart';
 		restartBtn.onclick = () => Game.startNewGame(this.difficulty);
 
 		const homeBtn = document.createElement('button');
-		homeBtn.className = 'px-6 py-2 bg-[#00f0ff] text-[#050507] font-bold rounded-lg shadow hover:bg-[#85e7ff] transition';
+		homeBtn.className = 'px-6 py-2 bg-pink-500 text-white font-bold rounded-lg shadow hover:bg-pink-400 transition';
 		homeBtn.textContent = 'Home';
 		homeBtn.onclick = () => SPA.navigateTo('/home');
 

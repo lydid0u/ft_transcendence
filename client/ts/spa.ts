@@ -1,5 +1,5 @@
 import { activate2fa } from "./profile";
-// import i18n from './i18n';
+/// <reference types="vite/client" />
 
 interface RouteConfig {
   title: string;
@@ -192,7 +192,7 @@ const SPA = {
   routeScript: function(): void {
       if (typeof window.google !== 'undefined' && window.google.accounts) {
         window.google.accounts.id.initialize({
-          client_id: "632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com",
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
           callback: handleGoogleAuth
         });
         const signInElement: Element | null = document.querySelector('.g_id_signin');
@@ -317,11 +317,7 @@ const SPA = {
     }
   },
 	'/snake': {
-<<<<<<< Updated upstream
-	title: 'Snake Game',
-=======
 	title: 'game.snake',
->>>>>>> Stashed changes
 	content: 'pages/snake.html',
 	routeScript: function (): void {
 	function tryInitSnakeGame() {
@@ -355,11 +351,6 @@ const SPA = {
 	tryInitSnakeGame();
 	},
 },
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
 
   '/gameAI': {
       title: 'game.pong_ai',

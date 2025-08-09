@@ -52,8 +52,6 @@ class Food
 			gridSize - 2,
 			gridSize - 2
 		);
-<<<<<<< Updated upstream
-=======
 	}
 }
 
@@ -96,7 +94,6 @@ class Wall {
 			gridSize - 2,
 			gridSize - 2,
 		);
->>>>>>> Stashed changes
 	}
 }
 
@@ -540,17 +537,10 @@ export class SnakeGame {
 		// Draw grid cells with black outlines
 		for (let y = 0; y < this.gridHeight; y++) {
 			for (let x = 0; x < this.gridWidth; x++) {
-<<<<<<< Updated upstream
-				this.ctx.fillStyle = '#000'; // fill each square black (optional background)
-				this.ctx.fillRect(x * this.gridSize, y * this.gridSize, this.gridSize, this.gridSize);
-
-				this.ctx.strokeStyle = '#444'; // black border
-=======
 				this.ctx.fillStyle = '#000';
 				this.ctx.fillRect(x * this.gridSize, y * this.gridSize, this.gridSize, this.gridSize);
 
 				this.ctx.strokeStyle = '#444';
->>>>>>> Stashed changes
 				this.ctx.lineWidth = 1;
 				this.ctx.strokeRect(x * this.gridSize, y * this.gridSize, this.gridSize, this.gridSize);
 			}
@@ -651,8 +641,6 @@ export class SnakeGame {
 				throw new Error('Failed to submit score');
 			}
 
-<<<<<<< Updated upstream
-=======
 			const data = await response.json();
 			console.log('Score submitted successfully:', data);
 			
@@ -759,7 +747,6 @@ export class SnakeGame {
 	}
 }
 
->>>>>>> Stashed changes
 	showGameOverScreen(): void {
 		const gameOverDiv = document.createElement('div');
 		gameOverDiv.className = 'game-over';
@@ -789,27 +776,18 @@ export class SnakeGame {
 
 	destroy(): void {
 		this.gameRunning = false;
-<<<<<<< Updated upstream
-=======
 		
 		// Hide game over menu if visible
 		const gameOverMenu = document.getElementById('gameOverMenu');
 		if (gameOverMenu) {
 			gameOverMenu.classList.remove('visible');
 		}
->>>>>>> Stashed changes
 	}
 
 }
 
 let currentGame: SnakeGame | null = null;
 
-<<<<<<< Updated upstream
-// // Initialize the game when DOM is loaded
-// document.addEventListener('DOMContentLoaded', () => {
-// 	currentGame = new SnakeGame();
-// });
-=======
 // Initialize the game when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
 	// If there's an existing game, destroy it first
@@ -842,4 +820,3 @@ document.addEventListener('DOMContentLoaded', () => {
 		};
 	}
 });
->>>>>>> Stashed changes
