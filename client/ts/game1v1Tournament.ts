@@ -28,6 +28,7 @@ export async function startTournamentFlow() {
     console.log("Participants du tournoi:", participants);
     // prendre les 2 premiers participants
     await tournament.fetchMatch();
+    
     // lancer une game avec eux
     function tryInitGame1v1() {
         const canvas = document.getElementById('game-canvas');

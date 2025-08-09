@@ -32,13 +32,26 @@ async function MatchData(fastify, options)
                 throw new Error(`Match not found for tournament ID: ${tournamentId}`);
             }
             
-            // Maintenant participants est un tableau, donc .length fonctionnera
+            // MMR et changer les chiffres par un index du joueur qui doit jouer
+            // inserer code ici
+
+
             if (participants.length == 4)
-                return ({tournamentId : tournamentId, player_1_name: participants[0].username || participants[0].alias, player_2_name: participants[1].username || participants[1].alias});
+                return ({tournamentId : tournamentId, 
+                    next_player_1_name : participants[2].username || participants[2].alias, 
+                    next_player_2_name: participants[3].username || participants[3].alias, 
+                    player_1_name: participants[0].username || participants[0].alias, 
+                    player_2_name: participants[1].username || participants[1].alias,
+                    round : "demi-finale 1"});
+
             else if (participants.length == 3)
-                return ({tournamentId : tournamentId, player_1_name: participants[1].username || participants[1].alias, player_2_name: participants[2].username || participants[2].alias});
+                return ({tournamentId : tournamentId, finalist_name : participants[0].username || participants[0].alias,
+                    player_1_name: participants[1].username || participants[1].alias, 
+                    player_2_name: participants[2].username || participants[2].alias,
+                    round : "demi-finale 2"});
             else if (participants.length == 2)
-                return ({tournamentId : tournamentId, player_1_name: participants[0].username || participants[0].alias, player_2_name: participants[1].username || participants[1].alias});
+                return ({tournamentId : tournamentId, player_1_name: participants[0].username || participants[0].alias, player_2_name: participants[1].username || participants[1].alias, 
+                    round : "finale"});
             else
                 throw new Error(`Unexpected number of participants: ${participants.length}`);
         },

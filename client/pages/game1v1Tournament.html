@@ -1,14 +1,46 @@
 <div class="flex flex-col items-center rounded-[40px] h-full w-full p-8 bg-gradient-to-b from-[#050507] to-[#0a1a2f] shadow-lg border-2 border-[#00f0ff] no-scrollbar overflow-y-auto">
   <div class="w-full max-w-4xl text-center">
-    <h1 class="text-5xl font-bold mb-12 text-[#e6fdff] vhsfont" style="text-shadow: 0 0 10px #00f0ff, 0 0 20px #85e7ff;">PvP</h1>
+    <h1 class="text-5xl font-bold mb-8 text-[#e6fdff] vhsfont" style="text-shadow: 0 0 10px #00f0ff, 0 0 20px #85e7ff;">Tournoi 🏆</h1>
+    
+    <!-- Indicateur du round actuel -->
+    <div id="round-indicator" class="text-2xl font-bold text-[#00f0ff] mb-6" style="text-shadow: 0 0 8px #00f0ff;">
+      <span id="current-round">Demi-finale</span>
+    </div>
+    
     <div class="page-content">
-      <p class="text-lg text-[#85e7ff] mb-4" style="text-shadow: 0 0 6px #00f0ff;">Bonne chance <span id="player1-name">Joueur 1</span>, <span id="player2-name">Joueur 2</span>!</p>
+      <!-- Noms des joueurs actuels -->
+      <div class="flex justify-between items-center mb-6 px-8">
+        <div class="text-2xl font-bold text-[#e6fdff]" style="text-shadow: 0 0 8px #00f0ff;">
+          <span id="player1-name">Joueur 1</span>
+        </div>
+        <div class="text-xl text-[#85e7ff]">VS</div>
+        <div class="text-2xl font-bold text-[#e6fdff]" style="text-shadow: 0 0 8px #00f0ff;">
+          <span id="player2-name">Joueur 2</span>
+        </div>
+      </div>
+      
       <div id="score-bar" class="flex justify-center items-center text-4xl font-bold text-[#00f0ff] mb-4" style="text-shadow: 0 0 8px #00f0ff;">
         <span id="player1-score" class="mx-8">0</span>
         <span class="mx-2">:</span>
         <span id="player2-score" class="mx-8">0</span>
       </div>
-      <canvas id="game-canvas" width="400" height="250" class="mx-auto border-4 border-[#00f0ff] shadow-[0_0_20px_#00f0ff] rounded-lg mt-2 mb-2"></canvas>
+      <canvas id="game-canvas" width="400" height="250" class="mx-auto border-4 border-[#00f0ff] shadow-[0_0_20px_#00f0ff] rounded-lg mt-2 mb-4"></canvas>
+      
+      <!-- Section pour les prochains adversaires -->
+      <div id="next-opponents-section" class="mt-6 mb-4">
+        <h3 class="text-lg font-bold text-[#85e7ff] mb-2" style="text-shadow: 0 0 6px #00f0ff;">Prochains adversaires :</h3>
+        <div class="flex justify-center items-center text-xl text-[#e6fdff]">
+          <span id="next-player1" class="mx-4">En attente...</span>
+          <span class="mx-2 text-[#85e7ff]">VS</span>
+          <span id="next-player2" class="mx-4">En attente...</span>
+        </div>
+        <!-- Section pour le finaliste (visible uniquement en finale) -->
+        <div id="finalist-section" class="mt-4 hidden">
+          <p class="text-lg text-[#00f0ff]" style="text-shadow: 0 0 6px #00f0ff;">
+            Finaliste : <span id="finalist-name" class="font-bold">--</span>
+          </p>
+        </div>
+      </div>
       
       <!-- Bouton "Prochain match" - caché par défaut -->
       <div id="next-game-container" class="mt-6 hidden">
