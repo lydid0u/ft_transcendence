@@ -48,6 +48,10 @@ export class Game
 		Game.keysPressed = [];
 		Game.playerScore = 0;
 		Game.computerScore = 0;
+		
+		// Mettre à jour le nom du joueur dès l'initialisation
+		Game.updatePlayerName();
+		
 		let paddleSpeed:number = 8, ballSpeed:number = 3;
 		if (this.difficulty === Difficulty.EASY)
 		{
@@ -146,6 +150,7 @@ export class Game
 		{
 			this.running = false;
 			this.showEndScreen();
+			this.postFinalGameResults(); // Enregistrer les résultats
 			return;
 		}
 		if (!this.running)
@@ -158,25 +163,70 @@ export class Game
 		}
 		requestAnimationFrame(() => this.gameLoop());
 	}
+	
+	async postFinalGameResults() {
+		// Récupérer le pseudo du joueur depuis l'élément HTML
+		let playerName = "Joueur";
+		const playerNameElement = document.getElementById("player-name");
+		if (playerNameElement && playerNameElement.textContent) {
+			playerName = playerNameElement.textContent;
+		}
+		
+		const gameResults = {
+			player1_score: Game.playerScore,
+			player2_score: Game.computerScore,
+			winner: Game.playerScore > Game.computerScore ? "player1" : "player2",
+			game_type: "Pong vs IA"
+		};
+		
+		try {
+			const token = localStorage.getItem('jwtToken');
+			if (!token) {
+				console.warn("Impossible d'enregistrer les résultats : token d'authentification non trouvé");
+				return;
+			}
+			
+			const response = await fetch('http://localhost:3000/add-match', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+				credentials: 'include',
+				body: JSON.stringify(gameResults)
+			});
+			
+			console.log(response);
+			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+			console.log('Résultats de la partie contre l\'IA enregistrés avec succès');
+		} catch (error) {
+			console.error('Erreur lors de l\'enregistrement des résultats:', error);
+		}
+	}
 	showEndScreen() {
 		const container = document.querySelector('.page-content');
 		if (!container) return;
 
+		// Remove old end screen if present
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
 
-		const winner = Game.playerScore > Game.computerScore ? "You" : "Computer";
+		// Récupérer le pseudo du joueur depuis l'élément HTML
+		let playerName = "Joueur";
+		const playerNameElement = document.getElementById("player-name");
+		if (playerNameElement && playerNameElement.textContent) {
+			playerName = playerNameElement.textContent;
+		}
+
+		const winner = Game.playerScore > Game.computerScore ? playerName : "IA";
 		const endDiv = document.createElement('div');
 		endDiv.id = 'end-screen';
 		endDiv.className = 'flex flex-col items-center mt-6';
 
 		const msg = document.createElement('div');
 		msg.className = 'text-3xl font-bold text-[#00f0ff] mb-4';
-		if (winner === "You")
-			msg.textContent = `${winner} get the win!`;
-		else
-			msg.textContent = '${winner} gets the win!'
-		
+		msg.textContent = `${winner} gagne!`;
+
 		const restartBtn = document.createElement('button');
 		restartBtn.className = 'px-6 py-2 bg-[#00f0ff] text-[#050507] font-bold rounded-lg shadow hover:bg-[#85e7ff] transition mb-2';
 		restartBtn.textContent = 'Restart';
@@ -194,9 +244,7 @@ export class Game
 
 		const canvas = document.getElementById('game-canvas');
 		if (canvas) canvas.style.display = 'none';
-	}
-
-	public static startNewGame(difficulty: Difficulty = Difficulty.EASY) {
+	}	public static startNewGame(difficulty: Difficulty = Difficulty.EASY) {
 		if (Game.currentInstance) {
 			Game.currentInstance.destroy();
 		}
@@ -204,9 +252,66 @@ export class Game
 		if (canvas) canvas.style.display = '';
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
+		
+		// Mettre à jour le nom du joueur
+		console.log("Tentative de mise à jour du nom du joueur...");
+		Game.updatePlayerName();
+		
 		const game = new Game(difficulty);
 		Game.currentInstance = game;
 		game.gameLoop();
+	}
+	
+	// Fonction pour mettre à jour le nom du joueur
+	private static updatePlayerName() {
+		const playerNameElement = document.getElementById('player-name');
+		if (playerNameElement) {
+			// Récupérer le nom d'utilisateur du localStorage
+			let username = localStorage.getItem('username');
+			
+			// Si pas trouvé dans localStorage, essayer avec d'autres clés potentielles
+			if (!username) {
+				username = localStorage.getItem('userUsername');
+			}
+			if (!username) {
+				username = localStorage.getItem('user_username');
+			}
+			if (!username) {
+				username = sessionStorage.getItem('username');
+			}
+			
+			// Si un nom d'utilisateur a été trouvé, l'utiliser
+			if (username) {
+				console.log("Nom d'utilisateur trouvé :", username);
+				playerNameElement.textContent = username;
+			} else {
+				// Sinon, essayer de récupérer le jeton JWT et extraire les informations
+				const token = localStorage.getItem('jwtToken');
+				if (token) {
+					try {
+						// Tenter de décoder le jeton JWT pour extraire les informations utilisateur
+						const base64Url = token.split('.')[1];
+						const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+						const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+							return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+						}).join(''));
+						
+						const payload = JSON.parse(jsonPayload);
+						if (payload.username) {
+							console.log("Nom d'utilisateur extrait du token :", payload.username);
+							playerNameElement.textContent = payload.username;
+						}
+					} catch (e) {
+						console.error("Erreur lors du décodage du token JWT:", e);
+						playerNameElement.textContent = "Joueur";
+					}
+				} else {
+					// Fallback si aucune information n'est trouvée
+					console.log("Aucun nom d'utilisateur trouvé, utilisation du fallback");
+					playerNameElement.textContent = "Joueur";
+				}
+			}
+		}
 	}
 }
 

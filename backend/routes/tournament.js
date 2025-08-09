@@ -146,7 +146,9 @@ async function tournamentRoute(fastify, options)
 
     fastify.get('/tournament/get-participants', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
-        const participants = await fastify.dbTournament.getAllParticipants();
+        const userId = request.user.id;
+        const participants = await fastify.dbTournament.getAllParticipants(userId);
+        console.log('Participants:', participants);
         reply.send({ participants });
     });
 

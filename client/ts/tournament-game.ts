@@ -13,7 +13,11 @@ interface TournamentMatch {
   player1_score: number;
   player2_score: number;
   winner_id: number;
-  status: string; // "pending", "in_progress", "completed"
+  next_player1_name?: string; // Nom du prochain adversaire pour le joueur 1
+  next_player2_name?: string; // Nom du prochain adversaire pour le joueur 2
+  finalist_name?: string; // Nom du finaliste
+  status: string;
+  round: string;
   created_at: string;
   updated_at: string;
 }
@@ -224,13 +228,23 @@ class TournamentLaunch
   // player_1 et player_2 html element
   private player1_name: HTMLElement | null;
   private player2_name: HTMLElement | null;
+  private next_player1_name: HTMLElement | null;
+  private next_player2_name: HTMLElement | null;
+  private current_round: HTMLElement | null;
+  private finalist_name: HTMLElement | null;
 
   constructor() {
     this.api = new TournamentLaunchAPI();
 
     // Initialisation des éléments DOM
-    this.player1_name = document.getElementById("player1-name");
-    this.player2_name = document.getElementById("player2-name");
+    document.getElementById('current-round')      // Pour le round actuel
+    document.getElementById('player1-name')      // Nom joueur 1
+    document.getElementById('player2-name')      // Nom joueur 2
+    document.getElementById('next-player1')      // Prochain adversaire 1
+    document.getElementById('next-player2')      // Prochain adversaire 2
+    document.getElementById('finalist-section')  // Section finaliste
+    document.getElementById('finalist-name')     // Nom du finaliste
+    document.getElementById('next-game-container') // Conteneur bouton "Prochain match"
   }
 
   async startTournament() {
@@ -256,15 +270,52 @@ class TournamentLaunch
   async fetchMatch() {
     const match = await this.api.getTournamentMatch();
     if (match) {
-      console.log("Match du tournoi:", match.player_1_name, match.player_2_name);
+      console.log("Match du tournoi:", match);
       this.player1_name = document.getElementById("player1-name");
       this.player2_name = document.getElementById("player2-name");
-      // Logique pour afficher les détails du match
-      if (this.player1_name && this.player2_name) {
-        this.player1_name.textContent = match.player_1_name.toString();
-        this.player2_name.textContent = match.player_2_name.toString();
-        console.log("Noms des joueurs mis à jour:", match.player_1_name, match.player_2_name);
+      
+      // Récupérer les éléments DOM pour les prochains joueurs seulement s'ils existent dans les données
+      if (match.next_player_1_name) {
+        this.next_player1_name = document.getElementById("next-player1");
       }
+      if (match.next_player_2_name) {
+        this.next_player2_name = document.getElementById("next-player2");
+      }
+      if (match.finalist_name) {
+        this.finalist_name = document.getElementById("finalist-name");
+      }
+
+      // Afficher les noms des joueurs actuels
+      if (this.player1_name && this.player2_name) {
+        this.player1_name.textContent = match.player_1_name || "Joueur 1"; // ✅ Corrigé
+        this.player2_name.textContent = match.player_2_name || "Joueur 2"; // ✅ Corrigé
+      }
+      
+      if (match.round == "finale") {
+        console.log("Affichage du match de la finale:");
+        this.current_round = document.getElementById("current-round");
+        this.current_round.textContent = "Finale";
+        const nextOpponentsSection = document.getElementById('next-opponents-section');
+        if (nextOpponentsSection) {
+          nextOpponentsSection.classList.add('hidden');
+        }
+        // console.log("Affichage du finaliste:", match.finalist_name);
+      }
+      // Afficher les prochains adversaires
+      else if(match.round == "demi-finale 1") {
+        console.log("Affichage des prochains adversaires:", match.next_player_1_name, match.next_player_2_name);
+        this.next_player1_name.textContent = match.next_player_1_name || "Prochain adversaire 1"; // ✅ Corrigé
+        this.next_player2_name.textContent = match.next_player_2_name || "Prochain adversaire 2"; // ✅ Corrigé
+      }
+      else if (match.round == "demi-finale 2") {
+        console.log("Affichage du prochain adversaire 1:", match.next_player_1_name);
+        this.next_player1_name = document.getElementById("next-player1");
+        this.next_player1_name.textContent = match.finalist_name || "Finaliste inconnu";
+        
+      }
+      // if (this.next_player1_name && !this.next_player2_name) {
+      //   this.next_player1_name.textContent = match.next_player_1_name || "Prochain sera le finaliste"; // ✅ Corrigé
+      // }
       
       // Vérifier s'il s'agit du dernier match du tournoi
       const participants = await this.api.getTournamentDetails();

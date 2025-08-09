@@ -10,6 +10,15 @@ enum Difficulty {
 	HARD = 3
 }
 
+interface GameResults {
+	player1_id: number;
+	player1_name: string;
+	player1_score: number;
+	player2_score: number;
+	winner: string; // "player1" or "player2"
+	game_type: string; // e.g., "pong"
+}
+
 const WALL_OFFSET = 20;
 
 import { SPA } from './spa';
@@ -56,7 +65,7 @@ export class Game1v1
 		if (this.difficulty === Difficulty.EASY)
 		{
 			paddleSpeed = 6;
-			ballSpeed = 2;
+			ballSpeed = 3
 		}
 		if (this.difficulty === Difficulty.HARD)
 		{
@@ -155,7 +164,7 @@ export class Game1v1
 	{
 		const p1Score = document.getElementById('player1-score');
 		const p2Score = document.getElementById('player2-score');
-		if (Game1v1.player1Score >= 2 || Game1v1.player2Score >= 2)
+		if (Game1v1.player1Score >= 5 || Game1v1.player2Score >= 5)
 		{
 			this.running = false;
 			this.showEndScreen(); // UI improvement
@@ -178,14 +187,18 @@ export class Game1v1
 			player1_score: Game1v1.player1Score,
 			player2_score: Game1v1.player2Score,
 			winner: Game1v1.player1Score > Game1v1.player2Score ? "player1" : "player2",
-			game_type: "pong"
+			game_type: "Pong 1v1",
 		};
 		try {
-			const response = await fetch('http://localhost:3000/api/pong-results', {
+			const response = await fetch('http://localhost:3000/add-match', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+				},
 				body: JSON.stringify(gameResults)
-			});
+			})
+			console.log(response);
 			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 			console.log('Final game results posted successfully');
 		} catch (error) {
@@ -201,7 +214,14 @@ export class Game1v1
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
 
-		const winner = Game1v1.player1Score > Game1v1.player2Score ? "Player 1" : "Player 2";
+		// Récupérer le pseudo du joueur 1 depuis l'élément HTML
+		let player1Name = "Player 1";
+		const player1NameElement = document.getElementById("player1-name");
+		if (player1NameElement && player1NameElement.textContent) {
+			player1Name = player1NameElement.textContent;
+		}
+
+		const winner = Game1v1.player1Score > Game1v1.player2Score ? player1Name : "Player 2";
 		const endDiv = document.createElement('div');
 		endDiv.id = 'end-screen';
 		endDiv.className = 'flex flex-col items-center mt-6';
@@ -240,10 +260,29 @@ export class Game1v1
 		// Remove end screen if present
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
+		
+		// Mettre à jour le nom du joueur 1
+		this.updatePlayerName();
+		
 		// Start new game
 		const game = new Game1v1(difficulty);
 		Game1v1.currentInstance = game;
 		game.gameLoop();
+	}
+	
+	// Fonction pour mettre à jour le nom du joueur 1
+	private static updatePlayerName() {
+		const player1NameElement = document.getElementById('player1-name');
+		if (player1NameElement) {
+			// Récupérer le nom d'utilisateur du localStorage ou de la session
+			const username = localStorage.getItem('username') || sessionStorage.getItem('username');
+			if (username) {
+				player1NameElement.textContent = username;
+			} else {
+				// Fallback si aucun nom n'est trouvé
+				player1NameElement.textContent = "Vous";
+			}
+		}
 	}
 }
 

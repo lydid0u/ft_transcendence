@@ -170,10 +170,11 @@ class TournamentHomeApp {
         console.log("Add Player Button found");
       this.addPlayerBtn.addEventListener("click", () => this.handleAddPlayer());
     }
-    
-    // Écouteur pour le bouton de lancement du tournoi
     if (this.tournamentStartBtn) {
-      this.tournamentStartBtn.addEventListener("click", () => this.handleLaunchTournament());
+      this.tournamentStartBtn.addEventListener("click", () => {
+        // Vérifier si le tournoi est valide avant de rediriger
+        this.validateTournamentAccess();
+      });
     }
     if (this.tournamentQuitBtn){
       this.tournamentQuitBtn.addEventListener("click", () => this.deleteTournament());
@@ -354,6 +355,30 @@ private async handlePlayerLogin(): Promise<void> {
     
     // Réinitialisation du champ de saisie
     this.playerNameInput.value = "";
+  }
+  
+  private async validateTournamentAccess(): Promise<void> {
+    if (!this.tournamentId) {
+      this.showMessage("Erreur: Aucun tournoi actif trouvé", "error");
+      return;
+    }
+    
+    // Vérifier que le tournoi a suffisamment de participants (au moins 2)
+    const participants = await this.api.getTournamentDetails();
+    if (!participants || participants.length < 2) {
+      this.showMessage("Le tournoi doit avoir au moins 2 participants pour être lancé", "error");
+      return;
+    }
+    
+    // Si tout est valide, rediriger vers la page du tournoi
+    this.showMessage("Lancement du tournoi...", "success");
+    setTimeout(() => {
+      if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
+        window.SPA.navigateTo('/game1v1Tournament');
+      } else {
+        window.location.href = '/game1v1Tournament';
+      }
+    }, 1000);
   }
 
   private async handleLaunchTournament(): Promise<void> {

@@ -14,7 +14,7 @@
       "settings": "Settings",
       "loading": "Loading..."
     },
-        "reset": {
+      "reset": {
       "title": "Reset Password",
       "email_placeholder": "Your email",
       "send": "Send code"
@@ -98,7 +98,12 @@
       "choose_difficulty": "Choose Difficulty",
       "easy": "Easy",
       "medium": "Medium",
-      "hard": "Hard"
+      "hard": "Hard",
+      "snake": "Snake Game",
+      "pong_ai": "Pong AI Game",
+      "pong_1v1": "Pong 1v1",
+      "pong_1v1_tournament": "Pong 1v1 Tournament",
+      "difficulty_choice": "Choose Difficulty"
     },
     "otp": {
       "title": "Two-Factor Authentication",
@@ -113,7 +118,8 @@
     "about": {
       "title": "Who are we?",
       "lydia_role": "Front End, designer...",
-      "khalid_role": "Back End, user management..."
+      "khalid_role": "Back End, user management...",
+      "ilan_role": "Pong, game development..."
     },
     "errors": {
       "noUserFound": "No user found"
@@ -146,8 +152,8 @@
   "step3_title": "Start competing",
   "step3_desc": "Launch the tournament and may the best win",
   "active_tournaments": "Active Tournaments",
-"create_first": "Create your first tournament",
-"no_tournaments": "No tournaments available",
+  "create_first": "Create your first tournament",
+  "no_tournaments": "No tournaments available",
   "create": "Create tournament",
   "creating": "Creating...",
   "create_success": "Tournament created successfully",
@@ -187,6 +193,10 @@
       "track_progress": "Suivre la progression",
       "improve_skills": "Gardez une trace de vos statistiques et améliorez vos compétences Pong au fil du temps."
     },    
+    "resetPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "new_password": "Nouveau mot de passe"
+    },
     "reset": {
       "title": "Réinitialiser le mot de passe",
       "email_placeholder": "Votre email",
@@ -259,7 +269,12 @@
       "choose_difficulty": "Choisissez la difficulté",
       "easy": "Facile",
       "medium": "Moyen",
-      "hard": "Difficile"
+      "hard": "Difficile",
+      "snake": "Jeu du Serpent",
+      "pong_ai": "Pong contre IA",
+      "pong_1v1": "Pong 1 contre 1",
+      "pong_1v1_tournament": "Tournoi Pong 1 contre 1",
+      "difficulty_choice": "Choix de la difficulté"
     },
     "otp": {
       "title": "Double Authentification",
@@ -274,7 +289,8 @@
     "about": {
       "title": "Qui sommes-nous ?",
       "lydia_role": "Front End, designer...",
-      "khalid_role": "Back End, gestion des utilisateurs..."
+      "khalid_role": "Back End, gestion des utilisateurs...",
+      "ilan_role": "Pong, développement de jeux..."
     },
     "errors": {
       "noUserFound": "Aucun utilisateur trouvé"
@@ -440,7 +456,12 @@
       "choose_difficulty": "Elige la dificultad",
       "easy": "Fácil",
       "medium": "Medio",
-      "hard": "Difícil"
+      "hard": "Difícil",
+      "snake": "Juego de la Serpiente",
+      "pong_ai": "Pong contra IA",
+      "pong_1v1": "Pong 1 contra 1",
+      "pong_1v1_tournament": "Torneo Pong 1 contra 1",
+      "difficulty_choice": "Elegir dificultad"
     },
     "otp": {
       "title": "Autenticación de dos factores",
@@ -455,7 +476,8 @@
     "about": {
       "title": "¿Quiénes somos?",
       "lydia_role": "Front End, diseñador...",
-      "khalid_role": "Back End, gestión de usuarios..."
+      "khalid_role": "Back End, gestión de usuarios...",
+      "ilan_role": "Pong, desarrollo de juegos..."
     },
     "errors": {
       "noUserFound": "No se encontró ningún usuario"

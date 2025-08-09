@@ -65,9 +65,9 @@ async function tableMatches(fastify, options)
             if (idDifferentfromCreator.creator_id != userId) {
                 throw new Error('You cannot join that tournament as you are not the creator');
             }
-            else if (tournament.status === 'open') {
-                return true;
-            }
+            // else if (tournament.status === 'open') {
+            //     return true;
+            // }
             const user = await fastify.db.connection.get('SELECT username FROM users WHERE id = ?', [userId]);
             // Ajouter le joueur au tournoi
             await fastify.db.connection.run(
@@ -279,10 +279,15 @@ async function tableMatches(fastify, options)
                 `SELECT * FROM tournaments;`);
         },
 
-        async getAllParticipants()
+        async getAllParticipants(userId)
         {
+            const t_id = await this.getTournamentByCreatorId(userId);
+            if (!t_id) {
+                return [];
+            }
             return await fastify.db.connection.all(
-                `SELECT * FROM tournament_participants;`);
+                `SELECT * FROM tournament_participants
+                 WHERE tournament_id = ?;`, [t_id.id]);
         },
 
         async getAllOpenTournaments() {

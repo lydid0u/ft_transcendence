@@ -19,8 +19,109 @@ import * as Tournament from './tournament-game';
 const api = new Tournament.TournamentLaunchAPI();
 const tournament = new Tournament.TournamentLaunch();
 
+// Fonction pour valider l'authentification de l'utilisateur
+function checkAuthentication(): boolean {
+    const token = localStorage.getItem("jwtToken");
+    
+    if (!token) {
+        showErrorMessage("Vous devez être connecté pour accéder à cette page");
+        return false;
+    }
+    
+    return true;
+}
+
+// Fonction pour valider l'accès au tournoi
+async function validateTournamentAccess(): Promise<boolean> {
+    // Vérifier d'abord l'authentification
+    if (!checkAuthentication()) {
+        return false;
+    }
+    
+    try {
+        // Vérifier si un tournoi actif existe
+        const participants = await api.getTournamentDetails();
+        
+        if (!participants || participants.length < 2) {
+            // Afficher un message d'erreur
+            showErrorMessage("Vous n'avez pas accès à ce tournoi ou le tournoi n'a pas assez de participants");
+            return false;
+        }
+        
+        return true;
+    } catch (error) {
+        console.error("Erreur lors de la validation de l'accès au tournoi:", error);
+        showErrorMessage("Erreur lors de la validation de l'accès au tournoi");
+        return false;
+    }
+}
+
+// Fonction pour afficher un message d'erreur
+function showErrorMessage(message: string): void {
+    // Supprimer les messages d'erreur existants
+    const existingErrors = document.querySelectorAll('.error-notification');
+    existingErrors.forEach(elem => elem.remove());
+    
+    const errorContainer = document.createElement("div");
+    errorContainer.className = "error-notification fixed top-5 right-5 p-4 bg-red-600 text-white rounded-lg shadow-lg z-50 max-w-xs";
+    
+    // Contenu du message
+    const messageContent = document.createElement("div");
+    messageContent.className = "flex items-start";
+    
+    // Icône d'alerte
+    const alertIcon = document.createElement("div");
+    alertIcon.className = "mr-3 text-xl font-bold";
+    alertIcon.innerHTML = "⚠️";
+    
+    // Texte du message
+    const messageText = document.createElement("div");
+    messageText.className = "flex-1 text-sm";
+    
+    // Titre du message
+    const messageTitle = document.createElement("p");
+    messageTitle.className = "font-bold mb-1";
+    messageTitle.textContent = "Accès refusé";
+    
+    // Corps du message
+    const messageBody = document.createElement("p");
+    messageBody.textContent = message;
+    
+    // Bouton pour retourner à l'accueil
+    const homeButton = document.createElement("button");
+    homeButton.className = "mt-2 px-3 py-1 bg-white text-red-600 text-xs rounded font-bold";
+    homeButton.textContent = "Retour à l'accueil";
+    homeButton.onclick = () => { window.location.href = "/home"; };
+    
+    // Assembler les éléments
+    messageText.appendChild(messageTitle);
+    messageText.appendChild(messageBody);
+    messageText.appendChild(homeButton);
+    
+    messageContent.appendChild(alertIcon);
+    messageContent.appendChild(messageText);
+    
+    errorContainer.appendChild(messageContent);
+    document.body.appendChild(errorContainer);
+    
+    // Ajouter une animation d'entrée
+    errorContainer.style.opacity = "0";
+    errorContainer.style.transform = "translateX(50px)";
+    errorContainer.style.transition = "opacity 0.3s ease-in-out, transform 0.3s ease-in-out";
+    
+    // Déclencher l'animation après un court délai
+    setTimeout(() => {
+        errorContainer.style.opacity = "1";
+        errorContainer.style.transform = "translateX(0)";
+    }, 10);
+}
 
 export async function startTournamentFlow() {
+    // Vérifier l'accès au tournoi avant de continuer
+    const hasAccess = await validateTournamentAccess();
+    if (!hasAccess) {
+        return; // Arrêter l'exécution si l'accès est refusé
+    }
 
     // logique pour lancer une game
     // Avoir la data des participants
@@ -28,6 +129,7 @@ export async function startTournamentFlow() {
     console.log("Participants du tournoi:", participants);
     // prendre les 2 premiers participants
     await tournament.fetchMatch();
+    
     // lancer une game avec eux
     function tryInitGame1v1() {
         const canvas = document.getElementById('game-canvas');
@@ -353,6 +455,8 @@ async function handleMatchEnd(winnerNumber: number, player1Name: string, player2
                 player2_score: Game1v1.player2Score,
                 winner_id: winnerNumber === 1 ? match.player1_id : match.player2_id,
                 status: "completed",
+                game_type: "Tournament",
+                round : match.round,
                 created_at: match.created_at || new Date().toISOString(),
                 updated_at: new Date().toISOString()
             };
@@ -537,7 +641,30 @@ declare global {
     }
 }
 
+// Initialiser la page de tournoi
+function initTournamentGame() {
+    // Vérifier l'authentification avant tout
+    if (!checkAuthentication()) {
+        return;
+    }
+    
+    // Valider l'accès au tournoi immédiatement
+    validateTournamentAccess().then(hasAccess => {
+        if (hasAccess) {
+            // Seulement si l'accès est validé, commencer le flux du tournoi
+            startTournamentFlow();
+        }
+    });
+}
+
 // Ajouter l'écouteur d'événements au chargement du document
 document.addEventListener('DOMContentLoaded', () => {
+    // Protection immédiate - vérifie l'authentification dès le chargement de la page
+    if (!checkAuthentication()) {
+        return; // Arrête l'exécution si l'utilisateur n'est pas authentifié
+    }
+    
     addNextGameButtonListener();
+    // Initialiser la page tournoi
+    initTournamentGame();
 });

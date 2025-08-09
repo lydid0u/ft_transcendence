@@ -168,7 +168,7 @@ const SPA = {
     },
 
     '/tournamenthome': {
-      title: 'Démarrer un tournoi',
+      title: 'tournament.create',
       content: 'pages/tournamenthome.html',
       routeScript: function(): void {
         setTimeout(() => {
@@ -226,7 +226,7 @@ const SPA = {
 },
 
     '/otp': {
-      title: 'Double Authentification',
+      title: 'otp.title',
       content: 'pages/otp.html',
       routeScript: function(): void {
         const otpInput: HTMLInputElement | null = document.querySelector('#otp-input');
@@ -244,7 +244,7 @@ const SPA = {
     },
 
     '/otp-password': {
-      title: 'Réinitialiser le mot de passe',
+      title: 'otp.title',
       content: 'pages/otp-password.html',
       routeScript: function(): void {
         console.log('Initialisation du formulaire OTP pour la réinitialisation de mot de passe');
@@ -257,7 +257,7 @@ const SPA = {
     },
 
     '/resetNewPassword': {
-      title: 'Nouveau mot de passe',
+      title: 'resetPassword.new_password',
       content: 'pages/newPasswordReset.html',
       routeScript: function(): void {
         import('./resetNewPassword').then(module => {
@@ -269,7 +269,7 @@ const SPA = {
     },
 
     '/googleLogin': {
-      title: 'Google Login',
+      title: 'login.title',
       content: 'pages/googleLogin.html',
         routeScript: function(): void {
         const googleUser = localStorage.getItem('googleUser');
@@ -281,7 +281,7 @@ const SPA = {
     },
 
     '/register': {
-      title: 'register',
+      title: 'register.title',
       content: 'pages/register.html',
       routeScript: function(): void {
         register();
@@ -297,7 +297,7 @@ const SPA = {
     },
 
       '/match-history': {
-    title: 'Historique des matchs',
+    title: 'matchHistory.title',
     content: 'pages/match-history.html',
     routeScript: function(): void {
       setTimeout(() => {
@@ -317,7 +317,11 @@ const SPA = {
     }
   },
 	'/snake': {
+<<<<<<< Updated upstream
 	title: 'Snake Game',
+=======
+	title: 'game.snake',
+>>>>>>> Stashed changes
 	content: 'pages/snake.html',
 	routeScript: function (): void {
 	function tryInitSnakeGame() {
@@ -351,11 +355,14 @@ const SPA = {
 	tryInitSnakeGame();
 	},
 },
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
 
   '/gameAI': {
-      title: 'Pong AI Game',
+      title: 'game.pong_ai',
       content: 'pages/gameAI.html',
       routeScript: function ()
       {
@@ -399,7 +406,7 @@ const SPA = {
     },
 
     '/game1v1Tournament': {
-  title: 'Pong 1v1 Tournament',
+  title: 'game.pong_1v1_tournament',
   content: 'pages/game1v1Tournament.html',
   routeScript: function (): void {
     setTimeout(() => {
@@ -418,7 +425,7 @@ const SPA = {
 },
 
   '/1v1': {
-      title: 'Pong 1v1',
+      title: 'game.pong_1v1',
       content: 'pages/game1v1.html',
       routeScript: function ()
       {
@@ -456,7 +463,7 @@ const SPA = {
     },
 
     '/ai-landing': {
-      title: 'Choix de la difficulté',
+      title: 'game.difficulty_choice',
       content: 'pages/pong-landing.html',
       routeScript: function () {
         // Attach event listeners to difficulty buttons
@@ -474,7 +481,7 @@ const SPA = {
     },
 
     '/1v1-landing': {
-      title: 'Choix de la difficulté',
+      title: 'game.difficulty_choice',
       content: 'pages/pong-landing.html',
       routeScript: function () {
         // Attach event listeners to difficulty buttons
@@ -492,7 +499,7 @@ const SPA = {
     },
 
     '/profile': {
-      title: 'profile',
+      title: 'common.profile',
       content: 'pages/profile.html',
       routeScript: function(): void {
         setTimeout(() => {
@@ -534,27 +541,6 @@ const SPA = {
 
 loadRoute: async function(route: string): Promise<void> {
   try {
-    const isAuthenticated: boolean = localStorage.getItem('isAuthenticated') === 'true';
-    const publicRoutes: string[] = ['/', '/login', '/register', '/reset-password', '/otp-password', '/otp', '/about', '/resetNewPassword'];
-    const hasValidToken = localStorage.getItem('jwtToken') !== null;
-
-    // Rediriger vers /login si non authentifié et route protégée
-    // if ((!isAuthenticated || !hasValidToken) && !publicRoutes.includes(route)) {
-    //   console.log('Access denied: redirecting to login');
-    //   history.pushState("", "", '/login'); // Direct history manipulation to avoid loops
-    //   this.loadRoute('/login');
-    //   return;
-    // }
-
-    // // Rediriger vers /home si authentifié et sur une page d'auth
-    // if (isAuthenticated && ['/login', '/register', '/reset-password'].includes(route)) {
-    //   console.log('Already authenticated: redirecting to home');
-    //   history.pushState("", "", '/home'); // Direct history manipulation to avoid loops
-    //   this.loadRoute('/home');
-    //   return;
-    // }
-
-
     // Vérifier si la route existe
     if (!(route in this.routes)) {
       this.error404();
@@ -564,10 +550,13 @@ loadRoute: async function(route: string): Promise<void> {
     const routeConfig = this.routes[route];
 
     // Set the page title with translation if needed
-    if (routeConfig.title && routeConfig.title.includes('.') && window.i18n) {
-      document.title = window.i18n.translate(routeConfig.title) || "ft_transcendence";
-    } else {
-      document.title = routeConfig.title || "ft_transcendence";
+    if (routeConfig.title) {
+      // Si c'est une clé de traduction (contient un point) et que i18n est disponible
+      if (routeConfig.title.includes('.') && window.i18n && typeof window.i18n.translate === 'function') {
+        document.title = window.i18n.translate(routeConfig.title) || "ft_transcendence";
+      } else {
+        document.title = routeConfig.title || "ft_transcendence";
+      }
     }
 
     // Appliquer la mise en page
@@ -654,8 +643,24 @@ loadRoute: async function(route: string): Promise<void> {
     },
 
 
-  signOut: function(): void {
-    // Clear all authentication data
+  signOut: async function(): Promise<void> {
+    try {
+      const token = localStorage.getItem('jwtToken');
+      if (token) {
+        await fetch('http://localhost:3000/user/connection-status', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: false }),  // 1 = connecté et 0 = déconnecté
+        });
+        console.log('Connection status updated to offline');
+      }
+    } catch (error) {
+      console.error('Failed to update connection status:', error);
+    }
+    
     localStorage.removeItem('googleUser');
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('jwtToken');
@@ -691,6 +696,7 @@ loadRoute: async function(route: string): Promise<void> {
     this.handleLayout(window.location.pathname);
   },
 
+
   error404: function(): void {
     console.error('error 404 - page not found');
     const contentDiv: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
@@ -725,6 +731,16 @@ document.addEventListener('DOMContentLoaded', function(): void {
       console.log('Language changed to:', event.detail.language);
       // Update document language attribute
       document.documentElement.lang = event.detail.language;
+      
+      // Mettre à jour le titre de la page si nécessaire
+      const currentRoute = window.location.pathname;
+      if (currentRoute in SPA.routes) {
+        const routeTitle = SPA.routes[currentRoute].title;
+        if (routeTitle && routeTitle.includes('.') && window.i18n && typeof window.i18n.translate === 'function') {
+          document.title = window.i18n.translate(routeTitle) || "ft_transcendence";
+        }
+      }
+      
       SPA.updateNavLoginBtn(window.location.pathname);
     } as EventListener);
 
