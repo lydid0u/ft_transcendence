@@ -9,21 +9,40 @@ async function matchesRoutes(fastify, options)
     })
 
     fastify.post('/add-match', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
-    {
-        const data = request.body;
+{
+    const data = request.body;
+    
+    // Obtenir l'ID de l'utilisateur à partir du token JWT
+    const userId = request.user.id;
+    
+    // Obtenir les informations de l'utilisateur via son ID
+    const user = await fastify.db.connection.get('SELECT * FROM users WHERE id = ?', userId);
+    if (!user) {
+        return reply.status(404).send({ success: false, message: 'User not found' });
+    }
+    
+    // Si player1 gagne, winner_id = userId, sinon winner_id = null (défaite)
+    let winner_id = data.winner === "player1" ? userId : null;
+    
+    try {
+        await fastify.db.connection.run('INSERT INTO matches(player1_id, player1_name, winner_id, score_player1, score_player2, game_mode) VALUES (?, ?, ?, ?, ?, ?)',
+            userId, user.username, winner_id, data.player1_score, data.player2_score, data.game_type);
         
-        // Utiliser game_type du client mais stocker comme game_mode dans la base
-        const gameMode = data.game_type || data.game_mode || 'pong';
-        
-        try {
-            await fastify.db.connection.run('INSERT INTO matches(player1_id, player2_id, winner_id, score_player1, score_player2, game_mode) VALUES (?, ?, ?, ?, ?, ?)',
-                data.player1_id, data.player2_id, data.winner_id, data.score_player1, data.score_player2, gameMode);
-            
-            return { success: true, message: 'Match added successfully' };
-        } catch (error) {
-            return reply.status(400).send({ success: false, error: error.message });
+        if (winner_id === null) {
+            console.log('Match recorded as a defeat for player1');
+        } else {
+            console.log('Match recorded as a victory for player1');
         }
-    })
+        
+        return reply.status(200).send({ 
+            success: true, 
+            message: winner_id ? 'Victory recorded successfully' : 'Defeat recorded successfully' 
+        });
+    } catch (error) {
+        console.error('Error adding match:', error);
+        return reply.status(400).send({ success: false, error: error.message });
+    }
+})
 
     fastify.get('/match-history', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {

@@ -190,11 +190,15 @@ export class Game1v1
 			game_type: "pong"
 		};
 		try {
-			const response = await fetch('http://localhost:3000/api/pong-results', {
+			const response = await fetch('http://localhost:3000/add-match', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+				},
 				body: JSON.stringify(gameResults)
-			});
+			})
+			console.log(response);
 			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 			console.log('Final game results posted successfully');
 		} catch (error) {
