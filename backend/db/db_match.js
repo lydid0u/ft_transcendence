@@ -25,7 +25,21 @@ async function tableMatches(fastify, options)
                     FOREIGN KEY (player1_id) REFERENCES users(id),
                     FOREIGN KEY (player2_id) REFERENCES users(id),
                     FOREIGN KEY (winner_id) REFERENCES users(id));`)
-        }        
+        }, 
+
+        async createTableSnake()
+        {
+            await fastify.db.connection.run(
+                `CREATE TABLE IF NOT EXISTS snake (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    player_id INTEGER,
+                    player_name TEXT,
+                    score INTEGER,
+                    game_mode TEXT,
+                    played_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (player_id) REFERENCES users(id));`
+            );
+        }
     };
     fastify.decorate('dbMatches', dbMatches);
     await dbMatches.createTableMatches();

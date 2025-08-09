@@ -100,6 +100,55 @@ async function matchesRoutes(fastify, options)
             return reply.status(400).send({ success: false, error: error.message });
         }
     });
+
+    // SNAKE ROUTES
+
+    fastify.get('/snake/high-score', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
+    {
+        try {
+            const highScore = await fastify.dbSnake.findHighScoreOfUser(request.user.id);
+            return reply.status(200).send({ highScore });
+        } catch (error) {
+            return reply.status(500).send({ error: 'Failed to retrieve high score' });
+        }
+    });
+
+    fastify.get('/snake/nearest-score', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
+    {
+        try {
+            const nearestScore = await fastify.dbSnake.findNearestScoreToBeat(request.user.id);
+            return reply.status(200).send({ nearestScore });
+        } catch (error) {
+            return reply.status(500).send({ error: 'Failed to retrieve nearest score' });
+        }
+    });
+
+    fastify.post('/snake/add-score', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
+    {
+        const game = request.body;
+        
+        // Obtenir l'ID de l'utilisateur à partir du token JWT
+        const userId = request.user.id;
+        
+        // Obtenir les informations de l'utilisateur via son ID
+        const user = await fastify.db.connection.get('SELECT * FROM users WHERE id = ?', userId);
+        if (!user) {
+            return reply.status(404).send({ success: false, message: 'User not found' });
+        }
+        
+        try {
+            await fastify.dbSnake.addScoreToDB({
+                playerId: userId,
+                playerName: user.username,
+                score: game.score,
+                gameMode: game.gameMode
+            });
+            return reply.status(200).send({ success: true, message: 'Score added successfully' });
+        } catch (error) {
+            console.error('Error adding score:', error);
+            return reply.status(400).send({ success: false, error: error.message });
+        }
+    });
 }
     
 export default fp(matchesRoutes);

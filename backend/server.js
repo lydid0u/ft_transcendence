@@ -19,6 +19,7 @@ import nodemailer from 'nodemailer';
 import multipart from '@fastify/multipart'
 import fastifyStatic from '@fastify/static';
 import path from 'path'
+import tableSnake from './db/db_snake.js';
 import MatchData from './db/db_tournament_match.js';
 import { fileURLToPath } from 'url';
 
@@ -88,6 +89,7 @@ fastify.register(MatchData);
 fastify.register(matchesTable);
 fastify.register(dbPong);  // Enregistrement du plugin dbPong
 fastify.register(matchesRoutes);
+fastify.register(tableSnake);
 fastify.register(tournamentRoutes);
 fastify.register(tournamentLaunchRoute);
 fastify.register(dbTournament);

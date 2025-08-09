@@ -246,14 +246,10 @@ export class SnakeGame {
 		this.snake.move();
 
 		// Check wall collision
-		if (this.snake.checkWallCollision(this.gridWidth, this.gridHeight)) {
+		if (this.snake.checkWallCollision(this.gridWidth, this.gridHeight) || this.snake.checkSelfCollision()) 
+		{
 			this.gameOver();
-			return;
-		}
-
-		// Check self collision
-		if (this.snake.checkSelfCollision()) {
-			this.gameOver();
+			// send data to backend function here
 			return;
 		}
 
@@ -341,7 +337,34 @@ export class SnakeGame {
 			this.updateScore();
 		}
 
-		this.showGameOverActions();
+		// Update final score in the game over menu
+		const finalScoreElement = document.getElementById('finalScore');
+		if (finalScoreElement) {
+			finalScoreElement.textContent = this.score.toString();
+		}
+
+		// Show the game over menu
+		const gameOverMenu = document.getElementById('gameOverMenu');
+		if (gameOverMenu) {
+			gameOverMenu.classList.add('visible');
+		}
+
+		// Add event listeners to buttons
+		const playAgainBtn = document.getElementById('playAgainBtn');
+		const homeBtn = document.getElementById('homeBtn');
+
+		if (playAgainBtn) {
+			playAgainBtn.onclick = () => {
+				gameOverMenu?.classList.remove('visible');
+				currentGame = new SnakeGame();
+			};
+		}
+
+		if (homeBtn) {
+			homeBtn.onclick = () => {
+				window.location.href = '/home';
+			};
+		}
 	}
 
 	showGameOverActions(): void {
@@ -424,13 +447,47 @@ export class SnakeGame {
 
 	destroy(): void {
 		this.gameRunning = false;
+		
+		// Hide game over menu if visible
+		const gameOverMenu = document.getElementById('gameOverMenu');
+		if (gameOverMenu) {
+			gameOverMenu.classList.remove('visible');
+		}
 	}
 
 }
 
 let currentGame: SnakeGame | null = null;
 
-// // Initialize the game when DOM is loaded
-// document.addEventListener('DOMContentLoaded', () => {
-// 	currentGame = new SnakeGame();
-// });
+// Initialize the game when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+	// If there's an existing game, destroy it first
+	if (currentGame) {
+		currentGame.destroy();
+	}
+	
+	// Create a new game
+	currentGame = new SnakeGame();
+	
+	// Setup event listeners for the game over menu
+	const playAgainBtn = document.getElementById('playAgainBtn');
+	const homeBtn = document.getElementById('homeBtn');
+	
+	if (playAgainBtn) {
+		playAgainBtn.onclick = () => {
+			const gameOverMenu = document.getElementById('gameOverMenu');
+			gameOverMenu?.classList.remove('visible');
+			
+			if (currentGame) {
+				currentGame.destroy();
+			}
+			currentGame = new SnakeGame();
+		};
+	}
+	
+	if (homeBtn) {
+		homeBtn.onclick = () => {
+			window.location.href = '/home';
+		};
+	}
+});
