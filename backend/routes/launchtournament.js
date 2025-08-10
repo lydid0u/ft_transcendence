@@ -31,7 +31,10 @@ async function tournamentLaunchRoute(fastify, options)
         try {
             const user_one = await fastify.utilsDb.getUserByUsername(match.player1_name);
             const user_two = await fastify.utilsDb.getUserByUsername(match.player2_name);
-
+            if(!user_one && !user_two)
+            {
+                return reply.status(200).send({ message: 'Match results sent successfully' });
+            }
             await fastify.dbMatchData.createMatch(match, user_one, user_two);
             return reply.send({ message: 'Match results sent successfully' });
         } catch (error) {

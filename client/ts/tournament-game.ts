@@ -70,7 +70,7 @@ class TournamentLaunchAPI {
     }
   }
 
-  async findWinnerOfTournament(match: TournamentMatch): Promise<number | null> {
+  async findWinnerOfTournament(match: TournamentMatch): Promise<TournamentParticipant | null> {
     try {
       console.log("Recherche du gagnant du tournoi pour le match:", match.tournament_id);
       const response = await fetch(`${this.baseUrl}/tournament/find-winner?tournament_id=${match.tournament_id}`, {
@@ -86,10 +86,10 @@ class TournamentLaunchAPI {
         return null;
       }
       const data = await response.json();
-      if (!data || !data.winner) {
+      if (!data) {
         return null;
       }
-      console.log("Gagnant du tournoi trouvé:", data.winner);
+      console.log("Gagnant du tournoi trouvé:", data);
       return data.winner;
     } catch (error) {
       console.error("Erreur lors de la recherche du gagnant du tournoi:", error);
@@ -346,12 +346,25 @@ class TournamentLaunch
   async showTournamentEndButton(winner: TournamentParticipant) {
     // Trouver ou créer le conteneur pour le bouton
     let endButtonContainer = document.getElementById('tournament-end-container');
+    console.log("Affichage du bouton de fin de tournoi pour le gagnant:", winner);
     
     if (!endButtonContainer) {
       // Créer le conteneur s'il n'existe pas
       endButtonContainer = document.createElement('div');
       endButtonContainer.id = 'tournament-end-container';
       endButtonContainer.className = 'mt-6';
+      
+      // Récupérer le nom du gagnant
+      const winnerName = winner.username || winner.alias || 'Joueur inconnu';
+      
+      // Créer l'élément pour afficher le vainqueur du tournoi
+      const winnerDisplay = document.createElement('div');
+      winnerDisplay.id = 'tournament-winner-display';
+      winnerDisplay.className = 'text-2xl font-bold text-center mb-4 p-3 bg-[#f3f3f3] rounded-lg';
+      winnerDisplay.textContent = `Vainqueur du tournoi : ${winnerName}`;
+      
+      // Ajouter l'élément d'affichage du vainqueur au conteneur
+      endButtonContainer.appendChild(winnerDisplay);
       
       // Créer le bouton
       const endButton = document.createElement('button');
@@ -385,10 +398,6 @@ class TournamentLaunch
       // Si le conteneur existe déjà, le rendre visible
       endButtonContainer.classList.remove('hidden');
     }
-    
-    // Afficher un message indiquant le gagnant
-    const winnerName = winner.username || winner.alias || 'Joueur inconnu';
-    alert(`Félicitations! ${winnerName} a remporté le tournoi!`);
   }
 }
 

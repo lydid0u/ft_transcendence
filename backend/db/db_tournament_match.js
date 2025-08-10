@@ -186,12 +186,14 @@ async function MatchData(fastify, options)
             if (match.player1_score > match.player2_score)
             {
                 console.log("Player 1 wins");
-                winner_id = user_one.id;
+                if(user_one)
+                    winner_id = user_one.id;
             }
             else if (match.player1_score < match.player2_score)
             {
                 console.log("Player 2 wins");
-                winner_id = user_two.id;
+                if(user_two)
+                    winner_id = user_two.id;
             }
             // console.log(user_two.id);
             if (user_one && user_two)
@@ -252,8 +254,7 @@ async function MatchData(fastify, options)
                 console.error(`No winner found for tournament ID: ${tournament_id}`);
                 return null;
             }
-            console.log("Winner found:", winner);
-            return winner.username || winner.alias;
+            return winner;
         }
     };
     fastify.decorate('dbMatchData', dbMatchData);
