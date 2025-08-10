@@ -26,9 +26,12 @@ async function tournamentLaunchRoute(fastify, options)
     {
         // const {player1_name: name_player1, player2_name: name_player2, player1_score: score_player1, player2_score: score_player2 } = request.body;
         const match = request.body;
-        console
         const userId = request.user.id;
         try {
+            const checkparticipants = await fastify.dbMatchData.checkParticipantsInMatch(match, userId);
+            if (!checkparticipants) {
+                return reply.status(404).send({ error: 'One or both players not found in tournament' });
+            }
             const user_one = await fastify.utilsDb.getUserByUsername(match.player1_name);
             const user_two = await fastify.utilsDb.getUserByUsername(match.player2_name);
             if(!user_one && !user_two)

@@ -237,7 +237,7 @@ function showTournamentEndButton(winnerName = "Nom du vainqueur") {
         // Créer le bouton
         const endButton = document.createElement('button');
         endButton.id = 'tournament-end-button';
-        endButton.className = 'px-6 py-3 bg-pink-400 text-white font-bold rounded-lg hover:bg-pink-300 transition-colors shadow-lg';
+        endButton.className = 'px-6 py-3 bg-[#ff5500] text-white font-bold rounded-lg hover:bg-[#ff7700] transition-colors shadow-lg';
         endButton.style.textShadow = 'none';
         endButton.textContent = 'Fin du tournoi';
         
@@ -479,7 +479,7 @@ async function handleMatchEnd(winnerNumber: number, player1Name: string, player2
                 const deleted = await api.deleteTournament(matchResult.tournament_id);
                 if (!deleted)
                     console.error("Erreur lors de la suppression du tournoi:");
-                    return;
+                return;
             }
             await tournament.deleteLosers(matchResult);
         }

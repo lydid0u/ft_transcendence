@@ -251,14 +251,14 @@ async function tableMatches(fastify, options)
                  WHERE tournament_id = ?;`, [tournamentId]);
         },
 
-        async getTournamentParticipantsWithDetails(tournamentId)
-        {
-            return await fastify.db.connection.all(
-                `SELECT tp.user_id as userId, u.username, u.avatar
-                 FROM tournament_participants tp
-                 JOIN users u ON tp.user_id = u.id
-                 WHERE tp.tournament_id = ?;`, [tournamentId]);
-        },
+        // async getTournamentParticipantsWithDetails(tournamentId)
+        // {
+        //     return await fastify.db.connection.all(
+        //         `SELECT tp.user_id as userId, u.username, u.avatar
+        //          FROM tournament_participants tp
+        //          JOIN users u ON tp.user_id = u.id
+        //          WHERE tp.tournament_id = ?;`, [tournamentId]);
+        // },
         async getTournamentById(tournamentId)
         {
             return await fastify.db.connection.get(

@@ -24,35 +24,35 @@ async function tournamentRoute(fastify, options)
         reply.send(tournaments);
     });
 
-    // Nouveau endpoint pour récupérer les détails du tournoi de l'utilisateur
-    fastify.get('/tournament/get-my-tournament', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
-    {
-        const userId = request.user.id;
+    // // Nouveau endpoint pour récupérer les détails du tournoi de l'utilisateur
+    // fastify.get('/tournament/get-my-tournament', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    // {
+    //     const userId = request.user.id;
         
-        try {
-            // Récupérer le tournoi créé par l'utilisateur
-            const tournament = await fastify.dbTournament.getTournamentByCreatorId(userId);
+    //     try {
+    //         // Récupérer le tournoi créé par l'utilisateur
+    //         const tournament = await fastify.dbTournament.getTournamentByCreatorId(userId);
             
-            if (!tournament) {
-                return reply.status(404).send({ status: 'error', message: 'No tournament found' });
-            }
+    //         if (!tournament) {
+    //             return reply.status(404).send({ status: 'error', message: 'No tournament found' });
+    //         }
             
-            // Récupérer les participants du tournoi
-            const participants = await fastify.dbTournament.getTournamentParticipantsWithDetails(tournament.id);
+    //         // Récupérer les participants du tournoi
+    //         const participants = await fastify.dbTournament.getTournamentParticipantsWithDetails(tournament.id);
             
-            // Retourner les détails du tournoi avec la liste des participants
-            reply.send({
-                id: tournament.id,
-                creator_id: tournament.creator_id,
-                status: tournament.status,
-                created_at: tournament.created_at,
-                participants: participants || []
-            });
-        } catch (error) {
-            console.error('Error fetching tournament details:', error);
-            return reply.status(500).send({ status: 'error', message: 'Failed to fetch tournament details' });
-        }
-    });
+    //         // Retourner les détails du tournoi avec la liste des participants
+    //         reply.send({
+    //             id: tournament.id,
+    //             creator_id: tournament.creator_id,
+    //             status: tournament.status,
+    //             created_at: tournament.created_at,
+    //             participants: participants || []
+    //         });
+    //     } catch (error) {
+    //         console.error('Error fetching tournament details:', error);
+    //         return reply.status(500).send({ status: 'error', message: 'Failed to fetch tournament details' });
+    //     }
+    // });
 
     fastify.post('/tournament/create', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
@@ -155,7 +155,7 @@ async function tournamentRoute(fastify, options)
     {
         const userId = request.user.id;
         const participants = await fastify.dbTournament.getAllParticipants(userId);
-        console.log('Participants:', participants);
+        // console.log('Participants:', participants);
         reply.send({ participants });
     });
 

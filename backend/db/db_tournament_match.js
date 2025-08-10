@@ -105,10 +105,10 @@ async function MatchData(fastify, options)
             });
             
             // Afficher le classement pour debug
-            console.log("Classement des joueurs par winrate:");
-            rankedPlayers.forEach((player, index) => {
-                console.log(`${index + 1}. ${player.username || player.alias} - ${player.winRate.toFixed(1)}% winrate`);
-            });
+            // console.log("Classement des joueurs par winrate:");
+            // rankedPlayers.forEach((player, index) => {
+                // console.log(`${index + 1}. ${player.username || player.alias} - ${player.winRate.toFixed(1)}% winrate`);
+            // });
             
             return rankedPlayers;
 
@@ -143,7 +143,7 @@ async function MatchData(fastify, options)
                 participants = rankedParticipants;
             }
             
-            console.log("Participants réorganisés:", participants);
+            // console.log("Participants réorganisés:", participants);
 
             if (participants.length == 4)
                 return ({
@@ -221,6 +221,26 @@ async function MatchData(fastify, options)
             {
                 console.error("Both players are missing, cannot create match.");
             }
+        },
+
+        async checkParticipantsInMatch(match, userId)
+        {
+            console.log("here\n");
+            const tournament = await fastify.dbTournament.getTournamentByCreatorId(userId);
+            if (!tournament || tournament.creator_id !== userId) {
+                return false;
+            }
+            console.log("Tournament found:", tournament);
+            console.log("TournamentId:", tournament.id);
+            const participants = await fastify.db.connection.all('SELECT * FROM tournament_participants WHERE tournament_id = ?', tournament.id);
+            // faire un check sur tout les tournament.user || tournament.alias voir si match.player1name && match.player2_name sont bien dedans
+            console.log("Affichage du tournoi", participants);
+            const player1 = participants.find(p => p.username === match.player1_name || p.alias === match.player1_name);
+            const player2 = participants.find(p => p.username === match.player2_name || p.alias === match.player2_name);
+            if (!player1 || !player2) {
+                return false;
+            }
+            return true;
         },
 
         async deleteLosers(match)
