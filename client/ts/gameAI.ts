@@ -52,10 +52,6 @@ export class Game
 		// Mettre à jour le nom du joueur dès l'initialisation
 		Game.updatePlayerName();
 		
-		
-		// Mettre à jour le nom du joueur dès l'initialisation
-		Game.updatePlayerName();
-		
 		let paddleSpeed:number = 8, ballSpeed:number = 3;
 		if (this.difficulty === Difficulty.EASY)
 		{
@@ -207,63 +203,14 @@ export class Game
 			console.error('Erreur lors de l\'enregistrement des résultats:', error);
 		}
 	}
-	
-	async postFinalGameResults() {
-		// Récupérer le pseudo du joueur depuis l'élément HTML
-		let playerName = "Joueur";
-		const playerNameElement = document.getElementById("player-name");
-		if (playerNameElement && playerNameElement.textContent) {
-			playerName = playerNameElement.textContent;
-		}
-		
-		const gameResults = {
-			player1_score: Game.playerScore,
-			player2_score: Game.computerScore,
-			winner: Game.playerScore > Game.computerScore ? "player1" : "player2",
-			game_type: "Pong vs IA"
-		};
-		
-		try {
-			const token = localStorage.getItem('jwtToken');
-			if (!token) {
-				console.warn("Impossible d'enregistrer les résultats : token d'authentification non trouvé");
-				return;
-			}
-			
-			const response = await fetch('http://localhost:3000/add-match', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`
-				},
-				credentials: 'include',
-				body: JSON.stringify(gameResults)
-			});
-			
-			console.log(response);
-			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-			console.log('Résultats de la partie contre l\'IA enregistrés avec succès');
-		} catch (error) {
-			console.error('Erreur lors de l\'enregistrement des résultats:', error);
-		}
-	}
 	showEndScreen() {
 		const container = document.querySelector('.page-content');
 		if (!container) return;
 
 		// Remove old end screen if present
-		// Remove old end screen if present
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
 
-		// Récupérer le pseudo du joueur depuis l'élément HTML
-		let playerName = "Joueur";
-		const playerNameElement = document.getElementById("player-name");
-		if (playerNameElement && playerNameElement.textContent) {
-			playerName = playerNameElement.textContent;
-		}
-
-		const winner = Game.playerScore > Game.computerScore ? playerName : "IA";
 		// Récupérer le pseudo du joueur depuis l'élément HTML
 		let playerName = "Joueur";
 		const playerNameElement = document.getElementById("player-name");
@@ -297,8 +244,9 @@ export class Game
 
 		const canvas = document.getElementById('game-canvas');
 		if (canvas) canvas.style.display = 'none';
-	}	public static startNewGame(difficulty: Difficulty = Difficulty.EASY) {
-	}	public static startNewGame(difficulty: Difficulty = Difficulty.EASY) {
+	}
+	
+	public static startNewGame(difficulty: Difficulty = Difficulty.EASY) {
 		if (Game.currentInstance) {
 			Game.currentInstance.destroy();
 		}
@@ -306,11 +254,6 @@ export class Game
 		if (canvas) canvas.style.display = '';
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
-		
-		// Mettre à jour le nom du joueur
-		console.log("Tentative de mise à jour du nom du joueur...");
-		Game.updatePlayerName();
-		
 		
 		// Mettre à jour le nom du joueur
 		console.log("Tentative de mise à jour du nom du joueur...");
