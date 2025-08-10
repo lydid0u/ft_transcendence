@@ -212,7 +212,7 @@ async function handleNextGame(event) {
 }
 
 // Fonction pour afficher le bouton "Fin du tournoi"
-function showTournamentEndButton() {
+function showTournamentEndButton(winnerName = "Nom du vainqueur") {
     // Cacher le bouton "Prochain match" s'il est visible
     const nextGameContainer = document.getElementById('next-game-container');
     if (nextGameContainer) {
@@ -226,7 +226,13 @@ function showTournamentEndButton() {
         // Créer le conteneur s'il n'existe pas
         endButtonContainer = document.createElement('div');
         endButtonContainer.id = 'tournament-end-container';
-        endButtonContainer.className = 'mt-6 flex justify-center';
+        endButtonContainer.className = 'mt-6 flex flex-col items-center';
+        
+        // Créer l'élément pour afficher le vainqueur
+        const winnerDisplay = document.createElement('div');
+        winnerDisplay.id = 'tournament-winner-display';
+        winnerDisplay.className = 'mb-4 p-3 bg-gray-100 rounded-lg text-xl font-bold text-center';
+        winnerDisplay.textContent = `Vainqueur du tournoi : ${winnerName}`;
         
         // Créer le bouton
         const endButton = document.createElement('button');
@@ -238,7 +244,8 @@ function showTournamentEndButton() {
         // Ajouter un gestionnaire d'événements au bouton
         endButton.addEventListener('click', handleTournamentEnd);
         
-        // Ajouter le bouton au conteneur
+        // Ajouter les éléments au conteneur
+        endButtonContainer.appendChild(winnerDisplay);
         endButtonContainer.appendChild(endButton);
         
         // Ajouter le conteneur à la page
@@ -250,14 +257,15 @@ function showTournamentEndButton() {
             document.body.appendChild(endButtonContainer);
         }
     } else {
-        // Si le conteneur existe déjà, le rendre visible
+        // Si le conteneur existe déjà, le rendre visible et mettre à jour le nom du vainqueur
+        const winnerDisplay = document.getElementById('tournament-winner-display');
+        if (winnerDisplay) {
+            winnerDisplay.textContent = `Vainqueur du tournoi : ${winnerName}`;
+        }
         endButtonContainer.classList.remove('hidden');
     }
     
-    // Afficher un message de félicitations
-    setTimeout(() => {
-        alert("Félicitations! Le tournoi est terminé!");
-    }, 500);
+    // L'alerte a été supprimée comme demandé
 }
 
 // Fonction qui gère le clic sur "Fin du tournoi"
@@ -460,17 +468,18 @@ async function handleMatchEnd(winnerNumber: number, player1Name: string, player2
                 created_at: match.created_at || new Date().toISOString(),
                 updated_at: new Date().toISOString()
             };
-            console.log ("Résultat du match à envoyer:", matchResult);            
             await api.sendMatchResults(matchResult);
-            const winner = await api.findWinnerOfTournament(matchResult);
-            if (winner) {
-                console.log("Vainqueur du tournoi trouvé:", winner);
-                // Au lieu de rediriger directement, afficher le bouton "Fin du tournoi"
-                // delete tournament
-
+            if (matchResult.round == "finale")
+            {
+                if (matchResult.player1_score > matchResult.player2_score)
+                    showTournamentEndButton(matchResult.player1_name);
+                else
+                    showTournamentEndButton(matchResult.player2_name);
+                
                 const deleted = await api.deleteTournament(matchResult.tournament_id);
-                showTournamentEndButton();
-                return; // Ne pas afficher le bouton "Prochain match" si le tournoi est terminé
+                if (!deleted)
+                    console.error("Erreur lors de la suppression du tournoi:");
+                    return;
             }
             await tournament.deleteLosers(matchResult);
         }

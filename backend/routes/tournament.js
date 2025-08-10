@@ -58,15 +58,22 @@ async function tournamentRoute(fastify, options)
     {
         // const { name } = request.body;
         const userId = request.user.id;
-
-        // Logic to create a tournament
-        const alreadyExists = await fastify.dbTournament.getTournamentByCreatorId(userId);
-        if (alreadyExists) {
-            console.log('User already has a tournament:', alreadyExists);
-            return reply.status(400).send({ status: 'error', message: 'You already have a tournament' });
+        try
+        {
+            const alreadyExists = await fastify.dbTournament.getTournamentByCreatorId(userId);
+            if (alreadyExists) {
+                console.log('User already has a tournament:', alreadyExists);
+                return reply.status(400).send({ status: 'error', message: 'You already have a tournament' });
+            }
+            const tournamentId = await fastify.dbTournament.createTournament(userId);
+            reply.send({ status: 'success', data: { tournamentId } });
         }
-        const tournamentId = await fastify.dbTournament.createTournament(userId);
-        reply.send({ status: 'success', data: { tournamentId } });
+        catch (error)
+        {
+            console.error('Error creating tournament:', error);
+            reply.status(400).send({ status: 'error', message: 'Failed to create tournament' });
+        }
+        // Logic to create a tournament
     });
 
     fastify.post('/tournament/add-player-alias', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
@@ -138,37 +145,45 @@ async function tournamentRoute(fastify, options)
         }
     });
 
-    fastify.get('/tournament/get-all-tournaments', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
-    {
-        const tournaments = await fastify.dbTournament.getAllTournaments();
-        reply.send(tournaments);
-    });
+    // fastify.get('/tournament/get-all-tournaments', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    // {
+    //     const tournaments = await fastify.dbTournament.getAllTournaments();
+    //     reply.send(tournaments);
+    // });
 
-    fastify.get('/tournament/get-participants', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
-    {
-        const userId = request.user.id;
-        const participants = await fastify.dbTournament.getAllParticipants(userId);
-        console.log('Participants:', participants);
-        reply.send({ participants });
-    });
+    // fastify.get('/tournament/get-participants', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    // {
+    //     const userId = request.user.id;
+    //     const participants = await fastify.dbTournament.getAllParticipants(userId);
+    //     console.log('Participants:', participants);
+    //     reply.send({ participants });
+    // });
 
     fastify.delete('/tournament/delete', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
         // Logic to clear all tournaments and participants
         const user_id = request.user.id;
-        const tournaments = await fastify.dbTournament.getTournamentByCreatorId(user_id);
-        await fastify.dbTournament.deleteTournament(tournaments.id);
-        reply.send({ status: 'success', message: 'All tournaments cleared successfully' });
+        try
+        {
+            const tournaments = await fastify.dbTournament.getTournamentByCreatorId(user_id);
+            await fastify.dbTournament.deleteTournament(tournaments.id);
+            reply.send({ status: 'success', message: 'All tournaments cleared successfully' });
+        }
+        catch (error)
+        {
+            console.error('Error clearing tournaments:', error);
+            reply.status(400).send({ status: 'error', message: 'Failed to clear tournaments' });
+        }
     });
 
-    fastify.put('/tournament/clear-participants', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
-    {
-        const { tournamentId } = request.body;
+    // fastify.put('/tournament/clear-participants', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    // {
+    //     const { tournamentId } = request.body;
 
-        // Logic to clear participants from a tournament
-        await fastify.dbTournament.clearTournamentParticipants(tournamentId);
-        reply.send({ status: 'success', message: 'Participants cleared successfully' });
-    });
+    //     // Logic to clear participants from a tournament
+    //     await fastify.dbTournament.clearTournamentParticipants(tournamentId);
+    //     reply.send({ status: 'success', message: 'Participants cleared successfully' });
+    // });
 
     fastify.post('/tournament/login', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
 {

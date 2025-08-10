@@ -2,37 +2,50 @@ import fp from 'fastify-plugin'
 
 async function userRoutes(fastify, options)
 {
-    fastify.get('/', async (request, reply) => {
-        console.log("route '/'");
-    });
+    // fastify.get('/', async (request, reply) => {
+    //     console.log("route '/'");
+    // });
 
     fastify.get('/user', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        const user = await fastify.utilsDb.getOneUser(request.user.email);
-        if(user)
+        try
         {
-            console.log("user found", user);
-            reply.send({user})
+            const user = await fastify.utilsDb.getOneUser(request.user.email);
+            if(user)
+            {
+                console.log("user found", user);
+                reply.send({user})
+            }
+            else
+            {
+                console.log("user not found");
+                reply.status(404).send({error: "User not found"});
+            }
         }
-    }); 
-
-    fastify.get('/db/users', async (request, reply) => {
-        const users = await fastify.db.showTableUsers()
-        return (users);
+        catch (error)
+        {
+            console.error('Error fetching user:', error);
+            reply.status(404).send({error: "Failed to fetch user"});
+        }
     });
 
-    fastify.get('/profile', {preValidation : [fastify.prevalidate]}, async(request, reply) =>
-    {
-        const user = request.user
-        console.log(user);
-        return ({
-            name : "test",
-            email : "test@test.com",
-            gamesPlayed : "4",
-            wins : "4",
-            losses : "0"
-        })
-    });
+    // fastify.get('/db/users', async (request, reply) => {
+    //     const users = await fastify.db.showTableUsers()
+    //     return (users);
+    // });
+
+    // fastify.get('/profile', {preValidation : [fastify.prevalidate]}, async(request, reply) =>
+    // {
+    //     const user = request.user
+    //     console.log(user);
+    //     return ({
+    //         name : "test",
+    //         email : "test@test.com",
+    //         gamesPlayed : "4",
+    //         wins : "4",
+    //         losses : "0"
+    //     })
+    // });
 
     fastify.patch('/user/avatar', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
