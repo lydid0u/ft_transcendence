@@ -1,18 +1,11 @@
-/*
 /* Keep the no-scrollbar utility class */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-/* Transition animation */
-.transition-animation {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300&display=swap');
 
-/* Root Elements */
+/* /* Root Elements */
 html, body {
   margin: 0;
   padding: 0;
@@ -20,8 +13,9 @@ html, body {
   width: 100vw;
   overflow: hidden;
   background: #050507;
-  font-family: 'Segoe UI', 'SegoeUI', 'Segoe WP', Tahoma, Geneva, Verdana, sans-serif;
-}
+  font-family: 'Oswald', sans-serif;
+  font-weight: 300;
+} 
 
 #nav-login-btn.page-title {
   background: linear-gradient(to right, #9b6dff, #ff69b4);
@@ -30,16 +24,6 @@ html, body {
   transition: all 0.3s ease;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-weight: 500;
-}
-/* Forcer la police Segoe UI sur tous les éléments principaux */
-#content, 
-.content-container, 
-.content-box, 
-#content h1, #content h2, #content h3, #content h4,
-#content p, #content span, #content div,
-button, input[type="submit"], input[type="button"], .button,
-input[type="text"], input[type="email"], input[type="password"], textarea, select {
-  font-family: 'Segoe UI', 'SegoeUI', 'Segoe WP', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
 /* Custom gradient text (fallback for browsers that don't support bg-clip-text) */
@@ -68,54 +52,8 @@ input[type="text"], input[type="email"], input[type="password"], textarea, selec
   box-shadow: 0 0 0 2px #d4c5ff;
 }
 
-.btn-primary {
-  padding: 0.5rem 1.5rem;
-  background: linear-gradient(to right, #9b6dff, #ff69b4);
-  color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-.btn-primary:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-.btn-secondary {
-  padding: 0.5rem 1.5rem;
-  background-color: white;
-  color: #1f2937;
-  border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-.btn-secondary:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-/* Animations */
-@keyframes slideInDown {
-    from { opacity: 0; transform: translateY(-50px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes grainmove {
-    0% { background-position: 0 0; }
-    100% { background-position: 100% 100%; }
-}
-
-@keyframes grainmove {
-    0% { background-position: 0 0; }
-    100% { background-position: 100% 100%; }
-}
-
 /* Content Container */
-[id="content"] {
+ [id="content"] {
   position: relative;
   z-index: 100;
   background-color: transparent !important;
@@ -148,42 +86,7 @@ input[type="text"], input[type="email"], input[type="password"], textarea, selec
   border: none !important;
   box-shadow: none !important;
   padding: 2rem !important;
-}
-
-/* Navigation Button Animation */
-@keyframes navPulse {
-  0% { box-shadow: 0 0 10px rgba(134, 231, 255, 0.4); }
-  50% { box-shadow: 0 0 18px rgba(134, 231, 255, 0.7); }
-  100% { box-shadow: 0 0 10px rgba(134, 231, 255, 0.4); }
-}
-
-/* Toggle Navigation Menu */
-.toggle-menu-button {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(26, 26, 26, 0.8);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 150;
-  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4);
-  transition: all 0.3s;
-}
-
-.toggle-menu-button svg {
-  color: #85e7ff;
-}
-
-.toggle-menu-button:hover {
-  box-shadow: 0 0 20px rgba(134, 231, 255, 0.8);
-  transform: translateX(-50%) scale(1.1);
-}
+} */
 
 #content h1 {
   font-size: 2.5rem;
@@ -202,9 +105,6 @@ input[type="text"], input[type="email"], input[type="password"], textarea, selec
   line-height: 1.6;
 }
 
-/* ====== Form Elements ====== */
-
-/* Interactive Elements */
 button, 
 input[type="submit"],
 input[type="button"],
@@ -255,170 +155,3 @@ select:focus {
   outline: none;
 }
 
-/* Glow Effect for Important Text */
-.glow-text, 
-.vhsfont, 
-h1, h2, h3 {
-  text-shadow: 
-    0 0 5px #e6fdff,
-    0 0 15px #85e7ff,
-    0 0 25px rgba(134, 231, 255, 0.5) !important;
-}
-
-/* ====== Navigation and UI Components ====== */
-
-/* Content Container */
-[id="content"] {
-  position: relative;
-  z-index: 100;
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  color: #e6fdff;
-  text-shadow: 0 0 5px #85e7ff;
-}
-
-/* Content Structure */
-.content-container {
-  background-color: transparent !important;
-  z-index: 200;
-  position: relative;
-  min-height: 100vh;
-  width: 100%;
-  overflow-y: auto;
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-}
-
-/* Content Box */
-.content-box {
-  width: 100%;
-  max-width: 4xl;
-  text-align: center;
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 2rem !important;
-}
-
-/* Navigation Button Animation */
-@keyframes navPulse {
-  0% { box-shadow: 0 0 10px rgba(134, 231, 255, 0.4); }
-  50% { box-shadow: 0 0 18px rgba(134, 231, 255, 0.7); }
-  100% { box-shadow: 0 0 10px rgba(134, 231, 255, 0.4); }
-}
-
-/* Toggle Navigation Menu */
-.toggle-menu-button {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(26, 26, 26, 0.8);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 150;
-  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4);
-  transition: all 0.3s;
-}
-
-.toggle-menu-button svg {
-  color: #85e7ff;
-}
-
-.toggle-menu-button:hover {
-  box-shadow: 0 0 20px rgba(134, 231, 255, 0.8);
-  transform: translateX(-50%) scale(1.1);
-}
-
-/* Headings */
-#content h1, #content h2, #content h3, #content h4 {
-  color: #e6fdff !important;
-  text-shadow: 
-    0 0 10px #e6fdff, 
-    0 0 20px #85e7ff !important;
-  margin-bottom: 1rem;
-}
-
-#content h1 {
-  font-size: 2.5rem;
-  letter-spacing: 2px;
-}
-
-#content h2 {
-  font-size: 2rem;
-  letter-spacing: 1.5px;
-}
-
-/* Text Elements */
-#content p, #content span, #content div {
-  color: #e6fdff !important;
-  text-shadow: 0 0 5px #85e7ff !important;
-  line-height: 1.6;
-}
-
-/* Interactive Elements */
-button, 
-input[type="submit"],
-input[type="button"],
-.button {
-  padding: 0.75rem 1.5rem;
-  border: none !important;
-  border-radius: 8px;
-  background-color: #111 !important;
-  color: #e6fdff !important;
-  box-shadow: 0 0 15px rgba(134, 231, 255, 0.3) !important;
-  text-shadow: 0 0 5px #85e7ff !important;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-button:hover, 
-input[type="submit"]:hover,
-input[type="button"]:hover,
-.button:hover {
-  box-shadow: 0 0 20px rgba(134, 231, 255, 0.6) !important;
-  transform: scale(1.03);
-  background-color: #1a1a1a !important;
-}
-
-/* Input Fields */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-textarea,
-select {
-  background-color: rgba(10, 10, 12, 0.7) !important;
-  border: none !important;
-  color: #e6fdff !important;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(134, 231, 255, 0.2) inset !important;
-  transition: all 0.3s ease;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-textarea:focus,
-select:focus {
-  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4) inset !important;
-  outline: none;
-}
-
-.vhsfont, 
-h1, h2, h3 {
-  text-shadow: 
-    0 0 5px #e6fdff,
-    0 0 15px #85e7ff,
-    0 0 25px rgba(134, 231, 255, 0.5) !important;
-}

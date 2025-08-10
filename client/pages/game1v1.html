@@ -1,25 +1,29 @@
-<div class="flex flex-col items-center rounded-[40px] h-full w-full p-8 bg-gradient-to-b from-[#050507] to-[#0a1a2f] shadow-lg border-2 border-[#00f0ff] no-scrollbar overflow-y-auto">
-  <div class="w-full max-w-4xl text-center">
-    <h1 class="text-5xl font-bold mb-12 text-[#e6fdff] vhsfont" style="text-shadow: 0 0 10px #00f0ff, 0 0 20px #85e7ff;">Player Vs Player!</h1>
-    <div class="page-content">
-      <div class="flex justify-between items-center mb-4">
-        <div class="flex-1 text-center">
-          <span id="player-name" class="font-bold text-xl text-[#00f0ff]" style="text-shadow: 0 0 6px #00f0ff;">Joueur/se 1</span>
-        </div>
-        <div class="px-4 text-[#85e7ff]">vs</div>
-        <div class="flex-1 text-center">
-          <span class="font-bold text-xl text-[#00f0ff]" style="text-shadow: 0 0 6px #00f0ff;">Joueur/se 2</span>
-        </div>
+<div class="flex flex-col items-center justify-center min-h-screen w-full p-0">
+  <div class="w-full max-w-3xl mt-10 mb-6 px-4">
+    <div class="flex flex-col items-center justify-center bg-white rounded-3xl shadow-xl py-6 border border-pink-200">
+        <div class="flex-1 justify-center text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-pink-400 mb-4 " data-i18n="game.pong_1v1">
+          Match en local
+        </h1>
       </div>
-      <div id="score-bar" class="flex justify-between items-center text-4xl font-bold text-[#00f0ff] mb-4" style="text-shadow: 0 0 8px #00f0ff;">
+      <div class="page-content">
+        <div class="flex justify-between items-center mb-2">
+          <span id="player-name" class="text-5xl font-bold text-pink-300">Joueur 1 </span>
+        <div class="text-5xl font-bold text-pink-500">vs</div>
+          <span class="text-5xl font-bold text-purple-300">Joueur 2</span>
+        </div>
+      <div id="score-bar" class="flex justify-between items-center text-4xl font-bold text-pink-400 mb-2">
         <div class="flex-1 text-center">
-          <span id="player1-score" class="mx-8">0</span>
+          <span id="player1-score" class="mx-8 text-pink-300">0</span>
         </div>
         <span class="mx-2">:</span>
         <div class="flex-1 text-center">
-          <span id="player2-score" class="mx-8">0</span>
+          <span id="player2-score" class="mx-8 text-purple-300">0</span>
         </div>
       </div>
+    </div>
+  </div>
+</div>
       <canvas id="game-canvas" width="800" height="500" class="mx-auto border-4 border-[#00f0ff] shadow-[0_0_20px_#00f0ff] rounded-lg mt-2 mb-2 bg-[#10131a]"></canvas>
     </div>
   </div>

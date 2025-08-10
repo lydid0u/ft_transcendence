@@ -131,8 +131,6 @@ const SPA = {
     }
   },
 
-
-
   routes: {
     '/': {
       title: 'ft_transcendence',
@@ -317,6 +315,7 @@ const SPA = {
       }, 100);
     }
   },
+
 	'/snake': {
 	title: 'game.snake',
 	content: 'pages/snake.html',
@@ -501,6 +500,11 @@ const SPA = {
           activate2fa();
         }, 50);
       }
+    }, 
+
+    '/404': {
+      title: '404',
+      content: 'pages/404.html',
     }
   } as Record<string, RouteConfig>,
 
@@ -726,29 +730,16 @@ loadRoute: async function(route: string): Promise<void> {
     this.handleLayout(window.location.pathname);
   },
 
-
   error404: function(): void {
     console.error('error 404 - page not found');
-    const contentDiv: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
-    if (contentDiv) {
-      contentDiv.innerHTML = `
-        <div style="text-align: center; margin-top: 50px;">
-          <h1>404 - Page Not Found</h1>
-          <p>Sorry, the page you are looking for does not exist.</p>
-          <a href="/" class="btn btn-primary">Go to Home</a>
-        </div>
-      `;
-    }
-    document.title = 'Error 404 - Page Not Found';
+    this.navigateTo('/404');
   }
 };
 
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
 
-  // Initialize language system
   if (window.i18n) {
-    // Initialize translations
     window.i18n.initializePageTranslations();
 
     // Met à jour le bouton après l'init des traductions

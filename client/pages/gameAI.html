@@ -1,11 +1,16 @@
 <div class="flex flex-col items-center justify-center min-h-screen w-full p-0">
   <div class="w-full max-w-3xl mt-10 mb-6 px-4">
-    <div class="flex flex-col items-center justify-center bg-white rounded-3xl shadow-xl py-6 border border-pink-200/60">
+    <div class="flex flex-col items-center justify-center bg-white rounded-3xl shadow-xl py-6 border border-pink-200">
+              <div class="flex-1 justify-center text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-pink-400 mb-4 " data-i18n="game.pong_ai">
+          Match contre l'IA
+        </h1>
+      </div>
       <div class="page-content">
-          <div class="flex justify-between items-center mb-4">   
-              <span id="player-name" class="text-5xl font-bold text-pink-300 mb-2">Joueur</span>
-            <div class="text-5xl font-bold text-pink-500 mb-2"> vs </div>
-              <span class="text-5xl font-bold text-purple-300 mb-2">IA</span>
+          <div class="flex justify-between items-center mb-2">
+              <span id="player-name" class="text-5xl font-bold text-pink-300">Joueur</span>
+            <div class="text-5xl font-bold text-pink-500"> vs </div>
+              <span class="text-5xl font-bold text-purple-300">IA</span>
           </div>
           <div id="score-bar" class="flex justify-between items-center text-4xl font-bold text-pink-400 mb-2">
             <div class="flex-1 text-center">
