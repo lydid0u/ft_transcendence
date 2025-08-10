@@ -24,10 +24,12 @@ async function tournamentLaunchRoute(fastify, options)
 
     fastify.post('/tournament/send-match-results', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
+        console.log('xzxz')
         // const {player1_name: name_player1, player2_name: name_player2, player1_score: score_player1, player2_score: score_player2 } = request.body;
         const match = request.body;
-        console
         const userId = request.user.id;
+        // const aa = match.player1_name
+        // console.log('aaaaaaaaaa', aa)
         try {
             const user_one = await fastify.utilsDb.getUserByUsername(match.player1_name);
             const user_two = await fastify.utilsDb.getUserByUsername(match.player2_name);

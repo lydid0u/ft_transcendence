@@ -189,20 +189,22 @@ export class Game1v1
 			winner: Game1v1.player1Score > Game1v1.player2Score ? "player1" : "player2",
 			game_type: "Pong 1v1",
 		};
-		try {
-			const response = await fetch('http://localhost:3000/add-match', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
-				},
-				body: JSON.stringify(gameResults)
-			})
-			console.log(response);
-			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-			console.log('Final game results posted successfully');
-		} catch (error) {
-			console.error('Error posting final results:', error);
+		if (await window.SPA.checkJwtValidity()) {
+			try {
+				const response = await fetch('http://localhost:3000/add-match', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+					},
+					body: JSON.stringify(gameResults)
+				})
+				console.log(response);
+				if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+				console.log('Final game results posted successfully');
+			} catch (error) {
+				console.error('Error posting final results:', error);
+			}
 		}
 	}
 

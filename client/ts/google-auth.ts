@@ -23,7 +23,6 @@ interface UserData {
 	jwt?: string;
 }
 
-// Global Google API interface
 declare global {
 	interface Window {
 		google?: {
@@ -61,18 +60,17 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 		}
 		else {
 			try {
-        await fetch('http://localhost:3000/user/connection-status', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${data.jwt || ''}`,
-              },
-              body: JSON.stringify({ status: true }), // 1 = connecté et 0 = déconnecté
-            });
-          } 
-        catch (err) {
-            console.error("Erreur lors de la notification du status de connexion au backend:", err);
-          }
+        		await fetch('http://localhost:3000/user/connection-status', {
+            	method: 'PATCH',
+            	headers: {
+            	    'Content-Type': 'application/json',
+            	    Authorization: `Bearer ${data.jwt || ''}`,
+            	  },
+            	  body: JSON.stringify({ status: true }), // 1 = connecté et 0 = déconnecté
+            	});
+          	} catch (err) {
+            	console.error("Erreur lors de la notification du status de connexion au backend:", err);
+          	}
 			localStorage.setItem('jwtToken', data.jwt);
 			window.SPA.navigateTo('/home');
 		}

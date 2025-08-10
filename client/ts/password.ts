@@ -4,38 +4,39 @@ interface ApiErrorResponse {
 }
 
 async function changePassword(): Promise<void> {
-  const messageDiv = document.getElementById("message") as HTMLElement;
-  const form = document.getElementById("change-password-form") as HTMLFormElement;
-  if (!messageDiv || !form) return;
-
-  form.addEventListener("submit", async function (event: Event): Promise<void> {
+  if (await window.SPA.checkJwtValidity()) {
+    const messageDiv = document.getElementById("message") as HTMLElement;
+    const form = document.getElementById("change-password-form") as HTMLFormElement;
+    if (!messageDiv || !form) return;
+    
+    form.addEventListener("submit", async function (event: Event): Promise<void> {
     event.preventDefault();
 
     const newPasswordInput: HTMLInputElement | null = document.getElementById("newPassword") as HTMLInputElement;
     const confirmNewPasswordInput: HTMLInputElement | null = document.getElementById("confirmNewPassword") as HTMLInputElement;
-
+    
     if (!newPasswordInput || !confirmNewPasswordInput) {
       messageDiv.textContent = "Éléments de formulaire manquants.";
       messageDiv.style.color = "red";
       return;
     }
-
+    
     const newPassword: string = newPasswordInput.value;
     const confirmNewPassword: string = confirmNewPasswordInput.value;
-
+    
     if (newPassword !== confirmNewPassword) {
       messageDiv.textContent = "Les mots de passe ne correspondent pas, réessayez.";
       messageDiv.style.color = "red";
       return;
     }
-
+    
     const token: string | null = localStorage.getItem("jwtToken");
     if (!token) {
       messageDiv.textContent = "Token d'authentification manquant.";
       messageDiv.style.color = "red";
       return;
     }
-
+    
     try {
       const response: Response = await fetch("http://localhost:3000/auth/change-password", {
         method: "PATCH",
@@ -45,7 +46,7 @@ async function changePassword(): Promise<void> {
         },
         body: JSON.stringify({ password: newPassword }),
       });
-
+      
       if (response.status === 400) {
         messageDiv.textContent = "Erreur de saisie dans les données fournies.";
         messageDiv.style.color = "red";
@@ -58,7 +59,7 @@ async function changePassword(): Promise<void> {
         messageDiv.style.color = "red";
         return;
       }
-
+      
       messageDiv.textContent = "Mot de passe changé avec succès !";
       messageDiv.style.color = "green";
     } catch (error: unknown) {
@@ -66,13 +67,14 @@ async function changePassword(): Promise<void> {
       messageDiv.style.color = "red";
     }
   });
+  }
 }
 
 async function resetPassword(): Promise<void> {
   const messageDiv = document.getElementById("message") as HTMLElement;
   const form = document.getElementById("reset-password-form") as HTMLFormElement;
   if (!messageDiv || !form) return;
-
+  
   form.addEventListener("submit", async function (event: Event): Promise<void> {
     event.preventDefault();
 

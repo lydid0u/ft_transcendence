@@ -14,80 +14,77 @@ interface ApiResponse {
 type MessageType = "success" | "error" | "info"
 
 class FriendsAPI {
-  private baseUrl: string
 
-  constructor(baseUrl = "http://localhost:3000") {
-    this.baseUrl = baseUrl
+  async getAllFriends(): Promise<any> {
+    if (await window.SPA.checkJwtValidity()) {
+      try {
+        const token = localStorage.getItem("jwtToken");
+
+        const response = await fetch(`http://localhost:3000/get-all-friends`, {
+          method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        credentials: "include", //cookies
+      });
+        const responseText = await response.text(); 
+        return JSON.parse(responseText);
+      } catch (error) {
+        console.error("Error fetching friends:", error);
+        throw new Error(`HTTP error! status: 999`);
+      }
+  }
+}
+    
+  async addFriend(username: string): Promise<ApiResponse> {
+    if (await window.SPA.checkJwtValidity()) {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        const response = await fetch(`http://localhost:3000/friends-add`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            friend_nickname: username, // Le backend attend friend_nickname
+          }),
+        });
+        
+        console.log("Response status:", response.status);
+        const responseText = await response.text(); 
+        console.log("Response text:", responseText);
+        
+        if (!response.ok)
+            throw new Error("Impossible d'ajouter cet ami");
+        
+        const result: ApiResponse = JSON.parse(responseText);
+        return result;
+      } catch (error) {
+        throw new Error(error instanceof Error ? error.message : "Impossible d'ajouter cet ami");
+      }
+    }
   }
 
-  /**
-   * Get all friends for the current user
-   */
-
-   
-  async getAllFriends(): Promise<any> {
-    try {
+  async getOnlineStatus(username: string): Promise<boolean> {
+    if (await window.SPA.checkJwtValidity()) {
       const token = localStorage.getItem("jwtToken");
-      
-      const response = await fetch(`${this.baseUrl}/get-all-friends`, {
+      console.log("Checking online status for:", username);
+      const response = await fetch(`http://localhost:3000/user/get-online-status?friend_nickname=${encodeURIComponent(username)}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        credentials: "include", // Include cookies for authentication
-      });
-      const responseText = await response.text();
-      
-      // Parse la réponse à nouveau car .text() a déjà consommé le body
-      return JSON.parse(responseText);
-    } catch (error) {
-      console.error("Error fetching friends:", error);
-      throw new Error(`HTTP error! status: 999`);
-    }
-  }
-    
-  async addFriend(username: string): Promise<ApiResponse> {
-    try {
-      const token = localStorage.getItem("jwtToken");
-      
-      const response = await fetch(`${this.baseUrl}/friends-add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
         credentials: "include",
-        body: JSON.stringify({
-          friend_nickname: username, // Le backend attend friend_nickname
-        }),
       });
-      console.log("Response status:", response.status);
-      const responseText = await response.text(); 
-      console.log("Response text:", responseText);
-      if (!response.ok) {
-          throw new Error("Impossible d'ajouter cet ami");
-      }
-      const result: ApiResponse = JSON.parse(responseText);
-      return result;
-    } catch (error) {
-      throw new Error(error instanceof Error ? error.message : "Impossible d'ajouter cet ami");
+      const result = await response.json();
+      return result.isOnline === true;
+    } else {
+      return false;
     }
-  }
-  async getOnlineStatus(username: string): Promise<boolean> {
-    const token = localStorage.getItem("jwtToken");
-    console.log("Checking online status for:", username);
-    const response = await fetch(`${this.baseUrl}/user/get-online-status?friend_nickname=${encodeURIComponent(username)}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      credentials: "include",
-    });
-    const result = await response.json();
-    return result.isOnline === true;
   }
 }
 
@@ -107,7 +104,7 @@ class FriendsApp {
   private messageContainer: HTMLDivElement
 
   constructor() {
-    this.api = new FriendsAPI() // Update with your API base URL if needed
+    this.api = new FriendsAPI()
 
     // Initialize DOM elements
     this.searchInput = document.getElementById("search-input") as HTMLInputElement
@@ -126,7 +123,6 @@ class FriendsApp {
     if (!this.searchInput || !this.addFriendBtn || !this.friendsList || 
         !this.friendsCount || !this.loadingState || !this.emptyState || !this.messageContainer) {
       console.error("DOM elements not found. Make sure the friends page is loaded correctly.");
-      // Afficher un message dans la console pour faciliter le débogage
       console.log("Missing DOM elements:", {
         searchInput: !!this.searchInput,
         addFriendBtn: !!this.addFriendBtn,
@@ -190,7 +186,7 @@ class FriendsApp {
     this.updateFriendsCount();
   } catch (error) {
     this.showMessage("Erreur lors du chargement des amis", "error");
-    console.error("❌ Error loading friends:", error);
+    console.error("Error loading friends:", error);
   } finally {
     this.showLoading(false);
   }
@@ -337,15 +333,13 @@ function displayFriendsList() {
       console.log("✅ FriendsApp: Éléments DOM trouvés, initialisation");
       new FriendsApp();
     } else {
-      console.warn("⚠️ FriendsApp: Éléments DOM non trouvés");
+      console.warn("FriendsApp: Éléments DOM non trouvés");
     }
   }, 100);
 }
 
-// Export for potential external use
 export { FriendsApp, FriendsAPI, displayFriendsList }
 
-// Make functions available globally for the SPA router
 declare global {
   interface Window {
     FriendsApp: typeof FriendsApp;
@@ -353,6 +347,5 @@ declare global {
   }
 }
 
-// Expose to window for SPA
 window.FriendsApp = FriendsApp;
 window.displayFriendsList = displayFriendsList;

@@ -47,7 +47,6 @@ declare global {
   }
 }
 
-declare function getUserDataFromBackend(): void;
 declare function handleGoogleAuth(response: any): void;
 declare function addPseudoForGoogleLogin(userData: UserData): Promise<void>;
 declare function login(): void;
@@ -638,10 +637,13 @@ loadRoute: async function(route: string): Promise<void> {
         }
     },
 
-
   async checkJwtValidity(): Promise<boolean> {
     const token = localStorage.getItem('jwtToken');
-    if (!token) return false;
+    if (!token) {
+      console.error('checkJwtValidity: No token found');
+      this.clearAuthAndRedirect();
+      return false;
+    }
 
     try {
       const response = await fetch('http://localhost:3000/check-jwt', {
@@ -653,6 +655,7 @@ loadRoute: async function(route: string): Promise<void> {
       });
 
       if (!response.ok) {
+        console.error('checkJwtValidity: Invalid token');
         this.clearAuthAndRedirect();
         return false;
       }
@@ -666,16 +669,16 @@ loadRoute: async function(route: string): Promise<void> {
   },
 
   clearAuthAndRedirect(): void {
-    localStorage.removeItem('googleUser');
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('jwtToken');
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    
+    // localStorage.removeItem('googleUser');
+    // localStorage.removeItem('isAuthenticated');
+    // localStorage.removeItem('jwtToken'); 
+    localStorage.setItem('jwtToken', ''); // Clear token but keep key
+    // localStorage.removeItem('user');
+    // localStorage.removeItem('token');
+    // localStorage.removeItem('email');
+
     this.navigateTo('/login');
   },
-
-  //await SPA.checkJwtValidity();
 
   signOut: async function(): Promise<void> {
     try {
@@ -700,6 +703,7 @@ loadRoute: async function(route: string): Promise<void> {
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem('email');
 
     // Disable Google authentication
     if (typeof window.google !== 'undefined' && window.google.accounts) {
@@ -777,7 +781,6 @@ export { SPA };
 declare global {
   interface Window {
     SPA: typeof SPA;
-    getUserDataFromBackend: () => Promise<void>;
     handleGoogleAuth: (response: any) => void;
     displayUserInfo: (userData: any) => void;
     login: () => void;
@@ -791,9 +794,11 @@ declare global {
     otpSubmit: (email: string) => Promise<void>;
     displayTournamentList: () => void;
     signOut: () => void;
+    checkJwtValidity: () => Promise<boolean>;
     [key: string]: any;
   }
 }
 
 window.SPA = SPA;
 window.signOut = SPA.signOut.bind(SPA);
+window.checkJwtValidity = SPA.checkJwtValidity.bind(SPA);

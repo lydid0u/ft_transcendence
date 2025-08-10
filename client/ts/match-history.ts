@@ -64,21 +64,23 @@ class MatchHistoryAPI {
 
   // Méthode utilitaire pour les appels API
   private async fetchAPI<T>(endpoint: string): Promise<T> {
-    try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.token}`,
-        },
-        credentials: "include",
-      });
-      
-      const data = await response.json();
-      return data as T;
-    } catch (error) {
-      console.error(`Error fetching ${endpoint}:`, error);
-      throw error;
+    if (await window.SPA.checkJwtValidity()) {
+      try {
+        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.token}`,
+          },
+          credentials: "include",
+        });
+
+        const data = await response.json();
+        return data as T;
+      } catch (error) {
+        console.error(`Error fetching ${endpoint}:`, error);
+        throw error;
+      }
     }
   }
 
@@ -478,8 +480,9 @@ class MatchHistoryApp {
   
   // Chargement des statistiques du joueur
   private async loadSnakePlayerStats(userId: number): Promise<void> {
-    try {
-      const response = await fetch(`http://localhost:3000/snake/player-stats/${userId}`, {
+    if (await window.SPA.checkJwtValidity()) {
+      try {
+        const response = await fetch(`http://localhost:3000/snake/player-stats/${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -511,11 +514,13 @@ class MatchHistoryApp {
       // Ne pas montrer de notification ici car on gère déjà l'erreur dans loadSnakeData
     }
   }
+}
   
   // Chargement du leaderboard
   private async loadSnakeLeaderboard(): Promise<void> {
-    try {
-      const response = await fetch('http://localhost:3000/snake/leaderboard', {
+    if (await window.SPA.checkJwtValidity()) {
+      try {
+        const response = await fetch('http://localhost:3000/snake/leaderboard', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -536,28 +541,30 @@ class MatchHistoryApp {
         } else {
           this.leaderboardListEl.innerHTML = data.map(entry => `
             <tr class="border-b border-gray-200 hover:bg-gray-50">
-              <td class="px-4 py-3 text-sm font-medium">${entry.rank}</td>
-              <td class="px-4 py-3 text-sm">${entry.username}</td>
-              <td class="px-4 py-3 text-sm">${entry.best_score}</td>
+            <td class="px-4 py-3 text-sm font-medium">${entry.rank}</td>
+            <td class="px-4 py-3 text-sm">${entry.username}</td>
+            <td class="px-4 py-3 text-sm">${entry.best_score}</td>
             </tr>
-          `).join('');
+            `).join('');
+          }
         }
+        
+        // Mettre à jour le compteur
+        if (this.leaderboardCountEl) {
+          this.leaderboardCountEl.textContent = data.length.toString();
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement du leaderboard Snake:', error);
+        // Ne pas montrer de notification ici car on gère déjà l'erreur dans loadSnakeData
       }
-      
-      // Mettre à jour le compteur
-      if (this.leaderboardCountEl) {
-        this.leaderboardCountEl.textContent = data.length.toString();
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement du leaderboard Snake:', error);
-      // Ne pas montrer de notification ici car on gère déjà l'erreur dans loadSnakeData
     }
   }
   
   // Chargement de l'historique du joueur
   private async loadSnakeHistory(userId: number): Promise<void> {
-    try {
-      const response = await fetch(`http://localhost:3000/snake/player-history/${userId}`, {
+    if (await window.SPA.checkJwtValidity()) {
+      try {
+        const response = await fetch(`http://localhost:3000/snake/player-history/${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -588,17 +595,17 @@ class MatchHistoryApp {
             });
             
             return `
-              <tr class="border-b border-gray-200 hover:bg-gray-50">
-                <td class="px-4 py-3 text-sm">${formattedDate}</td>
-                <td class="px-4 py-3 text-sm">${entry.score}</td>
-              </tr>
+            <tr class="border-b border-gray-200 hover:bg-gray-50">
+            <td class="px-4 py-3 text-sm">${formattedDate}</td>
+            <td class="px-4 py-3 text-sm">${entry.score}</td>
+            </tr>
             `;
           }).join('');
         }
       }
-    } catch (error) {
-      console.error('Erreur lors du chargement de l\'historique Snake:', error);
-      // Ne pas montrer de notification ici car on gère déjà l'erreur dans loadSnakeData
+      } catch (error) {
+        console.error('Erreur lors du chargement de l\'historique Snake:', error);
+      }
     }
   }
   

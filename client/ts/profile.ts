@@ -18,53 +18,49 @@ interface ChangeUserResponse {
 }
 
 async function displayUserProfile(): Promise<void> {
-    const jwtToken = localStorage.getItem("jwtToken");
-  if (!jwtToken) {
-    if (window.SPA && typeof window.SPA.navigateTo === "function") {
-      window.SPA.navigateTo("/login");
+  if (await window.SPA.checkJwtValidity()) {
+    try {
+      const response: Response = await fetch("http://localhost:3000/user", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      })
+
+      if (!response.ok) {
+        console.log("la")
+        throw new Error(`Erreur HTTP: ${response.status}`)
+      }
+
+      const data: UserResponse = await response.json()
+      const user: User = data.user
+      console.log("User data received:", user)
+
+      localStorage.setItem("user", JSON.stringify(user))
+
+      if (user?.username) localStorage.setItem("username", user.username)
+      if (user?.email) localStorage.setItem("email", user.email)
+
+      const userGreeting: HTMLElement | null = document.getElementById("user-greeting")
+      if (userGreeting && user?.username) {
+        userGreeting.textContent = `${t('profile.greeting')} ${user.username}`
+      }
+
+      const userEmail: HTMLElement | null = document.getElementById("user-email")
+      if (userEmail && user?.email) {
+        userEmail.textContent = user.email
+      }
+
+      const userAvatar: HTMLImageElement | null = document.getElementById("user-avatar") as HTMLImageElement
+      if (userAvatar && user?.picture) {
+        userAvatar.src = user.picture
+      }
+
+    } catch (error: unknown) {
+      console.error("Erreur lors de la récupération des données:", error)
+      window.SPA.clearAuthAndRedirect();
     }
-    return;
-  }
-  try {
-    const response: Response = await fetch("http://localhost:3000/user", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-      },
-    })
-
-    if (!response.ok) {
-      console.log("la")
-      throw new Error(`Erreur HTTP: ${response.status}`)
-    }
-
-    const data: UserResponse = await response.json()
-    const user: User = data.user
-    console.log("User data received:", user)
-
-    localStorage.setItem("user", JSON.stringify(user))
-
-    if (user?.username) localStorage.setItem("username", user.username)
-    if (user?.email) localStorage.setItem("email", user.email)
-
-    const userGreeting: HTMLElement | null = document.getElementById("user-greeting")
-    if (userGreeting && user?.username) {
-      userGreeting.textContent = `${t('profile.greeting')} ${user.username}`
-    }
-
-    const userEmail: HTMLElement | null = document.getElementById("user-email")
-    if (userEmail && user?.email) {
-      userEmail.textContent = user.email
-    }
-
-    const userAvatar: HTMLImageElement | null = document.getElementById("user-avatar") as HTMLImageElement
-    if (userAvatar && user?.picture) {
-      userAvatar.src = user.picture
-    }
-
-  } catch (error: unknown) {
-    console.error("Erreur lors de la récupération des données:", error)
   }
 }
 
@@ -114,102 +110,112 @@ function showMessage(elementId: string, message: string, type: "success" | "erro
 }
 
 async function changeUsername(): Promise<void> {
+  const a = await window.SPA.checkJwtValidity();
+  console.log("JWT validity check in changeUsername:", a);
+  if (!await window.SPA.checkJwtValidity()) {
+    window.SPA.clearAuthAndRedirect();
+    return;
+  }
+
   const form = document.getElementById("change-username-form") as HTMLFormElement | null
   if (!form) return
 
   form.addEventListener("submit", async (event: Event) => {
     event.preventDefault()
 
-    const newUsername: string = (document.getElementById("new-username") as HTMLInputElement)?.value || ""
+      const newUsername: string = (document.getElementById("new-username") as HTMLInputElement)?.value || ""
 
-    if (!newUsername) {
-      showMessage("message-username", "Le nom d'utilisateur ne peut pas être vide.", "error")
-      return
-    }
-
-    try {
-      const response: Response = await fetch("http://localhost:3000/user/username", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-        },
-        body: JSON.stringify({
-          newusername: newUsername,
-          email: localStorage.getItem("email"),
-        }),
-      })
-
-      if (response.status === 400) {
-        showMessage("message-username", "Le nom d'utilisateur est déjà pris.", "error")
+      if (!newUsername) {
+        showMessage("message-username", "Le nom d'utilisateur ne peut pas être vide.", "error")
         return
       }
 
-      const data: ChangeUserResponse = await response.json()
-      console.log("Response data API in change Username:", data)
+      try {
+        const response: Response = await fetch("http://localhost:3000/user/username", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          },
+          body: JSON.stringify({
+            newusername: newUsername,
+            email: localStorage.getItem("email"),
+          }),
+        })
 
-      if (data.newUser) {
-        console.log(`New username: ${JSON.stringify(data.newUser.username)}`)
-        localStorage.setItem("user", JSON.stringify(data.newUser))
-        const userGreeting = document.getElementById("user-greeting") as HTMLElement
-        if (userGreeting && data.newUser.username) userGreeting.textContent = `Salut ${data.newUser.username}`
+        if (response.status === 400) {
+          showMessage("message-username", "Le nom d'utilisateur est déjà pris.", "error")
+          return
+        }
 
-        showMessage("message-username", "Pseudo changé avec succès !", "success")
-        form.reset()
-      } else {
-        console.error("Aucun utilisateur trouvé dans la réponse de l'API.")
-        showMessage("message-username", "Erreur lors de la mise à jour du pseudo.", "error")
+        const data: ChangeUserResponse = await response.json()
+        console.log("Response data API in change Username:", data)
+
+        if (data.newUser) {
+          console.log(`New username: ${JSON.stringify(data.newUser.username)}`)
+          localStorage.setItem("user", JSON.stringify(data.newUser))
+          const userGreeting = document.getElementById("user-greeting") as HTMLElement
+          if (userGreeting && data.newUser.username) userGreeting.textContent = `Salut ${data.newUser.username}`
+
+          showMessage("message-username", "Pseudo changé avec succès !", "success")
+          form.reset()
+        } else {
+          console.error("Aucun utilisateur trouvé dans la réponse de l'API.")
+          showMessage("message-username", "Erreur lors de la mise à jour du pseudo.", "error")
+        }
+      } catch (error) {
+        console.error("Erreur lors du changement de pseudo:", error)
+        showMessage("message-username", "Erreur réseau 3. Veuillez réessayer.", "error")
       }
-    } catch (error) {
-      console.error("Erreur lors du changement de pseudo:", error)
-      showMessage("message-username", "Erreur réseau 3. Veuillez réessayer.", "error")
-    }
-  })
+    })
 }
 
 async function changeAvatar() {
-  const form = document.getElementById("change-avatar-form") as HTMLFormElement
-  if (!form) return
+  if (await window.SPA.checkJwtValidity()) {
+    const form = document.getElementById("change-avatar-form") as HTMLFormElement
+    if (!form) return
 
-  form.addEventListener("submit", async (event: Event) => {
-    event.preventDefault()
+    form.addEventListener("submit", async (event: Event) => {
+      event.preventDefault()
 
-    try {
-      const target = event.target as HTMLFormElement
-      const formData = new FormData(target)
+      try {
+        const target = event.target as HTMLFormElement
+        const formData = new FormData(target)
 
-      const response: Response = await fetch("http://localhost:3000/user/avatar", {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-          // on definit pas Content-Type pour FormData
-        },
-        body: formData,
-      })
+        const response: Response = await fetch("http://localhost:3000/user/avatar", {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            // on definit pas Content-Type pour FormData
+          },
+          body: formData,
+        })
 
-      if (response.status === 400) {
-        showMessage("message-avatar", "Erreur lors de l'envoi de l'avatar, veuillez réessayer.", "error")
-        return
+        if (response.status === 400) {
+          showMessage("message-avatar", "Erreur lors de l'envoi de l'avatar, veuillez réessayer.", "error")
+          return
+        }
+
+        const data: ChangeUserResponse = await response.json()
+        console.log("retour de l'api dans changeAvatar:", data)
+
+        if (data.newUser) {
+          localStorage.setItem("user", JSON.stringify(data.newUser))
+          const userAvatar = document.getElementById("user-avatar") as HTMLImageElement
+          if (userAvatar && data.newUser.picture) userAvatar.src = data.newUser.picture
+
+          showMessage("message-avatar", "Avatar changé avec succès !", "success")
+          form.reset()
+        }
+      } catch (error) {
+        showMessage("message-avatar", "Erreur réseau 4. Veuillez réessayer.", "error")
       }
-
-      const data: ChangeUserResponse = await response.json()
-      console.log("retour de l'api dans changeAvatar:", data)
-
-      if (data.newUser) {
-        localStorage.setItem("user", JSON.stringify(data.newUser))
-        const userAvatar = document.getElementById("user-avatar") as HTMLImageElement
-        if (userAvatar && data.newUser.picture) userAvatar.src = data.newUser.picture
-
-        showMessage("message-avatar", "Avatar changé avec succès !", "success")
-        form.reset()
-      }
-    } catch (error) {
-      showMessage("message-avatar", "Erreur réseau 4. Veuillez réessayer.", "error")
-    }
-  })
+    })
+  }
 }
 
 async function activate2fa() {
+  if (await window.SPA.checkJwtValidity()) {
   const checkbox = document.getElementById("2fa-checkbox") as HTMLInputElement
   const messageDiv = document.getElementById("message-2fa") as HTMLElement
   if (!checkbox || !messageDiv) return
@@ -239,7 +245,8 @@ async function activate2fa() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
         },
-        body: JSON.stringify({email: localStorage.getItem("email"), isActivate: boolean,
+        body: JSON.stringify({
+          email: localStorage.getItem("email"), isActivate: boolean,
         }),
       })
 
@@ -250,7 +257,7 @@ async function activate2fa() {
         return
       }
 
-      if (!response.ok) 
+      if (!response.ok)
         throw new Error("Échec de la requête")
 
       localStorage.setItem("2fa_enabled", boolean.toString())
@@ -268,8 +275,10 @@ async function activate2fa() {
     }
   })
 }
+}
 
 async function changePassword(): Promise<void> {
+  if (await window.SPA.checkJwtValidity()) {
   const form = document.getElementById("change-password-form") as HTMLFormElement
   if (!form) return
 
@@ -309,6 +318,7 @@ async function changePassword(): Promise<void> {
       showMessage("message-password", "Erreur réseau 5. Veuillez réessayer.", "error")
     }
   })
+}
 }
 
 document.addEventListener("DOMContentLoaded", () => {
