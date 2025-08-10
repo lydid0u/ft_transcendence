@@ -1,6 +1,7 @@
 import { activate2fa } from "./profile";
 /// <reference types="vite/client" />
 
+
 interface RouteConfig {
   title: string;
   content: string;
@@ -129,8 +130,6 @@ const SPA = {
       window.i18n.initializePageTranslations();
     }
   },
-
-
 
   routes: {
     '/': {
@@ -316,6 +315,7 @@ const SPA = {
       }, 100);
     }
   },
+
 	'/snake': {
 	title: 'game.snake',
 	content: 'pages/snake.html',
@@ -500,6 +500,11 @@ const SPA = {
           activate2fa();
         }, 50);
       }
+    }, 
+
+    '/404': {
+      title: '404',
+      content: 'pages/404.html',
     }
   } as Record<string, RouteConfig>,
 
@@ -634,6 +639,44 @@ loadRoute: async function(route: string): Promise<void> {
     },
 
 
+  async checkJwtValidity(): Promise<boolean> {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) return false;
+
+    try {
+      const response = await fetch('http://localhost:3000/check-jwt', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+
+      if (!response.ok) {
+        this.clearAuthAndRedirect();
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error checking JWT:', error);
+      this.clearAuthAndRedirect();
+      return false;
+    }
+  },
+
+  clearAuthAndRedirect(): void {
+    localStorage.removeItem('googleUser');
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    
+    this.navigateTo('/login');
+  },
+
+  //await SPA.checkJwtValidity();
+
   signOut: async function(): Promise<void> {
     try {
       const token = localStorage.getItem('jwtToken');
@@ -687,29 +730,16 @@ loadRoute: async function(route: string): Promise<void> {
     this.handleLayout(window.location.pathname);
   },
 
-
   error404: function(): void {
     console.error('error 404 - page not found');
-    const contentDiv: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
-    if (contentDiv) {
-      contentDiv.innerHTML = `
-        <div style="text-align: center; margin-top: 50px;">
-          <h1>404 - Page Not Found</h1>
-          <p>Sorry, the page you are looking for does not exist.</p>
-          <a href="/" class="btn btn-primary">Go to Home</a>
-        </div>
-      `;
-    }
-    document.title = 'Error 404 - Page Not Found';
+    this.navigateTo('/404');
   }
 };
 
 document.addEventListener('DOMContentLoaded', function(): void {
   SPA.init();
 
-  // Initialize language system
   if (window.i18n) {
-    // Initialize translations
     window.i18n.initializePageTranslations();
 
     // Met à jour le bouton après l'init des traductions

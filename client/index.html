@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ft_transcendence</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="google-signin-client_id" content="632484486903-vm1hfg66enqfkffsmlhih0au506obuch.apps.googleusercontent.com" />
     <script type="module" src="main.ts" defer></script>
     <script>
+        
         tailwind.config = {
             theme: {
                 extend: {
@@ -19,7 +21,13 @@
                         'pink-light': '#ffb3d9',
                         'pink-medium': '#ff69b4',
                         'pink-dark': '#ff1493'
-                    }
+                    },
+                    fontFamily: {
+                      sans: ['Roboto', 'sans-serif'],
+                    },
+                    fontWeight: {
+                      medium: 500
+                    },
                 }
             }
         }
@@ -35,18 +43,14 @@
     </script>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-purple-200 via-purple-100 to-pink-200">
-    <!-- Browser Window Container -->
     <div class="max-w-6xl mx-auto pt-8 px-4">
-        <!-- Browser Header -->
         <div class="bg-white rounded-t-xl px-4 py-3 flex items-center justify-between shadow-sm">
-            <!-- Traffic Light Buttons -->
             <div class="flex items-center space-x-2">
                 <div id="lang-en" class="w-3 h-3 bg-red-500 rounded-full cursor-pointer hover:ring-2 hover:ring-red-300 transition-all" title="English"></div>
                 <div id="lang-fr" class="w-3 h-3 bg-yellow-500 rounded-full cursor-pointer hover:ring-2 hover:ring-yellow-300 transition-all" title="Français"></div>
                 <div id="lang-es" class="w-3 h-3 bg-green-500 rounded-full cursor-pointer hover:ring-2 hover:ring-green-300 transition-all" title="Español"></div>
             </div>
             
-            <!-- URL Bar -->
             <div class="flex items-center space-x-4 flex-1 justify-center">
                 <div class="flex items-center space-x-2 bg-gray-200 rounded-md px-20 py-1.5">
                   <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
@@ -58,20 +62,25 @@
                 <div class="text-gray-400">•••</div>
             </div>
             
-            <!-- User Account Section -->
             <div class="flex items-center space-x-4 relative">
                 <button id="nav-login-btn" class="text-sm font-medium px-3 py-1.5 rounded-md hover:bg-purple-light hover:text-purple-dark transition-colors"></button>
                 <div class="flex items-center space-x-1 cursor-pointer relative group" id="profile-dropdown-toggle">
-                    <div class="w-8 h-8 bg-gradient-to-r from-purple-dark to-pink-medium rounded-full flex items-center justify-center">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </div>
+<div class="w-8 h-8 bg-gradient-to-r from-purple-dark to-pink-medium rounded-full overflow-hidden flex items-center justify-center">
+    <img 
+        id="nav-user-avatar"
+        class="w-full h-full object-cover"
+        alt="Profile"
+        onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')"
+    />
+    <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+    </svg>
+</div>
                     <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-dark transition-colors transform group-hover:-rotate-180 duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </div>
-                <!-- Dropdown Menu -->
+
                 <div id="profile-dropdown" class="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 hidden transition-all duration-200 transform origin-top-right">
                     <div class="py-1">
                         <a href="/profile" data-route="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-light hover:text-purple-dark transition-colors">
@@ -189,8 +198,6 @@
                     const route = this.getAttribute('data-route');
                     if (route && typeof SPA !== 'undefined' && SPA.navigateTo) {
                         if (route === '/') {
-                            if (confirm('Are you sure you want to log out?')) {
-                                // Use the signOut function from SPA
                                 if (typeof SPA.signOut === 'function') {
                                     SPA.signOut();
                                     console.log('User logged out using SPA.signOut()');
@@ -198,7 +205,6 @@
                                     console.error('SPA.signOut function not found');
                                 }
                                 SPA.navigateTo(route);
-                            }
                         } else {
                             SPA.navigateTo(route);
                         }
@@ -212,8 +218,25 @@
             function updateDropdownVisibility() {
                 const isLoggedIn = localStorage.getItem('user') !== null;
                 dropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
+
+                if (isLoggedIn) {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    const navAvatar = document.getElementById('nav-user-avatar');
+                    if (navAvatar) {
+                        // Si l'utilisateur a une photo Google ou une autre photo de profil
+                        if (user.picture) {
+                            navAvatar.src = user.picture;
+                            navAvatar.classList.remove('hidden');
+                            navAvatar.nextElementSibling.classList.add('hidden');
+                        } else {
+                            // Afficher l'icône SVG par défaut
+                            navAvatar.classList.add('hidden');
+                            navAvatar.nextElementSibling.classList.remove('hidden');
+                        }
+                    }
+                }
             }
-            
+
             updateDropdownVisibility();
         });
     </script>

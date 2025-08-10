@@ -17,7 +17,7 @@ module.exports = {
         'pink-dark': '#ff1493'
       },
       fontFamily: {
-      sans: ["'Segoe UI'", "'SegoeUI'", "'Segoe WP'", "Tahoma", "Geneva", "Verdana", "sans-serif"],
+        sans: ['Oswald', 'sans-serif'], 
       },
       boxShadow: {
         'browser': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'

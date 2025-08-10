@@ -225,7 +225,7 @@ export class Game
 
 		const msg = document.createElement('div');
 		msg.className = 'text-3xl font-bold text-pink-500 mb-4';
-		msg.textContent = `${winner} gagne!`;
+		msg.textContent = `Winner : ${winner} !`;
 
 		const restartBtn = document.createElement('button');
 		restartBtn.className = 'px-6 py-2 bg-pink-500 text-white font-bold rounded-lg shadow hover:bg-pink-400 transition mb-2';

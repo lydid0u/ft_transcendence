@@ -12,7 +12,8 @@
       "login": "Login",
       "logout": "Logout",
       "settings": "Settings",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "back": "Return"
     },
       "reset": {
       "title": "Reset Password",
@@ -53,20 +54,20 @@
       "sign_in": "Sign in"
     },
     "home": {
-      "welcome": "Prêt à jouer ?",
-      "start_playing": "Choisissez votre mode de jeu et commencez le défi",
-      "play_ai": "Jouer contre l'IA",
-      "choose_difficulty": "Choisissez votre niveau de difficulté et améliorez vos compétences",
-      "play_now": "Jouer maintenant",
-      "local_match": "Match local",
-	  "snake_match": "Jouez à Snake",
-      "challenge": "Défiez un autre joueur dans un match de pong en temps réel",
-      "snake_challenge": "Faites une partie de Snake pour atteindre un tout nouveau High Score ",
-      "find_opponent": "Trouver un adversaire",
-      "tournament": "Tournoi",
-      "participate": "Participez à des tournois et montez dans le classement",
-      "join_tournament": "Rejoindre un tournoi",
-      "dashboard": "Tableau de bord"
+      "welcome": "Ready to play?",
+      "start_playing": "Choose your game mode and start the challenge",
+      "play_ai": "Play against AI",
+      "choose_difficulty": "Choose your difficulty level and improve your skills",
+      "play_now": "Play now",
+      "local_match": "Local Match",
+      "snake_match": "Play Snake",
+      "challenge": "Challenge another player in a real-time pong match",
+      "snake_challenge": "Play Snake and and try to beat your high score",
+      "find_opponent": "Find Opponent",
+      "tournament": "Tournament",
+      "participate": "Participate in tournaments and climb the leaderboard",
+      "join_tournament": "Join Tournament",
+      "dashboard": "Dashboard"
     },
     "friends": {
   "title": "Friends List",
@@ -121,7 +122,9 @@
       "ilan_role": "Pong, game development..."
     },
     "errors": {
-      "noUserFound": "No user found"
+      "noUserFound": "No user found",
+      "404_title": "Error 404 -Page Not Found",
+      "404_message": "The page you're looking for doesn't exist or has been moved."
     },
     "matchHistory": {
       "title": "Match History",
@@ -143,7 +146,7 @@
     },
     
     "tournament": {
-  "title": "Tournaments",
+  "title": "Tournament",
   "step1_title": "Create or join",
   "step1_desc": "Create your tournament or join an existing one",
   "step2_title": "Invite friends",
@@ -179,7 +182,8 @@
       "login": "Connexion",
       "logout": "Déconnexion",
       "settings": "Paramètres",
-      "loading": "Chargement..."
+      "loading": "Chargement...",
+      "back": "Retour"
     },
     "landing": {
       "title": "FT_TRANSCENDENCE",
@@ -231,6 +235,8 @@
       "choose_difficulty": "Choisissez votre niveau de difficulté et améliorez vos compétences",
       "play_now": "Jouer maintenant",
       "local_match": "Match local",
+      "snake_match": "Jeu du Serpent",
+      "snake_challenge": "Lancez-vous dans une partie de Snake pour atteindre un nouveau record",
       "challenge": "Défiez un autre joueur dans un match de pong en temps réel",
       "find_opponent": "Trouver un adversaire",
       "tournament": "Tournoi",
@@ -292,10 +298,12 @@
       "ilan_role": "Pong, développement de jeux..."
     },
     "errors": {
-      "noUserFound": "Aucun utilisateur trouvé"
+      "noUserFound": "Aucun utilisateur trouvé",
+      "404_title": "Erreur 404 - Page introuvable",
+      "404_message": "La page que vous recherchez n'existe pas ou a été déplacée."
     },
     "tournament": {
-  "title": "Tournois",
+  "title": "Tournoi",
   "step1_title": "Créer ou rejoindre",
   "step1_desc": "Créez votre tournoi ou rejoignez un existant",
   "step2_title": "Inviter des amis",
@@ -312,7 +320,7 @@
   "join": "Rejoindre",
   "join_success": "Tournoi rejoint avec succès",
   "join_error": "Erreur pour rejoindre le tournoi",
-  "ready_to_compete": "Prêt à concourir"
+  "ready_to_compete": "Prêt à vous mesurer aux meilleurs ?"
 },
 
     "matchHistory": {
@@ -351,7 +359,8 @@
       "login": "Iniciar sesión",
       "logout": "Cerrar sesión",
       "settings": "Ajustes",
-      "loading": "Cargando..."
+      "loading": "Cargando...",
+      "back": "Volver"
     },
     "landing": {
       "title": "FT_TRANSCENDENCE",
@@ -394,6 +403,8 @@
       "choose_difficulty": "Elige tu nivel de dificultad y mejora tus habilidades",
       "play_now": "Jugar ahora",
       "local_match": "Partida local",
+      "snake_match": "Juego de la Serpiente",
+      "snake_challenge": "Juega a la Serpiente y alcanza una nueva puntuación máxima",
       "challenge": "Desafía a otro jugador en una partida de pong en tiempo real",
       "find_opponent": "Encontrar oponente",
       "tournament": "Torneo",
@@ -422,7 +433,7 @@
   "start_adding": "Comienza a añadir amigos para ver tu lista aquí."
 },
     "tournament": {
-  "title": "Torneos",
+  "title": "Torneo",
   "step1_title": "Crear o unirse",
   "step1_desc": "Crea tu torneo o únete a uno existente",
   "step2_title": "Invitar amigos",
@@ -483,7 +494,9 @@
       "ilan_role": "Pong, desarrollo de juegos..."
     },
     "errors": {
-      "noUserFound": "No se encontró ningún usuario"
+      "noUserFound": "No se encontró ningún usuario",
+      "404_title": "Error 404 - Página no encontrada",
+      "404_message": "La página que buscas no existe o ha sido movida."
     },
     "matchHistory": {
       "title": "Historial de Partidas",

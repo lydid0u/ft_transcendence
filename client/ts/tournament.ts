@@ -207,14 +207,14 @@ class TournamentListApp {
       const buttonDisabled = tournament.isFull ? "disabled" : ""
       const buttonText = tournament.isFull ? "Complet" : "Rejoindre"
       const buttonClass = tournament.isFull
-        ? "px-4 py-2 bg-stone-500 text-white rounded-lg cursor-not-allowed"
-        : "px-4 py-2 bg-[#1a1a1a] text-[#e6fdff] rounded hover:bg-[#222] transition-colors shadow-[0_0_10px_rgba(134,231,255,0.2)] hover:shadow-[0_0_15px_rgba(134,231,255,0.4)]"
+        ? "px-4 py-2 bg-pink-200 text-white rounded-lg cursor-not-allowed"
+        : "px-4 py-2 bg-pink-400 text-white rounded hover:bg-pink-300 transition-colors shadow-[0_0_10px_rgba(134,231,255,0.2)] hover:shadow-[0_0_15px_rgba(134,231,255,0.4)]"
 
       return `
-        <div class="flex items-center justify-between p-4 bg-[#111] bg-opacity-40 backdrop-blur-sm rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] mb-2">
+        <div class="flex items-center justify-between p-4 bg-pink-200 bg-opacity-40 backdrop-blur-sm rounded shadow-[0_0_10px_rgba(134,231,255,0.2)] mb-2">
         <div>
-          <h3 class="font-bold text-[#e6fdff]">${tournament.creator_name}</h3>
-          <p class="text-sm text-[#b3f0ff]">Statut: ${tournament.status}</p>
+          <h3 class="font-bold text-pink-500">${tournament.creator_name}</h3>
+          <p class="text-sm text-pink-500">Statut: ${tournament.status}</p>
         </div>
           <button 
             class="${buttonClass}" 
