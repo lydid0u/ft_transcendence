@@ -307,6 +307,12 @@ function displayTournamentList(): void {
   setTimeout(() => new TournamentListApp(), 100)
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.i18n && typeof window.i18n.initializePageTranslations === 'function') {
+    window.i18n.initializePageTranslations();
+  }
+});
+
 // Déclaration globale
 declare global {
   interface Window {

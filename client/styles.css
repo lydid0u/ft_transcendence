@@ -12,9 +12,6 @@
   justify-content: center;
 }
 
-/* Page title styling */
-#nav-login-btn {
-  position: relative;
 /* Root Elements */
 html, body {
   margin: 0;
@@ -23,7 +20,7 @@ html, body {
   width: 100vw;
   overflow: hidden;
   background: #050507;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Segoe UI', 'SegoeUI', 'Segoe WP', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 #nav-login-btn.page-title {
@@ -34,27 +31,15 @@ html, body {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-weight: 500;
 }
-
-/* Gazpacho font family */
-@font-face {
-  font-family: 'Gazpacho';
-  src: url('./Gazpacho-Font/Gazpacho/Gazpacho\ Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Gazpacho';
-  src: url('./Gazpacho-Font/Gazpacho/Gazpacho\ Bold.ttf') format('truetype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Gazpacho';
-  src: url('./Gazpacho-Font/Gazpacho/Gazpacho\ Light.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
+/* Forcer la police Segoe UI sur tous les éléments principaux */
+#content, 
+.content-container, 
+.content-box, 
+#content h1, #content h2, #content h3, #content h4,
+#content p, #content span, #content div,
+button, input[type="submit"], input[type="button"], .button,
+input[type="text"], input[type="email"], input[type="password"], textarea, select {
+  font-family: 'Segoe UI', 'SegoeUI', 'Segoe WP', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
 /* Custom gradient text (fallback for browsers that don't support bg-clip-text) */
@@ -63,15 +48,6 @@ html, body {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-}
-
-/* Dropdown menu animation */
-#profile-dropdown {
-/* TV State Logic */
-.tv:not(.on) .off {
-  opacity: 0;
-  transform: scale(0.95);
-  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 #profile-dropdown.opacity-100 {
@@ -115,56 +91,6 @@ html, body {
 }
 .btn-secondary:hover {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-/* Scanlines */
-.scanline {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    rgba(0,0,0,0.14) 2px,
-    transparent 8px,
-    transparent 22px
-  );
-  opacity: 0.14;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-
-/* Tracking Effect */
-.tracking {
-  position: absolute;
-  left: 0; 
-  width: 100vw;
-  height: 22px;
-  z-index: 12;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.tracking.top { top: 0; }
-.tracking.bottom { bottom: 0; transform: scaleY(-1); }
-
-.tracking-canvas {
-  display: block;
-  width: 100vw; 
-  height: 22px;
-  pointer-events: none;
-}
-
-/* UI Container */
-.crt-ui {
-  position: relative;
-  width: 100vw; 
-  height: 100vh;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  pointer-events: none;
 }
 
 /* Animations */
@@ -231,47 +157,6 @@ html, body {
   100% { box-shadow: 0 0 10px rgba(134, 231, 255, 0.4); }
 }
 
-/* Navigation Menu */
-#dial-container {
-  background: rgba(10, 10, 12, 0.5) !important;
-  backdrop-filter: blur(5px);
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 0 25px rgba(134, 231, 255, 0.3);
-}
-
-/* Navigation Button */
-.nav-button {
-  background-color: rgba(26, 26, 26, 0.7);
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 10px rgba(134, 231, 255, 0.3);
-}
-
-.nav-button span {
-  color: #e6fdff;
-  font-size: 0.875rem;
-  letter-spacing: 1px;
-  text-shadow: 0 0 5px #85e7ff;
-}
-
-.nav-button:hover {
-  background-color: rgba(40, 40, 40, 0.9);
-  box-shadow: 0 0 15px rgba(134, 231, 255, 0.5);
-  transform: translateY(-2px);
-}
-
-/* Active Navigation Button */
-.active-nav-button {
-  background-color: #1a1a1a !important;
-  box-shadow: 0 0 15px rgba(134, 231, 255, 0.6) !important;
-  transform: scale(1.05);
-  text-shadow: 0 0 8px #e6fdff;
-  animation: navPulse 2s infinite;
-}
-
 /* Toggle Navigation Menu */
 .toggle-menu-button {
   position: fixed;
@@ -298,55 +183,6 @@ html, body {
 .toggle-menu-button:hover {
   box-shadow: 0 0 20px rgba(134, 231, 255, 0.8);
   transform: translateX(-50%) scale(1.1);
-}
-
-/* Action Button */
-.action-button-container {
-  position: relative;
-  z-index: 20;
-}
-
-.action-button {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: rgba(26, 26, 26, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4);
-  transition: all 0.3s ease;
-}
-
-.action-button svg {
-  color: #85e7ff;
-}
-
-.action-button:hover {
-  box-shadow: 0 0 20px rgba(134, 231, 255, 0.7);
-  transform: translateY(-2px);
-}
-
-/* Global Content Containers */
-#television-screen-container,
-#television-crt,
-#television-screen {
-  background-color: transparent !important;
-  backdrop-filter: none !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-/* ====== Typography ====== */
-
-/* Headings */
-#content h1, #content h2, #content h3, #content h4 {
-  color: #e6fdff !important;
-  text-shadow: 
-    0 0 10px #e6fdff, 
-    0 0 20px #85e7ff !important;
-  margin-bottom: 1rem;
 }
 
 #content h1 {
@@ -474,47 +310,6 @@ h1, h2, h3 {
   100% { box-shadow: 0 0 10px rgba(134, 231, 255, 0.4); }
 }
 
-/* Navigation Menu */
-#dial-container {
-  background: rgba(10, 10, 12, 0.5) !important;
-  backdrop-filter: blur(5px);
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 0 25px rgba(134, 231, 255, 0.3);
-}
-
-/* Navigation Button */
-.nav-button {
-  background-color: rgba(26, 26, 26, 0.7);
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 10px rgba(134, 231, 255, 0.3);
-}
-
-.nav-button span {
-  color: #e6fdff;
-  font-size: 0.875rem;
-  letter-spacing: 1px;
-  text-shadow: 0 0 5px #85e7ff;
-}
-
-.nav-button:hover {
-  background-color: rgba(40, 40, 40, 0.9);
-  box-shadow: 0 0 15px rgba(134, 231, 255, 0.5);
-  transform: translateY(-2px);
-}
-
-/* Active Navigation Button */
-.active-nav-button {
-  background-color: #1a1a1a !important;
-  box-shadow: 0 0 15px rgba(134, 231, 255, 0.6) !important;
-  transform: scale(1.05);
-  text-shadow: 0 0 8px #e6fdff;
-  animation: navPulse 2s infinite;
-}
-
 /* Toggle Navigation Menu */
 .toggle-menu-button {
   position: fixed;
@@ -543,46 +338,6 @@ h1, h2, h3 {
   transform: translateX(-50%) scale(1.1);
 }
 
-/* Action Button */
-.action-button-container {
-  position: relative;
-  z-index: 20;
-}
-
-.action-button {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: rgba(26, 26, 26, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 0 15px rgba(134, 231, 255, 0.4);
-  transition: all 0.3s ease;
-}
-
-.action-button svg {
-  color: #85e7ff;
-}
-
-.action-button:hover {
-  box-shadow: 0 0 20px rgba(134, 231, 255, 0.7);
-  transform: translateY(-2px);
-}
-
-/* Global Content Containers */
-#television-screen-container,
-#television-crt,
-#television-screen {
-  background-color: transparent !important;
-  backdrop-filter: none !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-/* ====== Typography ====== */
-
 /* Headings */
 #content h1, #content h2, #content h3, #content h4 {
   color: #e6fdff !important;
@@ -608,8 +363,6 @@ h1, h2, h3 {
   text-shadow: 0 0 5px #85e7ff !important;
   line-height: 1.6;
 }
-
-/* ====== Form Elements ====== */
 
 /* Interactive Elements */
 button, 
@@ -662,8 +415,6 @@ select:focus {
   outline: none;
 }
 
-/* Glow Effect for Important Text */
-.glow-text, 
 .vhsfont, 
 h1, h2, h3 {
   text-shadow: 
