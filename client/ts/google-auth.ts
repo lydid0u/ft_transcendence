@@ -53,6 +53,7 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 		console.log("Réponse du backend:", data, data.jwt);
 
 		localStorage.setItem('googleUser', JSON.stringify(userData));
+		localStorage.setItem('user', JSON.stringify(data.user || userData));
 		localStorage.setItem('isAuthenticated', 'true');
 		if (!data.jwt) {
 			console.log("Utilisateur authentifié, redirection vers la page de connexion Google");

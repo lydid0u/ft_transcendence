@@ -29,7 +29,7 @@ let translations: Translations = {
 };
 
 // Default language
-let currentLanguage = localStorage.getItem('preferredLanguage') || 'fr';
+let currentLanguage = JSON.parse(localStorage.getItem('user') || '{}').language || localStorage.getItem('preferredLanguage') || 'fr';
 
 // Load translations from JSON file
 async function loadTranslations(): Promise<void> {

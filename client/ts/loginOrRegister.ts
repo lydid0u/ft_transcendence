@@ -1,3 +1,5 @@
+import { setLanguage } from "./i18n";
+
 interface User {
   email: string;
   pseudo?: string;
@@ -80,7 +82,7 @@ async function login(): Promise<void> {
         }
         
           localStorage.setItem('user', JSON.stringify(data.user || { email }));
-    
+          setLanguage(data.user.language || 'fr');
           if (!data.jwt) {
             try {
               await fetch('http://localhost:3000/auth/2FA-code', {

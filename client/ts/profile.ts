@@ -219,7 +219,7 @@ async function updateLanguage(): Promise<void> {
           console.log(`New language: ${JSON.stringify(data.newUser.language)}`)
           localStorage.setItem("user", JSON.stringify(data.newUser))
           const userGreeting = document.getElementById("user-greeting") as HTMLElement
-          if (userGreeting && data.newUser.language) userGreeting.textContent = `Salut ${data.newUser.language}`
+          if (userGreeting && data.newUser.language) userGreeting.textContent = `Salut ${data.newUser.user}`
           showMessage("message-language", "Langue changée avec succès !", "success")
           form.reset()
         } else {
