@@ -145,19 +145,19 @@ async function tournamentRoute(fastify, options)
         }
     });
 
-    // fastify.get('/tournament/get-all-tournaments', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
-    // {
-    //     const tournaments = await fastify.dbTournament.getAllTournaments();
-    //     reply.send(tournaments);
-    // });
+    fastify.get('/tournament/get-all-tournaments', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    {
+        const tournaments = await fastify.dbTournament.getAllTournaments();
+        reply.send(tournaments);
+    });
 
-    // fastify.get('/tournament/get-participants', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
-    // {
-    //     const userId = request.user.id;
-    //     const participants = await fastify.dbTournament.getAllParticipants(userId);
-    //     console.log('Participants:', participants);
-    //     reply.send({ participants });
-    // });
+    fastify.get('/tournament/get-participants', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
+    {
+        const userId = request.user.id;
+        const participants = await fastify.dbTournament.getAllParticipants(userId);
+        console.log('Participants:', participants);
+        reply.send({ participants });
+    });
 
     fastify.delete('/tournament/delete', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {

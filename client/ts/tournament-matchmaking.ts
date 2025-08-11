@@ -50,6 +50,7 @@ class TournamentMatchmakingAPI {
 
 	private async fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise<T>
 	{
+		if (await window.SPA.checkJwtValidity()) {
 		const response = await fetch(`${this.baseUrl}${endpoint}`, {
 		...options,
 		headers:
@@ -67,6 +68,7 @@ class TournamentMatchmakingAPI {
 
 	return response.json() as T;
 	}
+}
 
 	// Get tournament bracket and matches
 	async getTournamentBracket(tournamentId: number): Promise<TournamentBracket> {

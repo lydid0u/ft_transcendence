@@ -34,19 +34,21 @@ class TournamentAPI {
   }
 
   private async fetchAPI<T>(endpoint: string): Promise<T> {
-    try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.token}`,
-        },
-        credentials: "include",
-      });
-      const data = await response.json();
-      return data as T;
-    } catch (error) {
-      throw error;
+    if (await window.SPA.checkJwtValidity()) {
+      try {
+        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.token}`,
+          },
+          credentials: "include",
+        });
+        const data = await response.json();
+        return data as T;
+      } catch (error) {
+        throw error;
+      }
     }
   }
 
@@ -64,85 +66,89 @@ class TournamentAPI {
   }
 
   async joinTournament(tournamentId: string): Promise<{ success: boolean, message?: string }> {
-    try {
-      const response = await fetch(`${this.baseUrl}/tournament/join`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.token}`,
-        },
-        credentials: "include",
-        body: JSON.stringify({ tournamentId : tournamentId }),
-      });
-      console.log("Réponse du serveur pour rejoindre le tournoi :", response);
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        if (window.SPA && window.SPA.navigateTo) {
-          window.SPA.navigateTo('/tournamenthome');
+    if (await window.SPA.checkJwtValidity()) {
+      try {
+        const response = await fetch(`${this.baseUrl}/tournament/join`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.token}`,
+          },
+          credentials: "include",
+          body: JSON.stringify({ tournamentId: tournamentId }),
+        });
+        console.log("Réponse du serveur pour rejoindre le tournoi :", response);
+
+        const data = await response.json();
+
+        if (response.ok) {
+          if (window.SPA && window.SPA.navigateTo) {
+            window.SPA.navigateTo('/tournamenthome');
+          }
+          return { success: true, message: data.message || "Tournoi rejoint avec succès" };
         }
-        return { success: true, message: data.message || "Tournoi rejoint avec succès" }; 
-      }
-      
-      // Vérifier si l'erreur est liée au créateur
-      if (response.status === 400 && data.message && data.message.includes("not the creator")) {
-        return { 
-          success: false, 
-          message: "Seul le créateur du tournoi peut rejoindre ce tournoi" 
+
+        // Vérifier si l'erreur est liée au créateur
+        if (response.status === 400 && data.message && data.message.includes("not the creator")) {
+          return {
+            success: false,
+            message: "Seul le créateur du tournoi peut rejoindre ce tournoi"
+          };
+        }
+
+        return {
+          success: false,
+          message: data.message || "Erreur lors de la tentative de rejoindre le tournoi"
         };
+
+      } catch (error) {
+        return { success: false, message: "Erreur pour rejoindre le tournoi" };
       }
-      
-      return { 
-        success: false, 
-        message: data.message || "Erreur lors de la tentative de rejoindre le tournoi" 
-      }; 
-
-    } catch (error) {
-      return { success: false, message: "Erreur pour rejoindre le tournoi" };
     }
   }
 
- async createTournament(): Promise<{ success: boolean; message?: string; data?: any }> {
-  try {
-    // Vérifier si le token est disponible
-    if (!this.token) {
-      return { success: false, message: "Authentification requise" };
+  async createTournament(): Promise<{ success: boolean; message?: string; data?: any }> {
+    if (await window.SPA.checkJwtValidity()) {
+      try {
+        // Vérifier si le token est disponible
+        if (!this.token) {
+          return { success: false, message: "Authentification requise" };
+        }
+
+        const response = await fetch(`${this.baseUrl}/tournament/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.token}`,
+          },
+          credentials: "include",
+          body: JSON.stringify({}),
+        });
+        const result = await response.json();
+
+        if (!response.ok) {
+          return {
+            success: false,
+            message: result.message || `Erreur serveur (${response.status})`
+          };
+        }
+
+        // La réponse du backend contient { status: 'success', data: { tournamentId } }
+        // OU peut aussi être { success: true, ... } si vous avez modifié le backend
+        const isSuccess = result.status === 'success' || result.success === true;
+        return {
+          success: isSuccess,
+          message: isSuccess ? "Tournoi créé avec succès" : "Erreur lors de la création du tournoi",
+          data: result.data || {}
+        };
+        //  La réponse du backend contient { status: 'success', data: { tournamentId } }
+        // OU peut aussi être { success: true, ... } si vous avez modifié le backend
+      } catch (error) {
+        console.error("Error creating tournament:", error);
+        return { success: false, message: "Erreur de connexion au serveur" };
+      }
     }
-
-      const response = await fetch(`${this.baseUrl}/tournament/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.token}`,
-      },
-      credentials: "include",
-      body: JSON.stringify({}),
-    });
-    const result = await response.json();
-
-    if (!response.ok) {
-      return { 
-        success: false, 
-        message: result.message || `Erreur serveur (${response.status})`
-      };
-    }
-
-    // La réponse du backend contient { status: 'success', data: { tournamentId } }
-    // OU peut aussi être { success: true, ... } si vous avez modifié le backend
-    const isSuccess = result.status === 'success' || result.success === true;
-    return {
-      success: isSuccess,
-      message: isSuccess ? "Tournoi créé avec succès" : "Erreur lors de la création du tournoi",
-      data: result.data || {}
-    };
-    //  La réponse du backend contient { status: 'success', data: { tournamentId } }
-    // OU peut aussi être { success: true, ... } si vous avez modifié le backend
-  } catch (error) {
-    console.error("Error creating tournament:", error);
-    return { success: false, message: "Erreur de connexion au serveur" };
   }
-}
 }
 
 // Classe pour l'affichage de la liste des tournois
@@ -164,20 +170,20 @@ class TournamentListApp {
     this.emptyState = document.getElementById("empty-state")
     this.messageContainer = document.getElementById("message-container")
     this.createTournamentBtn = document.getElementById("create-tournament-btn")
-    
+
     this.init()
   }
 
   private init(): void {
     if (!this.tournamentList || !this.loadingState || !this.emptyState) return
-    
+
     // Ajout de l'écouteur d'événement pour le bouton de création de tournoi
     if (this.createTournamentBtn) {
       this.createTournamentBtn.addEventListener("click", () => {
         this.handleCreateTournament()
       })
     }
-    
+
     this.loadTournamentList()
   }
 
@@ -244,10 +250,10 @@ class TournamentListApp {
       this.showNotification(window.i18n.translate('tournament.join_success'), "success")
       console.log("Tournoi rejoint avec succès :", tournamentId)
       if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
-            window.SPA.navigateTo('/tournamenthome');
-          } else {
-            window.location.href = '/tournamenthome';
-          }
+        window.SPA.navigateTo('/tournamenthome');
+      } else {
+        window.location.href = '/tournamenthome';
+      }
     } else {
       this.showNotification(result.message || window.i18n.translate('tournament.join_error'), "error")
       btnEl.disabled = false
@@ -257,17 +263,17 @@ class TournamentListApp {
 
   private async handleCreateTournament(): Promise<void> {
     if (!this.createTournamentBtn) return
-    
+
     // Désactiver le bouton pendant la création
     const originalText = this.createTournamentBtn.textContent || window.i18n.translate('tournament.create')
     this.createTournamentBtn.textContent = window.i18n.translate('tournament.creating')
     this.createTournamentBtn.classList.add("opacity-50", "cursor-not-allowed")
-    
+
     try {
       const result = await this.api.createTournament()
-      
+
       if (result.success) {
-        this.showNotification(window.i18n.translate('tournament.create_success'),  "success")
+        this.showNotification(window.i18n.translate('tournament.create_success'), "success")
 
         // Redirection vers la page de gestion du tournoi
         setTimeout(() => {

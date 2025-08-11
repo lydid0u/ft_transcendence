@@ -116,10 +116,10 @@
       "placeholder": "Verification Code"
     },
     "about": {
-      "title": "Who are we?",
-      "lydia_role": "Front End, designer...",
-      "khalid_role": "Back End, user management...",
-      "ilan_role": "Pong, game development..."
+  "title": "Who are we?",
+  "lydia_role": "Front End, design, API requests, Single Page Application (SPA), Google Login, user management, two-factor authentication, translation, Docker...",
+  "khalid_role": "Back end, API routes, database, user management, two-factor authentication, tournament system and match making, Docker...",
+  "ilan_role": "Pong and Snake game development"
     },
     "errors": {
       "noUserFound": "No user found",
@@ -146,7 +146,15 @@
     },
     
     "tournament": {
-  "title": "Tournament",
+      "tournament_title": "Tournament 🏆",
+      "round": "Semi-finals",
+      "finals": "Finals",
+      "versus": "vs",
+      "next_opponents": "Next opponents:",
+      "waiting": "Waiting...",
+      "finalist": "Finalist",
+      "next_match": "Next match",
+      "title": "Tournament",
   "step1_title": "Create or join",
   "step1_desc": "Create your tournament or join an existing one",
   "step2_title": "Invite friends",
@@ -292,10 +300,10 @@
       "placeholder": "Code de vérification"
     },
     "about": {
-      "title": "Qui sommes-nous ?",
-      "lydia_role": "Front End, designer...",
-      "khalid_role": "Back End, gestion des utilisateurs...",
-      "ilan_role": "Pong, développement de jeux..."
+  "title": "Qui sommes-nous ?",
+  "lydia_role": "Front End, design, requêtes API, application monopage (SPA), connexion Google, gestion des utilisateurs, double authentification, traduction, Docker...",
+  "khalid_role": "Back end, routes API, base de données, gestion des utilisateurs, double authentification, système de tournoi et match making, Docker...",
+  "ilan_role": "Développement des jeux Pong et Snake"
     },
     "errors": {
       "noUserFound": "Aucun utilisateur trouvé",
@@ -303,7 +311,15 @@
       "404_message": "La page que vous recherchez n'existe pas ou a été déplacée."
     },
     "tournament": {
-  "title": "Tournoi",
+      "tournament_title": "Tournoi 🏆",
+      "round": "Demi-finale",
+      "finals": "Finale",
+      "versus": "vs",
+      "next_opponents": "Prochains adversaires :",
+      "waiting": "En attente...",
+      "finalist": "Finaliste",
+      "next_match": "Prochain match",
+      "title": "Tournoi",
   "step1_title": "Créer ou rejoindre",
   "step1_desc": "Créez votre tournoi ou rejoignez un existant",
   "step2_title": "Inviter des amis",
@@ -433,7 +449,15 @@
   "start_adding": "Comienza a añadir amigos para ver tu lista aquí."
 },
     "tournament": {
-  "title": "Torneo",
+      "tournament_title": "Torneo 🏆",
+      "round": "Semifinales",
+      "finals": "Final",
+      "versus": "vs",
+      "next_opponents": "Próximos oponentes:",
+      "waiting": "Esperando...",
+      "finalist": "Finalista",
+      "next_match": "Siguiente partido",
+      "title": "Torneo",
   "step1_title": "Crear o unirse",
   "step1_desc": "Crea tu torneo o únete a uno existente",
   "step2_title": "Invitar amigos",
@@ -488,10 +512,10 @@
       "placeholder": "Código de verificación"
     },
     "about": {
-      "title": "¿Quiénes somos?",
-      "lydia_role": "Front End, diseñador...",
-      "khalid_role": "Back End, gestión de usuarios...",
-      "ilan_role": "Pong, desarrollo de juegos..."
+  "title": "¿Quiénes somos?",
+  "lydia_role": "Front End, diseño, peticiones API, aplicación de una sola página (SPA), inicio de sesión con Google, gestión de usuarios, doble autenticación, traducción, Docker...",
+  "khalid_role": "Back end, rutas API, base de datos, gestión de usuarios, doble autenticación, sistema de torneos y match making, Docker...",
+  "ilan_role": "Desarrollo de los juegos Pong y Snake"
     },
     "errors": {
       "noUserFound": "No se encontró ningún usuario",

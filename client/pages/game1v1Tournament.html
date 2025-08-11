@@ -1,9 +1,9 @@
 <div class="flex flex-col items-center h-full w-full p-8 rounded-[40px] bg-gradient-to-b from-pink-light to-purple-light bg-opacity-60 shadow-lg border-2 border-pink-200 overflow-y-auto">
   <div class="w-full max-w-4xl text-center">
-    <h1 class="text-6xl font-bold mb-8 text-pink-500">Tournoi 🏆</h1>
+    <h1 class="text-6xl font-bold mb-8 text-pink-500" data-i18n="tournament.tournament_title">Tournoi 🏆</h1>
     
     <div class="text-4xl font-bold text-pink-900 mb-6">
-      <span id="current-round">Demi-finale</span>
+      <span id="current-round" data-i18n="tournament.round">Demi-finale</span>
     </div>
         <div class="flex flex-col items-center justify-center bg-white rounded-3xl shadow-xl py-6 border border-pink-200">
 
@@ -11,7 +11,7 @@
             
             <div class="flex justify-between items-center text-3xl font-bold">
               <span id="player1-name" class="text-pink-700"></span>
-              <div class="text-pink-600">vs</div>
+              <div class="text-pink-600" data-i18n="tournament.versus">vs</div>
               <span id="player2-name" class="text-purple-400"></span>
             </div>
             
@@ -24,23 +24,23 @@
             <canvas id="game-canvas" class="mx-auto border-4 border-pink-200 rounded-lg mt-2 mb-4" width="800" height="500"></canvas>
       
       <div id="next-opponents-section" class="mt-6 mb-4 font-bold">
-        <h3 class="text-lg text-pink-600 mb-2">Prochains adversaires :</h3>
+        <h3 class="text-lg text-pink-600 mb-2" data-i18n="tournament.next_opponents">Prochains adversaires :</h3>
         <div class="flex justify-center items-center text-xl text-pink-500">
-          <span id="next-player1" class="mx-4">En attente...</span>
-          <span class="mx-2 text-pink-600">vs</span>
-          <span id="next-player2" class="mx-4">En attente...</span>
+          <span id="next-player1" class="mx-4" data-i18n="tournament.waiting">En attente...</span>
+          <span class="mx-2 text-pink-600" data-i18n="tournament.versus">vs</span>
+          <span id="next-player2" class="mx-4" data-i18n="tournament.waiting">En attente...</span>
         </div>
 
         <div id="finalist-section" class="mt-4 hidden">
           <p class="text-lg text-pink-200">
-            Finaliste : <span id="finalist-name" class="font-bold">--</span>
+            <span data-i18n="tournament.finalist">Finaliste</span> : <span id="finalist-name" class="font-bold">--</span>
           </p>
         </div>
       </div>
       
       <!-- Bouton "Prochain match" - caché par défaut -->
       <div id="next-game-container" class="mt-4 hidden">
-        <button id="next-game-button" class="px-6 py-3 bg-pink-400 text-white font-bold rounded-lg hover:bg-pink-600 transition-colors shadow-lg">
+        <button id="next-game-button" class="px-6 py-3 bg-pink-400 text-white font-bold rounded-lg hover:bg-pink-600 transition-colors shadow-lg" data-i18n="tournament.next_match">
           Prochain match
         </button>
       </div>

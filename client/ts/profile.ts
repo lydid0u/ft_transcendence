@@ -110,64 +110,59 @@ function showMessage(elementId: string, message: string, type: "success" | "erro
 }
 
 async function changeUsername(): Promise<void> {
-  const a = await window.SPA.checkJwtValidity();
-  console.log("JWT validity check in changeUsername:", a);
-  if (!await window.SPA.checkJwtValidity()) {
-    window.SPA.clearAuthAndRedirect();
-    return;
-  }
-
-  const form = document.getElementById("change-username-form") as HTMLFormElement | null
-  if (!form) return
-
-  form.addEventListener("submit", async (event: Event) => {
-    event.preventDefault()
-
-      const newUsername: string = (document.getElementById("new-username") as HTMLInputElement)?.value || ""
-
-      if (!newUsername) {
-        showMessage("message-username", "Le nom d'utilisateur ne peut pas être vide.", "error")
-        return
-      }
-
-      try {
-        const response: Response = await fetch("http://localhost:3000/user/username", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-          },
-          body: JSON.stringify({
-            newusername: newUsername,
-            email: localStorage.getItem("email"),
-          }),
-        })
-
-        if (response.status === 400) {
-          showMessage("message-username", "Le nom d'utilisateur est déjà pris.", "error")
+  if (await window.SPA.checkJwtValidity()) {
+    const form = document.getElementById("change-username-form") as HTMLFormElement | null
+    if (!form) return
+    
+    form.addEventListener("submit", async (event: Event) => {
+      event.preventDefault()
+    
+        const newUsername: string = (document.getElementById("new-username") as HTMLInputElement)?.value || ""
+    
+        if (!newUsername) {
+          showMessage("message-username", "Le nom d'utilisateur ne peut pas être vide.", "error")
           return
         }
-
-        const data: ChangeUserResponse = await response.json()
-        console.log("Response data API in change Username:", data)
-
-        if (data.newUser) {
-          console.log(`New username: ${JSON.stringify(data.newUser.username)}`)
-          localStorage.setItem("user", JSON.stringify(data.newUser))
-          const userGreeting = document.getElementById("user-greeting") as HTMLElement
-          if (userGreeting && data.newUser.username) userGreeting.textContent = `Salut ${data.newUser.username}`
-
-          showMessage("message-username", "Pseudo changé avec succès !", "success")
-          form.reset()
-        } else {
-          console.error("Aucun utilisateur trouvé dans la réponse de l'API.")
-          showMessage("message-username", "Erreur lors de la mise à jour du pseudo.", "error")
+      
+        try {
+          const response: Response = await fetch("http://localhost:3000/user/username", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            },
+            body: JSON.stringify({
+              newusername: newUsername,
+              email: localStorage.getItem("email"),
+            }),
+          })
+        
+          if (response.status === 400) {
+            showMessage("message-username", "Le nom d'utilisateur est déjà pris.", "error")
+            return
+          }
+        
+          const data: ChangeUserResponse = await response.json()
+          console.log("Response data API in change Username:", data)
+        
+          if (data.newUser) {
+            console.log(`New username: ${JSON.stringify(data.newUser.username)}`)
+            localStorage.setItem("user", JSON.stringify(data.newUser))
+            const userGreeting = document.getElementById("user-greeting") as HTMLElement
+            if (userGreeting && data.newUser.username) userGreeting.textContent = `Salut ${data.newUser.username}`
+          
+            showMessage("message-username", "Pseudo changé avec succès !", "success")
+            form.reset()
+          } else {
+            console.error("Aucun utilisateur trouvé dans la réponse de l'API.")
+            showMessage("message-username", "Erreur lors de la mise à jour du pseudo.", "error")
+          }
+        } catch (error) {
+          console.error("Erreur lors du changement de pseudo:", error)
+          showMessage("message-username", "Erreur réseau 3. Veuillez réessayer.", "error")
         }
-      } catch (error) {
-        console.error("Erreur lors du changement de pseudo:", error)
-        showMessage("message-username", "Erreur réseau 3. Veuillez réessayer.", "error")
-      }
-    })
+      })
+  }
 }
 
 async function changeAvatar() {

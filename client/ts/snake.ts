@@ -625,6 +625,7 @@ export class SnakeGame {
 	}
 	
 	private async sendScoreToBackend(score: number): Promise<void> {
+		if (await window.SPA.checkJwtValidity()) {
 		try {
 			const response = await fetch('http://localhost:3000/snake/add-score', {
 				method: 'POST',
@@ -650,8 +651,10 @@ export class SnakeGame {
 			console.error('Error submitting score:', error);
 		}
 	}
+}
 
 	private async fetchLeaderboardData(): Promise<void> {
+		if (await window.SPA.checkJwtValidity()) {
 		try {
 			const response = await fetch('http://localhost:3000/snake/nearest-score', {
 				method: 'GET',
@@ -673,6 +676,7 @@ export class SnakeGame {
 			this.updateLeaderboardUI(data);
 		} catch (error) {
 			console.error('Error fetching leaderboard data:', error);
+		}
 		}
 	}
 	
