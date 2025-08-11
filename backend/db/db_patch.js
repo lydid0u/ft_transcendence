@@ -1,3 +1,16 @@
+import fp from 'fastify-plugin';
+import fs from 'fs'
+import path from 'path'
+import bcrypt from 'bcrypt';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+const saltRounds = 10;
+
+
 async function dbFunctionPatch(fastify, options)
 {
     const dbPatch = {

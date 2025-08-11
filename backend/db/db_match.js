@@ -53,4 +53,4 @@ async function tableMatches(fastify, options)
     await dbMatches.createTableSnake();
 };
 
-export default
+export default fp(tableMatches)
