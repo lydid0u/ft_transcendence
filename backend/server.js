@@ -95,7 +95,6 @@ fastify.register(cors, {
       // Docker container names
       'http://vite-frontend:5173',
       'https://vite-frontend:5173',
-      '*'
     ];
     
     if (allowedOrigins.includes(origin)) {
