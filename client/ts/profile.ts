@@ -321,7 +321,7 @@ async function activate2fa() {
         throw new Error("Échec de la requête")
 
       localStorage.setItem("2fa_enabled", boolean.toString())
-      messageDiv.textContent = isActivate ? t('profile.tfa_enabled_success') : t('profile.tfa_disabled_success')
+      messageDiv.textContent = isActivate ? t('2FA activated successfully') : t('2FA deactivated successfully')
       messageDiv.classList.remove("hidden")
 
       setTimeout(() => {
@@ -329,7 +329,7 @@ async function activate2fa() {
       }, 5000)
     } catch (error) {
       console.log("LERREUR", error)
-      messageDiv.textContent = t('profile.tfa_update_error')
+      messageDiv.textContent = t('2FA ') 
       messageDiv.classList.remove("hidden")
       checkbox.checked = !isActivate
     }
