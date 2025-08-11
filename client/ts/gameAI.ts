@@ -167,7 +167,7 @@ export class Game
 	private static async GetCurrentUsername(): Promise <string | null> {
 		try 
 		{
-			const response = await fetch('http://localhost:3000/user', {
+			const response = await fetch('https://localhost:3000/user', {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',

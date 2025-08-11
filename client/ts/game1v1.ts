@@ -191,7 +191,7 @@ export class Game1v1
 		};
 		if (await window.SPA.checkJwtValidity()) {
 			try {
-				const response = await fetch('http://localhost:3000/add-match', {
+				const response = await fetch('https://localhost:3000/add-match', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ export class Game1v1
 	private static async GetCurrentUsername(): Promise <string | null> {
 		try 
 		{
-			const response = await fetch('http://localhost:3000/user', {
+			const response = await fetch('https://localhost:3000/user', {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',

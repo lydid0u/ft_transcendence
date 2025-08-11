@@ -569,7 +569,7 @@ class MatchHistoryApp {
   private async loadSnakeHistory(userId: number): Promise<void> {
     if (await window.SPA.checkJwtValidity()) {
       try {
-        const response = await fetch(`http://localhost:3000/snake/player-history/${userId}`, {
+        const response = await fetch(`https://localhost:3000/snake/player-history/${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

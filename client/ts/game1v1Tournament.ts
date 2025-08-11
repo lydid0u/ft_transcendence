@@ -338,9 +338,15 @@ export class Game1v1
     handleKeyDown(e:any)
     {
         if (e.code == "ArrowUp")
+        {
             Game1v1.keys2Pressed[KeyBindings.UP] = true;
+            e.preventDefault();
+        }
         if (e.code == "ArrowDown")
+        {
             Game1v1.keys2Pressed[KeyBindings.DOWN] = true;
+            e.preventDefault();
+        }
         if (e.code == "KeyW")
             Game1v1.keys1Pressed[KeyBindings.UP] = true;
         if (e.code == "KeyS")

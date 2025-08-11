@@ -21,7 +21,7 @@ interface ChangeUserResponse {
 async function displayUserProfile(): Promise<void> {
   if (await window.SPA.checkJwtValidity()) {
     try {
-      const response: Response = await fetch("http://localhost:3000/user", {
+      const response: Response = await fetch("https://localhost:3000/user", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -136,7 +136,7 @@ async function changeUsername(): Promise<void> {
         }
       
         try {
-          const response: Response = await fetch("http://localhost:3000/user/username", {
+          const response: Response = await fetch("https://localhost:3000/user/username", {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
@@ -193,7 +193,7 @@ async function updateLanguage(): Promise<void> {
       }
 
       try {
-        const response: Response = await fetch("http://localhost:3000/user/language", {
+        const response: Response = await fetch("https://localhost:3000/user/language", {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

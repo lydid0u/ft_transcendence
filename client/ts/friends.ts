@@ -20,7 +20,7 @@ class FriendsAPI {
       try {
         const token = localStorage.getItem("jwtToken");
 
-        const response = await fetch(`http://localhost:3000/get-all-friends`, {
+        const response = await fetch(`https://localhost:3000/get-all-friends`, {
           method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ class FriendsAPI {
     if (await window.SPA.checkJwtValidity()) {
       try {
         const token = localStorage.getItem("jwtToken");
-        const response = await fetch(`http://localhost:3000/friends-add`, {
+        const response = await fetch(`https://localhost:3000/friends-add`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -72,7 +72,7 @@ class FriendsAPI {
     if (await window.SPA.checkJwtValidity()) {
       const token = localStorage.getItem("jwtToken");
       console.log("Checking online status for:", username);
-      const response = await fetch(`http://localhost:3000/user/get-online-status?friend_nickname=${encodeURIComponent(username)}`, {
+      const response = await fetch(`https://localhost:3000/user/get-online-status?friend_nickname=${encodeURIComponent(username)}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
