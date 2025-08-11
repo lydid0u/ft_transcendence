@@ -87,6 +87,9 @@ function translate(key: string): string {
 
 // Set the current language
 function setLanguage(lang: string): void {
+  const loadLanguage = JSON.parse(localStorage.getItem('user') || '{}').language || localStorage.getItem('preferredLanguage') || 'fr';
+  console.log("Setting language to:", lang, "Current language:", loadLanguage);
+  console.log("user language:", JSON.parse(localStorage.getItem('user') || '{}').language);
   if (translations[lang]) {
     currentLanguage = lang;
     localStorage.setItem('preferredLanguage', lang);

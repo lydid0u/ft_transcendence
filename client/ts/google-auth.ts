@@ -1,3 +1,7 @@
+import { setLanguage } from "./i18n";
+
+export {}
+
 interface GoogleAuthResponse {
 	credential: string;
 }
@@ -54,6 +58,7 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 
 		localStorage.setItem('googleUser', JSON.stringify(userData));
 		localStorage.setItem('user', JSON.stringify(data.user || userData));
+		setLanguage(data.user?.language || 'fr'); // Set language from user data or default to 'fr'
 		localStorage.setItem('isAuthenticated', 'true');
 		if (!data.jwt) {
 			console.log("Utilisateur authentifié, redirection vers la page de connexion Google");

@@ -24,9 +24,7 @@ interface AuthErrorResponse {
 
 declare global {
   interface Window {
-    SPA?: {
-      navigateTo: (route: string) => void;
-    };
+    SPA?: any;
   }
 }
 

@@ -653,9 +653,7 @@ function displayMatchHistory(): void {
 declare global {
   interface Window {
     displayMatchHistory: typeof displayMatchHistory;
-    SPA?: {
-      navigateTo: (path: string) => void;
-    };
+    SPA?: any;
     i18n?: {
       translate: (key: string) => string;
     };
