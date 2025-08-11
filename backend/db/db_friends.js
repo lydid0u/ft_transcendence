@@ -8,40 +8,51 @@ async function tableFriends(fastify, options)
 
         async createTableFriends()
         {
-            await fastify.db.connection.run(
-                `CREATE TABLE IF NOT EXISTS friends (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    user_id INTEGER,
-                    friend_id INTEGER,
-                    FOREIGN KEY (user_id) REFERENCES users(id),
-                    FOREIGN KEY (friend_id) REFERENCES users(id)
-                )`)
+            try {
+                await fastify.db.connection.run(
+                    `CREATE TABLE IF NOT EXISTS friends (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER,
+                        friend_id INTEGER,
+                        FOREIGN KEY (user_id) REFERENCES users(id),
+                        FOREIGN KEY (friend_id) REFERENCES users(id)
+                    )`
+                );
+            } catch (error) {
+                console.error('Error creating friends table:', error);
+            }
         },
 
        async showTableFriends(userId) 
        {
-            console.log("Récupération de tous les amis");
-            console.log("User ID:", userId);
-            const friends = await fastify.db.connection.all(`
-                SELECT 
-                    f.id, 
-                    f.user_id, 
-                    f.friend_id,
-                    u.username, 
-                    u.email
-                FROM 
-                    friends f
-                JOIN 
-                    users u ON f.friend_id = u.id
-                WHERE
-                    f.user_id = ?
-            `, [userId]);
-            console.log("Amis trouvés:", friends.length);
-            return { status: 'success', friends: friends };
+            try {
+                console.log("Récupération de tous les amis");
+                console.log("User ID:", userId);
+                const friends = await fastify.db.connection.all(`
+                    SELECT 
+                        f.id, 
+                        f.user_id, 
+                        f.friend_id,
+                        u.username, 
+                        u.email
+                    FROM 
+                        friends f
+                    JOIN 
+                        users u ON f.friend_id = u.id
+                    WHERE
+                        f.user_id = ?
+                `, [userId]);
+                console.log("Amis trouvés:", friends.length);
+                return { status: 'success', friends: friends };
+            } catch (error) {
+                console.error('Error fetching friends:', error);
+                return { status: 'error', message: 'Failed to fetch friends' };
+            }
         },
 
         async addFriends(request, friend_nickname)
         {
+            try {
             console.log("Ajout d'un ami avec le pseudo:", friend_nickname);
             const friend_id = await fastify.db.connection.get('SELECT id FROM users WHERE username = ?', friend_nickname);
             if (!friend_id) {
@@ -58,6 +69,10 @@ async function tableFriends(fastify, options)
                 return reply.status(400).send({ status: 'error', message: 'Cannot add yourself as a friend' });
             }
             await fastify.db.connection.run('INSERT INTO friends (user_id, friend_id) VALUES (?, ?)', request.user.id, friend_id.id);
+        } catch (error) {
+            console.error('Error adding friend:', error);
+            return reply.status(500).send({ status: 'error', message: 'Failed to add friend' });
+        }
         }
 
         // async deletefriend(request, friend_delete)

@@ -291,13 +291,13 @@ async function authGoogle(fastify, options) {
         expiresAt: Date.now() + 1 * 60 * 1000,
         user: user,
       });
-      // await fastify.nodemailer.sendMail({
-      //     from: process.env.MAIL_2FA,
-      //     to: email,
-      //     subject: 'Your verification code',
-      //     text: `Your verification code is: ${code}`,
-      //     html: `<p>Voici votre code de verification: <b>${code}</b></p>`
-      // });
+      await fastify.nodemailer.sendMail({
+          from: process.env.MAIL_2FA,
+          to: email,
+          subject: 'Your verification code',
+          text: `Your verification code is: ${code}`,
+          html: `<p>Voici votre code de verification: <b>${code}</b></p>`
+      });
       console.log(code, email);
       return reply.send({
         success: true,
