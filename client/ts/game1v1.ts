@@ -208,7 +208,27 @@ export class Game1v1
 		}
 	}
 
-	showEndScreen() {
+	private static async GetCurrentUsername(): Promise <string | null> {
+		try 
+		{
+			const response = await fetch('http://localhost:3000/user', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+				}
+			});
+			if (!response.ok) 
+				throw new Error(`HTTP error! status: ${response.status}`);
+			const data = await response.json();
+			return (data.user.username || null);
+		} catch (error) {
+			console.error('Error fetching current username:', error);
+			return null;
+		}
+	}
+
+	async showEndScreen() {
 		const container = document.querySelector('.page-content');
 		if (!container) return;
 
@@ -217,13 +237,17 @@ export class Game1v1
 		if (oldEnd) oldEnd.remove();
 
 		// Récupérer le pseudo du joueur 1 depuis l'élément HTML
-		let player1Name = "Player 1";
+		let player1Name: string = await Game1v1.GetCurrentUsername() || "Vous";
+		console.log("Player 1 Name is " + player1Name); 
 		const player1NameElement = document.getElementById("player1-name");
-		if (player1NameElement && player1NameElement.textContent) {
-			player1Name = player1NameElement.textContent;
+		if (player1Name == null || player1Name === "Vous")
+		{
+			if (player1NameElement && player1NameElement.textContent) {
+				player1Name = player1NameElement.textContent;
+			}
 		}
 
-		const winner = Game1v1.player1Score > Game1v1.player2Score ? player1Name : "Player 2";
+		const winner = Game1v1.player1Score > Game1v1.player2Score ? player1Name : "The Challenger";
 		const endDiv = document.createElement('div');
 		endDiv.id = 'end-screen';
 		endDiv.className = 'flex flex-col items-center mt-6';

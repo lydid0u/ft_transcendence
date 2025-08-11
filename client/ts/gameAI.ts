@@ -164,48 +164,71 @@ export class Game
 		requestAnimationFrame(() => this.gameLoop());
 	}
 	
-	async postFinalGameResults() {
-		// Récupérer le pseudo du joueur depuis l'élément HTML
-		if (await window.SPA.checkJwtValidity()) {
-			let playerName = "Joueur";
-			const playerNameElement = document.getElementById("player-name");
-			if (playerNameElement && playerNameElement.textContent) {
-				playerName = playerNameElement.textContent;
-			}
-		
-			const gameResults = {
-				player1_score: Game.playerScore,
-				player2_score: Game.computerScore,
-				winner: Game.playerScore > Game.computerScore ? "player1" : "player2",
-				game_type: "Pong vs IA"
-			};
-
-			try {
-				const token = localStorage.getItem('jwtToken');
-				if (!token) {
-					console.warn("Impossible d'enregistrer les résultats : token d'authentification non trouvé");
-					return;
+	private static async GetCurrentUsername(): Promise <string | null> {
+		try 
+		{
+			const response = await fetch('http://localhost:3000/user', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
 				}
-
-				const response = await fetch('http://localhost:3000/add-match', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${token}`
-					},
-					credentials: 'include',
-					body: JSON.stringify(gameResults)
-				});
-
-				console.log(response);
-				if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-				console.log('Résultats de la partie contre l\'IA enregistrés avec succès');
-			} catch (error) {
-				console.error('Erreur lors de l\'enregistrement des résultats:', error);
-			}
+			});
+			if (!response.ok) 
+				throw new Error(`HTTP error! status: ${response.status}`);
+			const data = await response.json();
+			return (data.user.username || null);
+		} catch (error) {
+			console.error('Error fetching current username:', error);
+			return null;
 		}
 	}
-	showEndScreen() {
+
+	async postFinalGameResults() {
+		// Récupérer le pseudo du joueur depuis l'élément HTML
+		let playerName: string = await Game.GetCurrentUsername() || "Vous";
+		const player1NameElement = document.getElementById("player1-name");
+		if (playerName == null || playerName === "Vous")
+		{
+			if (player1NameElement && player1NameElement.textContent) {
+				playerName = player1NameElement.textContent;
+			}
+		}
+		
+		const gameResults = {
+			player1_score: Game.playerScore,
+			player2_score: Game.computerScore,
+			winner: Game.playerScore > Game.computerScore ? "player1" : "player2",
+			game_type: "Pong vs IA"
+		};
+		
+		try {
+			if (await window.SPA.checkJwtValidity()) {
+			const token = localStorage.getItem('jwtToken');
+			if (!token) {
+				console.warn("Impossible d'enregistrer les résultats : token d'authentification non trouvé");
+				return;
+			}
+			
+			const response = await fetch('https://localhost:3000/add-match', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+				credentials: 'include',
+				body: JSON.stringify(gameResults)
+			});
+			
+			console.log(response);
+			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+			console.log('Résultats de la partie contre l\'IA enregistrés avec succès');
+		} catch (error) {
+			console.error('Erreur lors de l\'enregistrement des résultats:', error);
+		}
+	}
+}
+	async showEndScreen() {
 		const container = document.querySelector('.page-content');
 		if (!container) return;
 
@@ -214,10 +237,14 @@ export class Game
 		if (oldEnd) oldEnd.remove();
 
 		// Récupérer le pseudo du joueur depuis l'élément HTML
-		let playerName = "Joueur";
-		const playerNameElement = document.getElementById("player-name");
-		if (playerNameElement && playerNameElement.textContent) {
-			playerName = playerNameElement.textContent;
+		let playerName: string = await Game.GetCurrentUsername() || "Vous";
+		console.log("Player 1 Name is " + playerName); 
+		const player1NameElement = document.getElementById("player1-name");
+		if (playerName == null || playerName === "Vous")
+		{
+			if (player1NameElement && player1NameElement.textContent) {
+				playerName = player1NameElement.textContent;
+			}
 		}
 
 		const winner = Game.playerScore > Game.computerScore ? playerName : "IA";

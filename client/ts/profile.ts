@@ -121,6 +121,7 @@ function showMessage(elementId: string, message: string, type: "success" | "erro
 }
 
 async function changeUsername(): Promise<void> {
+<<<<<<< HEAD
   if (await window.SPA.checkJwtValidity()) {
     const form = document.getElementById("change-username-form") as HTMLFormElement | null
     if (!form) return
@@ -172,6 +173,32 @@ async function changeUsername(): Promise<void> {
           console.error("Erreur lors du changement de pseudo:", error)
           showMessage("message-username", "Erreur réseau 3. Veuillez réessayer.", "error")
         }
+=======
+  const form = document.getElementById("change-username-form") as HTMLFormElement | null
+  if (!form) return
+
+  form.addEventListener("submit", async (event: Event) => {
+    event.preventDefault()
+
+    const newUsername: string = (document.getElementById("new-username") as HTMLInputElement)?.value || ""
+
+    if (!newUsername) {
+      showMessage("message-username", "Le nom d'utilisateur ne peut pas être vide.", "error")
+      return
+    }
+
+    try {
+      const response: Response = await fetch("https://localhost:3000/user/username", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+        body: JSON.stringify({
+          newusername: newUsername,
+          email: localStorage.getItem("email"),
+        }),
+>>>>>>> Khalid3
       })
   }
 }
@@ -246,6 +273,7 @@ async function changeAvatar() {
         const target = event.target as HTMLFormElement
         const formData = new FormData(target)
 
+<<<<<<< HEAD
         const response: Response = await fetch("http://localhost:3000/user/avatar", {
           method: "PATCH",
           headers: {
@@ -254,6 +282,16 @@ async function changeAvatar() {
           },
           body: formData,
         })
+=======
+      const response: Response = await fetch("https://localhost:3000/user/avatar", {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          // on definit pas Content-Type pour FormData
+        },
+        body: formData,
+      })
+>>>>>>> Khalid3
 
         if (response.status === 400) {
           showMessage("message-avatar", "Erreur lors de l'envoi de l'avatar, veuillez réessayer.", "error")
@@ -303,7 +341,7 @@ async function activate2fa() {
     const boolean = isActivate
     console.log("isActivate:", isActivate, "boolean:", boolean)
     try {
-      const response: Response = await fetch("http://localhost:3000/user/2fa-activate", {
+      const response: Response = await fetch("https://localhost:3000/user/2fa-activate", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -360,7 +398,7 @@ async function changePassword(): Promise<void> {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/auth/change-password", {
+      const response = await fetch("https://localhost:3000/auth/change-password", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

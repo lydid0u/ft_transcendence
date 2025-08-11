@@ -648,7 +648,7 @@ loadRoute: async function(route: string): Promise<void> {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/check-jwt', {
+      const response = await fetch('https://localhost:3000/check-jwt', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -687,7 +687,7 @@ loadRoute: async function(route: string): Promise<void> {
     try {
       const token = localStorage.getItem('jwtToken');
       if (token) {
-        await fetch('http://localhost:3000/user/connection-status', {
+        await fetch('https://localhost:3000/user/connection-status', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
