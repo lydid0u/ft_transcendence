@@ -5,7 +5,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300&display=swap');
 
-/* /* Root Elements */
+/* /* Root Elements
 html, body {
   margin: 0;
   padding: 0;
@@ -15,7 +15,7 @@ html, body {
   background: #050507;
   font-family: 'Oswald', sans-serif;
   font-weight: 300;
-} 
+}  */
 
 #nav-login-btn.page-title {
   background: linear-gradient(to right, #9b6dff, #ff69b4);

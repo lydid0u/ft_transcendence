@@ -671,13 +671,14 @@ loadRoute: async function(route: string): Promise<void> {
   },
 
   clearAuthAndRedirect(): void {
-    // localStorage.removeItem('googleUser');
-    // localStorage.removeItem('isAuthenticated');
-    // localStorage.removeItem('jwtToken'); 
-    localStorage.setItem('jwtToken', ''); // Clear token but keep key
-    // localStorage.removeItem('user');
-    // localStorage.removeItem('token');
-    // localStorage.removeItem('email');
+    localStorage.removeItem('googleUser');
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('jwtToken'); 
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('email');
+    localStorage.removeItem('username');
+
 
     this.navigateTo('/login');
   },
@@ -706,6 +707,8 @@ loadRoute: async function(route: string): Promise<void> {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('email');
+    localStorage.removeItem('username');
+
 
     // Disable Google authentication
     if (typeof window.google !== 'undefined' && window.google.accounts) {

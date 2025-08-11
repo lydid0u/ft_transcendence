@@ -145,18 +145,15 @@ class FriendsApp {
       return;
     }
 
-    // Search input event
     this.searchInput.addEventListener("input", (e: Event) => {
       const target = e.target as HTMLInputElement
       this.handleSearch(target.value)
     })
 
-    // Add friend button event
     this.addFriendBtn.addEventListener("click", () => {
       this.handleAddFriend()
     })
 
-    // Enter key on search input
     this.searchInput.addEventListener("keypress", (e: KeyboardEvent) => {
       if (e.key === "Enter") {
         this.handleAddFriend()
@@ -170,7 +167,6 @@ class FriendsApp {
     const response = await this.api.getAllFriends();
     console.log("Réponse API complète:", response);
     
-    // Extraire correctement les amis de la réponse
     if (response && response.friends && Array.isArray(response.friends)) {
       this.friends = response.friends;
     } else if (Array.isArray(response)) {
@@ -210,9 +206,8 @@ class FriendsApp {
       if (result.status === "success") {
         this.showMessage("Ami ajouté avec succès!", "success")
         this.searchInput.value = ""
-        // Ajouter un délai avant de recharger pour laisser le temps à la base de données
         setTimeout(async () => {
-          await this.loadFriends() // Reload the friends list
+          await this.loadFriends() 
         }, 500);
       }
     } catch (error) {
@@ -230,7 +225,6 @@ class FriendsApp {
 
     this.emptyState.classList.add("hidden")
 
-    // Générer le HTML sans bouton de suppression
     const htmlArray = await Promise.all(
     this.filteredFriends.map((friend) => this.createFriendHTML(friend))
   );
