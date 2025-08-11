@@ -1,47 +1,46 @@
 version: '3.8'
-
 services:
-  # Backend Fastify
+  # Backend Fastify with HTTPS
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: fastify-backend
     ports:
-      - "3000:3000"
     environment:
       - NODE_ENV=development
       - DB_PATH=/app/data/database.sqlite
       - PORT=3000
+      - HTTPS_ENABLED=true
     volumes:
       - ./backend:/app
       - /app/node_modules
       - sqlite_data:/app/data
+      - ./certs:/app/certs:ro
     depends_on:
       - db
     networks:
       - app-network
     command: npm run dev
 
-  # Frontend Vite.js
   frontend:
     build:
       context: ./client
       dockerfile: Dockerfile
     container_name: vite-frontend
     ports:
-      - "5173:5173"
     environment:
       - NODE_ENV=development
-      - VITE_API_URL=http://localhost:3000
+      - VITE_API_URL=https://localhost:3000
     volumes:
       - ./client:/app
       - /app/node_modules
+      - ./certs:/app/certs:ro
     networks:
       - app-network
     command: npm run dev
 
-  # SQLite Database (avec un conteneur pour gérer les volumes)
+  # SQLite Database (unchanged)
   db:
     image: alpine:latest
     container_name: sqlite-db

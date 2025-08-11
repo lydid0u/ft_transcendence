@@ -626,7 +626,7 @@ export class SnakeGame {
 	
 	private async sendScoreToBackend(score: number): Promise<void> {
 		try {
-			const response = await fetch('http://localhost:3000/snake/add-score', {
+			const response = await fetch('https://localhost:3000/snake/add-score', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -653,7 +653,7 @@ export class SnakeGame {
 
 	private async fetchLeaderboardData(): Promise<void> {
 		try {
-			const response = await fetch('http://localhost:3000/snake/nearest-score', {
+			const response = await fetch('https://localhost:3000/snake/nearest-score', {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',

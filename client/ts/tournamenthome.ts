@@ -12,7 +12,7 @@ class TournamentHomeAPI {
   private baseUrl: string;
   private token: string | null;
 
-  constructor(baseUrl = "http://localhost:3000") {
+  constructor(baseUrl = "https://localhost:3000") {
     this.baseUrl = baseUrl;
     this.token = localStorage.getItem("jwtToken");
   }
@@ -241,7 +241,7 @@ class TournamentHomeApp {
   private async deleteTournament(): Promise<void> {
     if (!this.tournamentId) return;
     try {
-      const response = await fetch(`http://localhost:3000/tournament/delete`, {
+      const response = await fetch(`https://localhost:3000/tournament/delete`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
@@ -281,7 +281,7 @@ private async handlePlayerLogin(): Promise<void> {
 
   // Met ici ta logique de login joueur local (API ou simulation front)
   this.showMessage(`Tentative de connexion pour ${email}...`, "info");
-  const response = await fetch("http://localhost:3000/tournament/login", {
+  const response = await fetch("https://localhost:3000/tournament/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

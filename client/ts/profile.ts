@@ -26,7 +26,7 @@ async function displayUserProfile(): Promise<void> {
     return;
   }
   try {
-    const response: Response = await fetch("http://localhost:3000/user", {
+    const response: Response = await fetch("https://localhost:3000/user", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -128,7 +128,7 @@ async function changeUsername(): Promise<void> {
     }
 
     try {
-      const response: Response = await fetch("http://localhost:3000/user/username", {
+      const response: Response = await fetch("https://localhost:3000/user/username", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -178,7 +178,7 @@ async function changeAvatar() {
       const target = event.target as HTMLFormElement
       const formData = new FormData(target)
 
-      const response: Response = await fetch("http://localhost:3000/user/avatar", {
+      const response: Response = await fetch("https://localhost:3000/user/avatar", {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
@@ -233,7 +233,7 @@ async function activate2fa() {
     const boolean = isActivate
     console.log("isActivate:", isActivate, "boolean:", boolean)
     try {
-      const response: Response = await fetch("http://localhost:3000/user/2fa-activate", {
+      const response: Response = await fetch("https://localhost:3000/user/2fa-activate", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -287,7 +287,7 @@ async function changePassword(): Promise<void> {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/auth/change-password", {
+      const response = await fetch("https://localhost:3000/auth/change-password", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

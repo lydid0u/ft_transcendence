@@ -57,7 +57,7 @@ class MatchHistoryAPI {
   private baseUrl: string;
   private token: string | null;
 
-  constructor(baseUrl = "http://localhost:3000") {
+  constructor(baseUrl = "https://localhost:3000") {
     this.baseUrl = baseUrl;
     this.token = localStorage.getItem("jwtToken");
   }
@@ -484,7 +484,7 @@ class MatchHistoryApp {
   // Chargement des statistiques du joueur
   private async loadSnakePlayerStats(userId: number): Promise<void> {
     try {
-      const response = await fetch(`http://localhost:3000/snake/player-stats/${userId}`, {
+      const response = await fetch(`https://localhost:3000/snake/player-stats/${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -520,7 +520,7 @@ class MatchHistoryApp {
   // Chargement du leaderboard
   private async loadSnakeLeaderboard(): Promise<void> {
     try {
-      const response = await fetch('http://localhost:3000/snake/leaderboard', {
+      const response = await fetch('https://localhost:3000/snake/leaderboard', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -562,7 +562,7 @@ class MatchHistoryApp {
   // Chargement de l'historique du joueur
   private async loadSnakeHistory(userId: number): Promise<void> {
     try {
-      const response = await fetch(`http://localhost:3000/snake/player-history/${userId}`, {
+      const response = await fetch(`https://localhost:3000/snake/player-history/${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

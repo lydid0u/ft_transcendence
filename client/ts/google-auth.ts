@@ -38,7 +38,7 @@ declare global {
 
 async function sendUserDataToBackend(userData: UserData): Promise<void> {
 	try {
-		const response = await fetch('http://localhost:3000/auth/google', {
+		const response = await fetch('https://localhost:3000/auth/google', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 		}
 		else {
 			try {
-        await fetch('http://localhost:3000/user/connection-status', {
+        await fetch('https://localhost:3000/user/connection-status', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
             }
 
             try {
-                const response = await fetch('http://localhost:3000/auth/google-username', {
+                const response = await fetch('https://localhost:3000/auth/google-username', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
 
                 if (result.success) {
                     localStorage.setItem('jwtToken', result.jwt);
-                    await fetch('http://localhost:3000/user/connection-status', {
+                    await fetch('https://localhost:3000/user/connection-status', {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',

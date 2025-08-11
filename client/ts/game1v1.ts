@@ -190,7 +190,7 @@ export class Game1v1
 			game_type: "Pong 1v1",
 		};
 		try {
-			const response = await fetch('http://localhost:3000/add-match', {
+			const response = await fetch('https://localhost:3000/add-match', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

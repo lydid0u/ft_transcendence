@@ -42,7 +42,7 @@ class TournamentMatchmakingAPI {
 	private baseUrl: string;
 	private token: string | null;
 
-	constructor(baseUrl = "http://localhost:3000")
+	constructor(baseUrl = "https://localhost:3000")
 	{
 		this.baseUrl = baseUrl;
 		this.token = localStorage.getItem("jwtToken");

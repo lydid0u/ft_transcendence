@@ -23,7 +23,7 @@ export function setupNewPasswordForm() {
         return;
       }
       try {
-        const res = await fetch('http://localhost:3000/auth/reset-new-password', {
+        const res = await fetch('https://localhost:3000/auth/reset-new-password', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

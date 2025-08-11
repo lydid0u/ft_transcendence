@@ -67,7 +67,7 @@ async function login(): Promise<void> {
     }
 
     try {
-      const response: Response = await fetch('http://localhost:3000/auth/login', {
+      const response: Response = await fetch('https://localhost:3000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -83,7 +83,7 @@ async function login(): Promise<void> {
     
           if (!data.jwt) {
             try {
-              await fetch('http://localhost:3000/auth/2FA-code', {
+              await fetch('https://localhost:3000/auth/2FA-code', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ async function login(): Promise<void> {
             window.SPA?.navigateTo('/otp');
           } else {
             try {
-        await fetch('http://localhost:3000/user/connection-status', {
+        await fetch('https://localhost:3000/user/connection-status', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ async function otpSubmit(email: string): Promise<void> {
 			const code: string = (document.getElementById("otp-code") as HTMLInputElement)?.value || ""
 
 			try {
-				const response = await fetch('http://localhost:3000/auth/2FA-verify', {
+				const response = await fetch('https://localhost:3000/auth/2FA-verify', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ async function otpSubmit(email: string): Promise<void> {
 
 				if (result.success) {
           try {
-        await fetch('http://localhost:3000/user/connection-status', {
+        await fetch('https://localhost:3000/user/connection-status', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -228,7 +228,7 @@ async function register(): Promise<void> {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/auth/register', {
+      const response = await fetch('https://localhost:3000/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, pseudo, password: createPassword })
@@ -258,7 +258,7 @@ async function register(): Promise<void> {
       localStorage.setItem('jwtToken', data.jwt || '');
 
       try {
-        await fetch('http://localhost:3000/user/connection-status', {
+        await fetch('https://localhost:3000/user/connection-status', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

@@ -22,11 +22,49 @@ import path from 'path'
 import tableSnake from './db/db_snake.js';
 import MatchData from './db/db_tournament_match.js';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
-const fastify = Fastify();
-
+// Load environment variables
 dotenv.config();
 
+// Get current directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Check if HTTPS is enabled
+const httpsEnabled = process.env.HTTPS_ENABLED === 'true';
+
+// HTTPS options (only if enabled and certificates exist)
+let httpsOptions = undefined;
+if (httpsEnabled) {
+  try {
+    const keyPath = path.join(__dirname, './certs/server.key');
+    const certPath = path.join(__dirname, './certs/server.crt');
+    
+    if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+      httpsOptions = {
+        key: fs.readFileSync(keyPath),
+        cert: fs.readFileSync(certPath)
+      };
+      console.log('✅ HTTPS certificates loaded successfully');
+    } else {
+      console.warn('⚠️  HTTPS enabled but certificates not found, falling back to HTTP');
+    }
+  } catch (error) {
+    console.error('❌ Error loading HTTPS certificates:', error.message);
+    console.log('📝 Falling back to HTTP');
+  }
+}
+
+// Create Fastify instance with optional HTTPS
+const fastify = Fastify({
+  logger: {
+    level: 'info'
+  },
+  ...(httpsOptions && { https: httpsOptions })
+});
+
+// JWT registration
 fastify.register(fastifyJwt, {
   secret: process.env.SECRET_KEY_JWT,
 });
@@ -40,11 +78,35 @@ const transporter = nodemailer.createTransport({
 });
 fastify.decorate('nodemailer', transporter);
 
-// Replace your current cors registration with this:
+// CORS registration with HTTPS support
 fastify.register(cors, {
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Replace with your actual frontend URL
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // List of allowed origins
+    const allowedOrigins = [
+      // HTTP origins (fallback)
+      'http://localhost:5173', 
+      'http://127.0.0.1:5173',
+      // HTTPS origins
+      'https://localhost:5173', 
+      'https://127.0.0.1:5173',
+      // Docker container names
+      'http://vite-frontend:5173',
+      'https://vite-frontend:5173',
+      '*'
+    ];
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    console.log('CORS blocked origin:', origin);
+    return callback(new Error('Not allowed by CORS'));
+  },
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
   exposedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   optionsSuccessStatus: 204,
@@ -68,16 +130,13 @@ transporter.verify(function(error, success) {
   }
 });
 
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const avatarDir = path.join(__dirname, 'avatar');
 
 fastify.register(multipart, {
-        limits: {
-            fileSize: 2 * 1024 * 1024 // 2 Mo
-        }
-    });
+  limits: {
+    fileSize: 2 * 1024 * 1024 // 2 Mo
+  }
+});
 fastify.register(dbFunction);
 fastify.register(utilsDbFunc);
 fastify.register(dbFunctionPatch);
@@ -87,26 +146,47 @@ fastify.register(authGoogle);
 fastify.register(tableFriends);
 fastify.register(MatchData);
 fastify.register(matchesTable);
-fastify.register(dbPong);  // Enregistrement du plugin dbPong
+fastify.register(dbPong);
 fastify.register(matchesRoutes);
 fastify.register(tableSnake);
 fastify.register(tournamentRoutes);
 fastify.register(tournamentLaunchRoute);
 fastify.register(dbTournament);
 fastify.register(fastifyStatic, {
-  root: avatarDir,         // Le dossier où sont stockés tes avatars
-  prefix: '/avatar/',      // L’URL publique pour accéder aux fichiers
+  root: avatarDir,
+  prefix: '/avatar/',
 });
-
-const startServer = async() =>
-{
-  try
-  {
-    await fastify.listen({ port: 3000, host: '0.0.0.0' })
-    console.log('Server listening on port 3000');
+// Graceful shutdown handlers
+const gracefulShutdown = async (signal) => {
+  console.log(`Received ${signal}, shutting down gracefully`);
+  try {
+    await fastify.close();
+    process.exit(0);
+  } catch (err) {
+    console.error('Error during shutdown:', err);
+    process.exit(1);
   }
-  catch (error)
-  {
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Start server function
+const startServer = async () => {
+  try {
+    const port = process.env.PORT || 3000;
+    const protocol = httpsOptions ? 'https' : 'http';
+    
+    await fastify.listen({ port: parseInt(port), host: '0.0.0.0' });
+    
+    console.log(`🚀 Server listening on ${protocol}://localhost:${port}`);
+    console.log(`📋 Health check: ${protocol}://localhost:${port}/api/health`);
+    console.log(`🔒 HTTPS: ${httpsOptions ? 'Enabled' : 'Disabled'}`);
+    
+    if (!httpsOptions && httpsEnabled) {
+      console.log('💡 To enable HTTPS, make sure certificates exist in ./certs/ directory');
+    }
+  } catch (error) {
     console.error("Failed to start server", error);
     process.exit(1);
   }

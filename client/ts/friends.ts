@@ -16,7 +16,7 @@ type MessageType = "success" | "error" | "info"
 class FriendsAPI {
   private baseUrl: string
 
-  constructor(baseUrl = "http://localhost:3000") {
+  constructor(baseUrl = "https://localhost:3000") {
     this.baseUrl = baseUrl
   }
 

@@ -26,7 +26,7 @@ export function setupResetEmailForm() {
       // ...existing code...
       try {
         console.log('Envoi de la requête de réinitialisation pour l’email DANS POST:', email);
-        const res = await fetch('http://localhost:3000/auth/2FA-code/pass', {
+        const res = await fetch('https://localhost:3000/auth/2FA-code/pass', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })
