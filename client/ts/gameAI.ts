@@ -204,30 +204,30 @@ export class Game
 		
 		try {
 			if (await window.SPA.checkJwtValidity()) {
-			const token = localStorage.getItem('jwtToken');
-			if (!token) {
-				console.warn("Impossible d'enregistrer les résultats : token d'authentification non trouvé");
-				return;
+				const token = localStorage.getItem('jwtToken');
+				if (!token) {
+					console.warn("Impossible d'enregistrer les résultats : token d'authentification non trouvé");
+					return;
+				}
+				
+				const response = await fetch('https://localhost:3000/add-match', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}`
+					},
+					credentials: 'include',
+					body: JSON.stringify(gameResults)
+				});
+				
+				console.log(response);
+				if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+				console.log('Résultats de la partie contre l\'IA enregistrés avec succès');
 			}
-			
-			const response = await fetch('https://localhost:3000/add-match', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`
-				},
-				credentials: 'include',
-				body: JSON.stringify(gameResults)
-			});
-			
-			console.log(response);
-			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-			console.log('Résultats de la partie contre l\'IA enregistrés avec succès');
 		} catch (error) {
 			console.error('Erreur lors de l\'enregistrement des résultats:', error);
 		}
 	}
-}
 	async showEndScreen() {
 		const container = document.querySelector('.page-content');
 		if (!container) return;
