@@ -1,8 +1,8 @@
 interface TournamentParticipant {
   tournament_id: number;
-  user_id: number;   // Changé de userId à user_id pour correspondre à la réponse API
+  user_id: number;  
   username?: string;
-  alias?: string; // Rendu optionnel car peut ne pas être présent
+  alias?: string; 
   success?: boolean;
 }
 
@@ -13,9 +13,9 @@ interface TournamentMatch {
   player1_score: number;
   player2_score: number;
   winner_id: number;
-  next_player1_name?: string; // Nom du prochain adversaire pour le joueur 1
-  next_player2_name?: string; // Nom du prochain adversaire pour le joueur 2
-  finalist_name?: string; // Nom du finaliste
+  next_player1_name?: string;
+  next_player2_name?: string;
+  finalist_name?: string;
   status: string;
   round: string;
   created_at: string;
@@ -23,7 +23,6 @@ interface TournamentMatch {
 }
 
 
-// Classe API pour gérer les interactions avec le backend pour le tournoi
 class TournamentLaunchAPI {
   private baseUrl: string;
   private token: string | null;
@@ -33,7 +32,6 @@ class TournamentLaunchAPI {
     this.token = localStorage.getItem("jwtToken");
   }
 
-  //   Méthode pour récupérer les détails du tournoi actif de l'utilisateur
   async getTournamentDetails(): Promise<TournamentParticipant[] | null> {
     if (await window.SPA.checkJwtValidity()) {
       try {
@@ -54,12 +52,10 @@ class TournamentLaunchAPI {
         const data = await response.json();
         console.log("Données brutes reçues:", data);
 
-        // Si data est un objet avec une propriété participants qui est un tableau
         if (data && data.participants && Array.isArray(data.participants)) {
           return data.participants;
         }
 
-        // Si data est déjà un tableau
         if (Array.isArray(data)) {
           return data;
         }
@@ -101,7 +97,6 @@ class TournamentLaunchAPI {
     }
   }
 
-  // Creer une route pour changer le status du tournoi
   async setTournamentStatus(status: string): Promise<string | null> {
     if (await window.SPA.checkJwtValidity()) {
       try {
@@ -128,7 +123,6 @@ class TournamentLaunchAPI {
     }
   }
 
-  // Avoir le match a lancer
   async getTournamentMatch(): Promise<any | null> {
     if (await window.SPA.checkJwtValidity()) {
       try {
@@ -146,7 +140,6 @@ class TournamentLaunchAPI {
         }
         const data = await response.json();
         console.log("Match du tournoi reçu:", data);
-        // Extraire les données du match de la réponse
         return data.match || null;
       } catch (error) {
         console.error("Erreur lors de la récupération du match du tournoi:", error);
@@ -180,7 +173,6 @@ class TournamentLaunchAPI {
       }
     }
   }
-  // Delete les perdants du tournoi
   async deleteTournamentLosers(match: TournamentMatch): Promise<boolean> {
     if (await window.SPA.checkJwtValidity()) {
       try {
@@ -207,7 +199,6 @@ class TournamentLaunchAPI {
     }
   }
 
-  // envoyer les scores a chaque fin de match
   async sendMatchResults(match: TournamentMatch): Promise<boolean> {
     if (await window.SPA.checkJwtValidity()) {
       try {
@@ -238,7 +229,6 @@ class TournamentLaunchAPI {
 class TournamentLaunch {
   private api: TournamentLaunchAPI;
 
-  // player_1 et player_2 html element
   private player1_name: HTMLElement | null;
   private player2_name: HTMLElement | null;
   private next_player1_name: HTMLElement | null;
@@ -249,22 +239,20 @@ class TournamentLaunch {
   constructor() {
     this.api = new TournamentLaunchAPI();
 
-    // Initialisation des éléments DOM
-    document.getElementById('current-round')      // Pour le round actuel
-    document.getElementById('player1-name')      // Nom joueur 1
-    document.getElementById('player2-name')      // Nom joueur 2
-    document.getElementById('next-player1')      // Prochain adversaire 1
-    document.getElementById('next-player2')      // Prochain adversaire 2
-    document.getElementById('finalist-section')  // Section finaliste
-    document.getElementById('finalist-name')     // Nom du finaliste
-    document.getElementById('next-game-container') // Conteneur bouton "Prochain match"
+    document.getElementById('current-round')
+    document.getElementById('player1-name')
+    document.getElementById('player2-name')
+    document.getElementById('next-player1')
+    document.getElementById('next-player2')
+    document.getElementById('finalist-section')
+    document.getElementById('finalist-name')
+    document.getElementById('next-game-container')
   }
 
   async startTournament() {
     const participants = await this.api.getTournamentDetails();
     if (participants) {
       console.log("Participants du tournoi:", participants);
-      // Logique pour démarrer le tournoi
     } else {
       console.error("Aucun participant trouvé ou erreur lors de la récupération des participants.");
     }
@@ -274,7 +262,6 @@ class TournamentLaunch {
     const result = await this.api.setTournamentStatus(status);
     if (result) {
       console.log("Statut du tournoi changé:", status);
-      // Logique pour gérer le changement de statut du tournoi
     } else {
       console.error("Erreur lors de la récupération du statut du tournoi.");
     }
@@ -287,7 +274,6 @@ class TournamentLaunch {
       this.player1_name = document.getElementById("player1-name");
       this.player2_name = document.getElementById("player2-name");
 
-      // Récupérer les éléments DOM pour les prochains joueurs seulement s'ils existent dans les données
       if (match.next_player_1_name) {
         this.next_player1_name = document.getElementById("next-player1");
       }
@@ -298,10 +284,9 @@ class TournamentLaunch {
         this.finalist_name = document.getElementById("finalist-name");
       }
 
-      // Afficher les noms des joueurs actuels
       if (this.player1_name && this.player2_name) {
-        this.player1_name.textContent = match.player_1_name || "Joueur 1"; // ✅ Corrigé
-        this.player2_name.textContent = match.player_2_name || "Joueur 2"; // ✅ Corrigé
+        this.player1_name.textContent = match.player_1_name || "Joueur 1";
+        this.player2_name.textContent = match.player_2_name || "Joueur 2";
       }
 
       if (match.round == "finale") {
@@ -312,13 +297,10 @@ class TournamentLaunch {
         if (nextOpponentsSection) {
           nextOpponentsSection.classList.add('hidden');
         }
-        // console.log("Affichage du finaliste:", match.finalist_name);
       }
-      // Afficher les prochains adversaires
       else if (match.round == "demi-finale 1") {
         console.log("Affichage des prochains adversaires:", match.next_player_1_name, match.next_player_2_name);
-        this.next_player1_name.textContent = match.next_player_1_name || "Prochain adversaire 1"; // ✅ Corrigé
-        this.next_player2_name.textContent = match.next_player_2_name || "Prochain adversaire 2"; // ✅ Corrigé
+        this.next_player1_name.textContent = match.next_player_1_name || "Prochain adversaire 1";
       }
       else if (match.round == "demi-finale 2") {
         console.log("Affichage du prochain adversaire 1:", match.next_player_1_name);
@@ -326,14 +308,9 @@ class TournamentLaunch {
         this.next_player1_name.textContent = match.finalist_name || "Finaliste inconnu";
 
       }
-      // if (this.next_player1_name && !this.next_player2_name) {
-      //   this.next_player1_name.textContent = match.next_player_1_name || "Prochain sera le finaliste"; // ✅ Corrigé
-      // }
 
-      // Vérifier s'il s'agit du dernier match du tournoi
       const participants = await this.api.getTournamentDetails();
       if (participants && participants.length <= 2) {
-        // C'est le dernier match, on prépare l'affichage du bouton "Fin du tournoi"
         console.log("C'est le dernier match du tournoi!");
       }
     } else {
@@ -346,7 +323,6 @@ class TournamentLaunch {
     if (result) {
       console.log("Perdants du tournoi supprimés:");
 
-      // Vérifier s'il ne reste qu'un seul participant (le gagnant du tournoi)
       const participants = await this.api.getTournamentDetails();
       if (participants && participants.length === 1) {
         console.log("Le tournoi est terminé! Affichage du bouton de fin de tournoi.");
@@ -355,40 +331,31 @@ class TournamentLaunch {
     }
   }
 
-  // Nouvelle méthode pour afficher le bouton "Fin du tournoi"
   async showTournamentEndButton(winner: TournamentParticipant) {
-    // Trouver ou créer le conteneur pour le bouton
     let endButtonContainer = document.getElementById('tournament-end-container');
     console.log("Affichage du bouton de fin de tournoi pour le gagnant:", winner);
 
     if (!endButtonContainer) {
-      // Créer le conteneur s'il n'existe pas
       endButtonContainer = document.createElement('div');
       endButtonContainer.id = 'tournament-end-container';
       endButtonContainer.className = 'mt-6';
 
-      // Récupérer le nom du gagnant
       const winnerName = winner.username || winner.alias || 'Joueur inconnu';
 
-      // Créer l'élément pour afficher le vainqueur du tournoi
       const winnerDisplay = document.createElement('div');
       winnerDisplay.id = 'tournament-winner-display';
       winnerDisplay.className = 'text-2xl font-bold text-center mb-4 p-3 bg-[#f3f3f3] rounded-lg';
       winnerDisplay.textContent = `Vainqueur du tournoi : ${winnerName}`;
 
-      // Ajouter l'élément d'affichage du vainqueur au conteneur
       endButtonContainer.appendChild(winnerDisplay);
 
-      // Créer le bouton
       const endButton = document.createElement('button');
       endButton.id = 'tournament-end-button';
       endButton.className = 'px-6 py-3 bg-[#ff5500] text-white font-bold rounded-lg hover:bg-[#ff7700] transition-colors shadow-lg';
       endButton.style.textShadow = 'none';
       endButton.textContent = 'Fin du tournoi';
 
-      // Ajouter un gestionnaire d'événements au bouton
       endButton.addEventListener('click', () => {
-        // Rediriger vers la page d'accueil du tournoi
         if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
           window.SPA.navigateTo('/tournoi');
         } else {
@@ -396,19 +363,15 @@ class TournamentLaunch {
         }
       });
 
-      // Ajouter le bouton au conteneur
       endButtonContainer.appendChild(endButton);
 
-      // Ajouter le conteneur à la page
       const gameContent = document.querySelector('.page-content');
       if (gameContent) {
         gameContent.appendChild(endButtonContainer);
       } else {
-        // Si .page-content n'existe pas, ajouter au body
         document.body.appendChild(endButtonContainer);
       }
     } else {
-      // Si le conteneur existe déjà, le rendre visible
       endButtonContainer.classList.remove('hidden');
     }
   }

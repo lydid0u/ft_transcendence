@@ -1,10 +1,10 @@
 import * as i18n from './ts/i18n';
 
-declare global {
-  interface Window {
-    i18n: typeof i18n;
-  }
-}
+// declare global {
+//   interface Window {
+//     i18n: typeof i18n;
+//   }
+// }
 
 window.i18n = i18n;
 
@@ -20,3 +20,4 @@ import './ts/gameAI';
 import './ts/game1v1';
 import './ts/tournamenthome';
 import './ts/snake';
+import './ts/i18n';

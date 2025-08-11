@@ -1,4 +1,3 @@
-// Enums and Interfaces
 enum Direction {
 	UP = "UP",
 	DOWN = "DOWN",
@@ -18,12 +17,10 @@ const DirectionVectors: Record<Direction, DirectionVector> = {
 	[Direction.RIGHT]: { x: 1, y: 0 }
 };
 
-// Position class
 class Position {
 	constructor(public x: number, public y: number) {}
 }
 
-// Food class
 class Food
 {
 	constructor(public position: Position) {}
@@ -43,7 +40,6 @@ class Food
 
 		ctx.shadowBlur = 0;
 
-		// Black border
 		ctx.strokeStyle = '#000';
 		ctx.lineWidth = 1;
 		ctx.strokeRect(
@@ -55,7 +51,6 @@ class Food
 	}
 }
 
-// Wall class
 class Wall {
 	constructor(public position: Position) {}
 
@@ -73,7 +68,6 @@ class Wall {
 
 		ctx.shadowBlur = 0;
 
-		// Dark border
 		ctx.strokeStyle = '#2c3e50';
 		ctx.lineWidth = 2;
 		ctx.strokeRect(
@@ -85,7 +79,6 @@ class Wall {
 
 		ctx.shadowBlur = 0;
 
-		// Dark border
 		ctx.strokeStyle = '#2c3e50';
 		ctx.lineWidth = 2;
 		ctx.strokeRect(
@@ -120,7 +113,6 @@ class Snake {
 	}
 
 	grow(): void {
-		// Don't remove the tail, snake grows
 	}
 
 	removeTail(): void {
@@ -140,12 +132,10 @@ class Snake {
 	checkWallCollision(gridWidth: number, gridHeight: number, walls: Wall[] = []): boolean {
 		const head = this.body[0];
 		
-		// Check boundary walls
 		if (head.x < 0 || head.x >= gridWidth || head.y < 0 || head.y >= gridHeight) {
 			return true;
 		}
 		
-		// Check custom walls
 		return walls.some(wall => wall.position.x === head.x && wall.position.y === head.y);
 	}
 
@@ -153,7 +143,6 @@ class Snake {
 		const currentVector = DirectionVectors[this.direction];
 		const newVector = DirectionVectors[newDirection];
 
-		// Prevent snake from going back into itself
 		if (currentVector.x === -newVector.x && currentVector.y === -newVector.y && this.body.length > 1) {
 			return;
 		}
@@ -163,12 +152,10 @@ class Snake {
 	draw(ctx: CanvasRenderingContext2D, gridSize: number): void {
 		this.body.forEach((segment, index) => {
 			if (index === 0) {
-				// Head
 				ctx.fillStyle = '#2ed573';
 				ctx.shadowColor = '#2ed573';
 				ctx.shadowBlur = 10;
 			} else {
-				// Body
 				ctx.fillStyle = '#5f27cd';
 				ctx.shadowColor = '#5f27cd';
 				ctx.shadowBlur = 5;
@@ -194,7 +181,6 @@ class Snake {
 	}
 }
 
-// Main game class
 export class SnakeGame {
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
@@ -208,7 +194,6 @@ export class SnakeGame {
 	private gameRunning: boolean = true;
 	private gameSpeed: number = 150;
 
-	// Add these properties
 	private walls: Wall[] = [];
 	private wallSpawnInterval: number = 20; // Spawn wall every 300 points
 	private lastWallSpawn: number = 0;
@@ -229,20 +214,16 @@ export class SnakeGame {
 		this.gameLoop();
 	}
 
-	// Add wall collision check to Snake class
 	checkWallCollision(gridWidth: number, gridHeight: number, walls: Wall[] = []): boolean {
 		const head = this.snake.body[0];
 	 	
-		// Check boundary walls
 		if (head.x < 0 || head.x >= gridWidth || head.y < 0 || head.y >= gridHeight) {
 			return true;
 		}
 		
-		// Check custom walls
 		return walls.some(wall => wall.position.x === head.x && wall.position.y === head.y);
 	}
 
-	// Add this method to generate walls
 	private generateWall(): Wall {
 		let position: Position;
 		let attempts = 0;
@@ -273,7 +254,6 @@ export class SnakeGame {
 		let attempts = 0;
 		const maxAttempts = 50;
 		
-		// Find a valid base position
 		do {
 			basePosition = new Position(
 				Math.floor(Math.random() * (this.gridWidth - 4)) + 2, // Leave some margin
@@ -283,11 +263,9 @@ export class SnakeGame {
 		} while (attempts < maxAttempts && !this.isValidBasePosition(basePosition));
 		
 		if (attempts >= maxAttempts) {
-			// Fallback to single wall if no valid position found
 			return [new Wall(basePosition)];
 		}
 		
-		// Generate walls based on pattern
 		switch (pattern) {
 			case 'line':
 				newWalls.push(...this.generateLinePattern(basePosition));
@@ -300,12 +278,10 @@ export class SnakeGame {
 				break;
 		}
 		
-		// Filter out invalid positions
 		return newWalls.filter(wall => this.isValidWallPosition(wall.position));
 	}
 
 	private isValidBasePosition(position: Position): boolean {
-		// Check if there's enough space around the base position for patterns
 		for (let dx = -2; dx <= 2; dx++) {
 			for (let dy = -2; dy <= 2; dy++) {
 				const checkPos = new Position(position.x + dx, position.y + dy);
@@ -318,7 +294,6 @@ export class SnakeGame {
 	}
 
 	private isValidWallPosition(position: Position): boolean {
-		// Check bounds
 		if (position.x < 0 || position.x >= this.gridWidth || 
 			position.y < 0 || position.y >= this.gridHeight) {
 			return false;
@@ -328,7 +303,6 @@ export class SnakeGame {
 	}
 
 	private isPositionOccupied(position: Position): boolean {
-		// Check if position is occupied by snake, food, or existing walls
 		return this.snake.body.some(segment => segment.x === position.x && segment.y === position.y) ||
 			   (this.food.position.x === position.x && this.food.position.y === position.y) ||
 			   this.walls.some(wall => wall.position.x === position.x && wall.position.y === position.y);
@@ -340,12 +314,10 @@ export class SnakeGame {
 		const length = Math.floor(Math.random() * 3) + 3; // 3-5 blocks
 		
 		if (isHorizontal) {
-			// Horizontal line
 			for (let i = 0; i < length; i++) {
 				walls.push(new Wall(new Position(basePosition.x + i, basePosition.y)));
 			}
 		} else {
-			// Vertical line
 			for (let i = 0; i < length; i++) {
 				walls.push(new Wall(new Position(basePosition.x, basePosition.y + i)));
 			}
@@ -357,18 +329,15 @@ export class SnakeGame {
 	private generateClusterPattern(basePosition: Position): Wall[] {
 		const walls: Wall[] = [];
 		const patterns = [
-			// 2x2 square
 			[
 				{ x: 0, y: 0 }, { x: 1, y: 0 },
 				{ x: 0, y: 1 }, { x: 1, y: 1 }
 			],
-			// Plus shape
 			[
 				{ x: 1, y: 0 },
 				{ x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 },
 				{ x: 1, y: 2 }
 			],
-			// Triangle
 			[
 				{ x: 1, y: 0 },
 				{ x: 0, y: 1 }, { x: 2, y: 1 },
@@ -391,25 +360,21 @@ export class SnakeGame {
 	private generateLShapePattern(basePosition: Position): Wall[] {
 		const walls: Wall[] = [];
 		const variations = [
-			// L shape (top-left)
 			[
 				{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 },
 				{ x: 0, y: 1 },
 				{ x: 0, y: 2 }
 			],
-			// L shape (top-right)
 			[
 				{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 },
 				{ x: 2, y: 1 },
 				{ x: 2, y: 2 }
 			],
-			// L shape (bottom-left)
 			[
 				{ x: 0, y: 0 },
 				{ x: 0, y: 1 },
 				{ x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }
 			],
-			// L shape (bottom-right)
 			[
 				{ x: 2, y: 0 },
 				{ x: 2, y: 1 },
@@ -476,7 +441,6 @@ export class SnakeGame {
 			}
 		});
 
-		// Button controls
 		const upBtn = document.getElementById('upBtn') as HTMLButtonElement;
 		const downBtn = document.getElementById('downBtn') as HTMLButtonElement;
 		const leftBtn = document.getElementById('leftBtn') as HTMLButtonElement;
@@ -501,13 +465,11 @@ export class SnakeGame {
 
 		this.snake.move();
 
-		// Check wall collision (updated to include walls)
 		if (this.snake.checkWallCollision(this.gridWidth, this.gridHeight, this.walls) || this.snake.checkSelfCollision()) {
 			this.gameOver();
 			return;
 		}
 
-		// Check food collision
 		const head = this.snake.body[0];
 		if (head.x === this.food.position.x && head.y === this.food.position.y) {
 			this.score += 10;
@@ -515,14 +477,12 @@ export class SnakeGame {
 			this.food = this.generateFood();
 			this.updateScore();
 
-			// Spawn wall pattern every wallSpawnInterval points
 			if (this.score - this.lastWallSpawn >= this.wallSpawnInterval) {
 				const newWalls = this.generateWalls(); // Changed from generateWall() to generateWalls()
 				this.walls.push(...newWalls); // Spread the array to add multiple walls
 				this.lastWallSpawn = this.score;
 			}
 
-			// Increase speed slightly
 			this.gameSpeed = Math.max(80, this.gameSpeed - 2);
 		} else {
 			this.snake.removeTail();
@@ -530,10 +490,8 @@ export class SnakeGame {
 	}
 
 	private draw(): void {
-		// Clear canvas
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-		// Draw grid cells with black outlines
 		for (let y = 0; y < this.gridHeight; y++) {
 			for (let x = 0; x < this.gridWidth; x++) {
 				this.ctx.fillStyle = '#000';
@@ -596,10 +554,10 @@ export class SnakeGame {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Assurez-vous d'envoyer le token d'authentification
+					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` 
 				},
 				body: JSON.stringify({ score }),
-				credentials: 'include' // Important pour envoyer les cookies d'authentification
+				credentials: 'include'
 			});
 
 			if (!response.ok) {
@@ -609,7 +567,6 @@ export class SnakeGame {
 			const data = await response.json();
 			console.log('Score submitted successfully:', data);
 			
-			// Après avoir envoyé le score, on rafraîchit les données du leaderboard
 			await this.fetchLeaderboardData();
 			
 		} catch (error) {
@@ -625,9 +582,9 @@ export class SnakeGame {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Assurez-vous d'envoyer le token d'authentification
+					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
 				},
-				credentials: 'include' // Important pour envoyer les cookies d'authentification
+				credentials: 'include'
 			});
 
 			if (!response.ok) {
@@ -636,8 +593,6 @@ export class SnakeGame {
 
 			const data = await response.json();
 			console.log('Leaderboard data:', data);
-			
-			// Mise à jour des éléments du leaderboard
 			this.updateLeaderboardUI(data);
 		} catch (error) {
 			console.error('Error fetching leaderboard data:', error);
@@ -646,19 +601,14 @@ export class SnakeGame {
 	}
 	
 	private updateLeaderboardUI(data: any): void {
-		// Mettre à jour le meilleur score
 		const globalBestElement = document.getElementById('globalBestScore');
 		if (globalBestElement && data.globalBest) {
 			globalBestElement.textContent = data.globalBest.toString();
 		}
-		
-		// Mettre à jour le prochain score à battre
 		const nextScoreElement = document.getElementById('nextScoreToBeat');
 		if (nextScoreElement && data.nextScore) {
 			nextScoreElement.textContent = data.nextScore.toString();
 		}
-		
-		// Mettre à jour le rang du joueur
 		const playerRankElement = document.getElementById('playerRank');
 		if (playerRankElement && data.playerRank) {
 			playerRankElement.textContent = data.playerRank.toString();
@@ -667,13 +617,9 @@ export class SnakeGame {
 showGameOverActions(): void {
     const oldOverlay = document.getElementById('gameOverActions');
     oldOverlay?.remove();
-
-    // Create overlay container
     const overlay = document.createElement('div');
     overlay.id = 'gameOverActions';
     overlay.className = 'absolute top-1/2 left-[calc(100%+24px)] -translate-y-1/2 flex flex-col items-center gap-4 bg-[#232526] rounded-lg shadow-lg p-7 z-100 min-w-[140px]';
-
-    // Restart button
     const restartBtn = document.createElement('button');
     restartBtn.textContent = 'Restart';
     restartBtn.className = 'px-4 py-2 bg-[#2ed573] text-black font-bold rounded-md hover:bg-[#27c264] hover:-translate-y-0.5 hover:shadow-md transition-all';
@@ -681,8 +627,6 @@ showGameOverActions(): void {
         overlay.remove();
         new SnakeGame();
     };
-
-    // Home button
     const homeBtn = document.createElement('button');
     homeBtn.textContent = 'Home';
     homeBtn.className = 'px-4 py-2 bg-[#555] text-white font-bold rounded-md hover:bg-[#666] hover:-translate-y-0.5 hover:shadow-md transition-all';

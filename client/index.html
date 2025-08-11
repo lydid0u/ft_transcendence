@@ -33,7 +33,6 @@
         }
     </script>
     <script>
-      // Met à jour dynamiquement le texte du bouton nav-login-btn lors d'un changement de langue
       window.addEventListener('languageChanged', function() {
         const loginBtn = document.getElementById('nav-login-btn');
         if (loginBtn && window.SPA && typeof window.SPA.updateNavLoginBtn === 'function') {
@@ -148,34 +147,27 @@
             const dropdownToggle = document.getElementById('profile-dropdown-toggle');
             const dropdown = document.getElementById('profile-dropdown');
             
-            // Toggle dropdown visibility with animation
             dropdownToggle.addEventListener('click', function() {
                 if (dropdown.classList.contains('hidden')) {
-                    // Show dropdown
                     dropdown.classList.remove('hidden');
                     dropdown.classList.add('scale-95', 'opacity-0');
                     
-                    // Trigger animation
                     setTimeout(() => {
                         dropdown.classList.remove('scale-95', 'opacity-0');
                         dropdown.classList.add('scale-100', 'opacity-100');
                     }, 10);
                 } else {
-                    // Hide dropdown
                     dropdown.classList.remove('scale-100', 'opacity-100');
                     dropdown.classList.add('scale-95', 'opacity-0');
                     
-                    // After animation completes, hide it completely
                     setTimeout(() => {
                         dropdown.classList.add('hidden');
                     }, 200);
                 }
             });
             
-            // Close dropdown when clicking outside
             document.addEventListener('click', function(event) {
                 if (!dropdownToggle.contains(event.target) && !dropdown.contains(event.target) && !dropdown.classList.contains('hidden')) {
-                    // Hide dropdown with animation
                     dropdown.classList.remove('scale-100', 'opacity-100');
                     dropdown.classList.add('scale-95', 'opacity-0');
                     
@@ -185,7 +177,6 @@
                 }
             });
 
-            // Handle dropdown links with SPA navigation
             dropdown.querySelectorAll('a[data-route]').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -208,7 +199,6 @@
                 });
             });
 
-            // Only show dropdown when user is logged in
             function updateDropdownVisibility() {
                 const isLoggedIn = localStorage.getItem('user') !== null;
                 dropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
@@ -217,13 +207,11 @@
                     const user = JSON.parse(localStorage.getItem('user'));
                     const navAvatar = document.getElementById('nav-user-avatar');
                     if (navAvatar) {
-                        // Si l'utilisateur a une photo Google ou une autre photo de profil
                         if (user.picture) {
                             navAvatar.src = user.picture;
                             navAvatar.classList.remove('hidden');
                             navAvatar.nextElementSibling.classList.add('hidden');
                         } else {
-                            // Afficher l'icône SVG par défaut
                             navAvatar.classList.add('hidden');
                             navAvatar.nextElementSibling.classList.remove('hidden');
                         }
@@ -235,15 +223,12 @@
         });
     </script>
 
-    <!-- Language Switcher Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Language switcher functionality for traffic light buttons
             const langEn = document.getElementById('lang-en');
             const langFr = document.getElementById('lang-fr');
             const langEs = document.getElementById('lang-es');
-            
-            // Highlight the current language
+            console.log('Language elements:', langEn, langFr, langEs);
             function updateLanguageIndicator() {
                 const currentLang = localStorage.getItem('preferredLanguage') || 'fr';
                 langEn.classList.remove('ring-2', 'ring-red-300');

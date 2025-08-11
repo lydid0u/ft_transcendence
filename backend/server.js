@@ -40,9 +40,8 @@ const transporter = nodemailer.createTransport({
 });
 fastify.decorate('nodemailer', transporter);
 
-// Replace your current cors registration with this:
 fastify.register(cors, {
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // Replace with your actual frontend URL
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Content-Type', 'Authorization'],
@@ -87,15 +86,15 @@ fastify.register(authGoogle);
 fastify.register(tableFriends);
 fastify.register(MatchData);
 fastify.register(matchesTable);
-fastify.register(dbPong);  // Enregistrement du plugin dbPong
+fastify.register(dbPong); 
 fastify.register(matchesRoutes);
 fastify.register(tableSnake);
 fastify.register(tournamentRoutes);
 fastify.register(tournamentLaunchRoute);
 fastify.register(dbTournament);
 fastify.register(fastifyStatic, {
-  root: avatarDir,         // Le dossier où sont stockés tes avatars
-  prefix: '/avatar/',      // L’URL publique pour accéder aux fichiers
+  root: avatarDir,         
+  prefix: '/avatar/',     
 });
 
 const startServer = async() =>

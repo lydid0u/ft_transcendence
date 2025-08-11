@@ -22,7 +22,6 @@ async function tableMatches(fastify, options)
         async deleteAllMatchesFromUser(userId)
         {
             try {
-                // Supprimer tous les matchs de l'utilisateur
                 await fastify.db.connection.run(
                     'DELETE FROM matches WHERE player1_id = ? OR player2_id = ?', 
                     userId, userId

@@ -171,7 +171,7 @@ async function otpSubmit(email: string): Promise<void> {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${data.jwt || ''}`,
+                Authorization: `Bearer ${localStorage.getItem('jwtToken') || ''}`,
               },
               body: JSON.stringify({ status: 1 }), // 1 = connecté et 0 = déconnecté
             });

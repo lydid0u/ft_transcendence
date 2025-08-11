@@ -80,13 +80,11 @@ function showMessage(elementId: string, message: string, type: "success" | "erro
   if (messageDiv) {
     messageDiv.textContent = message
 
-    // Remove existing classes
     messageDiv.className = messageDiv.className
       .split(" ")
       .filter((cls) => !cls.includes("text-") && !cls.includes("bg-") && !cls.includes("border-"))
       .join(" ")
 
-    // Add new classes based on type
     if (type === "success") {
       messageDiv.classList.add(
         "mt-4",
@@ -113,7 +111,6 @@ function showMessage(elementId: string, message: string, type: "success" | "erro
 
     messageDiv.classList.remove("hidden")
 
-    // Hide after 5 seconds
     setTimeout(() => {
       messageDiv.classList.add("hidden")
     }, 5000)
@@ -282,8 +279,9 @@ async function activate2fa() {
   const messageDiv = document.getElementById("message-2fa") as HTMLElement
   if (!checkbox || !messageDiv) return
 
-  const saved2FA = localStorage.getItem("2fa_enabled")
-  if (saved2FA === "true") checkbox.checked = true
+  const user = localStorage.getItem("user")
+  const saved2FA = user ? JSON.parse(user).is_2fa_activated : null
+  if (saved2FA === 1) checkbox.checked = true
 
   checkbox.addEventListener("change", async (event: Event) => {
     if (!event.target) return
@@ -292,7 +290,7 @@ async function activate2fa() {
     if (!button.checked) {
       const confirmation = confirm("Êtes-vous sûr de vouloir désactiver la double authentification ?")
       if (!confirmation) {
-        button.checked = true // revenir à l'état précédent si l'user annule
+        button.checked = true // on revient à l'état précédent si l'user annule
         return
       }
     }

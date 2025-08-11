@@ -88,12 +88,6 @@ async function dbFunction(fastify, options)
                 throw new Error('Failed to log in user');
             }
         },
-
-        // async showTableUsers()
-        // {
-        //     const users = await db.all('SELECT * FROM users;');
-        //     return users;
-        // }
     };
     fastify.decorate('db', dbHelper);
     await dbHelper.createTable();

@@ -49,7 +49,7 @@ class FriendsAPI {
           },
           credentials: "include",
           body: JSON.stringify({
-            friend_nickname: username, // Le backend attend friend_nickname
+            friend_nickname: username, 
           }),
         });
         
@@ -94,7 +94,6 @@ class FriendsApp {
   private filteredFriends: Friend[] = []
   private api: FriendsAPI
 
-  // DOM Elements
   private searchInput: HTMLInputElement
   private addFriendBtn: HTMLButtonElement
   private friendsList: HTMLUListElement
@@ -106,7 +105,6 @@ class FriendsApp {
   constructor() {
     this.api = new FriendsAPI()
 
-    // Initialize DOM elements
     this.searchInput = document.getElementById("search-input") as HTMLInputElement
     this.addFriendBtn = document.getElementById("add-friend-btn") as HTMLButtonElement
     this.friendsList = document.getElementById("friends-list") as HTMLUListElement
@@ -119,7 +117,6 @@ class FriendsApp {
   }
 
   private init(): void {
-    // Vérifier si les éléments DOM existent
     if (!this.searchInput || !this.addFriendBtn || !this.friendsList || 
         !this.friendsCount || !this.loadingState || !this.emptyState || !this.messageContainer) {
       console.error("DOM elements not found. Make sure the friends page is loaded correctly.");

@@ -1,5 +1,3 @@
-// reset-password.ts
-// Flow de réinitialisation du mot de passe en TypeScript
 
 interface APIresetResponse {
   success: string;
@@ -8,8 +6,6 @@ interface APIresetResponse {
 
 
 let resetEmail: string = '';
-
-// Gestion de la page email
 export function setupResetEmailForm() {
     console.log('Demarrage de la configuration du formulaire de réinitialisation de mot de passe');
   const emailForm = document.getElementById('reset-email-form') as HTMLFormElement | null;
@@ -23,7 +19,6 @@ export function setupResetEmailForm() {
       const message = document.getElementById('reset-email-message') as HTMLElement;
       message.textContent = '';
       console.log('Envoi de la requête de réinitialisation pour l’email:', email);
-      // ...existing code...
       try {
         console.log('Envoi de la requête de réinitialisation pour l’email DANS POST:', email);
         const res = await fetch('http://localhost:3000/auth/2FA-code/pass', {
@@ -50,12 +45,4 @@ export function setupResetEmailForm() {
     });
   }
 }
-
-// Gestion de la page OTP
-
-
-// Gestion de la page nouveau mot de passe
-
-
-// Initialisation automatique selon la page
 if (document.getElementById('reset-email-form')) setupResetEmailForm();

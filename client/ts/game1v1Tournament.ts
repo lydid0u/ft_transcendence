@@ -18,8 +18,6 @@ import * as Tournament from './tournament-game';
 
 const api = new Tournament.TournamentLaunchAPI();
 const tournament = new Tournament.TournamentLaunch();
-
-// Fonction pour valider l'authentification de l'utilisateur
 function checkAuthentication(): boolean {
     const token = localStorage.getItem("jwtToken");
     
@@ -30,20 +28,15 @@ function checkAuthentication(): boolean {
     
     return true;
 }
-
-// Fonction pour valider l'accès au tournoi
 async function validateTournamentAccess(): Promise<boolean> {
-    // Vérifier d'abord l'authentification
     if (!checkAuthentication()) {
         return false;
     }
     
     try {
-        // Vérifier si un tournoi actif existe
         const participants = await api.getTournamentDetails();
         
         if (!participants || participants.length < 2) {
-            // Afficher un message d'erreur
             showErrorMessage("Vous n'avez pas accès à ce tournoi ou le tournoi n'a pas assez de participants");
             return false;
         }
@@ -55,45 +48,28 @@ async function validateTournamentAccess(): Promise<boolean> {
         return false;
     }
 }
-
-// Fonction pour afficher un message d'erreur
 function showErrorMessage(message: string): void {
-    // Supprimer les messages d'erreur existants
     const existingErrors = document.querySelectorAll('.error-notification');
     existingErrors.forEach(elem => elem.remove());
     
     const errorContainer = document.createElement("div");
     errorContainer.className = "error-notification fixed top-5 right-5 p-4 bg-red-600 text-white rounded-lg shadow-lg z-50 max-w-xs";
-    
-    // Contenu du message
     const messageContent = document.createElement("div");
     messageContent.className = "flex items-start";
-    
-    // Icône d'alerte
     const alertIcon = document.createElement("div");
     alertIcon.className = "mr-3 text-xl font-bold";
     alertIcon.innerHTML = "⚠️";
-    
-    // Texte du message
     const messageText = document.createElement("div");
     messageText.className = "flex-1 text-sm";
-    
-    // Titre du message
     const messageTitle = document.createElement("p");
     messageTitle.className = "font-bold mb-1";
     messageTitle.textContent = "Accès refusé";
-    
-    // Corps du message
     const messageBody = document.createElement("p");
     messageBody.textContent = message;
-    
-    // Bouton pour retourner à l'accueil
     const homeButton = document.createElement("button");
     homeButton.className = "mt-2 px-3 py-1 bg-white text-red-600 text-xs rounded font-bold";
     homeButton.textContent = "Retour à l'accueil";
     homeButton.onclick = () => { window.location.href = "/home"; };
-    
-    // Assembler les éléments
     messageText.appendChild(messageTitle);
     messageText.appendChild(messageBody);
     messageText.appendChild(homeButton);
@@ -103,13 +79,9 @@ function showErrorMessage(message: string): void {
     
     errorContainer.appendChild(messageContent);
     document.body.appendChild(errorContainer);
-    
-    // Ajouter une animation d'entrée
     errorContainer.style.opacity = "0";
     errorContainer.style.transform = "translateX(50px)";
     errorContainer.style.transition = "opacity 0.3s ease-in-out, transform 0.3s ease-in-out";
-    
-    // Déclencher l'animation après un court délai
     setTimeout(() => {
         errorContainer.style.opacity = "1";
         errorContainer.style.transform = "translateX(0)";
@@ -117,20 +89,13 @@ function showErrorMessage(message: string): void {
 }
 
 export async function startTournamentFlow() {
-    // Vérifier l'accès au tournoi avant de continuer
     const hasAccess = await validateTournamentAccess();
     if (!hasAccess) {
         return; // Arrêter l'exécution si l'accès est refusé
     }
-
-    // logique pour lancer une game
-    // Avoir la data des participants
     const participants = await api.getTournamentDetails();
     console.log("Participants du tournoi:", participants);
-    // prendre les 2 premiers participants
     await tournament.fetchMatch();
-    
-    // lancer une game avec eux
     function tryInitGame1v1() {
         const canvas = document.getElementById('game-canvas');
         const p1Score = document.getElementById('player1-score');
@@ -156,53 +121,36 @@ export async function startTournamentFlow() {
         }
     }
     tryInitGame1v1();
-    
-    // Ajouter l'écouteur d'événements pour le bouton "Prochain match"
     addNextGameButtonListener();
 }
-
-// Fonction pour ajouter l'écouteur d'événements au bouton "Prochain match"
 function addNextGameButtonListener() {
     const nextGameButton = document.getElementById('next-game-button');
     if (nextGameButton) {
         console.log("Next game button found, adding click event listener");
-        // Supprimer les gestionnaires existants pour éviter les doublons
         nextGameButton.removeEventListener('click', handleNextGame);
-        // Ajouter le nouveau gestionnaire
         nextGameButton.addEventListener('click', handleNextGame);
     } else {
         console.log("Next game button not found, will retry...");
-        // Réessayer dans un court délai
         setTimeout(addNextGameButtonListener, 500);
     }
 }
-
-// Fonction qui gère le clic sur "Prochain match"
 async function handleNextGame(event) {
-    // Empêcher le comportement par défaut
     if (event) event.preventDefault();
     
     console.log("Bouton Prochain match cliqué!");
     
     try {
-        // Cacher le bouton
         const nextGameContainer = document.getElementById('next-game-container');
         if (nextGameContainer) {
             nextGameContainer.classList.add('hidden');
         }
-        
-        // Option 1: Utiliser SPA.navigateTo (recommandé)
         if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
-            // Rediriger vers une autre page temporairement
             window.SPA.navigateTo('/tournoi');
-            
-            // Puis revenir à la page du jeu après un court délai
             setTimeout(() => {
                 window.SPA.navigateTo('/game1v1Tournament');
                 console.log("Redirection vers le prochain match...");
             }, 100);
         } 
-        // Option 2: Rechargement simple de la page
         else {
             window.location.reload();
         }
@@ -210,71 +158,47 @@ async function handleNextGame(event) {
         console.error("Erreur lors du passage au match suivant:", error);
     }
 }
-
-// Fonction pour afficher le bouton "Fin du tournoi"
 function showTournamentEndButton(winnerName = "Nom du vainqueur") {
-    // Cacher le bouton "Prochain match" s'il est visible
     const nextGameContainer = document.getElementById('next-game-container');
     if (nextGameContainer) {
         nextGameContainer.classList.add('hidden');
     }
-    
-    // Trouver ou créer le conteneur pour le bouton "Fin du tournoi"
     let endButtonContainer = document.getElementById('tournament-end-container');
     
     if (!endButtonContainer) {
-        // Créer le conteneur s'il n'existe pas
         endButtonContainer = document.createElement('div');
         endButtonContainer.id = 'tournament-end-container';
         endButtonContainer.className = 'mt-6 flex flex-col items-center';
-        
-        // Créer l'élément pour afficher le vainqueur
         const winnerDisplay = document.createElement('div');
         winnerDisplay.id = 'tournament-winner-display';
         winnerDisplay.className = 'mb-4 p-3 bg-gray-100 rounded-lg text-xl font-bold text-center';
         winnerDisplay.textContent = `Vainqueur du tournoi : ${winnerName}`;
-        
-        // Créer le bouton
         const endButton = document.createElement('button');
         endButton.id = 'tournament-end-button';
         endButton.className = 'px-6 py-3 bg-[#ff5500] text-white font-bold rounded-lg hover:bg-[#ff7700] transition-colors shadow-lg';
         endButton.style.textShadow = 'none';
         endButton.textContent = 'Fin du tournoi';
-        
-        // Ajouter un gestionnaire d'événements au bouton
         endButton.addEventListener('click', handleTournamentEnd);
-        
-        // Ajouter les éléments au conteneur
         endButtonContainer.appendChild(winnerDisplay);
         endButtonContainer.appendChild(endButton);
-        
-        // Ajouter le conteneur à la page
         const gameContent = document.querySelector('.page-content');
         if (gameContent) {
             gameContent.appendChild(endButtonContainer);
         } else {
-            // Si .page-content n'existe pas, ajouter au body
             document.body.appendChild(endButtonContainer);
         }
     } else {
-        // Si le conteneur existe déjà, le rendre visible et mettre à jour le nom du vainqueur
         const winnerDisplay = document.getElementById('tournament-winner-display');
         if (winnerDisplay) {
             winnerDisplay.textContent = `Vainqueur du tournoi : ${winnerName}`;
         }
         endButtonContainer.classList.remove('hidden');
     }
-    
-    // L'alerte a été supprimée comme demandé
 }
-
-// Fonction qui gère le clic sur "Fin du tournoi"
 function handleTournamentEnd(event) {
     if (event) event.preventDefault();
     
     console.log("Bouton Fin du tournoi cliqué!");
-    
-    // Rediriger vers la page d'accueil du tournoi
     if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
         window.SPA.navigateTo('/tournoi');
     } else {
@@ -377,12 +301,9 @@ export class Game1v1
     }
     drawBoardDetails()
     {
-        //draw court outline
         this.gameContext.strokeStyle = "#000";
         this.gameContext.lineWidth = 5;
         this.gameContext.strokeRect(8,8,this.gameCanvas.width - 15,this.gameCanvas.height - 15);
-
-        //draw center lines
         for (var i = 0; i + 30 < this.gameCanvas.height; i += 31) {
             this.gameContext.fillStyle = "#aaa";
             this.gameContext.fillRect(this.gameCanvas.width / 2 - 10, i + 10, 15, 20);
@@ -396,11 +317,7 @@ export class Game1v1
     }
     draw()
     {
-        // Remplacer par un fond transparent ou semi-transparent
         this.gameContext.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
-        // Ou utiliser une couleur semi-transparente:
-        // this.gameContext.fillStyle = "rgba(0, 0, 0, 0.1)";
-        // this.gameContext.fillRect(0,0,this.gameCanvas.width,this.gameCanvas.height);
         
         this.drawBoardDetails();
         this.player1.draw(this.gameContext);
@@ -414,22 +331,12 @@ export class Game1v1
         if (Game1v1.player1Score >= 2 || Game1v1.player2Score >= 2)
         {
             this.running = false;
-            
-            // Afficher le bouton "Prochain match"
-            
-            // Déterminer le gagnant
             const winner = Game1v1.player1Score > Game1v1.player2Score ? 1 : 2;
             console.log(`Le joueur ${winner} a gagné la partie!`);
-            
-            // Récupérer les éléments pour afficher le vainqueur
             const player1Name = document.getElementById('player1-name')?.textContent || 'Joueur 1';
             const player2Name = document.getElementById('player2-name')?.textContent || 'Joueur 2';
-            
-            // Afficher un message de victoire
             const winnerName = winner === 1 ? player1Name : player2Name;
             console.log(`${winnerName} remporte la victoire!`);
-            
-            // Arrêter les animations et les contrôles
             window.removeEventListener("keydown", this.keyDownHandler);
             window.removeEventListener("keyup", this.keyUpHandler);  
             handleMatchEnd(winner, player1Name, player2Name);
@@ -454,7 +361,6 @@ async function handleMatchEnd(winnerNumber: number, player1Name: string, player2
         console.log("Match récupéré pour la finalisation:", match);
         
         if (match) {
-            // Créer l'objet de résultat du match
             const matchResult = {
                 tournament_id: match.tournamentId || 0,
                 player1_name: player1Name,
@@ -483,8 +389,6 @@ async function handleMatchEnd(winnerNumber: number, player1Name: string, player2
             }
             await tournament.deleteLosers(matchResult);
         }
-        
-        // Afficher le bouton "Prochain match" seulement si le tournoi n'est pas terminé
         const nextGameContainer = document.getElementById('next-game-container');
         if (nextGameContainer) {
             nextGameContainer.classList.remove('hidden');
@@ -588,34 +492,28 @@ class Ball extends Entity
     }
     update(player1:Paddle,player2:Paddle,canvas: HTMLCanvasElement): void
     {
-        //check left canvas bounds
         if(this.x <= 0)
         {
             Game1v1.player2Score += 1;
             this.reset(canvas);
             return ;
         }
-        //check right canvas bounds
         if (this.x + this.width >= canvas.width)
         {
             Game1v1.player1Score += 1;
             this.reset(canvas);
             return ;
         }
-        //check top canvas bounds
         if (this.y <= 10)
         {
             this.y = 10;
                 this.yVel = Math.abs(this.yVel); // always positive after bounce
         }
-        //check bottom canvas bounds
         if (this.y + this.height >= canvas.height - 10)
         {
             this.y = canvas.height - 10 - this.height;
                 this.yVel = -Math.abs(this.yVel); // always positive after bounce
         }
-        //check player collision
-        // Player1 paddle collision
         if (this.x <= player1.x + player1.width &&
             this.x + this.width >= player1.x &&
             this.y < player1.y + player1.height &&
@@ -624,7 +522,6 @@ class Ball extends Entity
             this.xVel = 1;
             this.yVel += player1.yVel * 0.5;
         }
-        // Player2 paddle collision
         if (this.x + this.width >= player2.x &&
             this.x <= player2.x + player2.width &&
             this.y < player2.y + player2.height &&
@@ -638,42 +535,28 @@ class Ball extends Entity
         this.speed += 0.001;
     }
 }
-
-// Rendre disponible globalement
 window.startTournamentFlow = startTournamentFlow;
-
-// Déclarer des fonctions supplémentaires sur l'objet Window si nécessaire
 declare global {
     interface Window {
         startTournamentFlow: typeof startTournamentFlow;
         SPA?: any;
     }
 }
-
-// Initialiser la page de tournoi
 function initTournamentGame() {
-    // Vérifier l'authentification avant tout
     if (!checkAuthentication()) {
         return;
     }
-    
-    // Valider l'accès au tournoi immédiatement
     validateTournamentAccess().then(hasAccess => {
         if (hasAccess) {
-            // Seulement si l'accès est validé, commencer le flux du tournoi
             startTournamentFlow();
         }
     });
 }
-
-// Ajouter l'écouteur d'événements au chargement du document
 document.addEventListener('DOMContentLoaded', () => {
-    // Protection immédiate - vérifie l'authentification dès le chargement de la page
     if (!checkAuthentication()) {
         return; // Arrête l'exécution si l'utilisateur n'est pas authentifié
     }
     
     addNextGameButtonListener();
-    // Initialiser la page tournoi
     initTournamentGame();
 });

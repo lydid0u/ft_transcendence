@@ -5,12 +5,10 @@ async function MatchData(fastify, options)
     const dbMatchData = 
     {
         async findWinRate(player) {
-            // Si le joueur utilise un alias au lieu d'un username, on considère 0% de winrate
             if (!player.username || player.alias) {
                 return 0;
             }
             try {
-                // D'abord récupérer l'user_id depuis la table users si ce n'est pas fourni
                 let userId = player.user_id;
                 if (!userId) {
                     const user = await fastify.db.connection.get(`
@@ -22,7 +20,6 @@ async function MatchData(fastify, options)
                     }
                     userId = user.id;
                 }
-                // Récupérer tous les matchs du joueur (en tant que player1 ou player2)
                 const matches = await fastify.db.connection.all(`
                     SELECT winner_id, player1_id, player2_id, player1_name, player2_name
                     FROM matches 
@@ -31,25 +28,22 @@ async function MatchData(fastify, options)
                 `, [player.username, player.username]);
                 if (!matches || matches.length === 0) {
                     console.log(`Aucun match trouvé pour ${player.username}`);
-                    return 0; // Aucun match trouvé = 0% de winrate
+                    return 0;
                 }
-                // Compter les victoires
                 let wins = 0;
                 const totalMatches = matches.length;
                 for (const match of matches) {
-                    // Vérifier si le joueur a gagné ce match
                     if ((match.player1_name === player.username && match.winner_id === userId) ||
                         (match.player2_name === player.username && match.winner_id === userId)) {
                         wins++;
                     }
                 }
-                // Calculer le winrate en pourcentage (entre 0 et 100)
                 const winRatePercent = (wins / totalMatches) * 100;
                 console.log(`Joueur ${player.username} (ID: ${userId}): ${wins}/${totalMatches} victoires = ${winRatePercent.toFixed(1)}% winrate`);
-                return winRatePercent; // Retourne en pourcentage
+                return winRatePercent;
             } catch (error) {
                 console.error(`Erreur lors du calcul du winrate pour ${player.username}:`, error);
-                return 0; // En cas d'erreur, considérer 0% de winrate
+                return 0;
             }
         },
 
@@ -64,7 +58,6 @@ async function MatchData(fastify, options)
                         winRate: winRate
                     });
                 }
-                // Trier les joueurs par winrate décroissant (meilleur en premier)
                 const rankedPlayers = playersWithWinRate.sort((a, b) => {
                     if (b.winRate !== a.winRate) {
                         return b.winRate - a.winRate;
@@ -90,10 +83,10 @@ async function MatchData(fastify, options)
                 let participants;
                 if (rankedParticipants.length >= 4) {
                     participants = [
-                        rankedParticipants[0], // #1 - Meilleur winrate
-                        rankedParticipants[3], // #4 - Plus bas winrate  
-                        rankedParticipants[1], // #2 - 2ème meilleur
-                        rankedParticipants[2]  // #3 - 3ème meilleur
+                        rankedParticipants[0], 
+                        rankedParticipants[3],  
+                        rankedParticipants[1], 
+                        rankedParticipants[2] 
                     ];
                     console.log("Matchmaking organisé:");
                     console.log(`Match actuel: ${participants[0].username || participants[0].alias} (${participants[0].winRate.toFixed(1)}%) VS ${participants[1].username || participants[1].alias} (${participants[1].winRate.toFixed(1)}%)`);

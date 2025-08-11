@@ -26,8 +26,6 @@ async function tournamentLaunchRoute(fastify, options)
     {
         const match = request.body;
         const userId = request.user.id;
-        // const aa = match.player1_name
-        // console.log('aaaaaaaaaa', aa)
         try {
             const checkparticipants = await fastify.dbMatchData.checkParticipantsInMatch(match, userId);
             if (!checkparticipants) {

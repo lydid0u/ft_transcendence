@@ -7,7 +7,7 @@ interface GoogleAuthResponse {
 }
 
 interface GoogleJwtPayload {
-	sub: string; // Google ID
+	sub: string; // google ID
 	name: string;
 	email: string;
 	picture: string;
@@ -18,7 +18,7 @@ interface GoogleJwtPayload {
 	[key: string]: any;
 }
 
-interface UserData {
+export interface UserData {
 	googleId: string;
 	name: string;
 	email: string;
@@ -27,17 +27,17 @@ interface UserData {
 	jwt?: string;
 }
 
-declare global {
-	interface Window {
-		google?: {
-			accounts: {
-				id: {
-					disableAutoSelect: () => void;
-				};
-			};
-		};
-	}
-}
+// declare global {
+// 	interface Window {
+// 		google?: {
+// 			accounts: {
+// 				id: {
+// 					disableAutoSelect: () => void;
+// 				};
+// 			};
+// 		};
+// 	}
+// }
 
 async function sendUserDataToBackend(userData: UserData): Promise<void> {
 	try {
@@ -58,7 +58,7 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 
 		localStorage.setItem('googleUser', JSON.stringify(userData));
 		localStorage.setItem('user', JSON.stringify(data.user || userData));
-		setLanguage(data.user?.language || 'fr'); // Set language from user data or default to 'fr'
+		setLanguage(data.user?.language || 'fr');
 		localStorage.setItem('isAuthenticated', 'true');
 		if (!data.jwt) {
 			console.log("Utilisateur authentifié, redirection vers la page de connexion Google");
@@ -86,10 +86,6 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 		localStorage.removeItem('googleUser');
 		localStorage.removeItem('isAuthenticated');
 		localStorage.removeItem('jwtToken');
-
-		// if (typeof google !== 'undefined' && google.accounts) {
-		// 	google.accounts.id.disableAutoSelect();
-		// }
 
 		if (window.SPA && typeof window.SPA.navigateTo === 'function') {
 			window.SPA.navigateTo('/login');
@@ -126,19 +122,16 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
                 console.log("Réponse du backend:", result);
 
                 if (!response.ok) {
-                    // Afficher le message d'erreur du serveur
                     if (message) {
-						message.classList.remove('hidden'); // Si vous gardez la classe hidden
+						message.classList.remove('hidden');
 						message.textContent = "Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre.";
 						message.style.color = "red";
 					}
-                    // Si le nom d'utilisateur est déjà pris
                     if (response.status === 409 || result.message?.includes("already taken")) {
                         if (message) {
                             message.textContent = "Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre.";
                             message.style.color = "red";
                         }
-                        // Vider le champ du nom d'utilisateur pour que l'utilisateur puisse en saisir un autre
                         const usernameInput = document.getElementById("new-username") as HTMLInputElement;
                         if (usernameInput) {
                             usernameInput.value = "";
@@ -162,7 +155,6 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
                 }
             } catch (error) {
                 console.error("Erreur lors de l'envoi au backend:", error);
-                // Ne pas rediriger en cas d'erreur pour permettre à l'utilisateur de corriger
             }
         })
     }, 100);
@@ -171,8 +163,6 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
 function handleGoogleAuth(response: GoogleAuthResponse): void {
 	try {
 		console.log("Encoded JWT ID token: " + response.credential);
-
-		// Decode the JWT token to get user info
 		const objUserData: GoogleJwtPayload = decodeJwtResponse(response.credential);
 
 		const userData: UserData = {
@@ -189,7 +179,7 @@ function handleGoogleAuth(response: GoogleAuthResponse): void {
 	}
 }
 
-// Decode JWT token: take the payload, convert base64Url to base64 to JSON, then return JSON as JS object
+// converti base64Url en base64 en JSON, et return le JSON en objet JS
 function decodeJwtResponse(token: string): GoogleJwtPayload {
 	try {
 		const parts: string[] = token.split('.');

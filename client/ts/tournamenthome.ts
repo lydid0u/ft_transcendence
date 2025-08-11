@@ -1,13 +1,11 @@
-// Interface pour les participants du tournoi
 interface TournamentParticipant {
   tournament_id: number;
-  user_id: number;   // Changé de userId à user_id pour correspondre à la réponse API
+  user_id: number;
   username?: string;
-  alias?: string; // Rendu optionnel car peut ne pas être présent
+  alias?: string;
   success?: boolean;
 }
 
-// Classe API pour gérer les interactions avec le backend pour le tournoi
 class TournamentHomeAPI {
   private baseUrl: string;
   private token: string | null;
@@ -17,7 +15,6 @@ class TournamentHomeAPI {
     this.token = localStorage.getItem("jwtToken");
   }
 
-//   Méthode pour récupérer les détails du tournoi actif de l'utilisateur
   async getTournamentDetails(): Promise<TournamentParticipant[] | null> {
     try {
       const response = await fetch(`${this.baseUrl}/tournament/get-participants`, {
@@ -36,13 +33,9 @@ class TournamentHomeAPI {
 
       const data = await response.json();
       console.log("Données brutes reçues:", data);
-      
-      // Si data est un objet avec une propriété participants qui est un tableau
       if (data && data.participants && Array.isArray(data.participants)) {
         return data.participants;
       }
-      
-      // Si data est déjà un tableau
       if (Array.isArray(data)) {
         return data;
       }
@@ -54,7 +47,6 @@ class TournamentHomeAPI {
     }
   }
 
-  // Méthode pour ajouter un joueur au tournoi par son alias
   async addPlayerByAlias(tournamentId: number, alias: string): Promise<{ success: boolean; message: string }> {
     try {
       const response = await fetch(`${this.baseUrl}/tournament/add-player-alias`, {
@@ -100,7 +92,6 @@ class TournamentHomeAPI {
     }
   }
 
-  // Méthode pour lancer le tournoi
   async launchTournament(tournamentId: number): Promise<{ success: boolean; message: string }> {
     try {
       const response = await fetch(`${this.baseUrl}/tournament/launch`, {
@@ -125,12 +116,10 @@ class TournamentHomeAPI {
   }
 }
 
-// Classe pour gérer l'interface utilisateur de la page tournamenthome
 class TournamentHomeApp {
   private api: TournamentHomeAPI;
   private tournamentId: number | null = null;
   
-  // Éléments DOM
   private playerListElement: HTMLElement | null;
   private addPlayerBtn: HTMLElement | null;
   private playerNameInput: HTMLInputElement | null;
@@ -147,7 +136,6 @@ class TournamentHomeApp {
   constructor() {
     this.api = new TournamentHomeAPI();
     
-    // Initialisation des éléments DOM
     this.playerListElement = document.getElementById("player-list");
     this.addPlayerBtn = document.getElementById("add-player-btn");
     this.playerNameInput = document.getElementById("player-name") as HTMLInputElement;
@@ -165,14 +153,12 @@ class TournamentHomeApp {
   }
 
   private setupEventListeners(): void {
-    // Écouteur pour le bouton d'ajout de joueur
     if (this.addPlayerBtn) {
         console.log("Add Player Button found");
       this.addPlayerBtn.addEventListener("click", () => this.handleAddPlayer());
     }
     if (this.tournamentStartBtn) {
       this.tournamentStartBtn.addEventListener("click", () => {
-        // Vérifier si le tournoi est valide avant de rediriger
         this.validateTournamentAccess();
       });
     }
@@ -194,17 +180,14 @@ class TournamentHomeApp {
 }
 
   private async init(): Promise<void> {
-    // Récupération des détails du tournoi
     const tournamentDetails = await this.api.getTournamentDetails();
     
     
     
     this.tournamentId = (tournamentDetails && tournamentDetails.length > 0) ? tournamentDetails[0].tournament_id : null;
     console.log("DETAILS DU TOURNOI:", tournamentDetails);
-    // Affichage des participants
     this.renderParticipants(tournamentDetails || []);
     
-    // Configuration des écouteurs d'événements
     this.setupEventListeners();
   }
 
@@ -218,7 +201,6 @@ class TournamentHomeApp {
     }
     
     this.playerListElement.innerHTML = participants.map(participant => {
-      // Déterminer quel nom afficher (username si disponible, sinon user_id)
       const displayName = participant.username || participant.alias ||
                          (participant.user_id ? `Joueur #${participant.user_id}` : 'Joueur inconnu');
       
@@ -251,7 +233,6 @@ class TournamentHomeApp {
 
       if (response.ok) {
         this.showMessage("Tournoi supprimé avec succès", "success");
-        // Redirection vers la page d'accueil ou une autre page appropriée
         window.location.href = '/home';
       } else {
         const errorData = await response.json();
@@ -279,7 +260,6 @@ private async handlePlayerLogin(): Promise<void> {
     return;
   }
 
-  // Met ici ta logique de login joueur local (API ou simulation front)
   this.showMessage(`Tentative de connexion pour ${email}...`, "info");
   const response = await fetch("http://localhost:3000/tournament/login", {
     method: "POST",
@@ -294,26 +274,22 @@ private async handlePlayerLogin(): Promise<void> {
 
     console.log("Connexion réussie:", data.data.email);
     
-    // Vérifier si le tournoi existe et l'id est valide
     if (!this.tournamentId) {
       this.showMessage("Erreur: Tournoi non trouvé", "error");
       if (this.playerLoginForm) this.playerLoginForm.classList.add("hidden");
       return;
     }
     
-    // Recharger la liste des participants après connexion
     try {
       const result = await this.api.addPlayerByEmail(this.tournamentId, data.data.email);
       if (result.success) {
         this.showMessage(`Joueur "${data.data.email}" ajouté avec succès!`, "success");
         
-        // Actualiser la liste des participants
         const updatedParticipants = await this.api.getTournamentDetails();
         if (updatedParticipants) {
           this.renderParticipants(updatedParticipants);
         }
       } else {
-        // Affichage du message d'erreur spécifique (comme "tournoi plein")
         this.showMessage(result.message, "error");
       }
     } catch (error) {
@@ -321,10 +297,9 @@ private async handlePlayerLogin(): Promise<void> {
       this.showMessage("Erreur lors de l'ajout du joueur au tournoi", "error");
     }
   } else {
-    console.log("Erreur de connexion:", data.data);
-    this.showMessage(data.data.message || "Veuillez réessayer", "error");
+    console.log("Erreur de connexion:", data.message);
+    this.showMessage(data.message || "Veuillez réessayer", "error");
   }
-  // Ferme le formulaire après (optionnel)
   if (this.playerLoginForm) this.playerLoginForm.classList.add("hidden");
 }
 
@@ -338,13 +313,11 @@ private async handlePlayerLogin(): Promise<void> {
       return;
     }
     
-    // Appel de l'API pour ajouter un joueur
     const result = await this.api.addPlayerByAlias(this.tournamentId, alias);
     
     if (result.success) {
       this.showMessage(`Joueur "${alias}" ajouté avec succès!`, "success");
       
-      // Recharger la liste des participants
       const updatedParticipants = await this.api.getTournamentDetails();
       if (updatedParticipants) {
         this.renderParticipants(updatedParticipants);
@@ -353,7 +326,6 @@ private async handlePlayerLogin(): Promise<void> {
       this.showMessage(result.message, "error");
     }
     
-    // Réinitialisation du champ de saisie
     this.playerNameInput.value = "";
   }
   
@@ -363,14 +335,12 @@ private async handlePlayerLogin(): Promise<void> {
       return;
     }
     
-    // Vérifier que le tournoi a suffisamment de participants (au moins 2)
     const participants = await this.api.getTournamentDetails();
     if (!participants || participants.length < 2) {
       this.showMessage("Le tournoi doit avoir au moins 2 participants pour être lancé", "error");
       return;
     }
     
-    // Si tout est valide, rediriger vers la page du tournoi
     this.showMessage("Lancement du tournoi...", "success");
     setTimeout(() => {
       if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
@@ -384,13 +354,11 @@ private async handlePlayerLogin(): Promise<void> {
   private async handleLaunchTournament(): Promise<void> {
     if (!this.tournamentId) return;
     
-    // Appel de l'API pour lancer le tournoi
     const result = await this.api.launchTournament(this.tournamentId);
     
     if (result.success) {
       this.showMessage("Tournoi lancé avec succès! Redirection...", "success");
       
-      // Redirection vers la page du tournoi après un court délai
       setTimeout(() => {
         if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
           window.SPA.navigateTo('/tournament-game');
@@ -417,7 +385,6 @@ private async handlePlayerLogin(): Promise<void> {
     this.messageContainer.innerHTML = "";
     this.messageContainer.appendChild(notification);
     
-    // Disparition automatique après 3 secondes
     setTimeout(() => {
       if (notification.parentNode === this.messageContainer) {
         notification.remove();

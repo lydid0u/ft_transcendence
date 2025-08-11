@@ -48,8 +48,6 @@ export class Game
 		Game.keysPressed = [];
 		Game.playerScore = 0;
 		Game.computerScore = 0;
-		
-		// Mettre à jour le nom du joueur dès l'initialisation
 		Game.updatePlayerName();
 		
 		let paddleSpeed:number = 8, ballSpeed:number = 3;
@@ -109,7 +107,6 @@ export class Game
 	}
 	drawBoardDetails()
 	{
-		// Draw glowing court outline
 		const gradient = this.gameContext.createLinearGradient(0, 0, this.gameCanvas.width, this.gameCanvas.height);
 		gradient.addColorStop(0, "pink");
 		gradient.addColorStop(1, "pink");
@@ -118,8 +115,6 @@ export class Game
 		this.gameContext.shadowColor = "#F2BDCD";
 		this.gameContext.shadowBlur = 16;
 		this.gameContext.strokeRect(8,8,this.gameCanvas.width - 15,this.gameCanvas.height - 15);
-
-		// Draw center dashed line with glow
 		this.gameContext.shadowBlur = 8;
 		this.gameContext.fillStyle = "#F2BDCD";
 		for (let i = 0; i + 30 < this.gameCanvas.height; i += 31) {
@@ -165,7 +160,6 @@ export class Game
 	}
 	
 	async postFinalGameResults() {
-		// Récupérer le pseudo du joueur depuis l'élément HTML
 		if (await window.SPA.checkJwtValidity()) {
 			let playerName = "Joueur";
 			const playerNameElement = document.getElementById("player-name");
@@ -208,12 +202,8 @@ export class Game
 	showEndScreen() {
 		const container = document.querySelector('.page-content');
 		if (!container) return;
-
-		// Remove old end screen if present
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
-
-		// Récupérer le pseudo du joueur depuis l'élément HTML
 		let playerName = "Joueur";
 		const playerNameElement = document.getElementById("player-name");
 		if (playerNameElement && playerNameElement.textContent) {
@@ -256,8 +246,6 @@ export class Game
 		if (canvas) canvas.style.display = '';
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
-		
-		// Mettre à jour le nom du joueur
 		console.log("Tentative de mise à jour du nom du joueur...");
 		Game.updatePlayerName();
 		
@@ -265,15 +253,10 @@ export class Game
 		Game.currentInstance = game;
 		game.gameLoop();
 	}
-	
-	// Fonction pour mettre à jour le nom du joueur
 	private static updatePlayerName() {
 		const playerNameElement = document.getElementById('player-name');
 		if (playerNameElement) {
-			// Récupérer le nom d'utilisateur du localStorage
 			let username = localStorage.getItem('username');
-			
-			// Si pas trouvé dans localStorage, essayer avec d'autres clés potentielles
 			if (!username) {
 				username = localStorage.getItem('userUsername');
 			}
@@ -283,17 +266,13 @@ export class Game
 			if (!username) {
 				username = sessionStorage.getItem('username');
 			}
-			
-			// Si un nom d'utilisateur a été trouvé, l'utiliser
 			if (username) {
 				console.log("Nom d'utilisateur trouvé :", username);
 				playerNameElement.textContent = username;
 			} else {
-				// Sinon, essayer de récupérer le jeton JWT et extraire les informations
 				const token = localStorage.getItem('jwtToken');
 				if (token) {
 					try {
-						// Tenter de décoder le jeton JWT pour extraire les informations utilisateur
 						const base64Url = token.split('.')[1];
 						const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
 						const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -310,7 +289,6 @@ export class Game
 						playerNameElement.textContent = "Joueur";
 					}
 				} else {
-					// Fallback si aucune information n'est trouvée
 					console.log("Aucun nom d'utilisateur trouvé, utilisation du fallback");
 					playerNameElement.textContent = "Joueur";
 				}
@@ -403,7 +381,6 @@ class ComputerPaddle extends Entity
 			return ;
 		}
 		this.reactionCount = 0;
-		//chase ball
 		if (ball.xVel == 1 && ball.x > canvas.width / 2)
 		{
 			this.parasiticMvmnt = (Math.random() - 0.5) * 10;
@@ -500,33 +477,28 @@ class Ball extends Entity
 	}
 	update(player:Paddle,computer:ComputerPaddle,canvas: HTMLCanvasElement): void
 	{
-		//check left canvas bounds
 		if(this.x <= 0)
 		{
 			Game.computerScore += 1;
 			this.reset(canvas);
 			return ;
 		}
-		//check right canvas bounds
 		if (this.x + this.width >= canvas.width)
 		{
 			Game.playerScore += 1;
 			this.reset(canvas);
 			return ;
 		}
-		//check top canvas bounds
 		if (this.y <= 10)
 		{
 			this.y = 10;
 				this.yVel = Math.abs(this.yVel); // always positive after bounce
 		}
-		//check bottom canvas bounds
 		if (this.y + this.height >= canvas.height - 10)
 		{
 			this.y = canvas.height - 10 - this.height;
 				this.yVel = -Math.abs(this.yVel); // always positive after bounce
 		}
-		// Player paddle collision
 		if (this.x <= player.x + player.width &&
 			this.x + this.width >= player.x &&
 			this.y < player.y + player.height &&
@@ -535,7 +507,6 @@ class Ball extends Entity
 			this.xVel = 1;
 			this.yVel += player.yVel * 0.5;
 		}
-		// Computer paddle collision
 		if (this.x + this.width >= computer.x &&
 			this.x <= computer.x + computer.width &&
 			this.y < computer.y + computer.height &&
