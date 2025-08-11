@@ -12,16 +12,13 @@ async function matchesRoutes(fastify, options)
 {
     const data = request.body;
     
-    // Obtenir l'ID de l'utilisateur à partir du token JWT
     const userId = request.user.id;
     
-    // Obtenir les informations de l'utilisateur via son ID
     const user = await fastify.db.connection.get('SELECT * FROM users WHERE id = ?', userId);
     if (!user) {
         return reply.status(404).send({ success: false, message: 'User not found' });
     }
     
-    // Si player1 gagne, winner_id = userId, sinon winner_id = null (défaite)
     let winner_id = data.winner === "player1" ? userId : null;
     
     try {
@@ -55,9 +52,6 @@ async function matchesRoutes(fastify, options)
 
     fastify.get('/history-details', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        // const gameMode = request.query.game_mode || request.query.gameType || 'pong';
-        
-        // Vérifier si dbPong est disponible
         if (!fastify.dbPong) {
             return { matchplayed: 0, victory: 0, defeats: 0, ratio: 0 };
         }
@@ -68,8 +62,7 @@ async function matchesRoutes(fastify, options)
         } catch (error) {
             return { matchplayed: 0, victory: 0, defeats: 0, ratio: 0 };
         }
-        
-        // Traitement des données
+
         if (!data || data.length === 0) {
             return { matchplayed: 0, victory: 0, defeats: 0, ratio: 0 };
         }
@@ -84,7 +77,6 @@ async function matchesRoutes(fastify, options)
 
     fastify.delete('/delete-all', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        // Vérifier si dbPong est disponible
         if (!fastify.dbPong) {
             return { success: false, message: 'Database not available' };
         }
@@ -97,7 +89,6 @@ async function matchesRoutes(fastify, options)
         }
     });
 
-    // SNAKE ROUTES
 
     fastify.get('/snake/high-score', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
@@ -129,10 +120,8 @@ async function matchesRoutes(fastify, options)
     {
         const game = request.body;
         
-        // Obtenir l'ID de l'utilisateur à partir du token JWT
         const userId = request.user.id;
         
-        // Obtenir les informations de l'utilisateur via son ID
         const user = await fastify.db.connection.get('SELECT * FROM users WHERE id = ?', userId);
         if (!user) {
             return reply.status(404).send({ success: false, message: 'User not found' });
@@ -156,25 +145,20 @@ async function matchesRoutes(fastify, options)
         try {
             const userId = parseInt(request.params.userId);
             
-            // Obtenir le nom du joueur
             const user = await fastify.db.connection.get('SELECT username FROM users WHERE id = ?', userId);
             if (!user) {
                 return reply.status(404).send({ success: false, message: 'User not found' });
             }
             
-            // Obtenir le nombre total de parties jouées
             const playCount = await fastify.db.connection.get(
                 'SELECT COUNT(*) as count FROM snake WHERE player_id = ?',
                 userId
             );
             
-            // Obtenir le meilleur score du joueur
             const bestScore = await fastify.dbSnake.findHighScoreOfUser(userId);
             
-            // Obtenir le classement du joueur
             const rank = await fastify.dbSnake.getPlayerRank(userId);
             
-            // Obtenir le score à battre
             const nextScoreToBeat = await fastify.dbSnake.findNearestScoreToBeat(userId);
             
             return reply.status(200).send({
@@ -195,7 +179,6 @@ async function matchesRoutes(fastify, options)
         try {
             const userId = parseInt(request.params.userId);
             
-            // Obtenir l'historique des parties du joueur
             const history = await fastify.db.connection.all(
                 'SELECT player_id, score, played_at as played_at FROM snake WHERE player_id = ? ORDER BY played_at DESC LIMIT 10',
                 userId

@@ -20,11 +20,7 @@ async function tableSnake(fastify, options)
 
         async findNearestScoreToBeat(userId) {
             try {
-                // Trouver le meilleur score du joueur
                 const highScore = await this.findHighScoreOfUser(userId);
-                
-                // Trouver le score le plus bas qui est supérieur au meilleur score du joueur
-                // Considérer uniquement le meilleur score par joueur
                 const result = await fastify.db.connection.get(
                     'SELECT MIN(s.max_score) as next_score FROM (SELECT player_id, MAX(score) as max_score FROM snake GROUP BY player_id) s WHERE s.max_score > ?',
                     highScore
@@ -40,7 +36,6 @@ async function tableSnake(fastify, options)
 
         async getPlayerRank(userId) {
             try {
-                // Get player's rank based on the highest score per player
                 const rank = await fastify.db.connection.get(
                     `SELECT COUNT(*) as rank FROM 
                      (SELECT player_id, MAX(score) as max_score FROM snake GROUP BY player_id) 
@@ -48,7 +43,7 @@ async function tableSnake(fastify, options)
                     userId
                 );
                 console.log('Player rank:', rank);
-                return rank?.rank + 1 || 0; // +1 pour inclure le joueur lui-même            
+                return rank?.rank + 1 || 0;            
             }
             catch (error) {
                 console.error('Error getting player rank:', error);
@@ -65,7 +60,6 @@ async function tableSnake(fastify, options)
                 const gameMode = game.gameMode;
                 const currentDate = new Date().toISOString();
 
-                // Insérer le score dans la base de données avec la date de création
                 await fastify.db.connection.run(
                     'INSERT INTO snake (player_id, player_name, score, game_mode, played_at) VALUES (?, ?, ?, ?, ?)',
                     userId, userName, score, gameMode, currentDate
@@ -77,7 +71,6 @@ async function tableSnake(fastify, options)
 
         async getLeaderboard(limit = 10) {
             try {
-                // Get top scores, but only the highest score per player
                 const leaderboard = await fastify.db.connection.all(
                     `SELECT player_id, player_name, MAX(score) as score 
                      FROM snake 

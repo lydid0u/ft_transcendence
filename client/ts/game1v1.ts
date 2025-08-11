@@ -127,7 +127,6 @@ export class Game1v1
 	}
 	drawBoardDetails()
 	{
-		// Draw glowing court outline
 		const gradient = this.gameContext.createLinearGradient(0, 0, this.gameCanvas.width, this.gameCanvas.height);
 		gradient.addColorStop(0, "pink");
 		gradient.addColorStop(1, "pink");

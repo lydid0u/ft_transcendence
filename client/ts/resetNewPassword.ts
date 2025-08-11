@@ -16,7 +16,6 @@ export function setupNewPasswordForm() {
         message.textContent = 'Les mots de passe ne correspondent pas.';
         return;
       }
-      // Récupère l'email stocké
       const email = localStorage.getItem('resetEmail');
       if (!email) {
         message.textContent = 'Erreur : email manquant.';
@@ -32,7 +31,6 @@ export function setupNewPasswordForm() {
         });
         const data = await res.json();
         if (data.success) {
-          // Nettoie le localStorage
           localStorage.removeItem('resetEmail');
           window.location.href = 'login.html';
         } else {

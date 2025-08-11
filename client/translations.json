@@ -85,6 +85,9 @@
     },
     "profile": {
       "greeting": "Hello",
+      "2fa_enabled_success": "Two-factor authentication enabled successfully!",
+      "2fa_disabled_success": "Two-factor authentication disabled successfully!",
+      "2fa_update_error": "Error updating two-factor authentication. Please try again.",
       "two_factor": "Two-Factor Authentication",
       "2fa_updated": "2FA settings updated",
       "2fa_description": "Add an extra layer of security to your account with two-factor authentication.",
@@ -285,6 +288,9 @@
     },
     "profile": {
       "greeting": "Bonjour",
+      "2fa_enabled_success": "Authentification à deux facteurs activée avec succès !",
+      "2fa_disabled_success": "Authentification à deux facteurs désactivée avec succès !",
+      "2fa_update_error": "Erreur lors de la mise à jour de l'authentification à deux facteurs. Veuillez réessayer.",
       "two_factor": "Authentification à deux facteurs",
       "2fa_updated": "Paramètres 2FA mis à jour",
       "2fa_description": "Ajoutez une couche de sécurité supplémentaire à votre compte avec l'authentification à deux facteurs.",
@@ -539,6 +545,9 @@
       "confirm_password": "Confirmar nueva contraseña",
       "confirm_password_placeholder": "Confirme su nueva contraseña",
       "update_password": "Actualizar contraseña"
+      ,"2fa_enabled_success": "¡Autenticación de dos factores activada con éxito!"
+      ,"2fa_disabled_success": "¡Autenticación de dos factores desactivada con éxito!"
+      ,"2fa_update_error": "Error al actualizar la autenticación de dos factores. Por favor, inténtalo de nuevo."
     },
     "game": {
       "choose_difficulty": "Elige la dificultad",

@@ -74,16 +74,6 @@ async function tableFriends(fastify, options)
             return reply.status(500).send({ status: 'error', message: 'Failed to add friend' });
         }
         }
-
-        // async deletefriend(request, friend_delete)
-        // {
-        //     const friend_id = await fastify.db.connection.get('SELECT id FROM users WHERE nickname = ?', friend_delete);
-        //     if (friend_id) {
-        //         await fastify.db.connection.run('DELETE FROM friends WHERE user_id = ? AND friend_id = ?', request.user.id, friend_id.id);
-        //     } else {
-        //         console.error(`Friend with nickname ${friend_delete} not found.`);
-        //     }
-        // }
     }
     fastify.decorate('dbFriends', dbFriends);
     await dbFriends.createTableFriends();

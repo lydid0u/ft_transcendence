@@ -9,7 +9,7 @@ export function setupOtpForm() {
       const otpInput = document.getElementById('otp-code') as HTMLInputElement;
       const code = otpInput.value;
       const message = document.getElementById('otp-message') as HTMLElement;
-      message.textContent = '...'; // ton message d'erreur ou de succès
+      message.textContent = '...'; 
       message.classList.remove('hidden');
       resetEmail = localStorage.getItem('resetEmail') || '';
       if (!resetEmail) {
@@ -29,7 +29,6 @@ export function setupOtpForm() {
             window.SPA.navigateTo('/resetNewPassword');
           }
         } else {
-          // Affiche le message d'erreur du backend ou un message par défaut
           message.textContent = data.message || 'Code incorrect ou expiré.';
         }
       } catch (err) {
@@ -38,5 +37,3 @@ export function setupOtpForm() {
     });
   }
 }
-
-// if (document.getElementById('otp-form')) setupOtpForm();

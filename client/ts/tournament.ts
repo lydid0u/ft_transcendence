@@ -1,6 +1,4 @@
-// import i18n from './i18n';
 
-// Interface pour représenter la structure d'un tournoi
 export interface Tournament {
   id: number
   creator_name: string
@@ -11,19 +9,16 @@ export interface Tournament {
   creatorId: number
 }
 
-// Format des données reçues du backend
 interface ApiTournament {
   id: number
-  name: string
+  creator_name: string
   participants: number
   maxParticipants: number
   creatorId: number
 }
 
-// Pour la notification
 type MessageType = "success" | "error" | "info"
 
-// Classe API pour les tournois
 class TournamentAPI {
   private baseUrl: string
   private token: string | null
@@ -57,8 +52,13 @@ class TournamentAPI {
       const data = await this.fetchAPI<ApiTournament[]>("/tournament/get-open");
       console.log("Tournois récupérés :", data);
       return data.map(t => ({
-        ...t,
-        isFull: t.participants >= t.maxParticipants
+        id: t.id,
+        creator_name: t.creator_name, 
+        participants: t.participants,
+        maxParticipants: t.maxParticipants,
+        status: "open", 
+        isFull: t.participants >= t.maxParticipants,
+        creatorId: t.creatorId
       }));
     } catch (error) {
       return [];
@@ -88,7 +88,6 @@ class TournamentAPI {
           return { success: true, message: data.message || "Tournoi rejoint avec succès" };
         }
 
-        // Vérifier si l'erreur est liée au créateur
         if (response.status === 400 && data.message && data.message.includes("not the creator")) {
           return {
             success: false,
@@ -110,7 +109,6 @@ class TournamentAPI {
   async createTournament(): Promise<{ success: boolean; message?: string; data?: any }> {
     if (await window.SPA.checkJwtValidity()) {
       try {
-        // Vérifier si le token est disponible
         if (!this.token) {
           return { success: false, message: "Authentification requise" };
         }
@@ -133,16 +131,13 @@ class TournamentAPI {
           };
         }
 
-        // La réponse du backend contient { status: 'success', data: { tournamentId } }
-        // OU peut aussi être { success: true, ... } si vous avez modifié le backend
         const isSuccess = result.status === 'success' || result.success === true;
         return {
           success: isSuccess,
           message: isSuccess ? "Tournoi créé avec succès" : "Erreur lors de la création du tournoi",
           data: result.data || {}
         };
-        //  La réponse du backend contient { status: 'success', data: { tournamentId } }
-        // OU peut aussi être { success: true, ... } si vous avez modifié le backend
+
       } catch (error) {
         console.error("Error creating tournament:", error);
         return { success: false, message: "Erreur de connexion au serveur" };
@@ -151,7 +146,7 @@ class TournamentAPI {
   }
 }
 
-// Classe pour l'affichage de la liste des tournois
+
 class TournamentListApp {
   private tournaments: Tournament[] = []
   private api: TournamentAPI
@@ -177,7 +172,6 @@ class TournamentListApp {
   private init(): void {
     if (!this.tournamentList || !this.loadingState || !this.emptyState) return
 
-    // Ajout de l'écouteur d'événement pour le bouton de création de tournoi
     if (this.createTournamentBtn) {
       this.createTournamentBtn.addEventListener("click", () => {
         this.handleCreateTournament()
@@ -191,7 +185,9 @@ class TournamentListApp {
     try {
       if (this.loadingState) this.loadingState.style.display = "block"
       if (this.emptyState) this.emptyState.style.display = "none"
+      console.log("Tournois chargés AVANT :", this.tournaments)
       this.tournaments = await this.api.getTournamentList()
+      console.log("Tournois chargés :", this.tournaments)
       this.renderTournamentList()
       if (this.loadingState) this.loadingState.style.display = "none"
       if (this.emptyState) this.emptyState.style.display = this.tournaments.length === 0 ? "block" : "none"
@@ -264,7 +260,6 @@ class TournamentListApp {
   private async handleCreateTournament(): Promise<void> {
     if (!this.createTournamentBtn) return
 
-    // Désactiver le bouton pendant la création
     const originalText = this.createTournamentBtn.textContent || window.i18n.translate('tournament.create')
     this.createTournamentBtn.textContent = window.i18n.translate('tournament.creating')
     this.createTournamentBtn.classList.add("opacity-50", "cursor-not-allowed")
@@ -275,7 +270,6 @@ class TournamentListApp {
       if (result.success) {
         this.showNotification(window.i18n.translate('tournament.create_success'), "success")
 
-        // Redirection vers la page de gestion du tournoi
         setTimeout(() => {
           if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
             window.SPA.navigateTo('/tournamenthome');
@@ -289,7 +283,7 @@ class TournamentListApp {
     } catch (error) {
       this.showNotification(window.i18n.translate('common.error'), "error")
     } finally {
-      // Réactiver le bouton
+
       this.createTournamentBtn.textContent = originalText
       this.createTournamentBtn.classList.remove("opacity-50", "cursor-not-allowed")
     }
@@ -308,25 +302,22 @@ class TournamentListApp {
   }
 }
 
-// Fonction globale pour afficher la liste des tournois
 function displayTournamentList(): void {
   setTimeout(() => new TournamentListApp(), 100)
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.i18n && typeof window.i18n.initializePageTranslations === 'function') {
-    window.i18n.initializePageTranslations();
+  if (window.i18n && typeof (window.i18n as any).initializePageTranslations === 'function') {
+    (window.i18n as any).initializePageTranslations();
   }
 });
 
-// Déclaration globale
 declare global {
   interface Window {
     displayTournamentList: () => void;
   }
 }
 
-// Exposer au scope global
 if (typeof window !== "undefined") {
   window.displayTournamentList = displayTournamentList
 }

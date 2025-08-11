@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["google.accounts"]
+    "types": ["google.accounts", "vite/client"],
   },
   "include": ["src/**/*", "js/**/*", "ts", "main.ts", "../password.ts"],
   "exclude": ["node_modules", "dist"]

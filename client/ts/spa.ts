@@ -34,13 +34,14 @@ import { Game1v1 } from './game1v1';
 import { Game1v1v1v1 } from './game1v1v1v1';
 import { SnakeGame } from './snake';
 
+import { UserData } from "./google-auth";
 
 declare global {
   interface Window {
     google?: {
       accounts: GoogleAccounts;
     };
-    i18n?: {
+    i18n: {
       translate: (key: string) => string;
       setLanguage: (lang: string) => void;
       getLanguage: () => string;
@@ -73,23 +74,19 @@ const SPA = {
     const content: HTMLElement | null = document.querySelector(this.SPAattribute.contentDiv);
     const isLanding: boolean = route === '/';
 
-    // Update the login button text to show current page
     const loginBtn = document.getElementById('nav-login-btn');
     
     const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
 
-    // Use the same authentication check as in loadRoute
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     const hasValidToken = localStorage.getItem('jwtToken') !== null;
     const isLoggedIn = isAuthenticated && hasValidToken;
 
-    // Log authentication state for debugging
     console.log('Navbar auth state:', { isAuthenticated, hasValidToken, isLoggedIn });
 
     if (loginBtn) {
       this.updateNavLoginBtn(route);
     }
-          // Show/hide dropdown toggle based on login status
     if (profileDropdownToggle) {
       console.log('Setting profile dropdown visibility:', isLoggedIn ? 'visible' : 'hidden');
       profileDropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
@@ -104,7 +101,6 @@ const SPA = {
     }
   },
 
-  // Ajoute une méthode pour mettre à jour dynamiquement le texte du bouton nav-login-btn
   updateNavLoginBtn: function(route?: string): void {
     const loginBtn = document.getElementById('nav-login-btn');
     if (!loginBtn) return;
@@ -126,7 +122,6 @@ const SPA = {
       loginBtn.setAttribute('data-i18n', pageTitle);
       loginBtn.onclick = null;
     }
-    // Laisse la fonction de traduction mettre à jour le texte
     if (window.i18n && typeof window.i18n.initializePageTranslations === 'function') {
       window.i18n.initializePageTranslations();
     }
@@ -304,11 +299,9 @@ const SPA = {
         if (typeof window.displayMatchHistory === 'function') {
           window.displayMatchHistory();
         } else {
-          // Essayer de charger et d'initialiser directement
           import('./match-history').then(module => {
             if (module && module.displayMatchHistory) {
               module.displayMatchHistory();
-              // Définir aussi sur window pour les futurs appels
               window.displayMatchHistory = module.displayMatchHistory;
             }
           });
@@ -330,7 +323,6 @@ const SPA = {
 			return;
 		}
 
-		// Destroy previous game instance if any
 		if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
 		{
 			SPA.SPAattribute.currentGameInstance.destroy();
@@ -339,7 +331,6 @@ const SPA = {
 
 		try
 		{
-			// If your class has no destroy method, you can still manage it this way
 			const snakeGame = new SnakeGame();
 			SPA.SPAattribute.currentGameInstance = snakeGame;
 		}
@@ -386,7 +377,9 @@ const SPA = {
               throw new Error("current game didn't load");
               return;
             }
-            requestAnimationFrame(() => SPA.SPAattribute.currentGameInstance.gameLoop());
+            if (SPA.SPAattribute.currentGameInstance && typeof (SPA.SPAattribute.currentGameInstance as any).gameLoop === 'function') {
+              requestAnimationFrame(() => (SPA.SPAattribute.currentGameInstance as any).gameLoop());
+            }
           }
           catch (e)
           {
@@ -402,7 +395,6 @@ const SPA = {
   content: 'pages/game1v1Tournament.html',
   routeScript: function (): void {
     setTimeout(() => {
-      // Importer dynamiquement le module game1v1Tournament.ts
       import('./game1v1Tournament').then(module => {
         if (typeof module.startTournamentFlow === 'function') {
           module.startTournamentFlow();
@@ -496,12 +488,10 @@ const SPA = {
       title: 'game.difficulty_choice',
       content: 'pages/pong-landing.html',
       routeScript: function () {
-        // Attach event listeners to difficulty buttons
         setTimeout(() => {
           document.querySelectorAll('.difficulty-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
               const difficulty = (e.target as HTMLElement).getAttribute('data-difficulty');
-              // Save difficulty to localStorage or SPA attribute
               localStorage.setItem('aiDifficulty', difficulty || 'EASY');
               SPA.navigateTo('/gameAI');
             });
@@ -514,12 +504,10 @@ const SPA = {
       title: 'game.difficulty_choice',
       content: 'pages/pong-landing.html',
       routeScript: function () {
-        // Attach event listeners to difficulty buttons
         setTimeout(() => {
           document.querySelectorAll('.difficulty-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
               const difficulty = (e.target as HTMLElement).getAttribute('data-difficulty');
-              // Save difficulty to localStorage or SPA attribute
               localStorage.setItem('Difficulty', difficulty || 'EASY');
               SPA.navigateTo('/1v1');
             });
@@ -594,7 +582,6 @@ const SPA = {
 
 loadRoute: async function(route: string): Promise<void> {
   try {
-    // Vérifier si la route existe
     if (!(route in this.routes)) {
       this.error404();
       return;
@@ -602,9 +589,7 @@ loadRoute: async function(route: string): Promise<void> {
 
     const routeConfig = this.routes[route];
 
-    // Set the page title with translation if needed
     if (routeConfig.title) {
-      // Si c'est une clé de traduction (contient un point) et que i18n est disponible
       if (routeConfig.title.includes('.') && window.i18n && typeof window.i18n.translate === 'function') {
         document.title = window.i18n.translate(routeConfig.title) || "ft_transcendence";
       } else {
@@ -612,11 +597,9 @@ loadRoute: async function(route: string): Promise<void> {
       }
     }
 
-    // Appliquer la mise en page
     this.handleLayout(route);
 
     try {
-      // Tenter de charger le contenu HTML
       const contentPath = routeConfig.content;
 
       const response = await fetch(contentPath);
@@ -627,7 +610,6 @@ loadRoute: async function(route: string): Promise<void> {
 
       const html = await response.text();
 
-      // Injecter le HTML dans le conteneur de contenu
       const contentElement = document.querySelector(this.SPAattribute.contentDiv);
       if (!contentElement) {
         throw new Error("Élément de contenu non trouvé");
@@ -635,7 +617,6 @@ loadRoute: async function(route: string): Promise<void> {
 
       contentElement.innerHTML = html;
 
-      // Apply translations after content is loaded
       if (window.i18n && typeof window.i18n.initializePageTranslations === 'function') {
         window.i18n.initializePageTranslations();
       }
@@ -645,13 +626,11 @@ loadRoute: async function(route: string): Promise<void> {
         }, 100);
       }
 
-      // Exécuter le script de route s'il existe
       if (typeof routeConfig.routeScript === "function") {
         routeConfig.routeScript();
       }
 
     } catch (error) {
-      // Afficher un message d'erreur dans le conteneur
       const contentElement = document.querySelector(this.SPAattribute.contentDiv);
       if (contentElement) {
         contentElement.innerHTML = `
@@ -671,13 +650,11 @@ loadRoute: async function(route: string): Promise<void> {
 },
 
   setCurrentPageToActive: function(currentPath: string): void {
-    // Reset all active links
     const links: NodeListOf<HTMLAnchorElement> = document.querySelectorAll('a[data-route]');
     links.forEach((link: HTMLAnchorElement) => {
       link.classList.remove('active');
     });
 
-    // Find and set the current active link
     const activeLink: HTMLAnchorElement | null = document.querySelector(`a[data-route="${currentPath}"]`);
     if (activeLink) {
       activeLink.classList.add('active');
@@ -734,6 +711,7 @@ loadRoute: async function(route: string): Promise<void> {
     localStorage.removeItem('token');
     localStorage.removeItem('email');
     localStorage.removeItem('username');
+    localStorage.removeItem('2fa_enabled');
 
 
     this.navigateTo('/login');
@@ -764,21 +742,20 @@ loadRoute: async function(route: string): Promise<void> {
     localStorage.removeItem('token');
     localStorage.removeItem('email');
     localStorage.removeItem('username');
+    localStorage.removeItem('2fa_enabled');
 
 
-    // Disable Google authentication
+
     if (typeof window.google !== 'undefined' && window.google.accounts) {
       console.log('Google accounts found, disabling auto-select');
       window.google.accounts.id.disableAutoSelect();
     }
 
-    // Hide user section
     const userSection = document.getElementById('user-section');
     if (userSection) {
         userSection.style.display = 'none';
     }
 
-    // Show login sections
     const signinSection = document.getElementById('signin-section');
     const loginWithAccountSection = document.getElementById('loginWithAccountSection');
 
@@ -791,7 +768,6 @@ loadRoute: async function(route: string): Promise<void> {
 
     console.log('User logged out successfully');
 
-    // Update navbar visibility
     this.handleLayout(window.location.pathname);
   },
 
@@ -807,18 +783,13 @@ document.addEventListener('DOMContentLoaded', function(): void {
   if (window.i18n) {
     window.i18n.initializePageTranslations();
 
-    // Met à jour le bouton après l'init des traductions
     setTimeout(() => {
       SPA.updateNavLoginBtn(window.location.pathname);
     }, 0);
 
-    // Listen for language changes to update content
     window.addEventListener('languageChanged', function(event: CustomEvent) {
       console.log('Language changed to:', event.detail.language);
-      // Update document language attribute
       document.documentElement.lang = event.detail.language;
-      
-      // Mettre à jour le titre de la page si nécessaire
       const currentRoute = window.location.pathname;
       if (currentRoute in SPA.routes) {
         const routeTitle = SPA.routes[currentRoute].title;
@@ -830,7 +801,6 @@ document.addEventListener('DOMContentLoaded', function(): void {
       SPA.updateNavLoginBtn(window.location.pathname);
     } as EventListener);
 
-    // Écoute l'événement custom qui doit être dispatché par i18n quand les traductions sont prêtes
     window.addEventListener('translationsReady', function() {
       SPA.updateNavLoginBtn(window.location.pathname);
     });
@@ -841,7 +811,7 @@ export { SPA };
 
 declare global {
   interface Window {
-    SPA?: typeof SPA;
+    SPA?: any;
     handleGoogleAuth: (response: any) => void;
     displayUserInfo: (userData: any) => void;
     login: () => void;
