@@ -9,6 +9,6 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["google.accounts"]
   },
-  "include": ["src/**/*", "js/**/*", "ts", "main.ts"],
+  "include": ["src/**/*", "js/**/*", "ts", "main.ts", "../password.ts"],
   "exclude": ["node_modules", "dist"]
 }

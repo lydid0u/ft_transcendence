@@ -28,7 +28,7 @@ const fastify = Fastify();
 dotenv.config();
 
 fastify.register(fastifyJwt, {
-  secret: process.env.SECRET_KEY_JWT
+  secret: process.env.SECRET_KEY_JWT,
 });
 
 const transporter = nodemailer.createTransport({
@@ -53,7 +53,7 @@ fastify.register(cors, {
 
 fastify.decorate('prevalidate', async function(request, reply) {
   try {
-    console.log("Verifying JWT token...");
+    console.log("Verifying JWT token JSPR CA MARCHE ICI ...");
     await request.jwtVerify()
   } catch (err) {
     reply.code(401).send({ error: 'Unauthorized', message: 'Invalid or missing token' })

@@ -495,6 +495,7 @@ const SPA = {
         setTimeout(() => {
           displayUserProfile();
           changeUsername();
+          changePassword();
           changeAvatar();
           activate2fa();
           updateLanguage();

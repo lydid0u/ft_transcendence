@@ -1,5 +1,3 @@
-import fastify from 'fastify';
-import fs from 'fs'
 import fp from 'fastify-plugin'
 
 
@@ -10,7 +8,6 @@ async function tableMatches(fastify, options)
         async findMatchesFromUser(userId)
         {
             try {
-                // Récupérez les matchs filtrés par game_mode
                 const matches = await fastify.db.connection.all(
                     'SELECT * FROM matches WHERE (player1_id = ? OR player2_id = ?)', 
                     userId, userId

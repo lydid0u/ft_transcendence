@@ -4,7 +4,6 @@ async function tournamentLaunchRoute(fastify, options)
 {
     fastify.get('/tournament/get-match', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
-        // const { tournamentId } = request.body;
         const userId = request.user.id;
         try {
             const tournament = await fastify.dbTournament.getTournamentByCreatorId(userId);
@@ -18,19 +17,22 @@ async function tournamentLaunchRoute(fastify, options)
             }
             return reply.send({ match });
         } catch (error) {
-            return reply.status(450).send({ error: 'Bad Request' });
+            console.error('Error in /tournament/get-match:', error);
+            return reply.status(400).send({ error: 'Bad Request' });
         }
     });
 
     fastify.post('/tournament/send-match-results', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
-        console.log('xzxz')
-        // const {player1_name: name_player1, player2_name: name_player2, player1_score: score_player1, player2_score: score_player2 } = request.body;
         const match = request.body;
         const userId = request.user.id;
         // const aa = match.player1_name
         // console.log('aaaaaaaaaa', aa)
         try {
+            const checkparticipants = await fastify.dbMatchData.checkParticipantsInMatch(match, userId);
+            if (!checkparticipants) {
+                return reply.status(404).send({ error: 'One or both players not found in tournament' });
+            }
             const user_one = await fastify.utilsDb.getUserByUsername(match.player1_name);
             const user_two = await fastify.utilsDb.getUserByUsername(match.player2_name);
             if(!user_one && !user_two)
@@ -40,7 +42,7 @@ async function tournamentLaunchRoute(fastify, options)
             await fastify.dbMatchData.createMatch(match, user_one, user_two);
             return reply.send({ message: 'Match results sent successfully' });
         } catch (error) {
-            console.error("Error sending match results:", error.message);
+            console.error("Error in /tournament/send-match-results:", error);
             return reply.status(400).send({ error: 'Bad Request' });
         }
     });
@@ -56,7 +58,8 @@ async function tournamentLaunchRoute(fastify, options)
                 return reply.status(404).send({ error: 'No losers found to delete' });
             }
         } catch (error) {
-            return reply.status(450).send({ error: 'Bad Request' });
+            console.error("Error in /tournament/delete-losers:", error);
+            return reply.status(400).send({ error: 'Bad Request' });
         }
     });
 
@@ -72,9 +75,10 @@ async function tournamentLaunchRoute(fastify, options)
                 return reply.status(200).send({ message: 'No winner found for this tournament' });
             }
         } catch (error) {
-            return reply.status(450).send({ error: 'Bad Request' });
+            console.error("Error in /tournament/find-winner:", error);
+            return reply.status(400).send({ error: 'Bad Request' });
         }
     });
 }
 
-export default fp(tournamentLaunchRoute)
+export default fp(tournamentLaunchRoute);

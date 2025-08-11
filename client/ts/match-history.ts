@@ -386,57 +386,62 @@ class MatchHistoryApp {
 
   // Affichage de l'historique des matchs
   private renderMatchHistory(): void {
-    if (!this.matchStats || !this.matchesList) return;
-    
-    const matches = this.matchStats.matchHistory;
-    
-    if (matches.length === 0) {
-      if (this.matchesList) this.matchesList.innerHTML = "";
-      if (this.emptyState) this.emptyState.style.display = 'block';
-      return;
-    }
-    
-    // Masquer l'état vide
-    if (this.emptyState) this.emptyState.style.display = 'none';
-    
-    // Limiter à 10 matchs
-    const recentMatches = matches.slice(0, 10);
-    
-    // Générer le HTML
-    this.matchesList.innerHTML = recentMatches.map(match => {
-      console.log("HERE JE CHECHE CA : ", match);
-      // Déterminer si le joueur a gagné
-      let isWin = null;
-      if(match.winner_id)
-      {
-        isWin = match.winner_id;
-      }
-      console.log("Match winner ID:", match.winner_id, "Player 1 ID:", match.player1_id, "Is win:", isWin);
-      const rowClass = isWin ? 'bg-blue-50' : 'bg-red-50';
-      const resultClass = isWin ? 'text-blue-600' : 'text-red-600';
-      // Use i18n translations if available
-      const resultText = isWin 
-        ? (window.i18n ? window.i18n.translate('matchHistory.victory') : 'Victory') 
-        : (window.i18n ? window.i18n.translate('matchHistory.defeat') : 'Defeat');
-      
-      // Formater le mode de jeu pour l'affichage (première lettre majuscule)
-      const gameMode = match.game_mode || this.currentGameType;
-      const formattedGameMode = gameMode.charAt(0).toUpperCase() + gameMode.slice(1);
-      
-      return `
-        <tr class="${rowClass}">
-          <td class="px-4 py-3 text-sm">${match.played_at}</td>
-          <td class="px-4 py-3 text-sm font-medium">${formattedGameMode}</td>
-          <td class="px-4 py-3 text-sm">${match.score_player1} - ${match.score_player2}</td>
-          <td class="px-4 py-3">
-            <span class="px-2 py-1 rounded-full ${resultClass} text-sm font-medium">
-              ${resultText}
-            </span>
-          </td>
-        </tr>
-      `;
-    }).join('');
+  if (!this.matchStats || !this.matchesList) return;
+  
+  const matches = this.matchStats.matchHistory;
+  
+  if (matches.length === 0) {
+    if (this.matchesList) this.matchesList.innerHTML = "";
+    if (this.emptyState) this.emptyState.style.display = 'block';
+    return;
   }
+  
+  // Masquer l'état vide
+  if (this.emptyState) this.emptyState.style.display = 'none';
+  
+  // Trier les matchs par date (du plus récent au plus ancien)
+  const sortedMatches = [...matches].sort((a, b) => {
+    return new Date(b.played_at).getTime() - new Date(a.played_at).getTime();
+  });
+  
+  // Limiter à 10 matchs après le tri
+  const recentMatches = sortedMatches.slice(0, 10);
+  
+  // Récupérer l'ID de l'utilisateur actuel
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const currentUserId = currentUser.id;
+  
+  // Générer le HTML
+  this.matchesList.innerHTML = recentMatches.map(match => {
+    // Déterminer si le joueur a gagné (comparer winner_id avec l'ID du joueur actuel)
+    const isWin = match.winner_id === currentUserId;
+    
+    const rowClass = isWin ? 'bg-blue-50' : 'bg-red-50';
+    const resultClass = isWin ? 'text-blue-600' : 'text-red-600';
+    
+    // Use i18n translations if available
+    const resultText = isWin 
+      ? (window.i18n ? window.i18n.translate('matchHistory.victory') : 'Victory') 
+      : (window.i18n ? window.i18n.translate('matchHistory.defeat') : 'Defeat');
+    
+    // Formater le mode de jeu pour l'affichage (première lettre majuscule)
+    const gameMode = match.game_mode || this.currentGameType;
+    const formattedGameMode = gameMode.charAt(0).toUpperCase() + gameMode.slice(1);
+    
+    return `
+      <tr class="${rowClass}">
+        <td class="px-4 py-3 text-sm">${match.played_at}</td>
+        <td class="px-4 py-3 text-sm font-medium">${formattedGameMode}</td>
+        <td class="px-4 py-3 text-sm">${match.score_player1} - ${match.score_player2}</td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-1 rounded-full ${resultClass} text-sm font-medium">
+            ${resultText}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
 
   // Chargement des données Snake
   private async loadSnakeData(): Promise<void> {

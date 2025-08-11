@@ -246,7 +246,9 @@ export class Game
 
 		const canvas = document.getElementById('game-canvas');
 		if (canvas) canvas.style.display = 'none';
-	}	public static startNewGame(difficulty: Difficulty = Difficulty.EASY) {
+	}
+	
+	public static startNewGame(difficulty: Difficulty = Difficulty.EASY) {
 		if (Game.currentInstance) {
 			Game.currentInstance.destroy();
 		}

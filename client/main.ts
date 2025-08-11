@@ -8,7 +8,7 @@ declare global {
 
 window.i18n = i18n;
 
-import './ts/password';
+// import '../password';
 import './ts/profile';
 import './ts/friends';
 import './ts/loginOrRegister';

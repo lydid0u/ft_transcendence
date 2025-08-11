@@ -32,7 +32,6 @@ export function setupResetEmailForm() {
           body: JSON.stringify({ email })
         });
         const data: APIresetResponse = await res.json();
-        console.log('JE SUIS DATA RESPONSE :', data); // <-- utilisation de l'interface ici
         if (data.success) {
             if (window.SPA && typeof window.SPA.navigateTo === 'function') {
                 console.log('Redirection vers la page OTP');
@@ -41,7 +40,7 @@ export function setupResetEmailForm() {
             } 
             else 
             {
-                window.location.href = 'otp.html';
+                window.location.href = 'otp-password.html';
             }
         }
       } catch (err) {

@@ -4,15 +4,25 @@ async function friendsRoute(fastify, options)
 {
     fastify.get('/get-all-friends', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        const table = await fastify.dbFriends.showTableFriends(request.user.id);
-        return table;
+        try {
+            const table = await fastify.dbFriends.showTableFriends(request.user.id);
+            return table;
+        } catch (error) {
+            console.error('Error fetching friends:', error);
+            reply.status(500).send({ error: 'Failed to fetch friends' });
+        }
     }),
 
     fastify.patch('/friends', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        const {friend_delete} = request.body
-        fastify.dbFriends.deletefriend(request, friend_delete);
-        reply.send({ status: 'success' });
+        try {
+            const { friend_delete } = request.body;
+            await fastify.dbFriends.deletefriend(request, friend_delete);
+            reply.send({ status: 'success' });
+        } catch (error) {
+            console.error('Error deleting friend:', error);
+            reply.status(400).send({ error: 'Failed to delete friend' });
+        }
     }),
 
     fastify.post('/friends-add', {preValidation : [fastify.prevalidate]}, async (request, reply) =>

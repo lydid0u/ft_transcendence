@@ -61,7 +61,7 @@ async function dbFunction(fastify, options)
             catch(error)
             {
                 console.error('Error registering user:', error);
-                throw new Error('Failed to register user');
+                throw new Error(error.message);
             }
         },
 

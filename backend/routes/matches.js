@@ -44,17 +44,13 @@ async function matchesRoutes(fastify, options)
     }
 })
 
-    fastify.get('/match-history', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
-    {
-        const gameMode = request.query.game_mode || request.query.gameType || 'pong';
-        
-        // Filtrer les matchs par game_mode
-        const match = await fastify.db.connection.all(
-            'SELECT * FROM matches WHERE (player1_id = ? OR player2_id = ?)', 
-            request.user.id, request.user.id
-        );
-        
-        return match;
+    fastify.get('/match-history', {preValidation: [fastify.prevalidate]}, async (request, reply) => {
+    
+        const matches = await fastify.db.connection.all(
+                'SELECT * FROM matches WHERE (player1_id = ? OR player2_id = ?)', 
+                request.user.id, request.user.id);
+        console.log("Matchs récupérés:", matches);
+        return matches;
     })
 
     fastify.get('/history-details', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
