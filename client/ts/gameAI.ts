@@ -164,12 +164,35 @@ export class Game
 		requestAnimationFrame(() => this.gameLoop());
 	}
 	
+	private static async GetCurrentUsername(): Promise <string | null> {
+		try 
+		{
+			const response = await fetch('http://localhost:3000/user', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+				}
+			});
+			if (!response.ok) 
+				throw new Error(`HTTP error! status: ${response.status}`);
+			const data = await response.json();
+			return (data.user.username || null);
+		} catch (error) {
+			console.error('Error fetching current username:', error);
+			return null;
+		}
+	}
+
 	async postFinalGameResults() {
 		// Récupérer le pseudo du joueur depuis l'élément HTML
-		let playerName = "Joueur";
-		const playerNameElement = document.getElementById("player-name");
-		if (playerNameElement && playerNameElement.textContent) {
-			playerName = playerNameElement.textContent;
+		let playerName: string = await Game.GetCurrentUsername() || "Vous";
+		const player1NameElement = document.getElementById("player1-name");
+		if (playerName == null || playerName === "Vous")
+		{
+			if (player1NameElement && player1NameElement.textContent) {
+				playerName = player1NameElement.textContent;
+			}
 		}
 		
 		const gameResults = {
@@ -203,7 +226,7 @@ export class Game
 			console.error('Erreur lors de l\'enregistrement des résultats:', error);
 		}
 	}
-	showEndScreen() {
+	async showEndScreen() {
 		const container = document.querySelector('.page-content');
 		if (!container) return;
 
@@ -212,10 +235,14 @@ export class Game
 		if (oldEnd) oldEnd.remove();
 
 		// Récupérer le pseudo du joueur depuis l'élément HTML
-		let playerName = "Joueur";
-		const playerNameElement = document.getElementById("player-name");
-		if (playerNameElement && playerNameElement.textContent) {
-			playerName = playerNameElement.textContent;
+		let playerName: string = await Game.GetCurrentUsername() || "Vous";
+		console.log("Player 1 Name is " + playerName); 
+		const player1NameElement = document.getElementById("player1-name");
+		if (playerName == null || playerName === "Vous")
+		{
+			if (player1NameElement && player1NameElement.textContent) {
+				playerName = player1NameElement.textContent;
+			}
 		}
 
 		const winner = Game.playerScore > Game.computerScore ? playerName : "IA";
