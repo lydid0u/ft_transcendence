@@ -4,6 +4,7 @@ interface User {
   username?: string
   email?: string
   picture?: string
+  language?: string
 }
 
 interface UserResponse {
@@ -55,6 +56,16 @@ async function displayUserProfile(): Promise<void> {
       const userAvatar: HTMLImageElement | null = document.getElementById("user-avatar") as HTMLImageElement
       if (userAvatar && user?.picture) {
         userAvatar.src = user.picture
+      }
+
+      const userLanguage: HTMLElement | null = document.getElementById("user-language")
+      if (userLanguage && user?.language) {
+        userLanguage.textContent = user.language
+      }
+
+      const selectorLanguage: HTMLSelectElement | null = document.getElementById("language-select") as HTMLSelectElement
+      if (selectorLanguage && user?.language) {
+        selectorLanguage.value = user.language
       }
 
     } catch (error: unknown) {
@@ -162,6 +173,64 @@ async function changeUsername(): Promise<void> {
           showMessage("message-username", "Erreur réseau 3. Veuillez réessayer.", "error")
         }
       })
+  }
+}
+
+async function updateLanguage(): Promise<void> {
+  if (await window.SPA.checkJwtValidity()) {
+    console.log("Updating language")
+    const form = document.getElementById("change-language-form") as HTMLFormElement | null
+    console.log("Form element:", form)
+    if (!form) return
+
+    form.addEventListener("submit", async (event: Event) => {
+      event.preventDefault()
+
+      const newLanguage: string = (document.getElementById("language-select") as HTMLSelectElement)?.value || ""
+      console.log("Selected language:", newLanguage)
+      alert("Selected language: " + newLanguage)
+      if (!newLanguage) {
+        showMessage("message-language", "La langue ne peut pas être vide.", "error")
+        return
+      }
+
+      try {
+        const response: Response = await fetch("http://localhost:3000/user/language", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          },
+          body: JSON.stringify({
+            newlanguage: newLanguage,
+            email: localStorage.getItem("email"),
+          }),
+        })
+
+        if (response.status === 400) {
+          showMessage("message-language", "Langue non supportée.", "error")
+          return
+        }
+
+        const data: ChangeUserResponse = await response.json()
+        console.log("Response data API in updateLanguage:", data)
+
+        if (data.newUser) {
+          console.log(`New language: ${JSON.stringify(data.newUser.language)}`)
+          localStorage.setItem("user", JSON.stringify(data.newUser))
+          const userGreeting = document.getElementById("user-greeting") as HTMLElement
+          if (userGreeting && data.newUser.language) userGreeting.textContent = `Salut ${data.newUser.language}`
+          showMessage("message-language", "Langue changée avec succès !", "success")
+          form.reset()
+        } else {
+          console.error("Aucun utilisateur trouvé dans la réponse de l'API.")
+          showMessage("message-language", "Erreur lors de la mise à jour de la langue.", "error")
+        }
+      } catch (error) {
+        console.error("Erreur lors du changement de langue:", error)
+        showMessage("message-language", "Erreur réseau 3. Veuillez réessayer.", "error")
+      }
+    })
   }
 }
 
@@ -322,15 +391,17 @@ document.addEventListener("DOMContentLoaded", () => {
   changeAvatar()
   activate2fa()
   changePassword()
+  updateLanguage()
 })
 
-export { displayUserProfile, changeUsername, changeAvatar, activate2fa }
+export { displayUserProfile, changeUsername, changeAvatar, activate2fa, updateLanguage }
 declare global {
   interface Window {
     displayUserProfile: typeof displayUserProfile
     changeUsername: typeof changeUsername
     changeAvatar: typeof changeAvatar
     activate2fa: typeof activate2fa
+    updateLanguage: typeof updateLanguage
   }
 }
 
@@ -339,3 +410,4 @@ window.displayUserProfile = displayUserProfile
 window.changeUsername = changeUsername
 window.changeAvatar = changeAvatar
 window.activate2fa = activate2fa
+window.updateLanguage = updateLanguage

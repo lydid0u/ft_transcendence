@@ -1,4 +1,4 @@
-import { activate2fa } from "./profile";
+import { activate2fa, updateLanguage } from "./profile";
 /// <reference types="vite/client" />
 
 
@@ -497,6 +497,7 @@ const SPA = {
           changeUsername();
           changeAvatar();
           activate2fa();
+          updateLanguage();
         }, 50);
       }
     }, 

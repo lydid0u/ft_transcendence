@@ -116,6 +116,11 @@ async function dbFunctionPatch(fastify, options)
             await fastify.db.connection.run('UPDATE users SET status = ? WHERE email = ?', isOnline, email);
             console.log("changeOnlineStatus called for user:", email, "isOnline:", isOnline);
             return { success: true, message: "Online status updated successfully" };
+        },
+
+        async changeLanguage(newlanguage, email) 
+        {
+            await fastify.db.connection.run ('UPDATE users SET language = ? WHERE email = ?', newlanguage, email)
         }
 
     }

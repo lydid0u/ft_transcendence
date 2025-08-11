@@ -20,7 +20,7 @@ async function dbFunction(fastify, options)
         {
             try
             {
-                await db.run('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, email TEXT UNIQUE, password TEXT, username TEXT UNIQUE, google_id TEXT UNIQUE, is_2fa_activated BOOLEAN, status BOOLEAN, picture TEXT)');
+                await db.run(`CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, email TEXT UNIQUE, password TEXT, username TEXT UNIQUE, google_id TEXT UNIQUE, is_2fa_activated BOOLEAN, status BOOLEAN, picture TEXT, language TEXT DEFAULT 'fr')`);
             } catch (error) {
                 console.error('Error creating table:', error);
             }
