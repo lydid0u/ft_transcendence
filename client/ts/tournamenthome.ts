@@ -426,16 +426,14 @@ private async handlePlayerLogin(): Promise<void> {
   }
 }
 
-// Fonction d'initialisation pour la page tournamenthome
 function initTournamentHome(): void {
   new TournamentHomeApp();
 }
 
-// Rendre la fonction accessible globalement
 declare global {
   interface Window {
     initTournamentHome: () => void;
-    SPA: any;
+    SPA?: any;
   }
 }
 

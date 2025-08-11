@@ -785,7 +785,7 @@ export { SPA };
 
 declare global {
   interface Window {
-    SPA: typeof SPA;
+    SPA?: typeof SPA;
     handleGoogleAuth: (response: any) => void;
     displayUserInfo: (userData: any) => void;
     login: () => void;

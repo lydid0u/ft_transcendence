@@ -646,7 +646,7 @@ window.startTournamentFlow = startTournamentFlow;
 declare global {
     interface Window {
         startTournamentFlow: typeof startTournamentFlow;
-        SPA: any;
+        SPA?: any;
     }
 }
 

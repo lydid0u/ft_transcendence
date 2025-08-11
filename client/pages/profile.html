@@ -26,28 +26,28 @@
     <!-- Two-Factor Authentication -->
     <div class="bg-white rounded-xl shadow-md p-6">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold text-gray-800">Two-Factor Authentication</h2>
+        <h2 class="text-xl font-semibold text-gray-800" data-i18n="profile.two_factor">Two-Factor Authentication</h2>
         <label for="2fa-checkbox" class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" id="2fa-checkbox" class="sr-only peer">
           <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-light rounded-full peer peer-checked:bg-purple-dark transition-all duration-300 ease-in-out"></div>
           <div class="absolute left-1 top-1 bg-white w-5 h-5 rounded-full shadow-md transition-transform duration-300 ease-in-out peer-checked:translate-x-7"></div>
         </label>
       </div>
-      <p class="text-gray-600 text-sm">Add an extra layer of security to your account with two-factor authentication.</p>
+      <p class="text-gray-600 text-sm" data-i18n="profile.2fa_description">Add an extra layer of security to your account with two-factor authentication.</p>
       <div id="message-2fa" class="mt-4 text-sm text-green-600 p-3 bg-green-50 rounded-lg border-l-4 border-green-400 hidden">
         <div class="flex items-center">
           <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
           </svg>
-          2FA settings updated
+          <span data-i18n="profile.2fa_updated">2FA settings updated</span>
         </div>
       </div>
     </div>
     
     <!-- Change Username -->
     <div class="bg-white rounded-xl shadow-md p-6">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Change Username</h2>
-      <p class="text-gray-600 text-sm mb-4">Update your username that's visible to other users.</p>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4" data-i18n="profile.change_username">Change Username</h2>
+      <p class="text-gray-600 text-sm mb-4" data-i18n="profile.update_username">Update your username that's visible to other users.</p>
       
       <form id="change-username-form" class="space-y-4">
         <div class="relative">
@@ -56,12 +56,14 @@
             id="new-username"
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-dark focus:border-transparent transition-all duration-200 placeholder-gray-400 text-gray-800"
             placeholder="New username"
+            data-i18n-placeholder="profile.username_placeholder"
             required
           />
         </div>
         <button 
           type="submit"
           class="w-full sm:w-auto px-6 py-3 bg-pink-400 hover:bg-pink-300 text-white text-lg font-semibold  focus:outline-none focus:ring-2 focus:ring-pink-800 focus:ring-offset-2 rounded-xl hover:opacity-90 transform hover:scale-[1.02] transition-all duration-200 shadow-md"
+          data-i18n="profile.update_btn"
         >
           Update Username
         </button>
@@ -72,8 +74,8 @@
     
     <!-- Language Selection -->
     <div class="bg-white rounded-xl shadow-md p-6">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Language Preference</h2>
-      <p class="text-gray-600 text-sm mb-4">Select your preferred language for the application.</p>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4" data-i18n="profile.language_preference">Language Preference</h2>
+      <p class="text-gray-600 text-sm mb-4" data-i18n="profile.select_language">Select your preferred language for the application.</p>
       
       <form id="change-language-form" class="space-y-4">
         <div class="relative">
@@ -94,6 +96,7 @@
         <button 
           type="submit"
           class="w-full sm:w-auto px-6 py-3 bg-pink-400 hover:bg-pink-300 text-white text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-pink-800 focus:ring-offset-2 rounded-xl hover:opacity-90 transform hover:scale-[1.02] transition-all duration-200 shadow-md"
+          data-i18n="profile.update_language"
         >
           Update Language
         </button>
@@ -103,8 +106,8 @@
     </div>
     <!-- Change Profile Picture -->
     <div class="bg-white rounded-xl shadow-md p-6">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Change Profile Picture</h2>
-      <p class="text-gray-600 text-sm mb-4">Upload a new profile picture (JPG, PNG, GIF formats accepted).</p>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4" data-i18n="profile.change_picture">Change Profile Picture</h2>
+      <p class="text-gray-600 text-sm mb-4" data-i18n="profile.picture_description">Upload a new profile picture (JPG, PNG, GIF formats accepted).</p>
       
       <form id="change-avatar-form" enctype="multipart/form-data" method="post" class="space-y-4">
         <div class="relative">
@@ -119,6 +122,7 @@
         <button 
           type="submit"
           class="w-full sm:w-auto px-6 py-3 bg-pink-400 hover:bg-pink-300 text-white text-lg font-semibold  focus:outline-none focus:ring-2 focus:ring-pink-800 focus:ring-offset-2 rounded-xl hover:opacity-90 transform hover:scale-[1.02] transition-all duration-200 shadow-md"
+          data-i18n="profile.upload"
         >
           Upload Picture
         </button>
@@ -129,12 +133,12 @@
     
     <!-- Change Password -->
     <div class="bg-white rounded-xl shadow-md p-6">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Change Password</h2>
-      <p class="text-gray-600 text-sm mb-4">Make sure to use a strong, unique password for your account.</p>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4" data-i18n="profile.change_password">Change Password</h2>
+      <p class="text-gray-600 text-sm mb-4" data-i18n="profile.strong_password">Make sure to use a strong, unique password for your account.</p>
       
       <form class="space-y-4" id="change-password-form">
         <div class="space-y-2">
-          <label for="actualPassword" class="block text-sm font-medium text-gray-700">
+          <label for="actualPassword" class="block text-sm font-medium text-gray-700" data-i18n="profile.current_password">
             Current Password
           </label>
           <input
@@ -142,12 +146,13 @@
             id="actualPassword"
             name="actualPassword"
             placeholder="Enter your current password"
+            data-i18n-placeholder="profile.current_password_placeholder"
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-dark focus:border-transparent transition-all duration-200 placeholder-gray-400 text-gray-800"
           />
         </div>
         
         <div class="space-y-2">
-          <label for="newPassword" class="block text-sm font-medium text-gray-700">
+          <label for="newPassword" class="block text-sm font-medium text-gray-700" data-i18n="profile.new_password">
             New Password
           </label>
           <input
@@ -155,12 +160,13 @@
             id="newPassword"
             name="newPassword"
             placeholder="Enter your new password"
+            data-i18n-placeholder="profile.new_password_placeholder"
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-dark focus:border-transparent transition-all duration-200 placeholder-gray-400 text-gray-800"
           />
         </div>
         
         <div class="space-y-2">
-          <label for="confirmNewPassword" class="block text-sm font-medium text-gray-700">
+          <label for="confirmNewPassword" class="block text-sm font-medium text-gray-700" data-i18n="profile.confirm_password">
             Confirm New Password
           </label>
           <input
@@ -168,6 +174,7 @@
             id="confirmNewPassword"
             name="confirmNewPassword"
             placeholder="Confirm your new password"
+            data-i18n-placeholder="profile.confirm_password_placeholder"
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-dark focus:border-transparent transition-all duration-200 placeholder-gray-400 text-gray-800"
           />
         </div>
@@ -176,6 +183,7 @@
           type="submit"
           id="change-password-submit"
           class="w-full py-3 px-6 bg-pink-400 hover:bg-pink-300 text-white text-lg font-semibold  focus:outline-none focus:ring-2 focus:ring-pink-800 focus:ring-offset-2 rounded-xl hover:opacity-90 transform hover:scale-[1.02] transition-all duration-200 shadow-md"
+          data-i18n="profile.update_password"
         >
           Update Password
         </button>

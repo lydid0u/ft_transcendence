@@ -111,17 +111,17 @@ export class Game
 	{
 		// Draw glowing court outline
 		const gradient = this.gameContext.createLinearGradient(0, 0, this.gameCanvas.width, this.gameCanvas.height);
-		gradient.addColorStop(0, "#00f0ff");
-		gradient.addColorStop(1, "#0a1a2f");
+		gradient.addColorStop(0, "pink");
+		gradient.addColorStop(1, "pink");
 		this.gameContext.strokeStyle = gradient;
 		this.gameContext.lineWidth = 6;
-		this.gameContext.shadowColor = "#00f0ff";
+		this.gameContext.shadowColor = "#F2BDCD";
 		this.gameContext.shadowBlur = 16;
 		this.gameContext.strokeRect(8,8,this.gameCanvas.width - 15,this.gameCanvas.height - 15);
 
 		// Draw center dashed line with glow
 		this.gameContext.shadowBlur = 8;
-		this.gameContext.fillStyle = "#00f0ff";
+		this.gameContext.fillStyle = "#F2BDCD";
 		for (let i = 0; i + 30 < this.gameCanvas.height; i += 31) {
 			this.gameContext.fillRect(this.gameCanvas.width / 2 - 4, i + 10, 8, 20);
 		}
@@ -135,7 +135,7 @@ export class Game
 	}
 	draw()
 	{
-		this.gameContext.fillStyle = "#083";
+		this.gameContext.fillStyle = "#DAB1DA";
 		this.gameContext.fillRect(0,0,this.gameCanvas.width,this.gameCanvas.height);
 		this.drawBoardDetails();
 		this.player1.draw(this.gameContext);
@@ -403,7 +403,7 @@ class Paddle extends Entity
 	draw(context: CanvasRenderingContext2D): void
 	{
 		context.save();
-		context.shadowColor = "#00f0ff";
+		context.shadowColor = "#F2BDCD";
 		context.shadowBlur = 12;
 		context.fillStyle = "#e6fdff";
 		context.fillRect(this.x,this.y,this.width,this.height);
@@ -486,9 +486,9 @@ class ComputerPaddle extends Entity
 	draw(context: CanvasRenderingContext2D): void
 	{
 		context.save();
-		context.shadowColor = "#00f0ff";
+		context.shadowColor = "#F2BDCD";
 		context.shadowBlur = 12;
-		context.fillStyle = "#00f0ff";
+		context.fillStyle = "white";
 		context.fillRect(this.x,this.y,this.width,this.height);
 		context.restore();
 	}

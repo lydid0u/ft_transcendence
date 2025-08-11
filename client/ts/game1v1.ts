@@ -129,17 +129,17 @@ export class Game1v1
 	{
 		// Draw glowing court outline
 		const gradient = this.gameContext.createLinearGradient(0, 0, this.gameCanvas.width, this.gameCanvas.height);
-		gradient.addColorStop(0, "#00f0ff");
-		gradient.addColorStop(1, "#0a1a2f");
+		gradient.addColorStop(0, "pink");
+		gradient.addColorStop(1, "pink");
 		this.gameContext.strokeStyle = gradient;
 		this.gameContext.lineWidth = 6;
-		this.gameContext.shadowColor = "#00f0ff";
+		this.gameContext.shadowColor = "#F2BDCD";
 		this.gameContext.shadowBlur = 16;
 		this.gameContext.strokeRect(8,8,this.gameCanvas.width - 15,this.gameCanvas.height - 15);
 
 		// Draw center dashed line with glow
 		this.gameContext.shadowBlur = 8;
-		this.gameContext.fillStyle = "#00f0ff";
+		this.gameContext.fillStyle = "white";
 		for (let i = 0; i + 30 < this.gameCanvas.height; i += 31) {
 			this.gameContext.fillRect(this.gameCanvas.width / 2 - 4, i + 10, 8, 20);
 		}
@@ -153,7 +153,7 @@ export class Game1v1
 	}
 	draw()
 	{
-		this.gameContext.fillStyle = "#083";
+		this.gameContext.fillStyle = "#DAB1DA";
 		this.gameContext.fillRect(0,0,this.gameCanvas.width,this.gameCanvas.height);
 		this.drawBoardDetails();
 		this.player1.draw(this.gameContext);
@@ -253,16 +253,16 @@ export class Game1v1
 		endDiv.className = 'flex flex-col items-center mt-6';
 
 		const msg = document.createElement('div');
-		msg.className = 'text-3xl font-bold text-[#00f0ff] mb-4';
+		msg.className = 'text-3xl font-bold text-pink-400 mb-4';
 		msg.textContent = `${winner} wins!`;
 
 		const restartBtn = document.createElement('button');
-		restartBtn.className = 'px-6 py-2 bg-[#00f0ff] text-[#050507] font-bold rounded-lg shadow hover:bg-[#85e7ff] transition mb-2';
+		restartBtn.className = 'px-6 py-2 bg-pink-400 text-white font-bold rounded-lg shadow hover:bg-[#85e7ff] transition mb-2';
 		restartBtn.textContent = 'Restart';
 		restartBtn.onclick = () => Game1v1.startNewGame(this.difficulty);
 
 		const homeBtn = document.createElement('button');
-		homeBtn.className = 'px-6 py-2 bg-[#00f0ff] text-[#050507] font-bold rounded-lg shadow hover:bg-[#85e7ff] transition';
+		homeBtn.className = 'px-6 py-2 bg-pink-400 text-white font-bold rounded-lg shadow hover:bg-[#85e7ff] transition';
 		homeBtn.textContent = 'Home';
 		homeBtn.onclick = () => SPA.navigateTo('/home');
 
@@ -373,9 +373,9 @@ class Paddle extends Entity
 	draw(context: CanvasRenderingContext2D): void
 	{
 		context.save();
-		context.shadowColor = "#00f0ff";
+		context.shadowColor = "#F2BDCD";
 		context.shadowBlur = 12;
-		context.fillStyle = this.playerNumber === 1 ? "#e6fdff" : "#00f0ff";
+		context.fillStyle = this.playerNumber === 1 ? "white" : "white";
 		context.fillRect(this.x,this.y,this.width,this.height);
 		context.restore();
 	}

@@ -205,7 +205,6 @@ async function changeUsername(): Promise<void> {
 
 async function updateLanguage(): Promise<void> {
   if (await window.SPA.checkJwtValidity()) {
-    console.log("Updating language")
     const form = document.getElementById("change-language-form") as HTMLFormElement | null
     console.log("Form element:", form)
     if (!form) return
@@ -215,7 +214,6 @@ async function updateLanguage(): Promise<void> {
 
       const newLanguage: string = (document.getElementById("language-select") as HTMLSelectElement)?.value || ""
       console.log("Selected language:", newLanguage)
-      alert("Selected language: " + newLanguage)
       if (!newLanguage) {
         showMessage("message-language", "La langue ne peut pas être vide.", "error")
         return
@@ -246,7 +244,7 @@ async function updateLanguage(): Promise<void> {
           console.log(`New language: ${JSON.stringify(data.newUser.language)}`)
           localStorage.setItem("user", JSON.stringify(data.newUser))
           const userGreeting = document.getElementById("user-greeting") as HTMLElement
-          if (userGreeting && data.newUser.language) userGreeting.textContent = `Salut ${data.newUser.user}`
+          if (userGreeting && data.newUser.language) userGreeting.textContent = `Salut ${data.newUser.username}`
           showMessage("message-language", "Langue changée avec succès !", "success")
           form.reset()
         } else {
