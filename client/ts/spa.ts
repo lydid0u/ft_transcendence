@@ -12,7 +12,7 @@ interface SPAAttributes {
   defaultRoute: string;
   contentDiv: string;
   contentParent?: Node | null;
-  currentGameInstance?: Game | Game1v1 | SnakeGame | null;
+  currentGameInstance?: Game | Game1v1 | Game1v1v1v1 | SnakeGame | null;
 
 }
 
@@ -31,7 +31,9 @@ interface GoogleAccounts {
 
 import { Game } from './gameAI';
 import { Game1v1 } from './game1v1';
+import { Game1v1v1v1 } from './game1v1v1v1';
 import { SnakeGame } from './snake';
+
 
 declare global {
   interface Window {
@@ -452,6 +454,44 @@ const SPA = {
       }
     },
 
+	  '/1v1v1v1': {
+      title: 'game.pong_1v1v1v1',
+      content: 'pages/game1v1v1v1.html',
+      routeScript: function () {
+        function tryInitGame1v1v1v1() {
+          const canvas = document.getElementById('game-canvas');
+          const p1Score = document.getElementById('player1-score');
+          const p2Score = document.getElementById('player2-score');
+          const p3Score = document.getElementById('player3-score');
+          const p4Score = document.getElementById('player4-score');
+          
+          if (!canvas || !p1Score || !p2Score || !p3Score || !p4Score) {
+            setTimeout(tryInitGame1v1v1v1, 50);
+            return;
+          }
+          
+          // Make sure Game1v1v1v1 class is available
+          if (typeof Game1v1v1v1 === 'undefined') {
+            console.error('Game1v1v1v1 class not found');
+            return;
+          }
+          
+          try {
+            let difficulty = localStorage.getItem('Difficulty') || 'EASY';
+            let diffEnum = 1;
+            if (difficulty === 'MEDIUM') diffEnum = 2;
+            else if (difficulty === 'HARD') diffEnum = 3;
+            
+            Game1v1v1v1.startNewGame(diffEnum);
+            console.log('4-player game initialized successfully');
+          } catch (e) {
+            console.error('4-player game init failed:', e);
+          }
+        }
+    tryInitGame1v1v1v1();
+  }
+},
+
     '/ai-landing': {
       title: 'game.difficulty_choice',
       content: 'pages/pong-landing.html',
@@ -485,6 +525,22 @@ const SPA = {
             });
           });
         }, 0);
+      }
+    },
+
+    '/1v1v1v1-landing': {
+      title: 'game.difficulty_choice',
+      content: 'pages/1v1v1v1-landing.html', // Make sure this matches your file name
+      routeScript: function () {
+        setTimeout(() => {
+          document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const difficulty = (e.target as HTMLElement).getAttribute('data-difficulty');
+              localStorage.setItem('Difficulty', difficulty || 'EASY');
+              SPA.navigateTo('/1v1v1v1'); // This should navigate to the actual game
+            });
+          });
+        }, 100); // Give time for elements to load
       }
     },
 

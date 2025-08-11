@@ -20,3 +20,4 @@ import './ts/gameAI';
 import './ts/game1v1';
 import './ts/tournamenthome';
 import './ts/snake';
+import './ts/game1v1v1v1';
