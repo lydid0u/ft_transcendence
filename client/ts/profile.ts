@@ -287,7 +287,7 @@ async function changePassword(): Promise<void> {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/user/password", {
+      const response = await fetch("http://localhost:3000/auth/change-password", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -319,18 +319,20 @@ document.addEventListener("DOMContentLoaded", () => {
   changePassword()
 })
 
-export { displayUserProfile, changeUsername, changeAvatar, activate2fa }
+export { displayUserProfile, changeUsername, changePassword, changeAvatar, activate2fa }
 declare global {
   interface Window {
     displayUserProfile: typeof displayUserProfile
     changeUsername: typeof changeUsername
     changeAvatar: typeof changeAvatar
     activate2fa: typeof activate2fa
+    changePassword: typeof changePassword
   }
 }
 
 console.log("Registering profile functions to window object")
 window.displayUserProfile = displayUserProfile
 window.changeUsername = changeUsername
+window.changePassword = changePassword
 window.changeAvatar = changeAvatar
 window.activate2fa = activate2fa

@@ -11,15 +11,17 @@ async function changePassword(): Promise<void> {
   form.addEventListener("submit", async function (event: Event): Promise<void> {
     event.preventDefault();
 
+    const actualPassword: HTMLInputElement | null = document.getElementById("actualPassword") as HTMLInputElement;
     const newPasswordInput: HTMLInputElement | null = document.getElementById("newPassword") as HTMLInputElement;
     const confirmNewPasswordInput: HTMLInputElement | null = document.getElementById("confirmNewPassword") as HTMLInputElement;
 
-    if (!newPasswordInput || !confirmNewPasswordInput) {
+    if (!newPasswordInput || !confirmNewPasswordInput || !actualPassword) {
       messageDiv.textContent = "Éléments de formulaire manquants.";
       messageDiv.style.color = "red";
       return;
     }
 
+    const actualPasswordValue: string = actualPassword.value;
     const newPassword: string = newPasswordInput.value;
     const confirmNewPassword: string = confirmNewPasswordInput.value;
 
@@ -37,13 +39,14 @@ async function changePassword(): Promise<void> {
     }
 
     try {
+      console.log("HERE");
       const response: Response = await fetch("http://localhost:3000/auth/change-password", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ password: newPassword }),
+        body: JSON.stringify({ currpass : actualPasswordValue, newPassword }),
       });
 
       if (response.status === 400) {

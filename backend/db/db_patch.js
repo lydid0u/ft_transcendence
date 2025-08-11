@@ -16,12 +16,19 @@ async function dbFunctionPatch(fastify, options)
 
         async changePassword(email, currpass, newpassword)
         {            
+            console.log("HERE");
             let user = await fastify.db.connection.get('SELECT password FROM users WHERE email = ?', email);
             if (!user)
+            {
+                console.log("User not found");
                 throw new Error ("Email doesn't exist");
+            }
             const check = await bcrypt.compare(currpass, user.password);
             if (!check)
+            {
+                console.log("Wrong password");
                 throw new Error ("Wrong password");
+            }
             if (check)
             {
                 const newpass = await bcrypt.hash(newpassword, saltRounds);
@@ -31,8 +38,9 @@ async function dbFunctionPatch(fastify, options)
                 throw new Error ("Email doesn't exist");
         },
 
-        async changePassword(email, password)
-        {            
+        async resetPassword(email, password)
+        {    
+                    
             let user = await fastify.db.connection.get('SELECT password FROM users WHERE email = ?', email);
             if (user)
             {
@@ -87,10 +95,13 @@ async function dbFunctionPatch(fastify, options)
         },
 
         async addUsernameGoogle(google_id, username)
-        {
+        { 
             const user = await fastify.db.connection.get('SELECT * FROM users WHERE google_id = ?', google_id);
             if (!user)
                 throw new Error ("Google user doesn't exist");
+            const alreadyExists = await fastify.db.connection.get('SELECT * FROM users WHERE username = ?', username);
+            if (alreadyExists)
+                throw new Error ("username already exist");
             if (!user.username)
                 await fastify.db.connection.run('UPDATE users SET username = ? WHERE google_id = ?', username, google_id);
             const jwt = await fastify.auth.createJWTtoken(user);

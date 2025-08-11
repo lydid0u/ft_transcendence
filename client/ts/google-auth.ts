@@ -94,57 +94,74 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 }
 
 async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
-	setTimeout(() => {
-		const form = document.getElementById("google-username-form") as HTMLFormElement | null
-		const message = document.getElementById("message-username") as HTMLElement | null
-		if (!form || !message) return
+    setTimeout(() => {
+        const form = document.getElementById("google-username-form") as HTMLFormElement | null
+        const message = document.getElementById("message-username") as HTMLElement | null
+        if (!form || !message) return
 
-		console.log('1')
+        form.addEventListener("submit", async (event: Event) => {
+            event.preventDefault()
+            const username: string = (document.getElementById("new-username") as HTMLInputElement)?.value || ""
+            
+            if (!username && message) {
+                message.textContent = "Le nom d'utilisateur ne peut pas être vide."
+                message.style.color = "red"
+                return
+            }
 
-		form.addEventListener("submit", async (event: Event) => {
-			event.preventDefault()
-			const username: string = (document.getElementById("new-username") as HTMLInputElement)?.value || ""
-			
-			console.log('tjrs la' , username);
-			if (!username && message) {
-				message.textContent = "Le nom d'utilisateur ne peut pas être vide."
-				message.style.color = "red"
-				return
-			}
+            try {
+                const response = await fetch('http://localhost:3000/auth/google-username', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, userData })
+                });
 
-			try {
-				const response = await fetch('http://localhost:3000/auth/google-username', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ username, userData })
-				});
+                const result = await response.json();
+                console.log("Réponse du backend:", result);
 
-				if (!response.ok)
-					throw new Error(`Erreur HTTP: ${response.status}`);
+                if (!response.ok) {
+                    // Afficher le message d'erreur du serveur
+                    if (message) {
+						message.classList.remove('hidden'); // Si vous gardez la classe hidden
+						message.textContent = "Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre.";
+						message.style.color = "red";
+					}
+                    // Si le nom d'utilisateur est déjà pris
+                    if (response.status === 409 || result.message?.includes("already taken")) {
+                        if (message) {
+                            message.textContent = "Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre.";
+                            message.style.color = "red";
+                        }
+                        // Vider le champ du nom d'utilisateur pour que l'utilisateur puisse en saisir un autre
+                        const usernameInput = document.getElementById("new-username") as HTMLInputElement;
+                        if (usernameInput) {
+                            usernameInput.value = "";
+                            usernameInput.focus();
+                        }
+                    }
+                    throw new Error(result.message || `Erreur HTTP: ${response.status}`);
+                }
 
-				const result = await response.json();
-				console.log("Réponse du backend:", result);
-
-				if (result.success) 
-				{
-					localStorage.setItem('jwtToken', result.jwt);
-					await fetch('http://localhost:3000/user/connection-status', {
-						method: 'PATCH',
-						headers: {
-							'Content-Type': 'application/json',
-							Authorization: `Bearer ${result.jwt || ''}`,
-						},
-						body: JSON.stringify({ status: true }), // 1 = connecté et 0 = déconnecté
-					});
-					window.SPA.navigateTo('/home');
-				}
-			} catch (error) {
-				console.error("Erreur lors de l'envoi au backend:", error);
-			}
-		})
-	}, 100);
+                if (result.success) {
+                    localStorage.setItem('jwtToken', result.jwt);
+                    await fetch('http://localhost:3000/user/connection-status', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${result.jwt || ''}`,
+                        },
+                        body: JSON.stringify({ status: true }),
+                    });
+                    window.SPA.navigateTo('/home');
+                }
+            } catch (error) {
+                console.error("Erreur lors de l'envoi au backend:", error);
+                // Ne pas rediriger en cas d'erreur pour permettre à l'utilisateur de corriger
+            }
+        })
+    }, 100);
 }
 
 function handleGoogleAuth(response: GoogleAuthResponse): void {

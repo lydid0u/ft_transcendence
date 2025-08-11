@@ -13,7 +13,6 @@ async function userRoutes(fastify, options)
             const user = await fastify.utilsDb.getOneUser(request.user.email);
             if(user)
             {
-                console.log("user found", user);
                 reply.send({user})
             }
             else
