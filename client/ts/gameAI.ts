@@ -65,7 +65,7 @@ export class Game
 		const paddleWidth:number = 20, paddleHeight:number = 70, ballSize:number = 10, wallOffset:number = WALL_OFFSET;
 
 		this.player1 = new Paddle(paddleWidth,paddleHeight,wallOffset,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed);
-		this.computerPlayer = new ComputerPaddle(paddleWidth,paddleHeight,this.gameCanvas.width - (wallOffset + paddleWidth) ,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed);
+		this.computerPlayer = new ComputerPaddle(paddleWidth,paddleHeight,this.gameCanvas.width - (wallOffset + paddleWidth) ,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed, difficulty);
 		this.ball = new Ball(ballSize,ballSize,this.gameCanvas.width / 2 - ballSize / 2, this.gameCanvas.height / 2 - ballSize / 2, ballSpeed);
 	}
 	handleKeyDown(e:any)
@@ -219,7 +219,9 @@ export class Game
 				if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 				console.log('Résultats de la partie contre l\'IA enregistrés avec succès');
 			}
-		} catch (error) {
+		}
+		catch (error)
+		{
 			console.error('Erreur lors de l\'enregistrement des résultats:', error);
 		}
 	}
@@ -229,7 +231,6 @@ export class Game
 		const oldEnd = document.getElementById('end-screen');
 		if (oldEnd) oldEnd.remove();
 
-		// Récupérer le pseudo du joueur depuis l'élément HTML
 		let playerName: string = await Game.GetCurrentUsername() || "Vous";
 		console.log("Player 1 Name is " + playerName); 
 		const player1NameElement = document.getElementById("player1-name");
@@ -394,82 +395,226 @@ class Paddle extends Entity
 
 class ComputerPaddle extends Entity
 {
-	private reactionCount: number = 0;
-	private reactionTime: number =  2;
-	private parasiticMvmnt: number = 0;
-	private idleDirection: number = 1;
-	private idleTimer: number = 0;
-	constructor(w:number,h:number,x:number,y:number, speed:number)
+	private lastUpdateTime: number = 0;
+	private updateInterval: number = 1000;
+	private currentDecision: 'UP' | 'DOWN' | 'IDLE' = 'IDLE';
+	private predictedBallPosition: { x: number, y: number } = { x: 0, y: 0 };
+	private keySimulator: AIKeySimulator;
+	private ballTrajectoryPredictor: BallTrajectoryPredictor;
+	private movementDuration: number = 0;
+	private targetY: number = 0;
+	private difficulty: Difficulty;
+	private overshootChance: number = 1;
+				
+	constructor(w: number, h: number, x: number, y: number, speed: number, difficulty: Difficulty = Difficulty.EASY)
 	{
-		super(w,h,x,y, speed);
+		super(w, h, x, y, speed);
+		this.keySimulator = new AIKeySimulator();
+		this.ballTrajectoryPredictor = new BallTrajectoryPredictor();
+		this.difficulty = difficulty;
+		this.setOvershootParameters();
 	}
-	update(ball:Ball, canvas: HTMLCanvasElement): void
+
+	private setOvershootParameters(): void
 	{
-		this.reactionCount++;
-		if (this.reactionCount < this.reactionTime)
+		switch (this.difficulty)
 		{
-			return ;
+			case Difficulty.EASY:
+				this.overshootChance = 0.40;
+				break;
+			case Difficulty.MEDIUM:
+				this.overshootChance = 0.25;
+				break;
+			case Difficulty.HARD:
+				this.overshootChance = 0.15;
+				break;
 		}
-		this.reactionCount = 0;
-		if (ball.xVel == 1 && ball.x > canvas.width / 2)
+	}
+
+	update(ball: Ball, canvas: HTMLCanvasElement): void
+	{
+		const currentTime = Date.now();
+				
+		if (currentTime - this.lastUpdateTime >= this.updateInterval)
 		{
-			this.parasiticMvmnt = (Math.random() - 0.5) * 10;
-			if (ball.y + this.parasiticMvmnt < this.y && ball.xVel == 1)
+			this.makeDecision(ball, canvas);
+			this.lastUpdateTime = currentTime;
+		}
+				
+		this.executeDecision(canvas);
+	}
+
+	private makeDecision(ball: Ball, canvas: HTMLCanvasElement): void
+	{
+		if (ball.xVel > 0) 
+		{
+			const prediction = this.ballTrajectoryPredictor.predictBallPosition(ball, canvas, this.x, this.difficulty);
+			this.predictedBallPosition = prediction;
+			this.targetY = prediction.y;
+		}
+		else
+		{
+			this.targetY = this.calculatePositionalTarget(ball, canvas);
+		}
+				
+		this.calculateMovementDuration(canvas);
+	}
+
+	private calculatePositionalTarget(ball: Ball, canvas: HTMLCanvasElement): number
+	{
+		const canvasCenter = canvas.height / 2;
+		const ballY = ball.y;
+		let targetY: number;
+				
+		if (Math.abs(ball.yVel) > 0.5)
+		{
+			targetY = ballY + (ball.yVel * 60);
+		}
+		else
+		{
+			const ballQuadrant = ballY < canvas.height / 2 ? -1 : 1;
+			targetY = canvasCenter + (ballQuadrant * 20);
+		}
+				
+		let randomOffset: number;
+		switch (this.difficulty)
+		{
+			case Difficulty.EASY:
+				randomOffset = (Math.random() - 0.5) * 200;
+				break;
+			case Difficulty.MEDIUM:
+				randomOffset = (Math.random() - 0.5) * 150;
+				break;
+			case Difficulty.HARD:
+				randomOffset = (Math.random() - 0.5) * 100;
+				break;
+			default:
+				randomOffset = (Math.random() - 0.5) * 100;
+		}
+				
+		targetY += randomOffset;
+		return Math.max(WALL_OFFSET + 35, Math.min(canvas.height - WALL_OFFSET - 35, targetY));
+	}
+
+	private calculateMovementDuration(canvas: HTMLCanvasElement): void
+	{
+		const paddleCenter = this.y + this.height / 2;
+		const distanceToTarget = Math.abs(this.targetY - paddleCenter);
+		const tolerance = 5;
+		
+		if (distanceToTarget <= tolerance)
+		{
+			this.currentDecision = 'IDLE';
+			this.movementDuration = 0;
+		}
+		else
+		{
+			let framesNeeded = Math.ceil(distanceToTarget / this.speed);
+			
+			if (Math.random() < this.overshootChance)
+			{
+				const overshootType = Math.random();
+				
+				if (overshootType < 0.5)
+				{
+					const overshootAmount = this.calculateOvershootAmount();
+					framesNeeded += overshootAmount;
+				}
+				else
+				{
+					const undershootAmount = this.calculateUndershootAmount(framesNeeded);
+					framesNeeded = Math.max(1, framesNeeded - undershootAmount);
+				}
+			}
+			
+			this.movementDuration = framesNeeded;
+			if (this.targetY < paddleCenter)
+			{
+				this.currentDecision = 'UP';
+			}
+			else
+			{
+				this.currentDecision = 'DOWN';
+			}
+		}
+	}
+
+	private calculateOvershootAmount(): number
+	{
+		switch (this.difficulty)
+		{
+			case Difficulty.EASY:
+				return Math.floor(Math.random() * 15) + 5;
+			case Difficulty.MEDIUM:
+				return Math.floor(Math.random() * 10) + 3;
+			case Difficulty.HARD:
+				return Math.floor(Math.random() * 6) + 2;
+			default:
+				return Math.floor(Math.random() * 10) + 3;
+		}
+	}
+
+	private calculateUndershootAmount(totalFrames: number): number
+	{
+		// Calculate how many frames to stop short
+		const maxUndershoot = Math.floor(totalFrames * 0.3); // Maximum 30% undershoot
+		
+		switch (this.difficulty)
+		{
+			case Difficulty.EASY:
+				return Math.floor(Math.random() * Math.max(1, maxUndershoot)) + 1;
+			case Difficulty.MEDIUM:
+				return Math.floor(Math.random() * Math.max(1, Math.floor(maxUndershoot * 0.7))) + 1;
+			case Difficulty.HARD:
+				return Math.floor(Math.random() * Math.max(1, Math.floor(maxUndershoot * 0.4))) + 1;
+			default:
+				return Math.floor(Math.random() * Math.max(1, maxUndershoot)) + 1;
+		}
+	}
+
+	private executeDecision(canvas: HTMLCanvasElement): void
+	{
+		this.keySimulator.simulateKeyInput(this.currentDecision);
+		this.yVel = 0;
+		
+		// Check if we should continue moving
+		if (this.movementDuration > 0)
+		{
+			// Don't stop early when overshooting/undershooting - let the duration run out
+			this.movementDuration--;
+		}
+
+		if (this.movementDuration > 0)
+		{
+			if (this.keySimulator.isKeyPressed('UP'))
 			{
 				this.yVel = -1;
 				if (this.y <= WALL_OFFSET)
 				{
 					this.yVel = 0;
+					this.movementDuration = 0;
 				}
 			}
-			else if (ball.y + this.parasiticMvmnt > this.y + this.height && ball.xVel == 1)
+			else if (this.keySimulator.isKeyPressed('DOWN'))
 			{
 				this.yVel = 1;
 				if (this.y + this.height >= canvas.height - WALL_OFFSET)
 				{
 					this.yVel = 0;
+					this.movementDuration = 0;
 				}
-			}
-			else
-			{
-				this.yVel = 0;
-			}
-		}
-		else
-		{
-			this.idleTimer++;
-			if (this.idleTimer > 6) { // Change direction every 30 frames
-				const ballTarget = ball.y +  (Math.random() - 0.5) * 40;
-				if (ballTarget < this.y)
-					this.idleDirection = -1;
-				else if (ballTarget > this.y + this.height)
-					this.idleDirection = 1;
-				else
-					this.idleDirection = 0;
-				this.idleTimer = 0;
-			}
-			this.yVel = this.idleDirection;
-			if (this.y <= WALL_OFFSET - 10)
-			{
-				this.y = WALL_OFFSET - 10;
-				this.yVel = 1;
-			}
-			if (this.y + this.height >= canvas.height - WALL_OFFSET + 10)
-			{
-				this.y = canvas.height - WALL_OFFSET + 10 - this.height;
-				this.yVel = -1;
-				return ;
 			}
 		}
 		this.y += this.yVel * this.speed;
 	}
+
 	draw(context: CanvasRenderingContext2D): void
 	{
 		context.save();
 		context.shadowColor = "#F2BDCD";
 		context.shadowBlur = 12;
 		context.fillStyle = "white";
-		context.fillRect(this.x,this.y,this.width,this.height);
+		context.fillRect(this.x, this.y, this.width, this.height);
 		context.restore();
 	}
 }
@@ -522,12 +667,12 @@ class Ball extends Entity
 		if (this.y <= 10)
 		{
 			this.y = 10;
-				this.yVel = Math.abs(this.yVel); // always positive after bounce
+				this.yVel = Math.abs(this.yVel);
 		}
 		if (this.y + this.height >= canvas.height - 10)
 		{
 			this.y = canvas.height - 10 - this.height;
-				this.yVel = -Math.abs(this.yVel); // always positive after bounce
+				this.yVel = -Math.abs(this.yVel);
 		}
 		if (this.x <= player.x + player.width &&
 			this.x + this.width >= player.x &&
@@ -559,5 +704,91 @@ class Ball extends Entity
 		context.arc(this.x + this.width/2, this.y + this.height/2, this.width/2, 0, 2 * Math.PI);
 		context.fill();
 		context.restore();
+	}
+}
+
+class AIKeySimulator
+{
+	private keysPressed: { [key: string]: boolean } = {};
+		
+	constructor()
+	{
+		this.keysPressed = { 'UP': false, 'DOWN': false };
+	}
+		
+	simulateKeyInput(decision: 'UP' | 'DOWN' | 'IDLE'): void
+	{
+		this.keysPressed['UP'] = false;
+		this.keysPressed['DOWN'] = false;
+		
+		if (decision !== 'IDLE')
+			this.keysPressed[decision] = true;
+	}
+	isKeyPressed(key: string): boolean
+	{
+		return this.keysPressed[key] || false;
+	}
+}
+
+class BallTrajectoryPredictor
+{
+	predictBallPosition(ball: Ball, canvas: HTMLCanvasElement, paddleX: number, difficulty: Difficulty = Difficulty.EASY): { x: number, y: number }
+	{
+		let simX = ball.x;
+		let simY = ball.y;
+		let simXVel = ball.xVel;
+		let simYVel = ball.yVel;
+		let simSpeed = ball.speed;
+		let timeSteps = 0;
+		const maxSteps = 6000;
+
+		if (simXVel === 0)
+		{
+			return {x: simX, y: simY};
+		}
+				
+		while (timeSteps < maxSteps) 
+		{
+			if (simY <= 10)
+			{
+				simY = 10;
+				simYVel = Math.abs(simYVel);
+			}
+			if (simY >= canvas.height - 10)
+			{
+				simY = canvas.height - 10;
+				simYVel = -Math.abs(simYVel);
+			}
+			simX += simXVel * simSpeed;
+			simY += simYVel * simSpeed;
+			simSpeed += 0.001;
+			timeSteps++;
+
+			if (simXVel > 0 && simX >= paddleX - 15)
+				break;
+		}
+				
+		// Add difficulty-based prediction error
+		let imperfection: number;
+		switch (difficulty)
+		{
+			case Difficulty.EASY:
+				imperfection = (Math.random() - 0.5) * 120; // High error margin
+				break;
+			case Difficulty.MEDIUM:
+				imperfection = (Math.random() - 0.5) * 80; // Medium error margin
+				break;
+			case Difficulty.HARD:
+				imperfection = (Math.random() - 0.5) * 40; // Low error margin
+				break;
+			default:
+				imperfection = (Math.random() - 0.5) * 40;
+		}		
+		simY += imperfection;
+		imperfection += 0.01;
+		return {
+			x: simX,
+			y: Math.max(WALL_OFFSET, Math.min(canvas.height - WALL_OFFSET, simY))
+		};
 	}
 }

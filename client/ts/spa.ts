@@ -322,34 +322,77 @@ const SPA = {
 	'/snake': {
 	title: 'game.snake',
 	content: 'pages/snake.html',
-	routeScript: function (): void {
-	function tryInitSnakeGame() {
-		const canvas = document.getElementById('gameCanvas');
-		if (!canvas)
-		{
-			// console.error('gameCanvas not found');
-			setTimeout(tryInitSnakeGame, 50);
-			return;
-		}
-
-		if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
+	routeScript: function (): void 
+	{
+		// Clean up any existing game first
+		if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function') 
 		{
 			SPA.SPAattribute.currentGameInstance.destroy();
-			// console.log("Previous Snake instance destroyed");
+			SPA.SPAattribute.currentGameInstance = null;
 		}
 
-		try
+		function tryInitSnakeGame() 
 		{
-			const snakeGame = new SnakeGame();
-			SPA.SPAattribute.currentGameInstance = snakeGame;
-		}
-		catch (e)
-		{
-			// console.error('Snake Game init failed:', e);
-		}
-	}
+			const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
+			if (!canvas) 
+			{
+				console.log('Canvas not found, retrying...');
+				setTimeout(tryInitSnakeGame, 50);
+				return;
+			}
 
-	tryInitSnakeGame();
+			console.log('Canvas found, creating Snake game');
+
+			try 
+			{
+				const snakeGame = new SnakeGame();
+				SPA.SPAattribute.currentGameInstance = snakeGame;
+				
+				// Setup button event listeners here since they're in the same HTML
+				const playAgainBtn = document.getElementById('playAgainBtn');
+				const homeBtn = document.getElementById('homeBtn');
+				
+				if (playAgainBtn) 
+				{
+					playAgainBtn.onclick = () => 
+					{
+						const gameOverMenu = document.getElementById('gameOverMenu');
+						gameOverMenu?.classList.remove('visible');
+						
+						if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function') 
+						{
+							SPA.SPAattribute.currentGameInstance.destroy();
+						}
+						
+						try 
+						{
+							const newGame = new SnakeGame();
+							SPA.SPAattribute.currentGameInstance = newGame;
+						} 
+						catch (error) 
+						{
+							console.error('Failed to create new Snake game:', error);
+						}
+					};
+				}
+				
+				if (homeBtn) 
+				{
+					homeBtn.onclick = () => 
+					{
+						SPA.navigateTo('/home');
+					};
+				}
+				
+				console.log('Snake game initialized successfully');
+			} 
+			catch (error) 
+			{
+				console.error('Snake Game init failed:', error);
+			}
+		}
+
+		tryInitSnakeGame();
 	},
 },
 
@@ -471,22 +514,22 @@ const SPA = {
             return;
           }
           
-          // Make sure Game1v1v1v1 class is available
           if (typeof Game1v1v1v1 === 'undefined') {
-            // console.error('Game1v1v1v1 class not found');
             return;
           }
           
           try {
             let difficulty = localStorage.getItem('Difficulty') || 'EASY';
             let diffEnum = 1;
-            if (difficulty === 'MEDIUM') diffEnum = 2;
-            else if (difficulty === 'HARD') diffEnum = 3;
+            if (difficulty === 'MEDIUM')
+				diffEnum = 2;
+            else if (difficulty === 'HARD')
+				diffEnum = 3;
             
             Game1v1v1v1.startNewGame(diffEnum);
-            // console.log('4-player game initialized successfully');
-          } catch (e) {
-            // console.error('4-player game init failed:', e);
+          } catch (e)
+		  {
+			console.log('Game init failed:', e);
           }
         }
     tryInitGame1v1v1v1();

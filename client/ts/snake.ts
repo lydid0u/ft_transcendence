@@ -181,7 +181,8 @@ class Snake {
 	}
 }
 
-export class SnakeGame {
+export class SnakeGame 
+{
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
 	private readonly gridSize: number = 20;
@@ -195,12 +196,22 @@ export class SnakeGame {
 	private gameSpeed: number = 150;
 
 	private walls: Wall[] = [];
-	private wallSpawnInterval: number = 20; // Spawn wall every 300 points
+	private wallSpawnInterval: number = 10;
 	private lastWallSpawn: number = 0;
 
-	constructor() {
+	constructor() 
+	{
 		this.canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
+		if (!this.canvas) 
+		{
+			console.error('Canvas element with ID "gameCanvas" not found');
+			throw new Error('Canvas element with ID "gameCanvas" not found. Make sure the HTML element exists.');
+		}
 		this.ctx = this.canvas.getContext('2d')!;
+		if (!this.ctx)
+		{
+			throw new Error('Failed to get canvas context');
+		}
 		this.gridWidth = this.canvas.width / this.gridSize;
 		this.gridHeight = this.canvas.height / this.gridSize;
 
@@ -210,7 +221,7 @@ export class SnakeGame {
 
 		this.updateScore();
 		this.setupEventListeners();
-		this.fetchLeaderboardData(); // Récupérer les données du leaderboard et le classement global
+		this.fetchLeaderboardData();
 		this.gameLoop();
 	}
 
@@ -304,8 +315,8 @@ export class SnakeGame {
 
 	private isPositionOccupied(position: Position): boolean {
 		return this.snake.body.some(segment => segment.x === position.x && segment.y === position.y) ||
-			   (this.food.position.x === position.x && this.food.position.y === position.y) ||
-			   this.walls.some(wall => wall.position.x === position.x && wall.position.y === position.y);
+				(this.food.position.x === position.x && this.food.position.y === position.y) ||
+				this.walls.some(wall => wall.position.x === position.x && wall.position.y === position.y);
 	}
 
 	private generateLinePattern(basePosition: Position): Wall[] {
@@ -515,38 +526,27 @@ export class SnakeGame {
 		if (scoreElement) scoreElement.textContent = this.score.toString();
 	}
 
-	private gameOver(): void {
+	private gameOver(): void 
+	{
 		this.gameRunning = false;
 		
 		this.sendScoreToBackend(this.score);
 
 		const finalScoreElement = document.getElementById('finalScore');
-		if (finalScoreElement) {
+		if (finalScoreElement) 
+		{
 			finalScoreElement.textContent = this.score.toString();
 		}
 
 		const gameOverMenu = document.getElementById('gameOverMenu');
-		if (gameOverMenu) {
+		if (gameOverMenu) 
+		{
 			gameOverMenu.classList.add('visible');
 		}
 
-		const playAgainBtn = document.getElementById('playAgainBtn');
-		const homeBtn = document.getElementById('homeBtn');
-
-		if (playAgainBtn) {
-			playAgainBtn.onclick = () => {
-				gameOverMenu?.classList.remove('visible');
-				currentGame = new SnakeGame();
-			};
-		}
-
-		if (homeBtn) {
-			homeBtn.onclick = () => {
-				window.location.href = '/home';
-			};
-		}
+		// Don't set button handlers here - they're handled in SPA route
 	}
-	
+
 	private async sendScoreToBackend(score: number): Promise<void> {
 		if (await window.SPA.checkJwtValidity()) {
 		try {
@@ -615,52 +615,52 @@ export class SnakeGame {
 		}
 	}
 showGameOverActions(): void {
-    const oldOverlay = document.getElementById('gameOverActions');
-    oldOverlay?.remove();
-    const overlay = document.createElement('div');
-    overlay.id = 'gameOverActions';
-    overlay.className = 'absolute top-1/2 left-[calc(100%+24px)] -translate-y-1/2 flex flex-col items-center gap-4 bg-[#232526] rounded-lg shadow-lg p-7 z-100 min-w-[140px]';
-    const restartBtn = document.createElement('button');
-    restartBtn.textContent = 'Restart';
-    restartBtn.className = 'px-4 py-2 bg-[#2ed573] text-black font-bold rounded-md hover:bg-[#27c264] hover:-translate-y-0.5 hover:shadow-md transition-all';
-    restartBtn.onclick = () => {
-        overlay.remove();
-        new SnakeGame();
-    };
-    const homeBtn = document.createElement('button');
-    homeBtn.textContent = 'Home';
-    homeBtn.className = 'px-4 py-2 bg-[#555] text-white font-bold rounded-md hover:bg-[#666] hover:-translate-y-0.5 hover:shadow-md transition-all';
-    homeBtn.onclick = () => {
-        window.location.href = '/home';
-    };
+	const oldOverlay = document.getElementById('gameOverActions');
+	oldOverlay?.remove();
+	const overlay = document.createElement('div');
+	overlay.id = 'gameOverActions';
+	overlay.className = 'absolute top-1/2 left-[calc(100%+24px)] -translate-y-1/2 flex flex-col items-center gap-4 bg-[#232526] rounded-lg shadow-lg p-7 z-100 min-w-[140px]';
+	const restartBtn = document.createElement('button');
+	restartBtn.textContent = 'Restart';
+	restartBtn.className = 'px-4 py-2 bg-[#2ed573] text-black font-bold rounded-md hover:bg-[#27c264] hover:-translate-y-0.5 hover:shadow-md transition-all';
+	restartBtn.onclick = () => {
+		overlay.remove();
+		new SnakeGame();
+	};
+	const homeBtn = document.createElement('button');
+	homeBtn.textContent = 'Home';
+	homeBtn.className = 'px-4 py-2 bg-[#555] text-white font-bold rounded-md hover:bg-[#666] hover:-translate-y-0.5 hover:shadow-md transition-all';
+	homeBtn.onclick = () => {
+		window.location.href = '/home';
+	};
 
-    overlay.appendChild(restartBtn);
-    overlay.appendChild(homeBtn);
+	overlay.appendChild(restartBtn);
+	overlay.appendChild(homeBtn);
 
-    const canvas = document.getElementById('gameCanvas');
-    const container = canvas?.parentElement;
-    if (container) {
-        container.style.position = 'relative';
-        container.appendChild(overlay);
-    }
+	const canvas = document.getElementById('gameCanvas');
+	const container = canvas?.parentElement;
+	if (container) {
+		container.style.position = 'relative';
+		container.appendChild(overlay);
+	}
 }
 
 showGameOverScreen(): void {
-    const gameOverDiv = document.createElement('div');
-    gameOverDiv.className = 'fixed inset-0 bg-black/80 flex flex-col justify-center items-center z-50';
-    gameOverDiv.innerHTML = `
-        <h2 class="text-[#ff5e57] text-4xl uppercase mb-4 shadow-[0_0_10px_rgba(255,94,87,0.5)]">Game Over!</h2>
-        <p class="text-white text-xl mb-5">Score Final: <span class="text-[#2ed573] text-2xl font-bold">${this.score}</span></p>
-        <button id="restartBtn" class="bg-[#2ed573] text-[#111] px-5 py-2 border-0 rounded-md text-base font-bold cursor-pointer transition-all hover:bg-[#27c264] hover:-translate-y-0.5 hover:shadow-lg">Rejouer</button>
-    `;
+	const gameOverDiv = document.createElement('div');
+	gameOverDiv.className = 'fixed inset-0 bg-black/80 flex flex-col justify-center items-center z-50';
+	gameOverDiv.innerHTML = `
+		<h2 class="text-[#ff5e57] text-4xl uppercase mb-4 shadow-[0_0_10px_rgba(255,94,87,0.5)]">Game Over!</h2>
+		<p class="text-white text-xl mb-5">Score Final: <span class="text-[#2ed573] text-2xl font-bold">${this.score}</span></p>
+		<button id="restartBtn" class="bg-[#2ed573] text-[#111] px-5 py-2 border-0 rounded-md text-base font-bold cursor-pointer transition-all hover:bg-[#27c264] hover:-translate-y-0.5 hover:shadow-lg">Rejouer</button>
+	`;
 
-    document.body.appendChild(gameOverDiv);
+	document.body.appendChild(gameOverDiv);
 
-    const restartBtn = document.getElementById('restartBtn');
-    restartBtn?.addEventListener('click', () => {
-        gameOverDiv.remove();
-        new SnakeGame();
-    });
+	const restartBtn = document.getElementById('restartBtn');
+	restartBtn?.addEventListener('click', () => {
+		gameOverDiv.remove();
+		new SnakeGame();
+	});
 }
 
 	private gameLoop(): void {
@@ -672,44 +672,20 @@ showGameOverScreen(): void {
 		}
 	}
 
-	destroy(): void {
+	destroy(): void 
+	{
 		this.gameRunning = false;
 		
 		const gameOverMenu = document.getElementById('gameOverMenu');
-		if (gameOverMenu) {
+		if (gameOverMenu) 
+		{
 			gameOverMenu.classList.remove('visible');
 		}
 	}
-
 }
 
+// Remove the DOMContentLoaded listener completely
 let currentGame: SnakeGame | null = null;
 
-document.addEventListener('DOMContentLoaded', () => {
-	if (currentGame) {
-		currentGame.destroy();
-	}
-	
-	currentGame = new SnakeGame();
-	
-	const playAgainBtn = document.getElementById('playAgainBtn');
-	const homeBtn = document.getElementById('homeBtn');
-	
-	if (playAgainBtn) {
-		playAgainBtn.onclick = () => {
-			const gameOverMenu = document.getElementById('gameOverMenu');
-			gameOverMenu?.classList.remove('visible');
-			
-			if (currentGame) {
-				currentGame.destroy();
-			}
-			currentGame = new SnakeGame();
-		};
-	}
-	
-	if (homeBtn) {
-		homeBtn.onclick = () => {
-			window.location.href = '/home';
-		};
-	}
-});
+// Export for SPA use
+(window as any).SnakeGame = SnakeGame;
