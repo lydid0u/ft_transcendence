@@ -428,6 +428,9 @@ class ComputerPaddle extends Entity
 			case Difficulty.HARD:
 				this.overshootChance = 0.15;
 				break;
+			default:
+				this.overshootChance = 0.25;
+				break;
 		}
 	}
 
@@ -486,10 +489,10 @@ class ComputerPaddle extends Entity
 				randomOffset = (Math.random() - 0.5) * 150;
 				break;
 			case Difficulty.HARD:
-				randomOffset = (Math.random() - 0.5) * 100;
+				randomOffset = (Math.random() - 0.5) * 80;
 				break;
 			default:
-				randomOffset = (Math.random() - 0.5) * 100;
+				randomOffset = (Math.random() - 0.5) * 150;
 		}
 				
 		targetY += randomOffset;
@@ -500,7 +503,7 @@ class ComputerPaddle extends Entity
 	{
 		const paddleCenter = this.y + this.height / 2;
 		const distanceToTarget = Math.abs(this.targetY - paddleCenter);
-		const tolerance = 5;
+		const tolerance = 20;
 		
 		if (distanceToTarget <= tolerance)
 		{
@@ -544,20 +547,20 @@ class ComputerPaddle extends Entity
 		switch (this.difficulty)
 		{
 			case Difficulty.EASY:
-				return Math.floor(Math.random() * 15) + 5;
+				return Math.floor(Math.random() * 15) + 15;
 			case Difficulty.MEDIUM:
-				return Math.floor(Math.random() * 10) + 3;
+				return Math.floor(Math.random() * 10) + 10;
 			case Difficulty.HARD:
-				return Math.floor(Math.random() * 6) + 2;
+				return Math.floor(Math.random() * 6) + 3;
 			default:
-				return Math.floor(Math.random() * 10) + 3;
+				return Math.floor(Math.random() * 10) + 10;
 		}
 	}
 
 	private calculateUndershootAmount(totalFrames: number): number
 	{
 		// Calculate how many frames to stop short
-		const maxUndershoot = Math.floor(totalFrames * 0.3); // Maximum 30% undershoot
+		const maxUndershoot = Math.floor(totalFrames * 0.3);
 		
 		switch (this.difficulty)
 		{
@@ -577,12 +580,8 @@ class ComputerPaddle extends Entity
 		this.keySimulator.simulateKeyInput(this.currentDecision);
 		this.yVel = 0;
 		
-		// Check if we should continue moving
 		if (this.movementDuration > 0)
-		{
-			// Don't stop early when overshooting/undershooting - let the duration run out
 			this.movementDuration--;
-		}
 
 		if (this.movementDuration > 0)
 		{
@@ -627,13 +626,9 @@ class Ball extends Entity
 		super(w,h,x,y,speed);
 		var randomDirection = Math.floor(Math.random() * 2) + 1;
 		if(randomDirection % 2)
-		{
 			this.xVel = 1;
-		}
 		else
-		{
 			this.xVel = -1;
-		}
 		this.yVel = 1;
 	}
 	reset(canvas: HTMLCanvasElement): void
@@ -768,7 +763,6 @@ class BallTrajectoryPredictor
 				break;
 		}
 				
-		// Add difficulty-based prediction error
 		let imperfection: number;
 		switch (difficulty)
 		{
@@ -782,10 +776,9 @@ class BallTrajectoryPredictor
 				imperfection = (Math.random() - 0.5) * 40; // Low error margin
 				break;
 			default:
-				imperfection = (Math.random() - 0.5) * 40;
+				imperfection = (Math.random() - 0.5) * 80;
 		}		
 		simY += imperfection;
-		imperfection += 0.01;
 		return {
 			x: simX,
 			y: Math.max(WALL_OFFSET, Math.min(canvas.height - WALL_OFFSET, simY))
