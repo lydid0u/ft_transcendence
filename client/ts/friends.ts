@@ -20,7 +20,7 @@ class FriendsAPI {
       try {
         const token = localStorage.getItem("jwtToken");
 
-        const response = await fetch(`https://localhost:3000/get-all-friends`, {
+        const response = await fetch(`/api/get-all-friends`, {
           method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -31,7 +31,7 @@ class FriendsAPI {
         const responseText = await response.text(); 
         return JSON.parse(responseText);
       } catch (error) {
-        console.error("Error fetching friends:", error);
+        // console.error("Error fetching friends:", error);
         throw new Error(`HTTP error! status: 999`);
       }
   }
@@ -41,7 +41,7 @@ class FriendsAPI {
     if (await window.SPA.checkJwtValidity()) {
       try {
         const token = localStorage.getItem("jwtToken");
-        const response = await fetch(`https://localhost:3000/friends-add`, {
+        const response = await fetch(`/api/friends-add`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -53,9 +53,9 @@ class FriendsAPI {
           }),
         });
         
-        console.log("Response status:", response.status);
+        // console.log("Response status:", response.status);
         const responseText = await response.text(); 
-        console.log("Response text:", responseText);
+        // console.log("Response text:", responseText);
         
         if (!response.ok)
             throw new Error("Impossible d'ajouter cet ami");
@@ -71,8 +71,8 @@ class FriendsAPI {
   async getOnlineStatus(username: string): Promise<boolean> {
     if (await window.SPA.checkJwtValidity()) {
       const token = localStorage.getItem("jwtToken");
-      console.log("Checking online status for:", username);
-      const response = await fetch(`https://localhost:3000/user/get-online-status?friend_nickname=${encodeURIComponent(username)}`, {
+      // console.log("Checking online status for:", username);
+      const response = await fetch(`/api/user/get-online-status?friend_nickname=${encodeURIComponent(username)}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -119,16 +119,16 @@ class FriendsApp {
   private init(): void {
     if (!this.searchInput || !this.addFriendBtn || !this.friendsList || 
         !this.friendsCount || !this.loadingState || !this.emptyState || !this.messageContainer) {
-      console.error("DOM elements not found. Make sure the friends page is loaded correctly.");
-      console.log("Missing DOM elements:", {
-        searchInput: !!this.searchInput,
-        addFriendBtn: !!this.addFriendBtn,
-        friendsList: !!this.friendsList,
-        friendsCount: !!this.friendsCount,
-        loadingState: !!this.loadingState,
-        emptyState: !!this.emptyState,
-        messageContainer: !!this.messageContainer
-      });
+      // console.error("DOM elements not found. Make sure the friends page is loaded correctly.");
+      // console.log("Missing DOM elements:", {
+      //   searchInput: !!this.searchInput,
+      //   addFriendBtn: !!this.addFriendBtn,
+      //   friendsList: !!this.friendsList,
+      //   friendsCount: !!this.friendsCount,
+      //   loadingState: !!this.loadingState,
+      //   emptyState: !!this.emptyState,
+      //   messageContainer: !!this.messageContainer
+      // });
       return;
     }
     
@@ -138,7 +138,7 @@ class FriendsApp {
 
   private bindEvents(): void {
     if (!this.searchInput || !this.addFriendBtn) {
-      console.error("Cannot bind events - DOM elements are missing");
+      // console.error("Cannot bind events - DOM elements are missing");
       return;
     }
 
@@ -162,7 +162,7 @@ class FriendsApp {
   try {
     this.showLoading(true);
     const response = await this.api.getAllFriends();
-    console.log("Réponse API complète:", response);
+    // console.log("Réponse API complète:", response);
     
     if (response && response.friends && Array.isArray(response.friends)) {
       this.friends = response.friends;
@@ -170,16 +170,16 @@ class FriendsApp {
       this.friends = response;
     } else {
       this.friends = [];
-      console.error("Format de réponse inattendu:", response);
+      // console.error("Format de réponse inattendu:", response);
     }
     
-    console.log("Amis extraits:", this.friends);
+    // console.log("Amis extraits:", this.friends);
     this.filteredFriends = [...this.friends];
     await this.renderFriends();
     this.updateFriendsCount();
   } catch (error) {
     this.showMessage("Erreur lors du chargement des amis", "error");
-    console.error("Error loading friends:", error);
+    // console.error("Error loading friends:", error);
   } finally {
     this.showLoading(false);
   }
@@ -317,11 +317,11 @@ function displayFriendsList() {
     return;
   }
 
-  console.log("🔄 Initialisation de la liste d'amis via displayFriendsList()");
+  // console.log("🔄 Initialisation de la liste d'amis via displayFriendsList()");
   setTimeout(() => {
     if (document.getElementById("friends-list") && 
         document.getElementById("search-input")) {
-      console.log("✅ FriendsApp: Éléments DOM trouvés, initialisation");
+      // console.log("✅ FriendsApp: Éléments DOM trouvés, initialisation");
       new FriendsApp();
     } else {
       console.warn("FriendsApp: Éléments DOM non trouvés");

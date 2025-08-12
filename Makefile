@@ -8,7 +8,6 @@ BLUE = \033[1;34m
 NC = \033[0m
 
 start:
-	./generate-certs.sh
 	@echo "$(YELLOW)Starting $(PROJECT_NAME) services...$(NC)"
 	docker compose -f $(COMPOSE_FILE) up --build
 	@echo "$(GREEN)Services started successfully!$(NC)"

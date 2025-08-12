@@ -67,7 +67,7 @@ async function login(): Promise<void> {
     }
 
     try {
-      const response: Response = await fetch('https://localhost:3000/auth/login', {
+      const response: Response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -83,7 +83,7 @@ async function login(): Promise<void> {
           setLanguage(data.user.language || 'fr');
           if (!data.jwt) {
             try {
-              await fetch('https://localhost:3000/auth/2FA-code', {
+              await fetch('/api/auth/2FA-code', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -91,14 +91,14 @@ async function login(): Promise<void> {
                 body: JSON.stringify({ email })
               });
             } catch (err) {
-              console.error("Erreur lors de l'envoi du code 2FA vers le mail:", err);
+              // console.error("Erreur lors de l'envoi du code 2FA vers le mail:", err);
             }
 
-            console.log('2fa active, redirection vers la page OTP');
+            // console.log('2fa active, redirection vers la page OTP');
             window.SPA?.navigateTo('/otp');
           } else {
             try {
-        await fetch('https://localhost:3000/user/connection-status', {
+        await fetch('/api/user/connection-status', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ async function login(): Promise<void> {
             });
           } 
         catch (err) {
-            console.error("Erreur lors de la notification du status de connexion au backend:", err);
+            // console.error("Erreur lors de la notification du status de connexion au backend:", err);
           }
             localStorage.setItem('jwtToken', data.jwt || '');
             localStorage.setItem('isAuthenticated', 'true');
@@ -135,7 +135,7 @@ async function login(): Promise<void> {
       }
     } catch (error: unknown) {
       if (messageDiv) {
-        console.error("Erreur lors de la connexion:", error);
+        // console.error("Erreur lors de la connexion:", error);
         messageDiv.textContent = "Erreur réseau on est ici. Veuillez réessayer.";
         messageDiv.style.color = "red";
       }
@@ -152,7 +152,7 @@ async function otpSubmit(email: string): Promise<void> {
 			const code: string = (document.getElementById("otp-code") as HTMLInputElement)?.value || ""
 
 			try {
-				const response = await fetch('https://localhost:3000/auth/2FA-verify', {
+				const response = await fetch('/api/auth/2FA-verify', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -163,11 +163,11 @@ async function otpSubmit(email: string): Promise<void> {
 					throw new Error(`Erreur HTTP: ${response.status}`);
 
 				const result = await response.json();
-				console.log("Réponse du backend:", result);
+				// console.log("Réponse du backend:", result);
 
 				if (result.success) {
           try {
-        await fetch('https://localhost:3000/user/connection-status', {
+        await fetch('/api/user/connection-status', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -177,16 +177,16 @@ async function otpSubmit(email: string): Promise<void> {
             });
           } 
         catch (err) {
-            console.error("Erreur lors de la notification du status de connexion au backend:", err);
+            // console.error("Erreur lors de la notification du status de connexion au backend:", err);
           }
 					localStorage.setItem('jwtToken', result.jwt);
           localStorage.setItem('isAuthenticated', 'true');
-          console.log("Connexion réussie, redirection vers la page d'accueil");
+          // console.log("Connexion réussie, redirection vers la page d'accueil");
 					window.SPA.navigateTo('/home');
 				}
 
 			} catch (error) {
-				console.error("Erreur lors de l'envoi au backend:", error);
+				// console.error("Erreur lors de l'envoi au backend:", error);
 			}
 		})
 	}, 100);
@@ -228,7 +228,7 @@ async function register(): Promise<void> {
     }
 
     try {
-      const response = await fetch('https://localhost:3000/auth/register', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, pseudo, password: createPassword })
@@ -258,7 +258,7 @@ async function register(): Promise<void> {
       localStorage.setItem('jwtToken', data.jwt || '');
 
       try {
-        await fetch('https://localhost:3000/user/connection-status', {
+        await fetch('/api/user/connection-status', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -267,7 +267,7 @@ async function register(): Promise<void> {
           body: JSON.stringify({ status: 1 }),
         });
       } catch (err) {
-        console.error("Erreur lors de la notification du status de connexion au backend:", err);
+        // console.error("Erreur lors de la notification du status de connexion au backend:", err);
       }
 
       if (window.SPA && typeof window.SPA.navigateTo === 'function') {
@@ -275,7 +275,7 @@ async function register(): Promise<void> {
       }
     } catch (error: unknown) {
       if (messageDiv) {
-        console.error("Erreur lors de l'inscription:", error);
+        // console.error("Erreur lors de l'inscription:", error);
         messageDiv.textContent = "Erreur réseau 1. Veuillez réessayer.";
         messageDiv.style.color = "red";
       }

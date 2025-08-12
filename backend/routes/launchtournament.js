@@ -7,7 +7,7 @@ async function tournamentLaunchRoute(fastify, options)
         const userId = request.user.id;
         try {
             const tournament = await fastify.dbTournament.getTournamentByCreatorId(userId);
-            console.log(tournament);
+            // console.log(tournament);
             if (!tournament) {
                 return reply.status(404).send({ error: 'Tournament not found' });
             }
@@ -17,7 +17,7 @@ async function tournamentLaunchRoute(fastify, options)
             }
             return reply.send({ match });
         } catch (error) {
-            console.error('Error in /tournament/get-match:', error);
+            // console.error('Error in /tournament/get-match:', error);
             return reply.status(400).send({ error: 'Bad Request' });
         }
     });
@@ -40,7 +40,7 @@ async function tournamentLaunchRoute(fastify, options)
             await fastify.dbMatchData.createMatch(match, user_one, user_two);
             return reply.send({ message: 'Match results sent successfully' });
         } catch (error) {
-            console.error("Error in /tournament/send-match-results:", error);
+            // console.error("Error in /tournament/send-match-results:", error);
             return reply.status(400).send({ error: 'Bad Request' });
         }
     });
@@ -56,7 +56,7 @@ async function tournamentLaunchRoute(fastify, options)
                 return reply.status(404).send({ error: 'No losers found to delete' });
             }
         } catch (error) {
-            console.error("Error in /tournament/delete-losers:", error);
+            // console.error("Error in /tournament/delete-losers:", error);
             return reply.status(400).send({ error: 'Bad Request' });
         }
     });
@@ -64,7 +64,7 @@ async function tournamentLaunchRoute(fastify, options)
     fastify.get('/tournament/find-winner', {preValidation: [fastify.prevalidate]}, async (request, reply) =>
     {
         const {tournament_id} = request.query;
-        console.log("Finding winner for tournament ID:", tournament_id);
+        // console.log("Finding winner for tournament ID:", tournament_id);
         try {
             const winner = await fastify.dbMatchData.findWinnerOfTournament(tournament_id);
             if (winner) {
@@ -73,7 +73,7 @@ async function tournamentLaunchRoute(fastify, options)
                 return reply.status(200).send({ message: 'No winner found for this tournament' });
             }
         } catch (error) {
-            console.error("Error in /tournament/find-winner:", error);
+            // console.error("Error in /tournament/find-winner:", error);
             return reply.status(400).send({ error: 'Bad Request' });
         }
     });

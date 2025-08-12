@@ -10,7 +10,7 @@ async function utilsDbFunc(fastify, options)
                 const user = await fastify.db.connection.get('SELECT * FROM users WHERE email = ?', email);
                 return user;
             } catch (error) {
-                console.error('Error in getOneUser:', error);
+                // console.error('Error in getOneUser:', error);
                 return null;
             }
         },
@@ -21,7 +21,7 @@ async function utilsDbFunc(fastify, options)
                 const user = await fastify.db.connection.get('SELECT * FROM users WHERE username = ?', username);
                 return user;
             } catch (error) {
-                console.error('Error in getUserByUsername:', error);
+                // console.error('Error in getUserByUsername:', error);
                 return null;
             }
         },
@@ -32,7 +32,7 @@ async function utilsDbFunc(fastify, options)
                 const user = await fastify.db.connection.get('SELECT * FROM users WHERE email = ?', email);
                 return user;
             } catch (error) {
-                console.error('Error in checkEmail:', error);
+                // console.error('Error in checkEmail:', error);
                 return null;
             }
         },
@@ -43,7 +43,7 @@ async function utilsDbFunc(fastify, options)
                 const user = await fastify.db.connection.get('SELECT * FROM users WHERE username = ?', username);
                 return user;    
             } catch (error) {
-                console.error('Error in checkUsername:', error);
+                // console.error('Error in checkUsername:', error);
                 return null;
             }
         }

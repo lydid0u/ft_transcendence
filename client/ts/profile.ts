@@ -21,7 +21,7 @@ interface ChangeUserResponse {
 async function displayUserProfile(): Promise<void> {
   if (await window.SPA.checkJwtValidity()) {
     try {
-      const response: Response = await fetch("https://localhost:3000/user", {
+      const response: Response = await fetch("/api/user", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -30,13 +30,12 @@ async function displayUserProfile(): Promise<void> {
       })
 
       if (!response.ok) {
-        console.log("la")
         throw new Error(`Erreur HTTP: ${response.status}`)
       }
 
       const data: UserResponse = await response.json()
       const user: User = data.user
-      console.log("User data received:", user)
+      // console.log("User data received:", user)
 
       localStorage.setItem("user", JSON.stringify(user))
 
@@ -69,7 +68,7 @@ async function displayUserProfile(): Promise<void> {
       }
 
     } catch (error: unknown) {
-      console.error("Erreur lors de la récupération des données:", error)
+      // console.error("Erreur lors de la récupération des données:", error)
       window.SPA.clearAuthAndRedirect();
     }
   }
@@ -133,7 +132,7 @@ async function changeUsername(): Promise<void> {
         }
       
         try {
-          const response: Response = await fetch("https://localhost:3000/user/username", {
+          const response: Response = await fetch("/api/user/username", {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
@@ -151,10 +150,10 @@ async function changeUsername(): Promise<void> {
           }
         
           const data: ChangeUserResponse = await response.json()
-          console.log("Response data API in change Username:", data)
+          // console.log("Response data API in change Username:", data)
         
           if (data.newUser) {
-            console.log(`New username: ${JSON.stringify(data.newUser.username)}`)
+            // console.log(`New username: ${JSON.stringify(data.newUser.username)}`)
             localStorage.setItem("user", JSON.stringify(data.newUser))
             const userGreeting = document.getElementById("user-greeting") as HTMLElement
             if (userGreeting && data.newUser.username) userGreeting.textContent = `Salut ${data.newUser.username}`
@@ -162,11 +161,11 @@ async function changeUsername(): Promise<void> {
             showMessage("message-username", "Pseudo changé avec succès !", "success")
             form.reset()
           } else {
-            console.error("Aucun utilisateur trouvé dans la réponse de l'API.")
+            // console.error("Aucun utilisateur trouvé dans la réponse de l'API.")
             showMessage("message-username", "Erreur lors de la mise à jour du pseudo.", "error")
           }
         } catch (error) {
-          console.error("Erreur lors du changement de pseudo:", error)
+          // console.error("Erreur lors du changement de pseudo:", error)
           showMessage("message-username", "Erreur réseau 3. Veuillez réessayer.", "error")
         }
       })
@@ -176,21 +175,21 @@ async function changeUsername(): Promise<void> {
 async function updateLanguage(): Promise<void> {
   if (await window.SPA.checkJwtValidity()) {
     const form = document.getElementById("change-language-form") as HTMLFormElement | null
-    console.log("Form element:", form)
+    // console.log("Form element:", form)
     if (!form) return
 
     form.addEventListener("submit", async (event: Event) => {
       event.preventDefault()
 
       const newLanguage: string = (document.getElementById("language-select") as HTMLSelectElement)?.value || ""
-      console.log("Selected language:", newLanguage)
+      // console.log("Selected language:", newLanguage)
       if (!newLanguage) {
         showMessage("message-language", "La langue ne peut pas être vide.", "error")
         return
       }
 
       try {
-        const response: Response = await fetch("https://localhost:3000/user/language", {
+        const response: Response = await fetch("/api/user/language", {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -208,21 +207,21 @@ async function updateLanguage(): Promise<void> {
         }
 
         const data: ChangeUserResponse = await response.json()
-        console.log("Response data API in updateLanguage:", data)
+        // console.log("Response data API in updateLanguage:", data)
 
         if (data.newUser) {
-          console.log(`New language: ${JSON.stringify(data.newUser.language)}`)
+          // console.log(`New language: ${JSON.stringify(data.newUser.language)}`)
           localStorage.setItem("user", JSON.stringify(data.newUser))
           const userGreeting = document.getElementById("user-greeting") as HTMLElement
           if (userGreeting && data.newUser.language) userGreeting.textContent = `Salut ${data.newUser.username}`
           showMessage("message-language", "Langue changée avec succès !", "success")
           form.reset()
         } else {
-          console.error("Aucun utilisateur trouvé dans la réponse de l'API.")
+          // console.error("Aucun utilisateur trouvé dans la réponse de l'API.")
           showMessage("message-language", "Erreur lors de la mise à jour de la langue.", "error")
         }
       } catch (error) {
-        console.error("Erreur lors du changement de langue:", error)
+        // console.error("Erreur lors du changement de langue:", error)
         showMessage("message-language", "Erreur réseau 3. Veuillez réessayer.", "error")
       }
     })
@@ -241,7 +240,7 @@ async function changeAvatar() {
         const target = event.target as HTMLFormElement
         const formData = new FormData(target)
 
-      const response: Response = await fetch("https://localhost:3000/user/avatar", {
+      const response: Response = await fetch("/api/user/avatar", {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
@@ -297,9 +296,9 @@ async function activate2fa() {
 
     const isActivate = button.checked
     const boolean = isActivate
-    console.log("isActivate:", isActivate, "boolean:", boolean)
+    // console.log("isActivate:", isActivate, "boolean:", boolean)
     try {
-      const response: Response = await fetch("https://localhost:3000/user/2fa-activate", {
+      const response: Response = await fetch("/api/user/2fa-activate", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -310,10 +309,10 @@ async function activate2fa() {
         }),
       })
 
-      console.log("Response status:", localStorage.getItem("email"), boolean)
+      // console.log("Response status:", localStorage.getItem("email"), boolean)
       if (response.status === 400) {
         showMessage("message-2fa", "Erreur lors de la mise à jour de la 2FA.", "error")
-        console.log("Response status 400, returning")
+        // console.log("Response status 400, returning")
         return
       }
 
@@ -328,7 +327,7 @@ async function activate2fa() {
         messageDiv.classList.add("hidden")
       }, 5000)
     } catch (error) {
-      console.log("LERREUR", error)
+      // console.log("LERREUR", error)
       messageDiv.textContent = t('2FA ') 
       messageDiv.classList.remove("hidden")
       checkbox.checked = !isActivate
@@ -356,15 +355,15 @@ async function changePassword(): Promise<void> {
     }
 
     try {
-      const response = await fetch("https://localhost:3000/auth/change-password", {
+      const response = await fetch("/api/auth/change-password", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
         },
         body: JSON.stringify({
-          actualPassword,
-          newPassword,
+          currpass : actualPassword,
+          newpassword :newPassword
         }),
       })
 
@@ -402,7 +401,7 @@ declare global {
   }
 }
 
-console.log("Registering profile functions to window object")
+// console.log("Registering profile functions to window object")
 window.displayUserProfile = displayUserProfile
 window.changeUsername = changeUsername
 window.changePassword = changePassword

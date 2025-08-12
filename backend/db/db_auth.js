@@ -22,7 +22,7 @@ async function dbFunction(fastify, options)
             {
                 await db.run(`CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, email TEXT UNIQUE, password TEXT, username TEXT UNIQUE, google_id TEXT UNIQUE, is_2fa_activated BOOLEAN, status BOOLEAN, picture TEXT, language TEXT DEFAULT 'fr')`);
             } catch (error) {
-                console.error('Error creating table:', error);
+                // console.error('Error creating table:', error);
             }
         },
         
@@ -60,7 +60,7 @@ async function dbFunction(fastify, options)
             }
             catch(error)
             {
-                console.error('Error registering user:', error);
+                // console.error('Error registering user:', error);
                 throw new Error(error.message);
             }
         },
@@ -84,7 +84,7 @@ async function dbFunction(fastify, options)
             }
             catch (error)
             {
-                console.error('Error logging in user:', error);
+                // console.error('Error logging in user:', error);
                 throw new Error('Failed to log in user');
             }
         },

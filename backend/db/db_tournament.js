@@ -16,7 +16,7 @@ async function tableMatches(fastify, options)
                         FOREIGN KEY (creator_id) REFERENCES users(id));`
                 );
             } catch (error) {
-                console.error('Error creating tournaments table:', error);
+                // console.error('Error creating tournaments table:', error);
             }
         },
         
@@ -34,7 +34,7 @@ async function tableMatches(fastify, options)
                         FOREIGN KEY (user_id) REFERENCES users(id));`
                 );
             } catch (error) {
-                console.error('Error creating tournament_participants table:', error);
+                // console.error('Error creating tournament_participants table:', error);
             }
         },
 
@@ -51,7 +51,7 @@ async function tableMatches(fastify, options)
                      VALUES (?, ?, ?);`, [tournamentId.id, creatorId, user.username]);
                 return tournamentId;
             } catch (error) {
-                console.error('Error in createTournament:', error);
+                // console.error('Error in createTournament:', error);
                 throw error;
             }
         },
@@ -79,7 +79,7 @@ async function tableMatches(fastify, options)
                     VALUES (?, ?, ?);`, [tournamentId, userId, user.username]);
                 return true;
             } catch (error) {
-                console.error('Error in joinPlayerToTournament:', error);
+                // console.error('Error in joinPlayerToTournament:', error);
                 throw error;
             }
         },
@@ -110,7 +110,7 @@ async function tableMatches(fastify, options)
                     VALUES (?, ?, ?);`, [tournamentId, userId, user.username]);
                 return true;
             } catch (error) {
-                console.error('Error in addPlayerToTournament:', error);
+                // console.error('Error in addPlayerToTournament:', error);
                 throw error;
             }
         },
@@ -136,7 +136,7 @@ async function tableMatches(fastify, options)
                 );
                 return true;
             } catch (error) {
-                console.error('Error in addAliasToTournament:', error);
+                // console.error('Error in addAliasToTournament:', error);
                 throw error;
             }
         },
@@ -154,7 +154,8 @@ async function tableMatches(fastify, options)
                     [tournamentId, alias, alias]
                 );
                 if (aliasExists) {
-                    throw new Error('This alias is already used in this tournament');
+                    console.log('Alias already exists in tournament');
+                    // throw new Error('This alias is already used in this tournament2');
                 }
                 const participantCount = await fastify.db.connection.get(
                     'SELECT COUNT(*) as count FROM tournament_participants WHERE tournament_id = ?', 
@@ -170,7 +171,7 @@ async function tableMatches(fastify, options)
                 );
                 return true;
             } catch (error) {
-                console.error('Error in addAliasToParticipant:', error);
+                // console.error('Error in addAliasToParticipant:', error);
                 throw error;
             }
         },
@@ -204,7 +205,7 @@ async function tableMatches(fastify, options)
                 );
                 return true;
             } catch (error) {
-                console.error('Error in addUsernameToParticipant:', error);
+                // console.error('Error in addUsernameToParticipant:', error);
                 throw error;
             }
         },
@@ -212,14 +213,14 @@ async function tableMatches(fastify, options)
         async getUsernameByEmail(email)
         {
             try {
-                console.log('Fetching username for email:', email);
+                // console.log('Fetching username for email:', email);
                 const user = await fastify.db.connection.get('SELECT username FROM users WHERE email = ?', [email]);
                 if (!user) {
                     throw new Error('User not found');
                 }
                 return user.username;
             } catch (error) {
-                console.error('Error in getUsernameByEmail:', error);
+                // console.error('Error in getUsernameByEmail:', error);
                 throw error;
             }
         },
@@ -231,7 +232,7 @@ async function tableMatches(fastify, options)
                     `DELETE FROM tournament_participants
                      WHERE tournament_id = ? AND user_id = ?;`, [tournamentId, userId]);
             } catch (error) {
-                console.error('Error in removePlayerFromTournament:', error);
+                // console.error('Error in removePlayerFromTournament:', error);
                 throw error;
             }
         },
@@ -246,7 +247,7 @@ async function tableMatches(fastify, options)
                     `DELETE FROM tournament_participants
                      WHERE tournament_id = ?;`, [tournamentId]);
             } catch (error) {
-                console.error('Error in deleteTournament:', error);
+                // console.error('Error in deleteTournament:', error);
                 throw error;
             }
         },
@@ -258,7 +259,7 @@ async function tableMatches(fastify, options)
                     `DELETE FROM tournament_participants
                      WHERE tournament_id = ?;`, [tournamentId]);
             } catch (error) {
-                console.error('Error in clearTournamentParticipants:', error);
+                // console.error('Error in clearTournamentParticipants:', error);
                 throw error;
             }
         },
@@ -270,7 +271,7 @@ async function tableMatches(fastify, options)
                     `SELECT user_id FROM tournament_participants
                      WHERE tournament_id = ?;`, [tournamentId]);
             } catch (error) {
-                console.error('Error in getTournamentParticipants:', error);
+                // console.error('Error in getTournamentParticipants:', error);
                 return [];
             }
         },
@@ -282,7 +283,7 @@ async function tableMatches(fastify, options)
                     `SELECT * FROM tournaments
                      WHERE id = ?;`, [tournamentId]);
             } catch (error) {
-                console.error('Error in getTournamentById:', error);
+                // console.error('Error in getTournamentById:', error);
                 return null;
             }
         },
@@ -294,7 +295,7 @@ async function tableMatches(fastify, options)
                     `SELECT * FROM tournaments
                      WHERE creator_id = ?;`, [creatorId]);
             } catch (error) {
-                console.error('Error in getTournamentByCreatorId:', error);
+                // console.error('Error in getTournamentByCreatorId:', error);
                 return null;
             }
         },
@@ -305,7 +306,7 @@ async function tableMatches(fastify, options)
                 return await fastify.db.connection.all(
                     `SELECT * FROM tournaments;`);
             } catch (error) {
-                console.error('Error in getAllTournaments:', error);
+                // console.error('Error in getAllTournaments:', error);
                 return [];
             }
         },
@@ -321,7 +322,7 @@ async function tableMatches(fastify, options)
                     `SELECT * FROM tournament_participants
                      WHERE tournament_id = ?;`, [t_id.id]);
             } catch (error) {
-                console.error('Error in getAllParticipants:', error);
+                // console.error('Error in getAllParticipants:', error);
                 return [];
             }
         },
@@ -335,7 +336,7 @@ async function tableMatches(fastify, options)
                     WHERE t.status = 'open';`);
                 return test;
             } catch (error) {
-                console.error('Error in getAllOpenTournaments:', error);
+                // console.error('Error in getAllOpenTournaments:', error);
                 return [];
             }
         }

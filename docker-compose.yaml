@@ -1,27 +1,39 @@
 version: '3.8'
+
 services:
-  # Backend Fastify with HTTPS
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx-gateway
+    ports:
+      - "8080:80"     # HTTP (redirigé vers HTTPS)
+      - "8443:443"    # HTTPS
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+    volumes:
+      - nginx_certs:/etc/nginx/ssl
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: fastify-backend
-    ports:
-      - "3000:3000"
     environment:
       - NODE_ENV=development
       - DB_PATH=/app/data/database.sqlite
       - PORT=3000
-      - HTTPS_ENABLED=true
     volumes:
       - ./backend:/app
       - /app/node_modules
       - sqlite_data:/app/data
-      - ./certs:/app/certs:ro
     depends_on:
       - db
     networks:
       - app-network
+    # pas d'exposition de port (Nginx seul est public)
     command: npm run dev
 
   frontend:
@@ -29,20 +41,17 @@ services:
       context: ./client
       dockerfile: Dockerfile
     container_name: vite-frontend
-    ports:
-      - "5173:5173"
     environment:
       - NODE_ENV=development
-      - VITE_API_URL=https://localhost:3000
+      - VITE_API_URL=/api       # base URL relative, compatible 8443
     volumes:
       - ./client:/app
       - /app/node_modules
-      - ./certs:/app/certs:ro
     networks:
       - app-network
-    command: npm run dev
+    command: sh -c "npm run dev -- --host 0.0.0.0 --port 5173"
 
-  # SQLite Database (unchanged)
+
   db:
     image: alpine:latest
     container_name: sqlite-db
@@ -62,6 +71,8 @@ services:
 
 volumes:
   sqlite_data:
+    driver: local
+  nginx_certs:
     driver: local
 
 networks:

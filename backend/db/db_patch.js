@@ -13,18 +13,17 @@ async function dbFunctionPatch(fastify, options) {
   const dbPatch = {
     async changePassword(email, currpass, newpassword) {
       try {
-        console.log("HERE");
         let user = await fastify.db.connection.get(
           "SELECT password FROM users WHERE email = ?",
           email
         );
         if (!user) {
-          console.log("User not found");
+          // console.log("User not found");
           throw new Error("Email doesn't exist");
         }
         const check = await bcrypt.compare(currpass, user.password);
         if (!check) {
-          console.log("Wrong password");
+          // console.log("Wrong password");
           throw new Error("Wrong password");
         }
         if (check) {
@@ -36,7 +35,7 @@ async function dbFunctionPatch(fastify, options) {
           );
         } else throw new Error("Email doesn't exist");
       } catch (error) {
-        console.error("Error in changePassword:", error);
+        // console.error("Error in changePassword:", error);
         throw error;
       }
     },
@@ -97,10 +96,7 @@ async function dbFunctionPatch(fastify, options) {
           try {
             await fs.promises.unlink(oldAvatarPath);
           } catch (err) {
-            console.error(
-              "Erreur lors de la suppression de l'ancien avatar :",
-              err
-            );
+            // console.error("Erreur lors de la suppression de l'ancien avatar :", err);
           }
         }
         const dataUrl = `data:${file.mimetype};base64,${avatar.toString(
@@ -108,7 +104,7 @@ async function dbFunctionPatch(fastify, options) {
         )}`;
         const safeFilename = path.basename(file.filename);
         const avatarPath = path.join(__dirname, "..", "avatar", safeFilename);
-        console.log("avatarPath", avatarPath);
+        // console.log("avatarPath", avatarPath);
         await fs.promises.writeFile(avatarPath, avatar);
         await fastify.db.connection.run(
           "UPDATE users SET picture = ? WHERE email = ?",
@@ -116,7 +112,7 @@ async function dbFunctionPatch(fastify, options) {
           requestOrEmail.user.email
         );
       } catch (error) {
-        console.error("Error in addOrChangeAvatar:", error);
+        // console.error("Error in addOrChangeAvatar:", error);
         throw error;
       }
     },
@@ -134,7 +130,7 @@ async function dbFunctionPatch(fastify, options) {
           email
         );
       } catch (error) {
-        console.error("Error in changeUsername:", error);
+        // console.error("Error in changeUsername:", error);
         throw error;
       }
     },
@@ -160,7 +156,7 @@ async function dbFunctionPatch(fastify, options) {
         const jwt = await fastify.auth.createJWTtoken(user);
         return { user, jwt };
       } catch (error) {
-        console.error("Error in addUsernameGoogle:", error);
+        // console.error("Error in addUsernameGoogle:", error);
         throw error;
       }
     },
@@ -177,15 +173,15 @@ async function dbFunctionPatch(fastify, options) {
           isActivate,
           email
         );
-        console.log(
-          "activate2FA called for user:",
-          email,
-          "isActivate:",
-          user.is_2fa_activated
-        );
+        // console.log(
+        //   "activate2FA called for user:",
+        //   email,
+        //   "isActivate:",
+        //   user.is_2fa_activated
+        // );
         return { success: true, message: "2FA status updated successfully" };
       } catch (error) {
-        console.error("Error in activate2FA:", error);
+        // console.error("Error in activate2FA:", error);
         throw error;
       }
     },
@@ -197,26 +193,26 @@ async function dbFunctionPatch(fastify, options) {
           email
         );
         if (!user) throw new Error("User not found");
-        console.log(
-          "changeOnlineStatus called for user:",
-          email,
-          "isOnline:",
-          isOnline
-        );
+        // console.log(
+        //   "changeOnlineStatus called for user:",
+        //   email,
+        //   "isOnline:",
+        //   isOnline
+        // );
         await fastify.db.connection.run(
           "UPDATE users SET status = ? WHERE email = ?",
           isOnline,
           email
         );
-        console.log(
-          "changeOnlineStatus called for user:",
-          email,
-          "isOnline:",
-          isOnline
-        );
+        // console.log(
+        //   "changeOnlineStatus called for user:",
+        //   email,
+        //   "isOnline:",
+        //   isOnline
+        // );
         return { success: true, message: "Online status updated successfully" };
       } catch (error) {
-        console.error("Error in changeOnlineStatus:", error);
+        // console.error("Error in changeOnlineStatus:", error);
         throw error;
       }
     },

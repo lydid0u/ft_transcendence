@@ -24,29 +24,22 @@ async function matchesRoutes(fastify, options)
     try {
         await fastify.db.connection.run('INSERT INTO matches(player1_id, player1_name, winner_id, score_player1, score_player2, game_mode) VALUES (?, ?, ?, ?, ?, ?)',
             userId, user.username, winner_id, data.player1_score, data.player2_score, data.game_type);
-        
-        if (winner_id === null) {
-            console.log('Match recorded as a defeat for player1');
-        } else {
-            console.log('Match recorded as a victory for player1');
-        }
-        
+            
         return reply.status(200).send({ 
             success: true, 
             message: winner_id ? 'Victory recorded successfully' : 'Defeat recorded successfully' 
         });
     } catch (error) {
-        console.error('Error adding match:', error);
+        // console.error('Error adding match:', error);
         return reply.status(400).send({ success: false, error: error.message });
     }
 })
 
     fastify.get('/match-history', {preValidation: [fastify.prevalidate]}, async (request, reply) => {
-    
         const matches = await fastify.db.connection.all(
-                'SELECT * FROM matches WHERE (player1_id = ? OR player2_id = ?)', 
+                'SELECT * FROM matches WHERE (player1_id = ? OR player2_id = ?) AND game_mode != "Pong 1v1v1v1"', 
                 request.user.id, request.user.id);
-        console.log("Matchs récupérés:", matches);
+        // console.log("Matchs récupérés:", matches);
         return matches;
     })
 
@@ -102,10 +95,7 @@ async function matchesRoutes(fastify, options)
 
     fastify.get('/snake/nearest-score', {preValidation : [fastify.prevalidate]}, async (request, reply) =>
     {
-        // globalBest
-        // nextScore
-        // playerRank
-        console.log('Fetching nearest score to beat for user:', request.user.id);
+        // console.log('Fetching nearest score to beat for user:', request.user.id);
         try {
             const nextScore = await fastify.dbSnake.findNearestScoreToBeat(request.user.id);
             const globalBest = await fastify.dbSnake.findHighScoreOfUser(request.user.id);
@@ -121,12 +111,10 @@ async function matchesRoutes(fastify, options)
         const game = request.body;
         
         const userId = request.user.id;
-        
         const user = await fastify.db.connection.get('SELECT * FROM users WHERE id = ?', userId);
         if (!user) {
             return reply.status(404).send({ success: false, message: 'User not found' });
         }
-        
         try {
             await fastify.dbSnake.addScoreToDB({
                 playerId: userId,
@@ -136,7 +124,7 @@ async function matchesRoutes(fastify, options)
             });
             return reply.status(200).send({ success: true, message: 'Score added successfully' });
         } catch (error) {
-            console.error('Error adding score:', error);
+            // console.error('Error adding score:', error);
             return reply.status(400).send({ success: false, error: error.message });
         }
     });
@@ -170,7 +158,7 @@ async function matchesRoutes(fastify, options)
                 next_score_to_beat: nextScoreToBeat
             });
         } catch (error) {
-            console.error('Error getting player stats:', error);
+            // console.error('Error getting player stats:', error);
             return reply.status(500).send({ success: false, error: 'Failed to retrieve player stats' });
         }
     });
@@ -186,7 +174,7 @@ async function matchesRoutes(fastify, options)
             
             return reply.status(200).send(history);
         } catch (error) {
-            console.error('Error getting player history:', error);
+            // console.error('Error getting player history:', error);
             return reply.status(500).send({ success: false, error: 'Failed to retrieve player history' });
         }
     });
@@ -205,7 +193,7 @@ async function matchesRoutes(fastify, options)
             
             return reply.status(200).send(leaderboard);
         } catch (error) {
-            console.error('Error getting leaderboard:', error);
+            // console.error('Error getting leaderboard:', error);
             return reply.status(500).send({ success: false, error: 'Failed to retrieve leaderboard' });
         }
     });

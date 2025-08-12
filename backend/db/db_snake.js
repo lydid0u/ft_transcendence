@@ -25,11 +25,11 @@ async function tableSnake(fastify, options)
                     'SELECT MIN(s.max_score) as next_score FROM (SELECT player_id, MAX(score) as max_score FROM snake GROUP BY player_id) s WHERE s.max_score > ?',
                     highScore
                 );
-                console.log('Nearest score to beat:', result);
+                // console.log('Nearest score to beat:', result);
                 return result?.next_score || 0;
             } 
             catch (error) {
-                console.error('Error finding nearest score to beat:', error);
+                // console.error('Error finding nearest score to beat:', error);
                 return 0;
             }
         },
@@ -59,7 +59,6 @@ async function tableSnake(fastify, options)
                 const score = game.score;
                 const gameMode = game.gameMode;
                 const currentDate = new Date().toISOString();
-
                 await fastify.db.connection.run(
                     'INSERT INTO snake (player_id, player_name, score, game_mode, played_at) VALUES (?, ?, ?, ?, ?)',
                     userId, userName, score, gameMode, currentDate

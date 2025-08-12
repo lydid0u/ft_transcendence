@@ -185,9 +185,9 @@
                         if (route === '/') {
                                 if (typeof SPA.signOut === 'function') {
                                     SPA.signOut();
-                                    console.log('User logged out using SPA.signOut()');
+                                    // console.log('User logged out using SPA.signOut()');
                                 } else {
-                                    console.error('SPA.signOut function not found');
+                                    // console.error('SPA.signOut function not found');
                                 }
                                 SPA.navigateTo(route);
                         } else {
@@ -228,7 +228,7 @@
             const langEn = document.getElementById('lang-en');
             const langFr = document.getElementById('lang-fr');
             const langEs = document.getElementById('lang-es');
-            console.log('Language elements:', langEn, langFr, langEs);
+            // console.log('Language elements:', langEn, langFr, langEs);
             function updateLanguageIndicator() {
                 const currentLang = localStorage.getItem('preferredLanguage') || 'fr';
                 langEn.classList.remove('ring-2', 'ring-red-300');

@@ -52,7 +52,7 @@ class MatchHistoryAPI {
   private baseUrl: string;
   private token: string | null;
 
-  constructor(baseUrl = "https://localhost:3000") {
+  constructor(baseUrl = "/api") {
     this.baseUrl = baseUrl;
     this.token = localStorage.getItem("jwtToken");
   }
@@ -72,7 +72,7 @@ class MatchHistoryAPI {
         const data = await response.json();
         return data as T;
       } catch (error) {
-        console.error(`Error fetching ${endpoint}:`, error);
+        // console.error(`Error fetching ${endpoint}:`, error);
         throw error;
       }
     }
@@ -412,7 +412,7 @@ class MatchHistoryApp {
         this.snakeLoadingStateEl.style.display = 'none';
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des données Snake:', error);
+      // console.error('Erreur lors du chargement des données Snake:', error);
       this.showNotification('Impossible de charger les données Snake', 'error');
       
       if (this.snakeLoadingStateEl) {
@@ -424,7 +424,7 @@ class MatchHistoryApp {
   private async loadSnakePlayerStats(userId: number): Promise<void> {
     if (await window.SPA.checkJwtValidity()) {
       try {
-        const response = await fetch(`https://localhost:3000/snake/player-stats/${userId}`, {
+        const response = await fetch(`/api/snake/player-stats/${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -450,7 +450,7 @@ class MatchHistoryApp {
         }
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des statistiques Snake:', error);
+      // console.error('Erreur lors du chargement des statistiques Snake:', error);
     }
   }
 }
@@ -458,7 +458,7 @@ class MatchHistoryApp {
   private async loadSnakeLeaderboard(): Promise<void> {
     if (await window.SPA.checkJwtValidity()) {
       try {
-        const response = await fetch('https://localhost:3000/snake/leaderboard', {
+        const response = await fetch('/api/snake/leaderboard', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -490,7 +490,7 @@ class MatchHistoryApp {
           this.leaderboardCountEl.textContent = data.length.toString();
         }
       } catch (error) {
-        console.error('Erreur lors du chargement du leaderboard Snake:', error);
+        // console.error('Erreur lors du chargement du leaderboard Snake:', error);
       }
     }
   }
@@ -498,7 +498,7 @@ class MatchHistoryApp {
   private async loadSnakeHistory(userId: number): Promise<void> {
     if (await window.SPA.checkJwtValidity()) {
       try {
-        const response = await fetch(`https://localhost:3000/snake/player-history/${userId}`, {
+        const response = await fetch(`/api/snake/player-history/${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -536,7 +536,7 @@ class MatchHistoryApp {
         }
       }
       } catch (error) {
-        console.error('Erreur lors du chargement de l\'historique Snake:', error);
+        // console.error('Erreur lors du chargement de l\'historique Snake:', error);
       }
     }
   }

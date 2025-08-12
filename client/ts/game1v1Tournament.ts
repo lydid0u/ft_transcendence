@@ -43,7 +43,7 @@ async function validateTournamentAccess(): Promise<boolean> {
         
         return true;
     } catch (error) {
-        console.error("Erreur lors de la validation de l'accès au tournoi:", error);
+        // console.error("Erreur lors de la validation de l'accès au tournoi:", error);
         showErrorMessage("Erreur lors de la validation de l'accès au tournoi");
         return false;
     }
@@ -94,7 +94,7 @@ export async function startTournamentFlow() {
         return; // Arrêter l'exécution si l'accès est refusé
     }
     const participants = await api.getTournamentDetails();
-    console.log("Participants du tournoi:", participants);
+    // console.log("Participants du tournoi:", participants);
     await tournament.fetchMatch();
     function tryInitGame1v1() {
         const canvas = document.getElementById('game-canvas');
@@ -117,7 +117,7 @@ export async function startTournamentFlow() {
         }
         catch (e)
         {
-            console.error("Error initializing game:", e);
+            // console.error("Error initializing game:", e);
         }
     }
     tryInitGame1v1();
@@ -126,18 +126,18 @@ export async function startTournamentFlow() {
 function addNextGameButtonListener() {
     const nextGameButton = document.getElementById('next-game-button');
     if (nextGameButton) {
-        console.log("Next game button found, adding click event listener");
+        // console.log("Next game button found, adding click event listener");
         nextGameButton.removeEventListener('click', handleNextGame);
         nextGameButton.addEventListener('click', handleNextGame);
     } else {
-        console.log("Next game button not found, will retry...");
+        // console.log("Next game button not found, will retry...");
         setTimeout(addNextGameButtonListener, 500);
     }
 }
 async function handleNextGame(event) {
     if (event) event.preventDefault();
     
-    console.log("Bouton Prochain match cliqué!");
+    // console.log("Bouton Prochain match cliqué!");
     
     try {
         const nextGameContainer = document.getElementById('next-game-container');
@@ -148,14 +148,14 @@ async function handleNextGame(event) {
             window.SPA.navigateTo('/tournoi');
             setTimeout(() => {
                 window.SPA.navigateTo('/game1v1Tournament');
-                console.log("Redirection vers le prochain match...");
+                // console.log("Redirection vers le prochain match...");
             }, 100);
         } 
         else {
             window.location.reload();
         }
     } catch (error) {
-        console.error("Erreur lors du passage au match suivant:", error);
+        // console.error("Erreur lors du passage au match suivant:", error);
     }
 }
 function showTournamentEndButton(winnerName = "Nom du vainqueur") {
@@ -198,7 +198,7 @@ function showTournamentEndButton(winnerName = "Nom du vainqueur") {
 function handleTournamentEnd(event) {
     if (event) event.preventDefault();
     
-    console.log("Bouton Fin du tournoi cliqué!");
+    // console.log("Bouton Fin du tournoi cliqué!");
     if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
         window.SPA.navigateTo('/tournoi');
     } else {
@@ -252,7 +252,7 @@ export class Game1v1
             paddleSpeed = 12;
             ballSpeed = 4;
         }
-        console.log("Game1v1 difficulty set to: " + Difficulty[this.difficulty]);
+        // console.log("Game1v1 difficulty set to: " + Difficulty[this.difficulty]);
         const paddleWidth:number = 20, paddleHeight:number = 70, ballSize:number = 10, wallOffset:number = WALL_OFFSET;
 
         this.player1 = new Paddle(paddleWidth,paddleHeight,wallOffset,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed, 1);
@@ -303,7 +303,7 @@ export class Game1v1
         Game1v1.keys2Pressed = [];
         Game1v1.player1Score = 0;
         Game1v1.player2Score = 0;
-        console.log("Game1v1 instance destroyed!");
+        // console.log("Game1v1 instance destroyed!");
     }
     drawBoardDetails()
     {
@@ -338,11 +338,11 @@ export class Game1v1
         {
             this.running = false;
             const winner = Game1v1.player1Score > Game1v1.player2Score ? 1 : 2;
-            console.log(`Le joueur ${winner} a gagné la partie!`);
+            // console.log(`Le joueur ${winner} a gagné la partie!`);
             const player1Name = document.getElementById('player1-name')?.textContent || 'Joueur 1';
             const player2Name = document.getElementById('player2-name')?.textContent || 'Joueur 2';
             const winnerName = winner === 1 ? player1Name : player2Name;
-            console.log(`${winnerName} remporte la victoire!`);
+            // console.log(`${winnerName} remporte la victoire!`);
             window.removeEventListener("keydown", this.keyDownHandler);
             window.removeEventListener("keyup", this.keyUpHandler);  
             handleMatchEnd(winner, player1Name, player2Name);
@@ -364,7 +364,7 @@ export class Game1v1
 async function handleMatchEnd(winnerNumber: number, player1Name: string, player2Name: string) { // Fonction globale, pas une méthode de classe
     try {
         const match = await api.getTournamentMatch();
-        console.log("Match récupéré pour la finalisation:", match);
+        // console.log("Match récupéré pour la finalisation:", match);
         
         if (match) {
             const matchResult = {
@@ -390,7 +390,7 @@ async function handleMatchEnd(winnerNumber: number, player1Name: string, player2
                 
                 const deleted = await api.deleteTournament(matchResult.tournament_id);
                 if (!deleted)
-                    console.error("Erreur lors de la suppression du tournoi:");
+                    // console.error("Erreur lors de la suppression du tournoi:");
                 return;
             }
             await tournament.deleteLosers(matchResult);
@@ -401,7 +401,7 @@ async function handleMatchEnd(winnerNumber: number, player1Name: string, player2
             addNextGameButtonListener();
         }
     } catch (error) {
-        console.error("Erreur lors de la finalisation du match:", error);
+        // console.error("Erreur lors de la finalisation du match:", error);
     }
 } // Accolade fermante ajoutée ici
 

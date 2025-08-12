@@ -39,7 +39,7 @@ class TournamentMatchmakingAPI {
     private baseUrl: string;
     private token: string | null;
 
-	constructor(baseUrl = "https://localhost:3000")
+	constructor(baseUrl = "/api")
 	{
 		this.baseUrl = baseUrl;
 		this.token = localStorage.getItem("jwtToken");
@@ -117,7 +117,7 @@ class TournamentMatchmaking {
             this.startPolling();
             this.checkForNextMatch();
         } catch (error) {
-            console.error('Error initializing tournament:', error);
+            // console.error('Error initializing tournament:', error);
             this.showMessage("Failed to load tournament", "error");
         }
     }
@@ -149,7 +149,7 @@ class TournamentMatchmaking {
                 this.renderTournamentBracket();
                 this.checkForNextMatch();
             } catch (error) {
-                console.error('Error polling tournament updates:', error);
+                // console.error('Error polling tournament updates:', error);
             }
         }, 5000);
     }
@@ -166,7 +166,7 @@ class TournamentMatchmaking {
                 this.stopPolling();
             }
         } catch (error) {
-            console.error('Error checking for next match:', error);
+            // console.error('Error checking for next match:', error);
         }
     }
 
@@ -307,7 +307,7 @@ class TournamentMatchmaking {
                 }, 5000);
             }
         } catch (error) {
-            console.error('Error submitting match result:', error);
+            // console.error('Error submitting match result:', error);
             this.showMessage("Failed to submit match result", "error");
         }
     }

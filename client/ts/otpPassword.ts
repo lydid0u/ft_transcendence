@@ -1,7 +1,7 @@
 let resetEmail: string = '';
 
 export function setupOtpForm() {
-  console.log('Demarrage de la configuration du formulaire OTP');
+  // console.log('Demarrage de la configuration du formulaire OTP');
   const otpForm = document.getElementById('otp-form') as HTMLFormElement | null;
   if (otpForm) {
     otpForm.addEventListener('submit', async (e) => {
@@ -17,7 +17,7 @@ export function setupOtpForm() {
         return;
       }
       try {
-        const res = await fetch('https://localhost:3000/auth/2FA-verify/pass', {
+        const res = await fetch('/api/auth/2FA-verify/pass', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: resetEmail, code })
@@ -32,7 +32,8 @@ export function setupOtpForm() {
           message.textContent = data.message || 'Code incorrect ou expiré.';
         }
       } catch (err) {
-        message.textContent = 'Erreur réseau.';
+        console.error('Erreur réseau:', err);
+        message.textContent = 'Erreur réseauici.';
       }
     });
   }

@@ -8,7 +8,7 @@ async function friendsRoute(fastify, options)
             const table = await fastify.dbFriends.showTableFriends(request.user.id);
             return table;
         } catch (error) {
-            console.error('Error fetching friends:', error);
+            // console.error('Error fetching friends:', error);
             reply.status(500).send({ error: 'Failed to fetch friends' });
         }
     }),
@@ -20,7 +20,7 @@ async function friendsRoute(fastify, options)
             await fastify.dbFriends.deletefriend(request, friend_delete);
             reply.send({ status: 'success' });
         } catch (error) {
-            console.error('Error deleting friend:', error);
+            // console.error('Error deleting friend:', error);
             reply.status(400).send({ error: 'Failed to delete friend' });
         }
     }),
@@ -35,7 +35,7 @@ async function friendsRoute(fastify, options)
         }
         catch (error)
         {
-            console.error('Error adding friend:', error);
+            // console.error('Error adding friend:', error);
             reply.status(400).send({ error: 'Failed to add friend' });
         }
     })

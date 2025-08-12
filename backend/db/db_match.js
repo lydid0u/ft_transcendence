@@ -28,7 +28,7 @@ async function tableMatches(fastify, options)
                         FOREIGN KEY (winner_id) REFERENCES users(id));`
                 );
             } catch (error) {
-                console.error('Error creating matches table:', error);
+                // console.error('Error creating matches table:', error);
             }
         }, 
 
@@ -46,7 +46,7 @@ async function tableMatches(fastify, options)
                         FOREIGN KEY (player_id) REFERENCES users(id));`
                 );
             } catch (error) {
-                console.error('Error creating snake table:', error);
+                // console.error('Error creating snake table:', error);
             }
         }
     };

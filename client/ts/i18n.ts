@@ -36,12 +36,12 @@ async function loadTranslations(): Promise<void> {
     if (response.ok) {
       const data = await response.json();
       translations = { ...translations, ...data };
-      console.log('Translations loaded successfully');
+      // console.log('Translations loaded successfully');
     } else {
-      console.error('Failed to load translations:', response.statusText);
+      // console.error('Failed to load translations:', response.statusText);
     }
   } catch (error) {
-    console.error('Error loading translations:', error);
+    // console.error('Error loading translations:', error);
   }
   
   // Initialize page translations after loading
@@ -81,8 +81,8 @@ function translate(key: string): string {
 
 function setLanguage(lang: string): void {
   const loadLanguage = JSON.parse(localStorage.getItem('user') || '{}').language || localStorage.getItem('preferredLanguage') || 'fr';
-  console.log("Setting language to:", lang, "Current language:", loadLanguage);
-  console.log("user language:", JSON.parse(localStorage.getItem('user') || '{}').language);
+  // console.log("Setting language to:", lang, "Current language:", loadLanguage);
+  // console.log("user language:", JSON.parse(localStorage.getItem('user') || '{}').language);
   if (translations[lang]) {
     currentLanguage = lang;
     localStorage.setItem('preferredLanguage', lang);

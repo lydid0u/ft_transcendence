@@ -11,7 +11,7 @@ async function tournamentRoute(fastify, options)
             reply.status(200).send({ status: 'success', message: 'Joined tournament successfully' });
         } 
         catch (error) {
-            console.error('Error joining tournament:', error);
+            // console.error('Error joining tournament:', error);
             return reply.status(400).send({ status: 'error', message: error.message });
         }
     });
@@ -22,7 +22,7 @@ async function tournamentRoute(fastify, options)
             const tournaments = await fastify.dbTournament.getAllOpenTournaments();
             reply.send(tournaments);
         } catch (error) {
-            console.error('Error fetching open tournaments:', error);
+            // console.error('Error fetching open tournaments:', error);
             reply.status(400).send({ status: 'error', message: 'Failed to fetch open tournaments' });
         }
     });
@@ -37,12 +37,13 @@ async function tournamentRoute(fastify, options)
                 console.log('User already has a tournament:', alreadyExists);
                 return reply.status(400).send({ status: 'error', message: 'You already have a tournament' });
             }
+            console.log('Creating tournament for user:', userId);
             const tournamentId = await fastify.dbTournament.createTournament(userId);
             reply.send({ status: 'success', data: { tournamentId } });
         }
         catch (error)
         {
-            console.error('Error creating tournament:', error);
+            // console.error('Error creating tournament:', error);
             reply.status(400).send({ status: 'error', message: 'Failed to create tournament' });
         }
     });
@@ -68,7 +69,7 @@ async function tournamentRoute(fastify, options)
                 message: `Player with alias "${alias}" added to tournament successfully` 
             });
         } catch (error) {
-            console.error('Error adding player with alias to tournament:', error);
+            // console.error('Error adding player with alias to tournament:', error);
             return reply.status(400).send({ status: 'error', message: error.message });
         }
     });
@@ -98,7 +99,7 @@ async function tournamentRoute(fastify, options)
                 message: `Player with username "${username}" added to tournament successfully` 
             });
         } catch (error) {
-            console.error('Error adding player with username to tournament:', error);
+            // console.error('Error adding player with username to tournament:', error);
             return reply.status(400).send({ status: 'error', message: error.message });
         }
     });
@@ -110,7 +111,7 @@ async function tournamentRoute(fastify, options)
             const participants = await fastify.dbTournament.getAllParticipants(userId);
             reply.send({ participants });
         } catch (error) {
-            console.error('Error fetching tournament participants:', error);
+            // console.error('Error fetching tournament participants:', error);
             reply.status(400).send({ status: 'error', message: 'Failed to fetch participants' });
         }
     });
@@ -126,7 +127,7 @@ async function tournamentRoute(fastify, options)
         }
         catch (error)
         {
-            console.error('Error clearing tournaments:', error);
+            // console.error('Error clearing tournaments:', error);
             reply.status(400).send({ status: 'error', message: 'Failed to clear tournaments' });
         }
     });
@@ -151,7 +152,7 @@ async function tournamentRoute(fastify, options)
                 });
             }
         } catch (error) {
-            console.error('Error in tournament login:', error);
+            // console.error('Error in tournament login:', error);
             return reply.status(400).send({
                 success: false, 
                 message: "Wrong mail or password"

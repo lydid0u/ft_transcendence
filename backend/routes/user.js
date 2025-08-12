@@ -13,13 +13,13 @@ async function userRoutes(fastify, options)
             }
             else
             {
-                console.log("user not found");
+                // console.log("user not found");
                 reply.status(404).send({error: "User not found"});
             }
         }
         catch (error)
         {
-            console.error('Error fetching user:', error);
+            // console.error('Error fetching user:', error);
             reply.status(404).send({error: "Failed to fetch user"});
         }
     });
@@ -72,7 +72,7 @@ async function userRoutes(fastify, options)
         try {
             await fastify.dbPatch.activate2FA(request.user.email, request.body.isActivate);
             const user = await fastify.utilsDb.getOneUser(request.user.email);
-            console.log("2FA status updated for user:", request.user.email, "isActivate:", request.body.isActivate);
+            // console.log("2FA status updated for user:", request.user.email, "isActivate:", request.body.isActivate);
             if (!user) {
                 return reply.status(404).send({ success: false, message: "User not found" });
             }
@@ -85,7 +85,7 @@ async function userRoutes(fastify, options)
     fastify.patch('/user/connection-status', { preValidation: [fastify.prevalidate] }, async (request, reply) => {
         try {
             const { status: isOnline } = request.body;
-            console.log("status", isOnline);
+            // console.log("status", isOnline);
             await fastify.dbPatch.changeOnlineStatus(request.user.email, isOnline);
             reply.send({ success: true, message: "Online status updated successfully" });
         } catch (err) {
@@ -95,12 +95,12 @@ async function userRoutes(fastify, options)
 
     fastify.get('/user/get-online-status', { preValidation: [fastify.prevalidate] }, async (request, reply) => {
             try {
-                console.log("Checking online status for user:", request.query.friend_nickname);
+                // console.log("Checking online status for user:", request.query.friend_nickname);
                 const user = await fastify.db.connection.get('SELECT status FROM users WHERE username = ?', request.query.friend_nickname);
                 if (!user) {
                     return reply.status(404).send({ success: false, message: "User not found" });
                 }
-                console.log("User found:", user);
+                // console.log("User found:", user);
                 reply.send({ success: true, isOnline: user.status === 1 });
             } catch (err) {
                 return reply.status(400).send({ success: false, message: "Erreur lors de la récupération du statut en ligne", error: err.message });

@@ -10,7 +10,7 @@ class TournamentHomeAPI {
   private baseUrl: string;
   private token: string | null;
 
-  constructor(baseUrl = "https://localhost:3000") {
+  constructor(baseUrl = "/api") {
     this.baseUrl = baseUrl;
     this.token = localStorage.getItem("jwtToken");
   }
@@ -27,12 +27,12 @@ class TournamentHomeAPI {
       });
 
       if (!response.ok) {
-        console.error(`Erreur HTTP: ${response.status}`);
+        // console.error(`Erreur HTTP: ${response.status}`);
         return null;
       }
 
       const data = await response.json();
-      console.log("Données brutes reçues:", data);
+      // console.log("Données brutes reçues:", data);
       if (data && data.participants && Array.isArray(data.participants)) {
         return data.participants;
       }
@@ -42,7 +42,7 @@ class TournamentHomeAPI {
       
       return [];
     } catch (error) {
-      console.error("Erreur lors de la récupération des détails du tournoi:", error);
+      // console.error("Erreur lors de la récupération des détails du tournoi:", error);
       return null;
     }
   }
@@ -65,7 +65,7 @@ class TournamentHomeAPI {
         message: result.message || (response.ok ? "Joueur ajouté avec succès" : "Erreur lors de l'ajout du joueur")
       };
     } catch (error) {
-      console.error("Erreur lors de l'ajout du joueur:", error);
+      // console.error("Erreur lors de l'ajout du joueur:", error);
       return { success: false, message: "Erreur de connexion au serveur" };
     }
   }
@@ -87,7 +87,7 @@ class TournamentHomeAPI {
         message: result.message || (response.ok ? "Joueur ajouté avec succès" : "Erreur lors de l'ajout du joueur")
       };
     } catch (error) {
-      console.error("Erreur lors de l'ajout du joueur:", error);
+      // console.error("Erreur lors de l'ajout du joueur:", error);
       return { success: false, message: "Erreur de connexion au serveur" };
     }
   }
@@ -110,7 +110,7 @@ class TournamentHomeAPI {
         message: result.message || (response.ok ? "Tournoi lancé avec succès" : "Erreur lors du lancement du tournoi")
       };
     } catch (error) {
-      console.error("Erreur lors du lancement du tournoi:", error);
+      // console.error("Erreur lors du lancement du tournoi:", error);
       return { success: false, message: "Erreur de connexion au serveur" };
     }
   }
@@ -154,7 +154,7 @@ class TournamentHomeApp {
 
   private setupEventListeners(): void {
     if (this.addPlayerBtn) {
-        console.log("Add Player Button found");
+        // console.log("Add Player Button found");
       this.addPlayerBtn.addEventListener("click", () => this.handleAddPlayer());
     }
     if (this.tournamentStartBtn) {
@@ -185,14 +185,14 @@ class TournamentHomeApp {
     
     
     this.tournamentId = (tournamentDetails && tournamentDetails.length > 0) ? tournamentDetails[0].tournament_id : null;
-    console.log("DETAILS DU TOURNOI:", tournamentDetails);
+    // console.log("DETAILS DU TOURNOI:", tournamentDetails);
     this.renderParticipants(tournamentDetails || []);
     
     this.setupEventListeners();
   }
 
   private renderParticipants(participants: TournamentParticipant[]): void {
-    console.log("Rendering participants:", participants);
+    // console.log("Rendering participants:", participants);
     if (!this.playerListElement) return;
     
     if (participants.length === 0) {
@@ -223,7 +223,7 @@ class TournamentHomeApp {
   private async deleteTournament(): Promise<void> {
     if (!this.tournamentId) return;
     try {
-      const response = await fetch(`https://localhost:3000/tournament/delete`, {
+      const response = await fetch(`/api/tournament/delete`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
@@ -239,7 +239,7 @@ class TournamentHomeApp {
         this.showMessage(errorData.message || "Erreur lors de la suppression du tournoi", "error");
       }
     } catch (error) {
-      console.error("Erreur lors de la suppression du tournoi:", error);
+      // console.error("Erreur lors de la suppression du tournoi:", error);
       this.showMessage("Erreur de connexion au serveur", "error");
     }
   }
@@ -250,7 +250,6 @@ class TournamentHomeApp {
 }
 
 private async handlePlayerLogin(): Promise<void> {
-  console.log
   if (!this.playerLoginEmail || !this.playerLoginPassword) return;
   const email = this.playerLoginEmail.value.trim();
   const password = this.playerLoginPassword.value;
@@ -261,7 +260,7 @@ private async handlePlayerLogin(): Promise<void> {
   }
 
   this.showMessage(`Tentative de connexion pour ${email}...`, "info");
-  const response = await fetch("https://localhost:3000/tournament/login", {
+  const response = await fetch("/api/tournament/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -272,7 +271,7 @@ private async handlePlayerLogin(): Promise<void> {
   const data = await response.json();
   if (data.success === true) {
 
-    console.log("Connexion réussie:", data.data.email);
+    // console.log("Connexion réussie:", data.data.email);
     
     if (!this.tournamentId) {
       this.showMessage("Erreur: Tournoi non trouvé", "error");
@@ -293,11 +292,11 @@ private async handlePlayerLogin(): Promise<void> {
         this.showMessage(result.message, "error");
       }
     } catch (error) {
-      console.error("Erreur lors de l'ajout du joueur:", error);
+      // console.error("Erreur lors de l'ajout du joueur:", error);
       this.showMessage("Erreur lors de l'ajout du joueur au tournoi", "error");
     }
   } else {
-    console.log("Erreur de connexion:", data.message);
+    // console.log("Erreur de connexion:", data.message);
     this.showMessage(data.message || "Veuillez réessayer", "error");
   }
   if (this.playerLoginForm) this.playerLoginForm.classList.add("hidden");
@@ -312,7 +311,19 @@ private async handlePlayerLogin(): Promise<void> {
       this.showMessage("Veuillez entrer un nom de joueur", "error");
       return;
     }
-    
+    const participants = await this.api.getTournamentDetails();
+    const existingParticipant = participants?.find(p => p.username === alias || p.alias === alias);
+    if (existingParticipant) {
+      this.showMessage(`Le joueur "${alias}" est déjà inscrit`, "error");
+      this.playerNameInput.value = "";
+      return;
+    }
+
+    if (participants && participants.length >= 4) {
+      this.showMessage("Le tournoi est complet, vous ne pouvez pas ajouter plus de joueurs", "error");
+      this.playerNameInput.value = "";
+      return;
+    }
     const result = await this.api.addPlayerByAlias(this.tournamentId, alias);
     
     if (result.success) {

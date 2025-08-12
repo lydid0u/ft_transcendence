@@ -27,7 +27,7 @@ class TournamentLaunchAPI {
   private baseUrl: string;
   private token: string | null;
 
-  constructor(baseUrl = "https://localhost:3000") {
+  constructor(baseUrl = "/api") {
     this.baseUrl = baseUrl;
     this.token = localStorage.getItem("jwtToken");
   }
@@ -45,12 +45,12 @@ class TournamentLaunchAPI {
         });
 
         if (!response.ok) {
-          console.error(`Erreur HTTP: ${response.status}`);
+          // console.error(`Erreur HTTP: ${response.status}`);
           return null;
         }
 
         const data = await response.json();
-        console.log("Données brutes reçues:", data);
+        // console.log("Données brutes reçues:", data);
 
         if (data && data.participants && Array.isArray(data.participants)) {
           return data.participants;
@@ -62,7 +62,7 @@ class TournamentLaunchAPI {
 
         return [];
       } catch (error) {
-        console.error("Erreur lors de la récupération des détails du tournoi:", error);
+        // console.error("Erreur lors de la récupération des détails du tournoi:", error);
         return null;
       }
     }
@@ -71,7 +71,7 @@ class TournamentLaunchAPI {
   async findWinnerOfTournament(match: TournamentMatch): Promise<TournamentParticipant | null> {
     if (await window.SPA.checkJwtValidity()) {
       try {
-        console.log("Recherche du gagnant du tournoi pour le match:", match.tournament_id);
+        // console.log("Recherche du gagnant du tournoi pour le match:", match.tournament_id);
         const response = await fetch(`${this.baseUrl}/tournament/find-winner?tournament_id=${match.tournament_id}`, {
           method: "GET",
           headers: {
@@ -81,17 +81,17 @@ class TournamentLaunchAPI {
           credentials: "include",
         });
         if (!response.ok) {
-          console.error(`Erreur HTTP: ${response.statusText}`);
+          // console.error(`Erreur HTTP: ${response.statusText}`);
           return null;
         }
         const data = await response.json();
         if (!data) {
           return null;
         }
-        console.log("Gagnant du tournoi trouvé:", data);
+        // console.log("Gagnant du tournoi trouvé:", data);
         return data.winner;
       } catch (error) {
-        console.error("Erreur lors de la recherche du gagnant du tournoi:", error);
+        // console.error("Erreur lors de la recherche du gagnant du tournoi:", error);
         return null;
       }
     }
@@ -110,14 +110,14 @@ class TournamentLaunchAPI {
           body: JSON.stringify({ status })
         });
         if (!response.ok) {
-          console.error(`Erreur HTTP: ${response.status}`);
+          // console.error(`Erreur HTTP: ${response.status}`);
           return null;
         }
         const data = await response.json();
-        console.log("Statut du tournoi reçu:", data);
+        // console.log("Statut du tournoi reçu:", data);
         return data.status || null;
       } catch (error) {
-        console.error("Erreur lors de la récupération du statut du tournoi:", error);
+        // console.error("Erreur lors de la récupération du statut du tournoi:", error);
         return null;
       }
     }
@@ -135,14 +135,14 @@ class TournamentLaunchAPI {
           credentials: "include",
         });
         if (!response.ok) {
-          console.error(`Erreur HTTP: ${response.status}`);
+          // console.error(`Erreur HTTP: ${response.status}`);
           return null;
         }
         const data = await response.json();
-        console.log("Match du tournoi reçu:", data);
+        // console.log("Match du tournoi reçu:", data);
         return data.match || null;
       } catch (error) {
-        console.error("Erreur lors de la récupération du match du tournoi:", error);
+        // console.error("Erreur lors de la récupération du match du tournoi:", error);
         return null;
       }
     }
@@ -161,14 +161,14 @@ class TournamentLaunchAPI {
           body: JSON.stringify({ tournament_id: tournamentId })
         });
         if (!response.ok) {
-          console.error(`Erreur HTTP: ${response.status}`);
+          // console.error(`Erreur HTTP: ${response.status}`);
           return false;
         }
         const result = await response.json();
-        console.log("Résultat de la suppression du tournoi:", result);
+        // console.log("Résultat de la suppression du tournoi:", result);
         return result.success || false;
       } catch (error) {
-        console.error("Erreur lors de la suppression du tournoi:", error);
+        // console.error("Erreur lors de la suppression du tournoi:", error);
         return false;
       }
     }
@@ -186,14 +186,14 @@ class TournamentLaunchAPI {
           body: JSON.stringify(match)
         });
         if (!response.ok) {
-          console.error(`Erreur HTTP: ${response.status}`);
+          // console.error(`Erreur HTTP: ${response.status}`);
           return false;
         }
         const result = await response.json();
-        console.log("Résultat de la suppression des perdants du tournoi:", result);
+        // console.log("Résultat de la suppression des perdants du tournoi:", result);
         return result.success || false;
       } catch (error) {
-        console.error("Erreur lors de la suppression des perdants du tournoi:", error);
+        // console.error("Erreur lors de la suppression des perdants du tournoi:", error);
         return false;
       }
     }
@@ -212,14 +212,14 @@ class TournamentLaunchAPI {
           body: JSON.stringify(match)
         });
         if (!response.ok) {
-          console.error(`Erreur HTTP: ${response.statusText}`);
+          // console.error(`Erreur HTTP: ${response.statusText}`);
           return false;
         }
         const result = await response.json();
-        console.log("Résultat de l'envoi des résultats du match:", result);
+        // console.log("Résultat de l'envoi des résultats du match:", result);
         return result.success || false;
       } catch (error) {
-        console.error("Erreur lors de l'envoi des résultats du match:", error);
+        // console.error("Erreur lors de l'envoi des résultats du match:", error);
         return false;
       }
     }
@@ -252,25 +252,25 @@ class TournamentLaunch {
   async startTournament() {
     const participants = await this.api.getTournamentDetails();
     if (participants) {
-      console.log("Participants du tournoi:", participants);
+      // console.log("Participants du tournoi:", participants);
     } else {
-      console.error("Aucun participant trouvé ou erreur lors de la récupération des participants.");
+      // console.error("Aucun participant trouvé ou erreur lors de la récupération des participants.");
     }
   }
 
   async changeTournamentStatus(status: string) {
     const result = await this.api.setTournamentStatus(status);
     if (result) {
-      console.log("Statut du tournoi changé:", status);
+      // console.log("Statut du tournoi changé:", status);
     } else {
-      console.error("Erreur lors de la récupération du statut du tournoi.");
+      // console.error("Erreur lors de la récupération du statut du tournoi.");
     }
   }
 
   async fetchMatch() {
     const match = await this.api.getTournamentMatch();
     if (match) {
-      console.log("Match du tournoi:", match);
+      // console.log("Match du tournoi:", match);
       this.player1_name = document.getElementById("player1-name");
       this.player2_name = document.getElementById("player2-name");
 
@@ -290,7 +290,7 @@ class TournamentLaunch {
       }
 
       if (match.round == "finale") {
-        console.log("Affichage du match de la finale:");
+        // console.log("Affichage du match de la finale:");
         this.current_round = document.getElementById("current-round");
         this.current_round.textContent = "Finale";
         const nextOpponentsSection = document.getElementById('next-opponents-section');
@@ -299,33 +299,33 @@ class TournamentLaunch {
         }
       }
       else if (match.round == "demi-finale 1") {
-        console.log("Affichage des prochains adversaires:", match.next_player_1_name, match.next_player_2_name);
+        // console.log("Affichage des prochains adversaires:", match.next_player_1_name, match.next_player_2_name);
         this.next_player1_name.textContent = match.next_player_1_name || "Prochain adversaire 1";
       }
       else if (match.round == "demi-finale 2") {
-        console.log("Affichage du prochain adversaire 1:", match.next_player_1_name);
-        this.next_player1_name = document.getElementById("next-player1");
+        // console.log("Affichage du prochain adversaire 1:", match.next_player_1_name);
+        // this.next_player1_name = document.getElementById("next-player1");
         this.next_player1_name.textContent = match.finalist_name || "Finaliste inconnu";
 
       }
 
       const participants = await this.api.getTournamentDetails();
       if (participants && participants.length <= 2) {
-        console.log("C'est le dernier match du tournoi!");
+        // console.log("C'est le dernier match du tournoi!");
       }
     } else {
-      console.error("Erreur lors de la récupération du match du tournoi.");
+      // console.error("Erreur lors de la récupération du match du tournoi.");
     }
   }
 
   async deleteLosers(match: TournamentMatch) {
     const result = await this.api.deleteTournamentLosers(match);
     if (result) {
-      console.log("Perdants du tournoi supprimés:");
+      // console.log("Perdants du tournoi supprimés:");
 
       const participants = await this.api.getTournamentDetails();
       if (participants && participants.length === 1) {
-        console.log("Le tournoi est terminé! Affichage du bouton de fin de tournoi.");
+        // console.log("Le tournoi est terminé! Affichage du bouton de fin de tournoi.");
         this.showTournamentEndButton(participants[0]);
       }
     }
@@ -333,7 +333,7 @@ class TournamentLaunch {
 
   async showTournamentEndButton(winner: TournamentParticipant) {
     let endButtonContainer = document.getElementById('tournament-end-container');
-    console.log("Affichage du bouton de fin de tournoi pour le gagnant:", winner);
+    // console.log("Affichage du bouton de fin de tournoi pour le gagnant:", winner);
 
     if (!endButtonContainer) {
       endButtonContainer = document.createElement('div');

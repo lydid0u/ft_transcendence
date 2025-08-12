@@ -41,7 +41,7 @@ export interface UserData {
 
 async function sendUserDataToBackend(userData: UserData): Promise<void> {
 	try {
-		const response = await fetch('https://localhost:3000/auth/google', {
+		const response = await fetch('/api/auth/google', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -54,19 +54,19 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
 		}
 
 		const data = await response.json();
-		console.log("Réponse du backend:", data, data.jwt);
+		// console.log("Réponse du backend:", data, data.jwt);
 
 		localStorage.setItem('googleUser', JSON.stringify(userData));
 		localStorage.setItem('user', JSON.stringify(data.user || userData));
 		setLanguage(data.user?.language || 'fr');
 		localStorage.setItem('isAuthenticated', 'true');
 		if (!data.jwt) {
-			console.log("Utilisateur authentifié, redirection vers la page de connexion Google");
+			// console.log("Utilisateur authentifié, redirection vers la page de connexion Google");
 			window.SPA.navigateTo('/googleLogin');
 		}
 		else {
 			try {
-        await fetch('https://localhost:3000/user/connection-status', {
+        await fetch('/api/user/connection-status', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,13 +76,13 @@ async function sendUserDataToBackend(userData: UserData): Promise<void> {
             });
           } 
         catch (err) {
-            console.error("Erreur lors de la notification du status de connexion au backend:", err);
+            // console.error("Erreur lors de la notification du status de connexion au backend:", err);
           }
 			localStorage.setItem('jwtToken', data.jwt);
 			window.SPA.navigateTo('/home');
 		}
 	} catch (error) {
-		console.error("Erreur lors de l'envoi au backend:", error);
+		// console.error("Erreur lors de l'envoi au backend:", error);
 
 		localStorage.removeItem('googleUser');
 		localStorage.removeItem('isAuthenticated');
@@ -111,7 +111,7 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
             }
 
             try {
-                const response = await fetch('https://localhost:3000/auth/google-username', {
+                const response = await fetch('/api/auth/google-username', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
                 });
 
                 const result = await response.json();
-                console.log("Réponse du backend:", result);
+                // console.log("Réponse du backend:", result);
 
                 if (!response.ok) {
                     if (message) {
@@ -144,7 +144,7 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
 
                 if (result.success) {
                     localStorage.setItem('jwtToken', result.jwt);
-                    await fetch('https://localhost:3000/user/connection-status', {
+                    await fetch('/api/user/connection-status', {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
@@ -155,7 +155,7 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
                     window.SPA.navigateTo('/home');
                 }
             } catch (error) {
-                console.error("Erreur lors de l'envoi au backend:", error);
+                // console.error("Erreur lors de l'envoi au backend:", error);
             }
         })
     }, 100);
@@ -163,7 +163,7 @@ async function addPseudoForGoogleLogin(userData: UserData): Promise<void> {
 
 function handleGoogleAuth(response: GoogleAuthResponse): void {
 	try {
-		console.log("Encoded JWT ID token: " + response.credential);
+		// console.log("Encoded JWT ID token: " + response.credential);
 		const objUserData: GoogleJwtPayload = decodeJwtResponse(response.credential);
 
 		const userData: UserData = {
@@ -176,7 +176,7 @@ function handleGoogleAuth(response: GoogleAuthResponse): void {
 
 		sendUserDataToBackend(userData);
 	} catch (error) {
-		console.error('Erreur lors de la gestion de l\'authentification Google:', error);
+		// console.error('Erreur lors de la gestion de l\'authentification Google:', error);
 	}
 }
 
@@ -210,7 +210,7 @@ function decodeJwtResponse(token: string): GoogleJwtPayload {
 
 		return payload;
 	} catch (error) {
-		console.error('Erreur lors du décodage du token JWT:', error);
+		// console.error('Erreur lors du décodage du token JWT:', error);
 		throw new Error('Impossible de décoder le token JWT');
 	}
 }

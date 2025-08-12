@@ -23,7 +23,7 @@ class TournamentAPI {
   private baseUrl: string
   private token: string | null
 
-  constructor(baseUrl = "https://localhost:3000") {
+  constructor(baseUrl = "/api") {
     this.baseUrl = baseUrl
     this.token = localStorage.getItem("jwtToken")
   }
@@ -50,7 +50,7 @@ class TournamentAPI {
   async getTournamentList(): Promise<Tournament[]> {
     try {
       const data = await this.fetchAPI<ApiTournament[]>("/tournament/get-open");
-      console.log("Tournois récupérés :", data);
+      // console.log("Tournois récupérés :", data);
       return data.map(t => ({
         id: t.id,
         creator_name: t.creator_name, 
@@ -77,7 +77,7 @@ class TournamentAPI {
           credentials: "include",
           body: JSON.stringify({ tournamentId: tournamentId }),
         });
-        console.log("Réponse du serveur pour rejoindre le tournoi :", response);
+        // console.log("Réponse du serveur pour rejoindre le tournoi :", response);
 
         const data = await response.json();
 
@@ -139,7 +139,7 @@ class TournamentAPI {
         };
 
       } catch (error) {
-        console.error("Error creating tournament:", error);
+        // console.error("Error creating tournament:", error);
         return { success: false, message: "Erreur de connexion au serveur" };
       }
     }
@@ -185,9 +185,9 @@ class TournamentListApp {
     try {
       if (this.loadingState) this.loadingState.style.display = "block"
       if (this.emptyState) this.emptyState.style.display = "none"
-      console.log("Tournois chargés AVANT :", this.tournaments)
+      // console.log("Tournois chargés AVANT :", this.tournaments)
       this.tournaments = await this.api.getTournamentList()
-      console.log("Tournois chargés :", this.tournaments)
+      // console.log("Tournois chargés :", this.tournaments)
       this.renderTournamentList()
       if (this.loadingState) this.loadingState.style.display = "none"
       if (this.emptyState) this.emptyState.style.display = this.tournaments.length === 0 ? "block" : "none"
@@ -244,7 +244,7 @@ class TournamentListApp {
     const result = await this.api.joinTournament(tournamentId)
     if (result.success) {
       this.showNotification(window.i18n.translate('tournament.join_success'), "success")
-      console.log("Tournoi rejoint avec succès :", tournamentId)
+      // console.log("Tournoi rejoint avec succès :", tournamentId)
       if (typeof window.SPA !== 'undefined' && window.SPA.navigateTo) {
         window.SPA.navigateTo('/tournamenthome');
       } else {

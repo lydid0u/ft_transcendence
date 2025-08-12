@@ -72,7 +72,7 @@ export class Game1v1
 			paddleSpeed = 12;
 			ballSpeed = 4;
 		}
-		console.log("Game1v1 difficulty set to: " + Difficulty[this.difficulty]);
+		// console.log("Game1v1 difficulty set to: " + Difficulty[this.difficulty]);
 		const paddleWidth:number = 20, paddleHeight:number = 70, ballSize:number = 10, wallOffset:number = WALL_OFFSET;
 
 		this.player1 = new Paddle(paddleWidth,paddleHeight,wallOffset,this.gameCanvas.height / 2 - paddleHeight / 2, paddleSpeed, 1);
@@ -123,7 +123,7 @@ export class Game1v1
 		Game1v1.keys2Pressed = [];
 		Game1v1.player1Score = 0;
 		Game1v1.player2Score = 0;
-		console.log("Game1v1 instance destroyed!");
+		// console.log("Game1v1 instance destroyed!");
 	}
 	drawBoardDetails()
 	{
@@ -190,7 +190,7 @@ export class Game1v1
 		};
 		if (await window.SPA.checkJwtValidity()) {
 			try {
-				const response = await fetch('https://localhost:3000/add-match', {
+				const response = await fetch('/api/add-match', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -198,11 +198,11 @@ export class Game1v1
 					},
 					body: JSON.stringify(gameResults)
 				})
-				console.log(response);
+				// console.log(response);
 				if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-				console.log('Final game results posted successfully');
+				// console.log('Final game results posted successfully');
 			} catch (error) {
-				console.error('Error posting final results:', error);
+				// console.error('Error posting final results:', error);
 			}
 		}
 	}
@@ -210,7 +210,7 @@ export class Game1v1
 	private static async GetCurrentUsername(): Promise <string | null> {
 		try 
 		{
-			const response = await fetch('https://localhost:3000/user', {
+			const response = await fetch('/api/user', {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -222,7 +222,7 @@ export class Game1v1
 			const data = await response.json();
 			return (data.user.username || null);
 		} catch (error) {
-			console.error('Error fetching current username:', error);
+			// console.error('Error fetching current username:', error);
 			return null;
 		}
 	}
@@ -237,7 +237,7 @@ export class Game1v1
 
 		// Récupérer le pseudo du joueur 1 depuis l'élément HTML
 		let player1Name: string = await Game1v1.GetCurrentUsername() || "Vous";
-		console.log("Player 1 Name is " + player1Name); 
+		// console.log("Player 1 Name is " + player1Name); 
 		const player1NameElement = document.getElementById("player1-name");
 		if (player1Name == null || player1Name === "Vous")
 		{

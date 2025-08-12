@@ -15,7 +15,7 @@ async function MatchData(fastify, options)
                         SELECT id FROM users WHERE username = ?
                     `, [player.username]);
                     if (!user) {
-                        console.log(`Utilisateur ${player.username} introuvable dans la table users`);
+                        // console.log(`Utilisateur ${player.username} introuvable dans la table users`);
                         return 0;
                     }
                     userId = user.id;
@@ -27,7 +27,7 @@ async function MatchData(fastify, options)
                     AND winner_id IS NOT NULL
                 `, [player.username, player.username]);
                 if (!matches || matches.length === 0) {
-                    console.log(`Aucun match trouvé pour ${player.username}`);
+                    // console.log(`Aucun match trouvé pour ${player.username}`);
                     return 0;
                 }
                 let wins = 0;
@@ -39,10 +39,10 @@ async function MatchData(fastify, options)
                     }
                 }
                 const winRatePercent = (wins / totalMatches) * 100;
-                console.log(`Joueur ${player.username} (ID: ${userId}): ${wins}/${totalMatches} victoires = ${winRatePercent.toFixed(1)}% winrate`);
+                // console.log(`Joueur ${player.username} (ID: ${userId}): ${wins}/${totalMatches} victoires = ${winRatePercent.toFixed(1)}% winrate`);
                 return winRatePercent;
             } catch (error) {
-                console.error(`Erreur lors du calcul du winrate pour ${player.username}:`, error);
+                // console.error(`Erreur lors du calcul du winrate pour ${player.username}:`, error);
                 return 0;
             }
         },
@@ -66,7 +66,7 @@ async function MatchData(fastify, options)
                 });
                 return rankedPlayers;
             } catch (error) {
-                console.error('Error in findMMR:', error);
+                // console.error('Error in findMMR:', error);
                 return [];
             }
         },
@@ -76,7 +76,7 @@ async function MatchData(fastify, options)
             try {
                 const players = await fastify.db.connection.all ('SELECT * FROM tournament_participants WHERE tournament_id = ?', tournamentId);
                 if (!players || players.length === 0) {
-                    console.log("0");
+                    // console.log("0");
                     throw new Error(`Match not found for tournament ID: ${tournamentId}`);
                 }
                 const rankedParticipants = await this.findMMR(players);
@@ -88,9 +88,9 @@ async function MatchData(fastify, options)
                         rankedParticipants[1], 
                         rankedParticipants[2] 
                     ];
-                    console.log("Matchmaking organisé:");
-                    console.log(`Match actuel: ${participants[0].username || participants[0].alias} (${participants[0].winRate.toFixed(1)}%) VS ${participants[1].username || participants[1].alias} (${participants[1].winRate.toFixed(1)}%)`);
-                    console.log(`Prochain match: ${participants[2].username || participants[2].alias} (${participants[2].winRate.toFixed(1)}%) VS ${participants[3].username || participants[3].alias} (${participants[3].winRate.toFixed(1)}%)`);
+                    // console.log("Matchmaking organisé:");
+                    // console.log(`Match actuel: ${participants[0].username || participants[0].alias} (${participants[0].winRate.toFixed(1)}%) VS ${participants[1].username || participants[1].alias} (${participants[1].winRate.toFixed(1)}%)`);
+                    // console.log(`Prochain match: ${participants[2].username || participants[2].alias} (${participants[2].winRate.toFixed(1)}%) VS ${participants[3].username || participants[3].alias} (${participants[3].winRate.toFixed(1)}%)`);
                 } else {
                     participants = rankedParticipants;
                 }
@@ -121,7 +121,7 @@ async function MatchData(fastify, options)
                 else
                     throw new Error(`Unexpected number of participants: ${participants.length}`);
             } catch (error) {
-                console.error('Error in getMatchNamesForTournament:', error);
+                // console.error('Error in getMatchNamesForTournament:', error);
                 return null;
             }
         },
@@ -129,20 +129,20 @@ async function MatchData(fastify, options)
         async createMatch(match, first_user, second_user)
         {
             try {
-                console.log("IN THE FUNCTION CREATE MATCH", match);
+                // console.log("IN THE FUNCTION CREATE MATCH", match);
                 const game_mode = 'tournament';
                 const user_one = first_user;
                 const user_two = second_user;
                 let winner_id = null;
                 if (match.player1_score > match.player2_score)
                 {
-                    console.log("Player 1 wins");
+                    // console.log("Player 1 wins");
                     if(user_one)
                         winner_id = user_one.id;
                 }
                 else if (match.player1_score < match.player2_score)
                 {
-                    console.log("Player 2 wins");
+                    // console.log("Player 2 wins");
                     if(user_two)
                         winner_id = user_two.id;
                 }
@@ -169,25 +169,24 @@ async function MatchData(fastify, options)
                 }
                 else
                 {
-                    console.error("Both players are missing, cannot create match.");
+                    // console.error("Both players are missing, cannot create match.");
                 }
             } catch (error) {
-                console.error('Error in createMatch:', error);
+                // console.error('Error in createMatch:', error);
             }
         },
 
         async checkParticipantsInMatch(match, userId)
         {
             try {
-                console.log("here\n");
                 const tournament = await fastify.dbTournament.getTournamentByCreatorId(userId);
                 if (!tournament || tournament.creator_id !== userId) {
                     return false;
                 }
-                console.log("Tournament found:", tournament);
-                console.log("TournamentId:", tournament.id);
+                // console.log("Tournament found:", tournament);
+                // console.log("TournamentId:", tournament.id);
                 const participants = await fastify.db.connection.all('SELECT * FROM tournament_participants WHERE tournament_id = ?', tournament.id);
-                console.log("Affichage du tournoi", participants);
+                // console.log("Affichage du tournoi", participants);
                 const player1 = participants.find(p => p.username === match.player1_name || p.alias === match.player1_name);
                 const player2 = participants.find(p => p.username === match.player2_name || p.alias === match.player2_name);
                 if (!player1 || !player2) {
@@ -195,7 +194,7 @@ async function MatchData(fastify, options)
                 }
                 return true;
             } catch (error) {
-                console.error('Error in checkParticipantsInMatch:', error);
+                // console.error('Error in checkParticipantsInMatch:', error);
                 return false;
             }
         },
@@ -212,12 +211,12 @@ async function MatchData(fastify, options)
                 if (!user) {
                     return false;
                 }
-                console.log('DELETING LOSER:', loser);
+                // console.log('DELETING LOSER:', loser);
                 await fastify.db.connection.run(`DELETE FROM tournament_participants WHERE username = ? OR alias = ? AND tournament_id = ?`, 
                 [loser, loser, match.tournament_id]);
                 return true;
             } catch (error) {
-                console.error('Error in deleteLosers:', error);
+                // console.error('Error in deleteLosers:', error);
                 return false;
             }
         },
@@ -225,20 +224,20 @@ async function MatchData(fastify, options)
         async findWinnerOfTournament(tournament_id)
         {
             try {
-                console.log("Finding winner for tournament ID:", tournament_id);
+                // console.log("Finding winner for tournament ID:", tournament_id);
                 const count = await fastify.db.connection.get('SELECT COUNT(*) as count FROM tournament_participants WHERE tournament_id = ?', tournament_id);
                 if (count.count !== 2){
                     return null;
                 }
                 const winner = await fastify.db.connection.get('SELECT * FROM tournament_participants WHERE tournament_id = ?', tournament_id);
-                console.log("Winner found:", winner);
+                // console.log("Winner found:", winner);
                 if (!winner) {
-                    console.error(`No winner found for tournament ID: ${tournament_id}`);
+                    // console.error(`No winner found for tournament ID: ${tournament_id}`);
                     return null;
                 }
                 return winner;
             } catch (error) {
-                console.error('Error in findWinnerOfTournament:', error);
+                // console.error('Error in findWinnerOfTournament:', error);
                 return null;
             }
         }

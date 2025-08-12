@@ -19,15 +19,15 @@ async function tableFriends(fastify, options)
                     )`
                 );
             } catch (error) {
-                console.error('Error creating friends table:', error);
+                // console.error('Error creating friends table:', error);
             }
         },
 
        async showTableFriends(userId) 
        {
             try {
-                console.log("Récupération de tous les amis");
-                console.log("User ID:", userId);
+                // console.log("Récupération de tous les amis");
+                // console.log("User ID:", userId);
                 const friends = await fastify.db.connection.all(`
                     SELECT 
                         f.id, 
@@ -42,10 +42,10 @@ async function tableFriends(fastify, options)
                     WHERE
                         f.user_id = ?
                 `, [userId]);
-                console.log("Amis trouvés:", friends.length);
+                // console.log("Amis trouvés:", friends.length);
                 return { status: 'success', friends: friends };
             } catch (error) {
-                console.error('Error fetching friends:', error);
+                // console.error('Error fetching friends:', error);
                 return { status: 'error', message: 'Failed to fetch friends' };
             }
         },
@@ -53,7 +53,7 @@ async function tableFriends(fastify, options)
         async addFriends(request, friend_nickname)
         {
             try {
-            console.log("Ajout d'un ami avec le pseudo:", friend_nickname);
+            // console.log("Ajout d'un ami avec le pseudo:", friend_nickname);
             const friend_id = await fastify.db.connection.get('SELECT id FROM users WHERE username = ?', friend_nickname);
             if (!friend_id) {
                 return reply.status(404).send({ status: 'error', message: 'Friend not found' });
@@ -70,7 +70,7 @@ async function tableFriends(fastify, options)
             }
             await fastify.db.connection.run('INSERT INTO friends (user_id, friend_id) VALUES (?, ?)', request.user.id, friend_id.id);
         } catch (error) {
-            console.error('Error adding friend:', error);
+            // console.error('Error adding friend:', error);
             return reply.status(500).send({ status: 'error', message: 'Failed to add friend' });
         }
         }

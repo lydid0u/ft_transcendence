@@ -1,6 +1,15 @@
 import { activate2fa, updateLanguage } from "./profile";
 /// <reference types="vite/client" />
 
+interface ImportMetaEnv {
+  VITE_GOOGLE_CLIENT_ID: string;
+  // add other env variables as needed
+}
+
+interface ImportMeta {
+  env: ImportMetaEnv;
+}
+
 
 interface RouteConfig {
   title: string;
@@ -82,13 +91,13 @@ const SPA = {
     const hasValidToken = localStorage.getItem('jwtToken') !== null;
     const isLoggedIn = isAuthenticated && hasValidToken;
 
-    console.log('Navbar auth state:', { isAuthenticated, hasValidToken, isLoggedIn });
+    // console.log('Navbar auth state:', { isAuthenticated, hasValidToken, isLoggedIn });
 
     if (loginBtn) {
       this.updateNavLoginBtn(route);
     }
     if (profileDropdownToggle) {
-      console.log('Setting profile dropdown visibility:', isLoggedIn ? 'visible' : 'hidden');
+      // console.log('Setting profile dropdown visibility:', isLoggedIn ? 'visible' : 'hidden');
       profileDropdownToggle.style.display = isLoggedIn ? 'flex' : 'none';
     }
     else
@@ -187,7 +196,7 @@ const SPA = {
   routeScript: function(): void {
       if (typeof window.google !== 'undefined' && window.google.accounts) {
         window.google.accounts.id.initialize({
-          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          client_id: (import.meta as any).env.VITE_GOOGLE_CLIENT_ID,
           callback: handleGoogleAuth
         });
         const signInElement: Element | null = document.querySelector('.g_id_signin');
@@ -226,9 +235,9 @@ const SPA = {
       routeScript: function(): void {
         const otpInput: HTMLInputElement | null = document.querySelector('#otp-input');
         const email = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}').email : '';
-        console.log('email', email);
+        // console.log('email', email);
         if (!email) {
-          console.error('No user found');
+          // console.error('No user found');
           return;
         }
         if (otpInput) {
@@ -242,7 +251,7 @@ const SPA = {
       title: 'otp.title',
       content: 'pages/otp-password.html',
       routeScript: function(): void {
-        console.log('Initialisation du formulaire OTP pour la réinitialisation de mot de passe');
+        // console.log('Initialisation du formulaire OTP pour la réinitialisation de mot de passe');
         import('./otpPassword').then(module => {
           if (module && module.setupOtpForm) {
             module.setupOtpForm();
@@ -318,7 +327,7 @@ const SPA = {
 		const canvas = document.getElementById('gameCanvas');
 		if (!canvas)
 		{
-			console.error('gameCanvas not found');
+			// console.error('gameCanvas not found');
 			setTimeout(tryInitSnakeGame, 50);
 			return;
 		}
@@ -326,7 +335,7 @@ const SPA = {
 		if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
 		{
 			SPA.SPAattribute.currentGameInstance.destroy();
-			console.log("Previous Snake instance destroyed");
+			// console.log("Previous Snake instance destroyed");
 		}
 
 		try
@@ -336,7 +345,7 @@ const SPA = {
 		}
 		catch (e)
 		{
-			console.error('Snake Game init failed:', e);
+			// console.error('Snake Game init failed:', e);
 		}
 	}
 
@@ -353,14 +362,14 @@ const SPA = {
           const canvas = document.getElementById('game-canvas');
           if (!canvas)
           {
-            console.error('Game-canvas not found');
+            // console.error('Game-canvas not found');
             setTimeout(tryInitGameAI, 50);
             return;
           }
           if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
           {
             SPA.SPAattribute.currentGameInstance.destroy();
-            console.log("Game instance destroyed");
+            // console.log("Game instance destroyed");
           }
           try
           {
@@ -383,7 +392,7 @@ const SPA = {
           }
           catch (e)
           {
-            console.error('Game init failed:', e);
+            // console.error('Game init failed:', e);
           }
         }
         tryInitGameAI();
@@ -399,10 +408,10 @@ const SPA = {
         if (typeof module.startTournamentFlow === 'function') {
           module.startTournamentFlow();
         } else {
-          console.error("startTournamentFlow function not found in module");
+          // console.error("startTournamentFlow function not found in module");
         }
       }).catch(err => {
-        console.error("Failed to load game1v1Tournament module:", err);
+        // console.error("Failed to load game1v1Tournament module:", err);
       });
     }, 50);
   }
@@ -424,7 +433,7 @@ const SPA = {
           if (SPA.SPAattribute.currentGameInstance && typeof SPA.SPAattribute.currentGameInstance.destroy === 'function')
           {
             SPA.SPAattribute.currentGameInstance.destroy();
-            console.log("Game instance destroyed");
+            // console.log("Game instance destroyed");
           }
           try
           {
@@ -439,7 +448,7 @@ const SPA = {
           }
           catch (e)
           {
-            console.error('Game init failed:', e);
+            // console.error('Game init failed:', e);
           }
         }
         tryInitGame1v1();
@@ -464,7 +473,7 @@ const SPA = {
           
           // Make sure Game1v1v1v1 class is available
           if (typeof Game1v1v1v1 === 'undefined') {
-            console.error('Game1v1v1v1 class not found');
+            // console.error('Game1v1v1v1 class not found');
             return;
           }
           
@@ -475,9 +484,9 @@ const SPA = {
             else if (difficulty === 'HARD') diffEnum = 3;
             
             Game1v1v1v1.startNewGame(diffEnum);
-            console.log('4-player game initialized successfully');
+            // console.log('4-player game initialized successfully');
           } catch (e) {
-            console.error('4-player game init failed:', e);
+            // console.error('4-player game init failed:', e);
           }
         }
     tryInitGame1v1v1v1();
@@ -644,7 +653,7 @@ loadRoute: async function(route: string): Promise<void> {
     }
 
   } catch (error) {
-    console.error('Erreur critique dans loadRoute:', error);
+    // console.error('Erreur critique dans loadRoute:', error);
     this.error404();
   }
 },
@@ -675,13 +684,13 @@ loadRoute: async function(route: string): Promise<void> {
   async checkJwtValidity(): Promise<boolean> {
     const token = localStorage.getItem('jwtToken');
     if (!token) {
-      console.error('checkJwtValidity: No token found');
+      // console.error('checkJwtValidity: No token found');
       this.clearAuthAndRedirect();
       return false;
     }
 
     try {
-      const response = await fetch('https://localhost:3000/check-jwt', {
+      const response = await fetch('/api/check-jwt', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -690,14 +699,14 @@ loadRoute: async function(route: string): Promise<void> {
       });
 
       if (!response.ok) {
-        console.error('checkJwtValidity: Invalid token');
+        // console.error('checkJwtValidity: Invalid token');
         this.clearAuthAndRedirect();
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Error checking JWT:', error);
+      // console.error('Error checking JWT:', error);
       this.clearAuthAndRedirect();
       return false;
     }
@@ -721,7 +730,7 @@ loadRoute: async function(route: string): Promise<void> {
     try {
       const token = localStorage.getItem('jwtToken');
       if (token) {
-        await fetch('https://localhost:3000/user/connection-status', {
+        await fetch('/api/user/connection-status', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -729,10 +738,10 @@ loadRoute: async function(route: string): Promise<void> {
           },
           body: JSON.stringify({ status: false }),  // 1 = connecté et 0 = déconnecté
         });
-        console.log('Connection status updated to offline');
+        // console.log('Connection status updated to offline');
       }
     } catch (error) {
-      console.error('Failed to update connection status:', error);
+      // console.error('Failed to update connection status:', error);
     }
     
     localStorage.removeItem('googleUser');
@@ -747,7 +756,7 @@ loadRoute: async function(route: string): Promise<void> {
 
 
     if (typeof window.google !== 'undefined' && window.google.accounts) {
-      console.log('Google accounts found, disabling auto-select');
+      // console.log('Google accounts found, disabling auto-select');
       window.google.accounts.id.disableAutoSelect();
     }
 
@@ -766,13 +775,13 @@ loadRoute: async function(route: string): Promise<void> {
         loginWithAccountSection.style.display = 'block';
     }
 
-    console.log('User logged out successfully');
+    // console.log('User logged out successfully');
 
     this.handleLayout(window.location.pathname);
   },
 
   error404: function(): void {
-    console.error('error 404 - page not found');
+    // console.error('error 404 - page not found');
     this.navigateTo('/404');
   }
 };
@@ -788,7 +797,7 @@ document.addEventListener('DOMContentLoaded', function(): void {
     }, 0);
 
     window.addEventListener('languageChanged', function(event: CustomEvent) {
-      console.log('Language changed to:', event.detail.language);
+      // console.log('Language changed to:', event.detail.language);
       document.documentElement.lang = event.detail.language;
       const currentRoute = window.location.pathname;
       if (currentRoute in SPA.routes) {
