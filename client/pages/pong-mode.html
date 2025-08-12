@@ -1,0 +1,61 @@
+<div class="w-full max-w-4xl mx-auto p-6">
+  <div class="text-center mb-12 mt-8">
+    <h1 class="text-6xl font-bold text-pink-400 mb-6">
+      Pong
+    </h1>
+    <p class="text-gray-600 text-xl mb-10">
+      Choose your preferred Pong game mode
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+
+    <!-- IA -->
+    <div class="bg-white rounded-xl p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 group">
+      <div class="w-16 h-16 mb-6 bg-pink-light rounded-full flex items-center justify-center mx-auto group-hover:bg-pink-dark transition-colors">
+        <svg class="w-8 h-8 text-pink-medium" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-800 text-center mb-3" data-i18n="home.play_ai">Play Against AI</h3>
+      <p class="text-gray-600 text-center mb-6" data-i18n="home.choose_difficulty">Choose your difficulty level and improve your skills</p>
+      <button onclick="SPA.navigateTo('/ai-landing')" class="w-full py-3 bg-pink-400 hover:bg-pink-300 text-white text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-pink-800 focus:ring-offset-2 rounded-lg shadow-md transition-all duration-300" data-i18n="home.play_now">
+        Play Now
+      </button>
+    </div>
+
+    <!-- 1v1v1v1 -->
+    <div class="bg-white rounded-xl p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 group">
+      <div class="w-16 h-16 mb-6 bg-pink-medium rounded-full flex items-center justify-center mx-auto group-hover:bg-pink-light transition-colors">
+        <svg class="w-8 h-8 text-pink-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-800 text-center mb-3" data-i18n="home.brawl_match">4 Player Brawl</h3>
+      <p class="text-gray-600 text-center mb-6" data-i18n="home.brawl_challenge">Challenge each other in a real-time Brawl with 4 players</p>
+      <button onclick="SPA.navigateTo('/1v1v1v1-landing')" class="w-full py-3 bg-pink-400 hover:bg-pink-300 text-white text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-pink-800 focus:ring-offset-2 rounded-lg shadow-md transition-all duration-300" data-i18n="home.start_brawl">
+        Enter the Brawl
+      </button>
+    </div>
+
+    <!-- local 1v1 -->
+    <div class="bg-white rounded-xl p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 group">
+      <div class="w-16 h-16 mb-6 bg-pink-medium rounded-full flex items-center justify-center mx-auto group-hover:bg-pink-dark transition-colors">
+        <svg class="w-8 h-8 text-pink-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-800 text-center mb-3" data-i18n="home.local_match">Local Match</h3>
+      <p class="text-gray-600 text-center mb-6" data-i18n="home.challenge">Challenge another player in a real-time pong match</p>
+      <button onclick="SPA.navigateTo('/1v1-landing')" class="w-full py-3 bg-pink-400 hover:bg-pink-300 text-white text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-pink-800 focus:ring-offset-2 rounded-lg shadow-md transition-all duration-300" data-i18n="home.find_opponent">
+        Find Opponent
+      </button>
+    </div>
+  </div>
+
+  <div class="flex justify-center">
+    <button onclick="SPA.navigateTo('/home')" class="px-8 py-3 bg-pink-400 text-white font-semibold rounded-xl shadow-md hover:bg-pink-300 transition-all duration-200" data-i18n="common.back">
+      Back
+    </button>
+  </div>
+</div>

@@ -147,6 +147,11 @@ const SPA = {
       content: 'pages/home.html'
     },
 
+    '/pong-mode': {
+      title: 'common.pong',
+      content: 'pages/pong-mode.html'
+    },
+
     '/about': {
       title: 'common.about',
       content: 'pages/about.html'

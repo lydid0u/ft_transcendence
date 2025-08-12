@@ -13,7 +13,9 @@
       "logout": "Logout",
       "settings": "Settings",
       "loading": "Loading...",
-      "back": "Return"
+      "back": "Return",
+      "pong_modes": "Challenge yourself in different Pong game modes",
+      "choose_mode": "Choose Mode"
     },
     "reset": {
       "title": "Reset Password",
@@ -211,7 +213,9 @@
       "logout": "Déconnexion",
       "settings": "Paramètres",
       "loading": "Chargement...",
-      "back": "Retour"
+      "back": "Retour",
+      "pong_modes": "Défiez-vous dans différents modes de jeu Pong seul ou entre amis",
+      "choose_mode": "Choisir un mode"
     },
     "landing": {
       "title": "FT_TRANSCENDENCE",
@@ -271,7 +275,7 @@
       "find_opponent": "Trouver un adversaire",
 	  "start_brawl": "Entrer dans la mêlée",
       "tournament": "Tournoi",
-      "participate": "Participez à des tournois et montez dans le classement",
+      "participate": "Participez à des tournois avec vos amis et montez dans le classement",
       "join_tournament": "Rejoindre un tournoi",
       "dashboard": "Tableau de bord"
     },
@@ -414,7 +418,9 @@
       "logout": "Cerrar sesión",
       "settings": "Ajustes",
       "loading": "Cargando...",
-      "back": "Volver"
+      "back": "Volver",
+      "pong_modes": "Desafíate en diferentes modos de juego de Pong solo o entre amigos",
+      "choose_mode": "Elegir modo"
     },
     "landing": {
       "title": "FT_TRANSCENDENCE",
@@ -465,7 +471,7 @@
       "find_opponent": "Encontrar oponente",
 	  "start_brawl": "Entrar en la pelea",
       "tournament": "Torneo",
-      "participate": "Participa en torneos y sube en la clasificación",
+      "participate": "Participa en torneos con tus amigos y sube en la clasificación",
       "join_tournament": "Unirse al torneo",
       "dashboard": "Panel"
     },
